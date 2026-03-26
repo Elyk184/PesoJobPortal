@@ -1,0 +1,179 @@
+/* =============================================
+   PESO Manolo Fortich — History Timeline
+   File: public/css/history-timeline.css
+   ============================================= */
+
+/* ── Timeline wrapper ── */
+.history-timeline {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ── Center vertical line ── */
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #bfdbfe;
+    transform: translateX(-50%);
+    z-index: 0;
+}
+
+/* ── Each event row ── */
+.history-event {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 3.5rem;
+}
+
+/* Left event: card | dot | spacer */
+.history-event.left {
+    flex-direction: row;
+}
+
+/* Right event: spacer | dot | card */
+.history-event.right {
+    flex-direction: row-reverse;
+}
+
+/* ── Spacer (empty half) ── */
+.history-event-spacer {
+    flex: 1;
+}
+
+/* ── Dot on the center line ── */
+.history-event-dot {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    background-color: #2563eb;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 2px #2563eb;
+    margin-top: 1.25rem;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+/* ── Outer event content wrapper (no background, no border) ── */
+.history-event-content {
+    flex: 1;
+    padding: 0;
+    margin: 0;
+}
+
+/* Left: push away from dot */
+.history-event.left .history-event-content {
+    text-align: right;
+    margin-right: 2rem;
+}
+
+/* Right: push away from dot */
+.history-event.right .history-event-content {
+    text-align: left;
+    margin-left: 2rem;
+}
+
+/* ── Date heading ── */
+.history-event-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0 0 0.2rem;
+    line-height: 1.3;
+}
+
+/* ── Event title ── */
+.history-event-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.75rem;
+}
+
+/* ── Description card ── */
+.history-event-description {
+    background-color: #f8faff;
+    border: 1px solid #dbeafe;
+    border-left: 4px solid #2563eb;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 4px 0 rgba(37, 99, 235, 0.07);
+    transition: box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+.history-event-description:hover {
+    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.12);
+    border-left-color: #1d4ed8;
+}
+
+/* Right-side cards: accent border on the right instead of left */
+.history-event.right .history-event-description {
+    border-left: 1px solid #dbeafe;
+    border-right: 4px solid #2563eb;
+    border-radius: 0.5rem;
+}
+
+.history-event.right .history-event-description:hover {
+    border-right-color: #1d4ed8;
+}
+
+/* ── Body text inside description card ── */
+.history-event-description p {
+    font-size: 0.9rem;
+    color: #4b5563;
+    line-height: 1.75;
+    margin: 0;
+    text-align: justify;
+    hyphens: none;
+    word-break: normal;
+}
+
+/* =============================================
+   Responsive — collapse to single column
+   ============================================= */
+@media (max-width: 640px) {
+    .history-timeline::before {
+        left: 8px;
+    }
+
+    .history-event,
+    .history-event.left,
+    .history-event.right {
+        flex-direction: column;
+        padding-left: 2.5rem;
+    }
+
+    .history-event-dot {
+        position: absolute;
+        left: 0;
+        top: 1.25rem;
+        margin-top: 0;
+    }
+
+    .history-event-spacer {
+        display: none;
+    }
+
+    .history-event.left .history-event-content,
+    .history-event.right .history-event-content {
+        text-align: left;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    /* On mobile, all description cards get left accent border */
+    .history-event.right .history-event-description {
+        border-left: 4px solid #2563eb;
+        border-right: 1px solid #dbeafe;
+    }
+}

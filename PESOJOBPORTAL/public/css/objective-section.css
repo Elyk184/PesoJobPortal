@@ -1,0 +1,141 @@
+/* ==============================================
+   Objective Section Styles
+   PESO Manolo Fortich
+   ============================================== */
+
+.objective-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1.5rem;
+    min-height: 60vh;
+    position: relative;
+    background: linear-gradient(135deg, #f4f7fb 0%, #eaf1fa 100%);
+    overflow: hidden;
+}
+
+.objective-section::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle at 60% 40%, #b3d8ff 0%, #eaf1fa 100%);
+    opacity: 0.18;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+.objective-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(10, 55, 100, 0.13);
+    border-left: 6px solid #2563eb;
+    border-top: 2px solid #eaf1fa;
+    padding: 2.5rem 2.2rem 2rem 2.2rem;
+    margin: 0 auto;
+    max-width: 700px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.objective-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0a3764;
+    margin: 0 0 0.75rem 0;
+    text-align: center;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 8px rgba(36, 80, 164, 0.07);
+}
+
+.objective-divider {
+    width: 80px;
+    height: 5px;
+    background: linear-gradient(90deg, #0066cc 60%, #4fc3f7 100%);
+    border-radius: 3px;
+    margin: 0 auto 1.75rem auto;
+    box-shadow: 0 2px 8px rgba(0,102,204,0.10);
+}
+
+.objective-text {
+    font-size: 1.13rem;
+    line-height: 1.85;
+    color: #1e2b3a;
+    margin: 0;
+    text-align: justify;
+    hyphens: none !important;
+    -webkit-hyphens: none !important;
+    -ms-hyphens: none !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    transition: color 0.2s;
+}
+.objective-text:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+/* ==============================================
+   Mobile — justify text for compact screens
+   ============================================== */
+@media (max-width: 767px) {
+    .objective-section {
+        padding: 2.5rem 0.5rem;
+    }
+
+    .objective-card {
+        padding: 1.25rem 0.75rem;
+        border-radius: 10px;
+    }
+
+    .objective-title {
+        font-size: 1.3rem;
+    }
+
+    .objective-divider {
+        width: 48px;
+        height: 3px;
+    }
+
+    .objective-text {
+        text-align: justify;
+        text-align-last: left;
+        font-size: 0.97rem;
+        line-height: 1.8;
+        hyphens: none !important;
+        -webkit-hyphens: none !important;
+        -ms-hyphens: none !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+    }
+}
+
+/* ==============================================
+   Tablet — optional middle ground
+   ============================================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .objective-card {
+        padding: 2rem 1.25rem;
+    }
+
+    .objective-title {
+        font-size: 1.55rem;
+    }
+}

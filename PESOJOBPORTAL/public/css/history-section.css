@@ -1,0 +1,124 @@
+/* =========================================
+   Brief Historical Background Section
+   ========================================= */
+
+.history-section {
+    padding: 48px 0;
+    background-color: #f3f4f6;
+}
+
+.history-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.history-card {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    min-height: 420px;
+}
+
+.history-image-col {
+    position: relative;
+    width: 380px;
+    flex-shrink: 0;
+}
+
+.history-image-banner {
+    background-color: #1e2a3a;
+    color: #ffffff;
+    text-align: center;
+    padding: 14px 16px;
+}
+
+.history-image-banner h2 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0 2px 0;
+    text-transform: uppercase;
+}
+
+.history-image-banner p {
+    font-size: 12px;
+    font-weight: 400;
+    color: #cbd5e1;
+    margin: 0;
+    font-style: italic;
+}
+
+.history-image-col img {
+    width: 100%;
+    height: clamp(220px, 42vw, 460px);
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.history-text-col {
+    padding: 32px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.history-text-col h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 18px 0;
+    line-height: 1.3;
+}
+
+.history-text-col p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #4b5563;
+    margin: 0 0 14px 0;
+}
+
+.history-text-col p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .history-card {
+        grid-template-columns: 1fr;
+    }
+
+    .history-image-col {
+        width: 100%;
+    }
+
+    .history-image-col img {
+        height: 240px;
+    }
+
+    .history-text-col {
+        padding: 24px 20px;
+    }
+
+    .history-text-col h1 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .history-image-col img {
+        height: 210px;
+    }
+
+    .history-text-col {
+        padding: 24px 20px;
+    }
+
+    .history-text-col h1 {
+        font-size: 20px;
+    }
+}
