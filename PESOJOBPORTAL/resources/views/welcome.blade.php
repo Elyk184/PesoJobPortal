@@ -174,7 +174,7 @@
                 background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
                 border-radius: 28px;
                 padding: 2.6rem 2.6rem 2.4rem;
-                margin: 2.25rem auto 2.5rem;
+                margin: 4rem auto 2.5rem;
                 box-shadow: 0 18px 40px rgba(14, 38, 79, 0.12);
                 border: 1px solid #e5e7eb;
                 width: min(1300px, calc(100% - 24px));
@@ -352,7 +352,7 @@
 
                 .about-section {
                     padding: 1.5rem;
-                    margin: 1rem auto 1.5rem;
+                    margin: 2rem auto 1.5rem;
                 }
             }
 
@@ -369,7 +369,21 @@
                 }
 
                 .hero-tabulation {
-                    display: none;
+                    display: block;
+                    width: 100%;
+                    padding: 14px;
+                }
+
+                .hero-tabulation-grid {
+                    gap: 12px;
+                }
+
+                .hero-stat strong {
+                    font-size: 32px;
+                }
+
+                .hero-stat span {
+                    font-size: 0.92rem;
                 }
 
                 .news-header {
