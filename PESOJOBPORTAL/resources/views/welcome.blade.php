@@ -307,11 +307,14 @@
                 .peso-hero {
                     min-height: auto;
                     padding: 0;
+                    background-image: none !important;
+                    background: none;
                 }
 
                 .hero-static {
                     background-image: url('/images/mobile-background.png');
-                    background-size: contain;
+                    background-size: 100% 100%;
+                    background-repeat: no-repeat;
                     background-position: center top;
                     min-height: 700px;
                     padding: 76px 16px 68px;
@@ -359,6 +362,9 @@
 
             @media (max-width: 540px) {
                 .hero-static {
+                    background-image: url('/images/mobile-background.png');
+                    background-size: 100% 100%;
+                    background-repeat: no-repeat;
                     min-height: 640px;
                     padding: 70px 14px 52px;
                     background-position: center top;
