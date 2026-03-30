@@ -311,7 +311,8 @@
 
                 .hero-static {
                     background-image: url('/images/mobile-background.png');
-                    background-size: cover;
+                    background-size: contain;
+                    background-position: center top;
                     min-height: 700px;
                     padding: 76px 16px 68px;
                     gap: 16px;
