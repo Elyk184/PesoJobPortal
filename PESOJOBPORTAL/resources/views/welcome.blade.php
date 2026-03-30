@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>PESO Job Portal</title>
 
-        <link rel="preload" as="image" href="/images/background.png">
+        <link rel="preload" as="image" href="/images/bg.png">
+        <link rel="preload" as="image" href="/images/mobile-background.png" media="(max-width: 800px)">
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
@@ -309,7 +310,7 @@
                 }
 
                 .hero-static {
-                    background-image: url('/images/bg.png');
+                    background-image: url('/images/mobile-background.png');
                     background-size: cover;
                     min-height: 700px;
                     padding: 76px 16px 68px;
