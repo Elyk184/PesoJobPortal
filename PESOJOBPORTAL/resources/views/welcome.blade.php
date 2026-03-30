@@ -47,7 +47,7 @@
                 justify-content: space-between;
                 gap: 22px;
                 box-sizing: border-box;
-                background-image: url('/images/background.png');
+                background-image: url('/images/bg.png');
                 background-size: cover;
                 background-position: center center;
                 background-repeat: no-repeat;
