@@ -24,8 +24,15 @@
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
             body.peso-body {
                 font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                overflow-x: hidden;
             }
 
             :root {
@@ -82,196 +89,160 @@
                 transform: translateY(-1px);
             }
 
+            /* FIXED HERO SECTION - Full Screen Background */
             .peso-hero {
-                background-image: url('/images/background-desktop.png'), url('/images/background.png') !important;
-                background-size: 1100px auto, 1100px auto !important;
-                background-position: center 12px !important;
-                background-repeat: no-repeat !important;
-                min-height: calc(100vh - 76px);
                 position: relative;
-                isolation: isolate;
+                min-height: 100vh;
+                width: 100%;
                 display: flex;
                 align-items: center;
-                padding: clamp(32px, 4vw, 52px) 0;
+                justify-content: center;
+                isolation: isolate;
+                overflow: hidden;
             }
 
-            /* Responsive background sizing */
-            .hero-section {
-                background-size: 100% auto;
-            }
-
-            @media (max-width: 375px) {
-                .hero-section {
-                    background-size: 120% auto;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .hero-section {
-                    background-size: 100% auto;
-                }
-            }
-
+            /* Background image with proper cover sizing - NO OVERLAY */
             .peso-hero::before {
-                content: none;
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('/images/background-desktop.png'), url('/images/background.png');
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+                z-index: -1;
             }
 
-            @media (max-width: 1024px) {
-                .peso-hero {
-                    background-image: url('/images/background-tablet.png'), url('/images/background.png') !important;
-                    background-size: 920px auto, 920px auto !important;
-                    background-position: center top !important;
-                    height: calc(100svh - 74px) !important;
-                    min-height: 520px !important;
+            /* Tablet background */
+            @media (max-width: 1024px) and (min-width: 801px) {
+                .peso-hero::before {
+                    background-image: url('/images/background-tablet.png'), url('/images/background.png');
+                    background-size: cover;
+                    background-position: center center;
                 }
             }
 
-            .peso-hero-content {
-                width: 100%;
-                height: 100%;
-                min-height: 100% !important;
-                padding: clamp(28px, 5vw, 72px) clamp(18px, 4vw, 38px) !important;
+            /* Mobile background */
+            @media (max-width: 800px) {
+                .peso-hero::before {
+                    background-image: url('/images/background-mobile.png'), url('/images/background.png');
+                    background-size: cover;
+                    background-position: center center;
+                }
+            }
+
+            .hero-static {
+                width: min(1360px, 100%);
+                margin: 0 auto;
                 display: flex;
-                align-items: center !important;
-                justify-content: center !important;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
                 position: relative;
+                padding: 80px 24px;
                 z-index: 1;
             }
 
-            .hero-split {
-                width: min(1240px, 100%);
-                display: grid;
-                grid-template-columns: 1.1fr 0.9fr;
-                gap: clamp(28px, 4vw, 56px);
-                align-items: start;
-                margin: 0 auto;
+            .hero-content-left {
+                position: relative;
+                z-index: 2;
+                text-align: left;
+                width: 55%;
             }
 
-            .hero-badge {
-                display: inline-flex;
-                align-items: center;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(252, 211, 77, 0.45);
-                color: var(--orig-blue-900);
-                padding: 8px 15px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin-bottom: 14px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
-            }
-
-            .peso-copy {
-                width: 100%;
-                margin-inline: 0;
-                text-align: left !important;
-                justify-self: start;
-                max-width: 620px;
-            }
-
-            .hero-title {
-                margin: 0;
-                font-size: clamp(2.1rem, 4.3vw, 3rem);
-                line-height: 1.04;
-                color: var(--orig-blue-900);
-                text-shadow: 0 6px 16px rgba(255, 255, 255, 0.55);
-                font-weight: 900;
-            }
-
-            .hero-subtitle {
-                margin: 8px 0 0;
-                color: var(--orig-yellow-300);
-                font-size: clamp(1.2rem, 2vw, 1.5rem);
+            .hero-title-welcome {
+                font-size: 46px;
+                font-weight: 700;
                 line-height: 1.1;
-                font-weight: 700;
+                margin-bottom: 10px;
+                color: #075cb2e6;
             }
 
-            .hero-description {
-                margin: 18px 0 22px;
-                color: var(--orig-blue-900);
-                font-size: clamp(1rem, 1.2vw, 1.2rem);
+            .hero-title-peso {
+                font-size: 46px;
+                font-weight: 700;
+                line-height: 1.1;
+                color: #e74c3c;
+                margin-bottom: 20px;
+            }
+
+            .hero-title-connecting {
+                font-size: 34px;
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 18px;
+                color: #075cb2e6;
+            }
+
+            .hero-title-connecting span {
+                color: #e74c3c;
+            }
+
+            .hero-description-text {
+                font-size: 18px;
+                color: #333;
+                margin-bottom: 30px;
                 line-height: 1.6;
-                max-width: 620px;
             }
 
-            .hero-cta {
-                display: inline-flex;
-                gap: 14px;
-                align-items: center;
-                margin-top: 6px;
-            }
-
-            .hero-btn-primary {
-                background: #1e3a8a;
-                color: #ffffff;
-                border: 2px solid #1e3a8a;
-                padding: 12px 26px;
-                border-radius: 999px;
-                font-weight: 700;
-                letter-spacing: 0.2px;
-                box-shadow: 0 12px 30px rgba(30, 58, 138, 0.24);
-                transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            .hero-btn-getstarted {
+                padding: 12px 40px;
+                font-size: 15px;
+                font-weight: 600;
+                border-radius: 30px;
+                border: 2px solid #3498db;
+                color: white;
+                background: #3498db;
                 text-decoration: none;
+                display: inline-block;
+                transition: all 0.3s ease;
             }
 
-            .hero-btn-primary:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 16px 34px rgba(30, 58, 138, 0.3);
-                background: #2546a3;
+            .hero-btn-getstarted:hover {
+                background: #2980b9;
+                border-color: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
             }
 
+            /* Stats Card */
             .hero-tabulation {
-                background: rgba(255, 255, 255, 0.92);
-                color: var(--orig-blue-900);
+                background: rgba(255, 255, 255, 0.95);
                 border: 1px solid rgba(252, 211, 77, 0.48);
                 border-radius: 22px;
-                padding: clamp(22px, 2.4vw, 32px);
-                width: min(440px, 100%);
+                padding: clamp(20px, 2.4vw, 28px);
+                width: 35%;
                 box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22);
                 backdrop-filter: blur(10px);
-                justify-self: end;
                 position: relative;
-                overflow: hidden;
-                align-self: start;
-                margin-top: clamp(32px, 5vw, 78px);
-            }
-
-            .hero-tabulation::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                border-radius: inherit;
-                pointer-events: none;
-                box-shadow: inset 0 0 0 1px rgba(252, 211, 77, 0.32);
+                z-index: 2;
             }
 
             .hero-tabulation-grid {
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 18px 24px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px 24px;
             }
 
             .hero-stat {
-                background: transparent;
-                border: 0;
-                border-radius: 0;
-                padding: 0;
                 text-align: center;
             }
 
             .hero-stat strong {
                 display: block;
-                font-size: clamp(34px, 3.2vw, 52px);
-                line-height: 1;
+                font-size: clamp(32px, 3.2vw, 48px);
+                line-height: 1.1;
                 color: var(--orig-blue-900);
-                font-weight: 900;
+                font-weight: 800;
             }
 
             .hero-stat span {
                 display: block;
-                font-size: 1rem;
-                opacity: 0.96;
-                margin-top: 8px;
+                font-size: 0.85rem;
+                margin-top: 6px;
                 font-weight: 600;
                 color: var(--orig-red-600);
             }
@@ -286,10 +257,6 @@
                 width: min(1300px, calc(100% - 24px));
                 position: relative;
                 z-index: 2;
-            }
-
-            .about-section::before {
-                content: none;
             }
 
             .about-grid {
@@ -320,235 +287,154 @@
                 margin: 0;
             }
 
-            @media (max-width: 800px) {
-                .peso-hero {
-                    background-image: url('/images/background-mobile.png'), url('/images/background.png') !important;
-                    background-size: 700px auto, 700px auto !important;
-                    height: calc(100svh - 74px) !important;
-                    min-height: 520px !important;
-                    background-position: center -12px !important;
-                }
-                    .hero-split {
-                        grid-template-columns: 1fr;
-                        gap: 18px;
-                        align-items: start;
-                    }
-                    .peso-copy {
-                        text-align: center !important;
-                        justify-self: center;
-                        margin-top: 18px;
-                    }
-                    .hero-description {
-                        margin-inline: auto;
-                    }
-                    .hero-tabulation {
-                        justify-self: center;
-                        width: min(560px, 100%);
-                        margin-top: 28px;
-                    }
+            .news-updates-section {
+                width: min(1300px, calc(100% - 24px));
+                margin: 2rem auto;
+            }
 
-                .peso-hero-content {
-                    padding: 18px 16px 8px !important;
-                }
+            .news-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #0a3764;
+                margin-bottom: 1.5rem;
+            }
 
-                .hero-split {
-                    grid-template-columns: 1fr;
-                        min-height: 620px !important;
-                }
+            .news-header span:first-child,
+            .news-header span:last-child {
+                flex: 1;
+                height: 3px;
+                background: #dc2626;
+            }
 
-                .hero-badge {
-                    font-size: 0.8125rem;
-                    margin-bottom: 12px;
-                }
+            .news-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
 
-                .hero-title {
-                    font-size: clamp(1.6rem, 7vw, 2.2rem);
-                }
+            .news-card {
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                transition: transform 0.2s ease;
+                height: 100%;
+                background: white;
+            }
 
-                .hero-subtitle {
-                    font-size: clamp(1.05rem, 5vw, 1.3rem);
-                }
+            .news-card:hover {
+                transform: translateY(-5px);
+            }
 
-                .hero-tabulation {
-                    max-width: 560px;
-                    width: 100%;
-                    margin-inline: auto;
-                    padding: 20px;
-                }
+            .news-card-img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
 
-                .hero-tabulation-grid {
-                    gap: 14px;
-                }
+            .news-card-body {
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
 
-                .hero-stat strong {
-                    font-size: clamp(26px, 7vw, 38px);
-                }
+            .news-card-title {
+                font-size: 1.2rem;
+                font-weight: 700;
+            }
 
-                .about-section {
-                    padding: 1.5rem;
-                    margin: -0.75rem auto 1.5rem;
-                }
+            .news-card-text {
+                flex-grow: 1;
+            }
 
-                .about-section::before {
-                    width: 58%;
-                }
-                }
+            .news-card .btn {
+                align-self: flex-start;
+            }
 
-            /* Mobile refinements */
-            @media (max-width: 540px) {
-                .peso-hero {
-                    padding: 22px 0 32px;
-                    background-size: 680px auto, 680px auto !important;
-                    background-position: center 24px !important;
-                    padding-bottom: 88px;
+            /* Responsive Design */
+            @media (max-width: 1024px) {
+                .hero-static {
+                    flex-direction: column;
+                    padding: 60px 24px;
                 }
 
-                .peso-hero-content {
-                    padding: 20px 16px 6px !important;
-                }
-
-                .hero-split {
-                    gap: 16px;
-                }
-
-                .hero-title {
-                    font-size: clamp(1.45rem, 6.6vw, 1.95rem);
-                    line-height: 1.08;
-                }
-
-                .hero-subtitle {
-                    font-size: clamp(0.98rem, 5vw, 1.18rem);
-                }
-
-                .hero-description {
-                    font-size: clamp(0.95rem, 4.6vw, 1.08rem);
-                    line-height: 1.55;
-                    margin: 12px 0 18px;
-                }
-
-                .hero-tabulation {
-                    margin-top: 14px;
-                    padding: 18px;
-                    width: 100%;
-                }
-
-                .hero-tabulation-grid {
-                    gap: 12px;
-                }
-
-                .hero-cta {
-                    justify-content: center;
-                    margin-top: 12px;
-                }
-
-                .hero-btn-primary {
+                .hero-content-left {
                     width: 100%;
                     text-align: center;
                 }
 
-                /* Hide stats card on small phones */
                 .hero-tabulation {
-                    display: none;
+                    width: 100%;
+                    max-width: 500px;
                 }
             }
 
-                @media (max-width: 620px) {
-                    .peso-brand-text {
-                        font-size: 2rem;
-                    }
-                    .peso-nav {
-                        gap: 10px;
-                    }
-                    .peso-nav a {
-                        font-size: 13px;
-                    }
-                    .peso-chip {
-                        min-width: 102px;
-                        padding: 8px 12px;
-                    }
-                    .hero-tabulation {
-                        padding: 16px;
-                    }
-                    .hero-tabulation-grid {
-                        gap: 10px 12px;
-                    }
-                    .hero-stat strong {
-                        font-size: clamp(24px, 10vw, 32px);
-                    }
-                    .hero-stat span {
-                        font-size: 0.9rem;
-                    }
+            @media (max-width: 768px) {
+                .hero-title-welcome,
+                .hero-title-peso {
+                    font-size: 36px;
                 }
-                .news-updates-section {
-    width: min(1300px, calc(100% - 24px));
-    margin: 2rem auto;
-}
 
-.news-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0a3764;
-    margin-bottom: 1.5rem;
-}
+                .hero-title-connecting {
+                    font-size: 28px;
+                }
 
-.news-header span:first-child,
-.news-header span:last-child {
-    flex: 1;
-    height: 3px;
-    background: #dc2626;
-}
+                .hero-description-text {
+                    font-size: 16px;
+                }
 
-/* 🔥 MAIN FIX: GRID SYSTEM */
-.news-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
+                .hero-static {
+                    padding: 40px 20px;
+                }
+            }
 
-/* CARD DESIGN */
-.news-card {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-    height: 100%;
-    background: white;
-}
+            @media (max-width: 480px) {
+                .hero-title-welcome,
+                .hero-title-peso {
+                    font-size: 28px;
+                }
 
-.news-card:hover {
-    transform: translateY(-5px);
-}
+                .hero-title-connecting {
+                    font-size: 22px;
+                }
 
-.news-card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
+                .hero-description-text {
+                    font-size: 14px;
+                }
 
-.news-card-body {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+                .hero-btn-getstarted {
+                    padding: 10px 30px;
+                    font-size: 14px;
+                }
 
-.news-card-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-}
+                .hero-tabulation-grid {
+                    gap: 15px;
+                }
 
-.news-card-text {
-    flex-grow: 1;
-}
+                .hero-stat strong {
+                    font-size: 24px;
+                }
 
-.news-card .btn {
-    align-self: flex-start;
-}
+                .hero-stat span {
+                    font-size: 12px;
+                }
 
+                .about-section {
+                    padding: 1.5rem;
+                }
+
+                .about-item h3 {
+                    font-size: 1.2rem;
+                }
+
+                .news-header {
+                    font-size: 1.4rem;
+                }
+            }
         </style>
     </head>
     <body class="peso-body">
@@ -556,52 +442,49 @@
         @include('components.navbar')
 
         <main class="peso-main">
-            <section class="peso-hero hero-section" aria-label="Welcome section">
-                <!-- HERO -->
-                <div class="hero-static" style="width: min(1360px, 100%); height: 700px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; box-sizing: border-box; background: url('{{ asset('css/images/background.png') }}') center/cover no-repeat; position: relative; overflow: hidden; padding: 100px 24px 90px;">
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.1);"></div>
-
-                    <div style="position: relative; z-index: 2; text-align: left; color: white; width: min(58%, 680px); transform: translateY(-2px);">
-                        <h1 style="font-size: 46px; font-weight: 700; line-height: 1.03; margin-bottom: 10px; color: #075cb2e6; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+            <section class="peso-hero" aria-label="Welcome section">
+                <div class="hero-static">
+                    <div class="hero-content-left">
+                        <h1 class="hero-title-welcome">
                             Welcome to <span style="color: #e74c3c;">PESO</span>
                         </h1>
 
-                        <h2 style="font-size: 46px; font-weight: 700; line-height: 1.03; color: #e74c3c; margin-bottom: 20px;">
+                        <h2 class="hero-title-peso">
                             Manolo Fortich
                         </h2>
 
-                        <h1 style="font-size: 34px; font-weight: 700; line-height: 1.08; margin-bottom: 18px; color: #075cb2e6; text-shadow: 2px 2px 6px rgba(0,0,0,0.3);">
-                            Connecting People <span style="color: #e74c3c;">with Opportunities</span>
+                        <h1 class="hero-title-connecting">
+                            Connecting People <span>with Opportunities</span>
                         </h1>
 
-                        <p style="font-size: 18px; color: rgb(7, 6, 6); margin-bottom: 30px; line-height: 1.6; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                        <p class="hero-description-text">
                             Connecting Filipino jobseekers with verified employers. Access thousands of local and overseas job opportunities through PESO.
                         </p>
 
-                        <div style="display: flex; justify-content: flex-start;">
-                            <a href="{{ route('login') }}" style="padding: 13px 45px; font-size: 15px; font-weight: 600; border-radius: 30px; border: 2px solid #3498db; color: white; background: #3498db; text-decoration: none;">
+                        <div>
+                            <a href="{{ route('login') }}" class="hero-btn-getstarted">
                                 Get Started
                             </a>
                         </div>
                     </div>
 
-                    <aside aria-label="Quick statistics" style="position: relative; z-index: 2; width: min(340px, 36%); background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(7, 92, 178, 0.2); border-radius: 22px; padding: 20px; box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22); backdrop-filter: blur(10px); transform: translateY(100px);">
-                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px;">
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="500" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Job Seekers</span>
+                    <aside class="hero-tabulation">
+                        <div class="hero-tabulation-grid">
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="500" data-suffix="+">0</strong>
+                                <span>Job Seekers</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="50" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Employers</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="50" data-suffix="+">0</strong>
+                                <span>Employers</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="300" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Jobs Posted</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="300" data-suffix="+">0</strong>
+                                <span>Jobs Posted</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="85" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Placement Rate</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="85" data-suffix="+">0</strong>
+                                <span>Placement Rate</span>
                             </div>
                         </div>
                     </aside>
@@ -629,99 +512,97 @@
                     </article>
                 </div>
             </section>
-<section id="features" class="news-updates-section">
-    <h2 class="news-header">
-        <span></span>
-        <span>News & Updates</span>
-        <span></span>
-    </h2>
 
-    <div class="news-cards">
+            <section id="features" class="news-updates-section">
+                <h2 class="news-header">
+                    <span></span>
+                    <span>News & Updates</span>
+                    <span></span>
+                </h2>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Events</h5>
-                <p class="card-text">Upcoming PESO events and job fairs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                <div class="news-cards">
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Events</h5>
+                            <p class="card-text">Upcoming PESO events and job fairs.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Announcements</h5>
-                <p class="card-text">Latest announcements and updates.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Announcements</h5>
+                            <p class="card-text">Latest announcements and updates.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Community</h5>
-                <p class="card-text">Community initiatives and programs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Community</h5>
+                            <p class="card-text">Community initiatives and programs.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    </div>
-</section>
-        @include('components.services')
-        @include('components.footer')
-
+            @include('components.services')
+            @include('components.footer')
         </main>
 
-    <!-- Bootstrap JS (for dropdowns and navbar toggler) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <!-- Bootstrap JS (for dropdowns and navbar toggler) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- Stat counter animation -->
-    <script>
-    (function () {
-        const DURATION = 1800; // ms
+        <!-- Stat counter animation -->
+        <script>
+        (function () {
+            const DURATION = 1800;
 
-        function easeOutQuad(t) {
-            return t * (2 - t);
-        }
-
-        function animateCounter(el) {
-            const target = parseInt(el.dataset.count, 10);
-            const suffix = el.dataset.suffix || '';
-            const start = performance.now();
-
-            function tick(now) {
-                const elapsed = now - start;
-                const progress = Math.min(elapsed / DURATION, 1);
-                const value = Math.floor(easeOutQuad(progress) * target);
-                el.textContent = value + (progress === 1 ? suffix : '');
-                if (progress < 1) {
-                    requestAnimationFrame(tick);
-                }
+            function easeOutQuad(t) {
+                return t * (2 - t);
             }
 
-            requestAnimationFrame(tick);
-        }
+            function animateCounter(el) {
+                const target = parseInt(el.dataset.count, 10);
+                const suffix = el.dataset.suffix || '';
+                const start = performance.now();
 
-        const counters = document.querySelectorAll('.stat-counter');
-
-        if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver(function (entries, obs) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        animateCounter(entry.target);
-                        obs.unobserve(entry.target);
+                function tick(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / DURATION, 1);
+                    const value = Math.floor(easeOutQuad(progress) * target);
+                    el.textContent = value + (progress === 1 ? suffix : '');
+                    if (progress < 1) {
+                        requestAnimationFrame(tick);
                     }
-                });
-            }, { threshold: 0.25 });
+                }
 
-            counters.forEach(function (el) { observer.observe(el); });
-        } else {
-            // Fallback: just show final values immediately
-            counters.forEach(function (el) {
-                el.textContent = el.dataset.count + (el.dataset.suffix || '');
-            });
-        }
-    })();
-    </script>
+                requestAnimationFrame(tick);
+            }
+
+            const counters = document.querySelectorAll('.stat-counter');
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(function (entries, obs) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            animateCounter(entry.target);
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.25 });
+
+                counters.forEach(function (el) { observer.observe(el); });
+            } else {
+                counters.forEach(function (el) {
+                    el.textContent = el.dataset.count + (el.dataset.suffix || '');
+                });
+            }
+        })();
+        </script>
     </body>
 </html>
