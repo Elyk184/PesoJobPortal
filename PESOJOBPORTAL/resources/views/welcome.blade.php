@@ -480,124 +480,211 @@
                     }
                 }
                 .news-updates-section {
-    width: min(1300px, calc(100% - 24px));
+    width: min(1320px, calc(100% - 24px));
     margin: 2.2rem auto 3rem;
-    padding: 1.25rem;
-    border-radius: 24px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 251, 255, 0.95) 100%);
-    box-shadow: 0 18px 45px rgba(10, 55, 100, 0.12);
+    padding: 1.5rem 0.6rem;
+    border-radius: 16px;
+                    background: #ffffff;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.08);
 }
 
 .news-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+    gap: 12px;
+    font-size: clamp(1.25rem, 2vw, 1.8rem);
     font-weight: 700;
-    color: #0a3764;
-    margin: 0 0 1.8rem;
+    color: #444444;
+    margin: 0 0 1.2rem;
+    letter-spacing: 1px;
 }
 
 .news-header span:first-child,
 .news-header span:last-child {
     flex: 1;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.05), #dc2626);
+    height: 2px;
+    background: #cccccc;
 }
 
-.news-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 22px;
-    align-items: stretch;
-}
-
-.news-card {
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(8, 55, 105, 0.08);
-    box-shadow: 0 12px 30px rgba(7, 46, 84, 0.12);
-    transition: transform 0.28s ease, box-shadow 0.28s ease;
-    height: 100%;
-    background: #ffffff;
+.news-updates-section .cards {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.news-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 22px 40px rgba(7, 46, 84, 0.18);
-}
-
-.news-card-img {
+.news-updates-section .cards__item {
+    display: flex;
+    padding: 0.6rem;
     width: 100%;
-    height: 190px;
-    object-fit: cover;
 }
 
-.news-card-body {
-    padding: 1rem 1rem 1.15rem;
+@media (min-width: 40rem) {
+    .news-updates-section .cards__item {
+        width: 50%;
+    }
+}
+
+@media (min-width: 56rem) {
+    .news-updates-section .cards__item {
+        width: 33.3333%;
+    }
+}
+
+.news-updates-section .card {
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.25);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    width: 100%;
+    transition: transform 0.22s ease;
+}
+
+.news-updates-section .card:hover {
+    transform: translateY(-6px);
+}
+
+.news-updates-section .card:hover .card__image {
+    filter: contrast(100%);
+}
+
+.news-updates-section .card__content {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
-    flex: 1;
+    padding: 1rem;
+    text-align: center;
 }
 
-.news-card-meta {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    font-size: 0.78rem;
-    letter-spacing: 0.03em;
-    font-weight: 700;
+.news-updates-section .card__image {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: none;
+    overflow: hidden;
+    position: relative;
+    transition: filter 0.5s cubic-bezier(.43, .41, .22, .91);
+}
+
+.news-updates-section .card__image::before {
+    content: "";
+    display: block;
+    padding-top: 56.25%;
+}
+
+@media (min-width: 40rem) {
+    .news-updates-section .card__image::before {
+        padding-top: 66.6%;
+    }
+}
+
+.news-updates-section .card__image--events {
+    background-image: url('https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif');
+}
+
+.news-updates-section .card__image--announcements {
+    background-image: url('https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif');
+}
+
+.news-updates-section .card__image--community {
+    background-image: url('https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif');
+}
+
+.news-updates-section .card__image--careers {
+    background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80');
+}
+
+.news-updates-section .card__title {
+    color: #696969;
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #0a3764;
-    background: #e8f2ff;
-    border-radius: 999px;
-    padding: 0.3rem 0.6rem;
+    margin: 0 0 0.65rem;
 }
 
-.news-card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.25;
-    color: #0a3764;
-    margin: 0;
+.news-updates-section .card__title--events {
+    color: #0c4a6e;
 }
 
-.news-card-text {
-    margin: 0;
-    color: #374151;
-    line-height: 1.55;
-    flex-grow: 1;
-}
-
-.news-link {
-    align-self: flex-start;
-    margin-top: 0.3rem;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.92rem;
-    color: #dc2626;
-    border-bottom: 2px solid rgba(220, 38, 38, 0.35);
-    transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.news-link:hover {
+.news-updates-section .card__title--announcements {
     color: #b91c1c;
-    border-color: #b91c1c;
 }
 
-@media (max-width: 768px) {
-    .news-updates-section {
-        padding: 1rem;
-        border-radius: 18px;
-    }
+.news-updates-section .card__title--community {
+    color: #166534;
+}
 
-    .news-card-img {
-        height: 170px;
-    }
+.news-updates-section .card__text {
+    flex: 1 1 auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 0 1.1rem;
+    color: #666666;
+}
+
+.news-updates-section .card__text--events {
+    color: #334155;
+}
+
+.news-updates-section .card__text--announcements {
+    color: #7f1d1d;
+}
+
+.news-updates-section .card__text--community {
+    color: #14532d;
+    text-align: justify;
+}
+
+.news-updates-section .btn {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    color: #696969;
+    padding: 0.55rem;
+    text-transform: lowercase;
+    border-radius: 0;
+}
+
+.news-updates-section .btn--block {
+    display: block;
+    width: 100%;
+}
+
+.news-updates-section .card__btn:hover {
+    background: #f7f7f7;
+    border-color: #bdbdbd;
+}
+
+.news-updates-section .card__btn:focus-visible {
+    outline: 2px solid #185fa5;
+    outline-offset: 2px;
+}
+
+.news-updates-section .card__btn--events {
+    border-color: #bae6fd;
+    color: #0c4a6e;
+    background: #f0f9ff;
+}
+
+.news-updates-section .card__btn--announcements {
+    border-color: #fecaca;
+    color: #b91c1c;
+    background: #fef2f2;
+}
+
+.news-updates-section .card__btn--community {
+    border-color: #bbf7d0;
+    color: #166534;
+    background: #f0fdf4;
+}
+
+.news-updates-section .card__image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
         </style>
@@ -687,39 +774,40 @@
         <span></span>
     </h2>
 
-    <div class="news-cards">
-
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
-            <div class="card-body news-card-body">
-                <span class="news-card-meta">March 2026</span>
-                <h5 class="news-card-title">Events and Job Fairs</h5>
-                <p class="card-text news-card-text">Stay updated on upcoming PESO events, recruitment drives, and local job fairs open to all applicants.</p>
-                <a href="#" class="news-link">Learn more</a>
+    <ul class="cards">
+        <li class="cards__item">
+            <div class="card">
+                <div class="card__image card__image--events"></div>
+                <div class="card__content">
+                    <div class="card__title card__title--events">Events</div>
+                    <p class="card__text card__text--events">Stay updated on upcoming PESO events, recruitment drives, and local job fairs open to all applicants.</p>
+                    <button class="btn btn--block card__btn card__btn--events">learn more..</button>
+                </div>
             </div>
-        </div>
+        </li>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
-            <div class="card-body news-card-body">
-                <span class="news-card-meta">Latest Notice</span>
-                <h5 class="news-card-title">Announcements</h5>
-                <p class="card-text news-card-text">Read recent advisories, office updates, and guidance for employers and jobseekers in Manolo Fortich.</p>
-                <a href="#" class="news-link">Learn more</a>
+        <li class="cards__item">
+            <div class="card">
+                <div class="card__image card__image--announcements"></div>
+                <div class="card__content">
+                    <div class="card__title card__title--announcements">Announcements</div>
+                    <p class="card__text card__text--announcements">Read recent advisories, office updates, and guidance for employers and jobseekers in Manolo Fortich.</p>
+                    <button class="btn btn--block card__btn card__btn--announcements">learn more..</button>
+                </div>
             </div>
-        </div>
+        </li>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
-            <div class="card-body news-card-body">
-                <span class="news-card-meta">Program Spotlight</span>
-                <h5 class="news-card-title">Community Programs</h5>
-                <p class="card-text news-card-text">Explore skills training, livelihood initiatives, and community-led programs supported by PESO partners.</p>
-                <a href="#" class="news-link">Learn more</a>
+        <li class="cards__item">
+            <div class="card">
+                <div class="card__image card__image--community"></div>
+                <div class="card__content">
+                    <div class="card__title card__title--community">Community</div>
+                    <p class="card__text card__text--community">Explore skills training, livelihood initiatives, and community-led programs supported by PESO partners.</p>
+                    <button class="btn btn--block card__btn card__btn--community">learn more..</button>
+                </div>
             </div>
-        </div>
-
-    </div>
+        </li>
+    </ul>
 </section>
         @include('components.services')
         @include('components.footer')
