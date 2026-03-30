@@ -624,6 +624,7 @@
     line-height: 1.6;
     margin: 0 0 1.1rem;
     color: #666666;
+    text-align: justify;
 }
 
 .news-updates-section .card__text--events {
@@ -636,7 +637,6 @@
 
 .news-updates-section .card__text--community {
     color: #14532d;
-    text-align: justify;
 }
 
 .news-updates-section .btn {
