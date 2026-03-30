@@ -5,13 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>PESO Job Portal</title>
 
-        <!-- Preload hero background images to eliminate loading delay -->
-        <link rel="preload" as="image" href="/images/background.png">
-        <link rel="preload" as="image" href="/images/background-desktop.png" media="(min-width: 1025px)">
-        <link rel="preload" as="image" href="/images/background-tablet.png" media="(min-width: 801px) and (max-width: 1024px)">
-        <link rel="preload" as="image" href="/images/background-mobile.png" media="(max-width: 800px)">
+        <link rel="preload" as="image" href="/images/bg.png">
+        <link rel="preload" as="image" href="/images/mobile-background.png" media="(max-width: 800px)">
 
-        <!-- Bootstrap CSS for navbar and layout -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -30,219 +26,122 @@
 
             :root {
                 --orig-blue-900: #1e3a8a;
-                --orig-blue-800: #1e40af;
                 --orig-red-600: #dc2626;
                 --orig-yellow-300: #fcd34d;
-                --orig-white: #ffffff;
-            }
-
-            .peso-header-inner {
-                width: 100% !important;
-                justify-content: space-between !important;
-                padding: 0 16px !important;
-            }
-
-            .peso-brand {
-                margin-right: 0 !important;
-                flex-shrink: 0 !important;
-            }
-
-            .peso-header-right {
-                margin-left: auto !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: flex-end !important;
-                flex: 1 !important;
-                min-width: 0 !important;
-                gap: 18px !important;
-            }
-
-            .peso-nav {
-                margin-left: 0 !important;
-                justify-content: flex-end !important;
-            }
-
-            .peso-actions {
-                justify-content: flex-end !important;
-            }
-
-            .peso-chip {
-                min-width: 110px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease,
-                    transform 0.18s ease;
-            }
-
-            .peso-chip:hover {
-                background: #1e3a8a;
-                border-color: #fcd34d;
-                box-shadow: 0 8px 18px rgba(9, 40, 73, 0.35);
-                transform: translateY(-1px);
             }
 
             .peso-hero {
-                background-image: url('/images/background-desktop.png'), url('/images/background.png') !important;
-                background-size: 1100px auto, 1100px auto !important;
-                background-position: center 12px !important;
-                background-repeat: no-repeat !important;
                 min-height: calc(100vh - 76px);
                 position: relative;
-                isolation: isolate;
                 display: flex;
                 align-items: center;
-                padding: clamp(32px, 4vw, 52px) 0;
+                padding: clamp(22px, 3vw, 36px) 0;
             }
 
-            /* Responsive background sizing */
-            .hero-section {
-                background-size: 100% auto;
-            }
-
-            @media (max-width: 375px) {
-                .hero-section {
-                    background-size: 120% auto;
-                }
-            }
-
-            @media (max-width: 480px) {
-                .hero-section {
-                    background-size: 100% auto;
-                }
-            }
-
-            .peso-hero::before {
-                content: none;
-            }
-
-            @media (max-width: 1024px) {
-                .peso-hero {
-                    background-image: url('/images/background-tablet.png'), url('/images/background.png') !important;
-                    background-size: 920px auto, 920px auto !important;
-                    background-position: center top !important;
-                    height: calc(100svh - 74px) !important;
-                    min-height: 520px !important;
-                }
-            }
-
-            .peso-hero-content {
-                width: 100%;
-                height: 100%;
-                min-height: 100% !important;
-                padding: clamp(28px, 5vw, 72px) clamp(18px, 4vw, 38px) !important;
-                display: flex;
-                align-items: center !important;
-                justify-content: center !important;
-                position: relative;
-                z-index: 1;
-            }
-
-            .hero-split {
-                width: min(1240px, 100%);
-                display: grid;
-                grid-template-columns: 1.1fr 0.9fr;
-                gap: clamp(28px, 4vw, 56px);
-                align-items: start;
+            .hero-static {
+                width: min(1360px, 100%);
+                min-height: 700px;
                 margin: 0 auto;
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 22px;
+                box-sizing: border-box;
+                background-image: url('/images/bg.png');
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+                position: relative;
+                overflow: hidden;
+                padding: 100px 24px 90px;
+                border-radius: 0;
             }
 
-            .hero-badge {
-                display: inline-flex;
-                align-items: center;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(252, 211, 77, 0.45);
-                color: var(--orig-blue-900);
-                padding: 8px 15px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin-bottom: 14px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+            .hero-copy {
+                position: relative;
+                z-index: 2;
+                text-align: left;
+                width: min(58%, 680px);
+                transform: translateY(-2px);
             }
 
-            .peso-copy {
-                width: 100%;
-                margin-inline: 0;
-                text-align: left !important;
-                justify-self: start;
-                max-width: 620px;
-            }
-
-            .hero-title {
+            .hero-copy h1 {
                 margin: 0;
-                font-size: clamp(2.1rem, 4.3vw, 3rem);
-                line-height: 1.04;
-                color: var(--orig-blue-900);
-                text-shadow: 0 6px 16px rgba(255, 255, 255, 0.55);
-                font-weight: 900;
             }
 
-            .hero-subtitle {
-                margin: 8px 0 0;
-                color: var(--orig-yellow-300);
-                font-size: clamp(1.2rem, 2vw, 1.5rem);
-                line-height: 1.1;
+            .hero-top {
+                font-size: 46px;
                 font-weight: 700;
+                line-height: 1.03;
+                margin-bottom: 10px;
+                color: #075cb2e6;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .hero-town {
+                font-size: 46px;
+                font-weight: 700;
+                line-height: 1.03;
+                color: #e74c3c;
+                margin-bottom: 20px;
+            }
+
+            .hero-main {
+                font-size: 34px;
+                font-weight: 700;
+                line-height: 1.08;
+                margin-bottom: 18px;
+                color: #075cb2e6;
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            .hero-main span,
+            .hero-top span {
+                color: #e74c3c;
             }
 
             .hero-description {
-                margin: 18px 0 22px;
-                color: var(--orig-blue-900);
-                font-size: clamp(1rem, 1.2vw, 1.2rem);
+                font-size: 18px;
+                color: #070606;
+                margin-bottom: 30px;
                 line-height: 1.6;
-                max-width: 620px;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+                max-width: 640px;
             }
 
             .hero-cta {
-                display: inline-flex;
-                gap: 14px;
-                align-items: center;
-                margin-top: 6px;
+                display: flex;
+                justify-content: flex-start;
             }
 
             .hero-btn-primary {
-                background: #1e3a8a;
-                color: #ffffff;
-                border: 2px solid #1e3a8a;
-                padding: 12px 26px;
-                border-radius: 999px;
-                font-weight: 700;
-                letter-spacing: 0.2px;
-                box-shadow: 0 12px 30px rgba(30, 58, 138, 0.24);
-                transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+                padding: 13px 45px;
+                font-size: 15px;
+                font-weight: 600;
+                border-radius: 30px;
+                border: 2px solid #3498db;
+                color: #fff;
+                background: #3498db;
                 text-decoration: none;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
             .hero-btn-primary:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 16px 34px rgba(30, 58, 138, 0.3);
-                background: #2546a3;
+                box-shadow: 0 10px 22px rgba(7, 92, 178, 0.25);
             }
 
             .hero-tabulation {
+                position: relative;
+                z-index: 2;
+                width: min(340px, 36%);
                 background: rgba(255, 255, 255, 0.92);
-                color: var(--orig-blue-900);
-                border: 1px solid rgba(252, 211, 77, 0.48);
+                border: 1px solid rgba(7, 92, 178, 0.2);
                 border-radius: 22px;
-                padding: clamp(22px, 2.4vw, 32px);
-                width: min(440px, 100%);
+                padding: 20px;
                 box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22);
                 backdrop-filter: blur(10px);
-                justify-self: end;
-                position: relative;
-                overflow: hidden;
-                align-self: start;
-                margin-top: clamp(32px, 5vw, 78px);
-            }
-
-            .hero-tabulation::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                border-radius: inherit;
-                pointer-events: none;
-                box-shadow: inset 0 0 0 1px rgba(252, 211, 77, 0.32);
+                transform: translateY(100px);
             }
 
             .hero-tabulation-grid {
@@ -252,44 +151,35 @@
             }
 
             .hero-stat {
-                background: transparent;
-                border: 0;
-                border-radius: 0;
-                padding: 0;
                 text-align: center;
             }
 
             .hero-stat strong {
                 display: block;
-                font-size: clamp(34px, 3.2vw, 52px);
+                font-size: 40px;
                 line-height: 1;
-                color: var(--orig-blue-900);
+                color: #075cb2e6;
                 font-weight: 900;
             }
 
             .hero-stat span {
                 display: block;
                 font-size: 1rem;
-                opacity: 0.96;
                 margin-top: 8px;
                 font-weight: 600;
-                color: var(--orig-red-600);
+                color: #e74c3c;
             }
 
             .about-section {
                 background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
                 border-radius: 28px;
                 padding: 2.6rem 2.6rem 2.4rem;
-                margin: 2.25rem auto 2.5rem;
+                margin: 4rem auto 2.5rem;
                 box-shadow: 0 18px 40px rgba(14, 38, 79, 0.12);
                 border: 1px solid #e5e7eb;
                 width: min(1300px, calc(100% - 24px));
                 position: relative;
                 z-index: 2;
-            }
-
-            .about-section::before {
-                content: none;
             }
 
             .about-grid {
@@ -320,125 +210,158 @@
                 margin: 0;
             }
 
-            @media (max-width: 800px) {
-                .peso-hero {
-                    background-image: url('/images/background-mobile.png'), url('/images/background.png') !important;
-                    background-size: 700px auto, 700px auto !important;
-                    height: calc(100svh - 74px) !important;
-                    min-height: 520px !important;
-                    background-position: center -12px !important;
-                }
-                    .hero-split {
-                        grid-template-columns: 1fr;
-                        gap: 18px;
-                        align-items: start;
-                    }
-                    .peso-copy {
-                        text-align: center !important;
-                        justify-self: center;
-                        margin-top: 18px;
-                    }
-                    .hero-description {
-                        margin-inline: auto;
-                    }
-                    .hero-tabulation {
-                        justify-self: center;
-                        width: min(560px, 100%);
-                        margin-top: 28px;
-                    }
+            .news-updates-section {
+                width: min(1300px, calc(100% - 24px));
+                margin: 2rem auto;
+            }
 
-                .peso-hero-content {
-                    padding: 18px 16px 8px !important;
+            .news-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #0a3764;
+                margin-bottom: 1.5rem;
+            }
+
+            .news-header span:first-child,
+            .news-header span:last-child {
+                flex: 1;
+                height: 3px;
+                background: #dc2626;
+            }
+
+            .news-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+
+            .news-card {
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s ease;
+                height: 100%;
+                background: #fff;
+            }
+
+            .news-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .news-card-img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
+
+            .news-card-body {
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .news-card-title {
+                font-size: 1.2rem;
+                font-weight: 700;
+            }
+
+            .news-card-text {
+                flex-grow: 1;
+            }
+
+            .news-card .btn {
+                align-self: flex-start;
+            }
+
+            @media (max-width: 1024px) {
+                .hero-static {
+                    background-image: url('/images/bg.png');
+                    min-height: 620px;
+                    padding: 76px 20px 70px;
                 }
 
-                .hero-split {
-                    grid-template-columns: 1fr;
-                        min-height: 620px !important;
+                .hero-copy {
+                    width: min(62%, 640px);
                 }
 
-                .hero-badge {
-                    font-size: 0.8125rem;
-                    margin-bottom: 12px;
+                .hero-top,
+                .hero-town {
+                    font-size: clamp(2.2rem, 5vw, 2.8rem);
                 }
 
-                .hero-title {
-                    font-size: clamp(1.6rem, 7vw, 2.2rem);
-                }
-
-                .hero-subtitle {
-                    font-size: clamp(1.05rem, 5vw, 1.3rem);
+                .hero-main {
+                    font-size: clamp(1.8rem, 3.8vw, 2.3rem);
                 }
 
                 .hero-tabulation {
-                    max-width: 560px;
-                    width: 100%;
-                    margin-inline: auto;
-                    padding: 20px;
+                    transform: translateY(60px);
                 }
+            }
 
-                .hero-tabulation-grid {
-                    gap: 14px;
-                }
-
-                .hero-stat strong {
-                    font-size: clamp(26px, 7vw, 38px);
-                }
-
-                .about-section {
-                    padding: 1.5rem;
-                    margin: -0.75rem auto 1.5rem;
-                }
-
-                .about-section::before {
-                    width: 58%;
-                }
-                }
-
-            /* Mobile refinements */
-            @media (max-width: 540px) {
+            @media (max-width: 800px) {
                 .peso-hero {
-                    padding: 22px 0 32px;
-                    background-size: 680px auto, 680px auto !important;
-                    background-position: center 24px !important;
-                    padding-bottom: 88px;
+                    min-height: auto;
+                    padding: 0;
                 }
 
-                .peso-hero-content {
-                    padding: 20px 16px 6px !important;
-                }
-
-                .hero-split {
+                .hero-static {
+                    background-image: url('/images/mobile-background.png');
+                    background-size: contain;
+                    background-position: center top;
+                    min-height: 700px;
+                    padding: 76px 16px 68px;
                     gap: 16px;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
                 }
 
-                .hero-title {
-                    font-size: clamp(1.45rem, 6.6vw, 1.95rem);
-                    line-height: 1.08;
+                .hero-copy {
+                    width: 100%;
+                    text-align: center;
+                    transform: none;
                 }
 
-                .hero-subtitle {
-                    font-size: clamp(0.98rem, 5vw, 1.18rem);
+                .hero-top,
+                .hero-town {
+                    font-size: clamp(1.9rem, 8vw, 2.4rem);
+                }
+
+                .hero-main {
+                    font-size: clamp(1.35rem, 6vw, 1.95rem);
                 }
 
                 .hero-description {
-                    font-size: clamp(0.95rem, 4.6vw, 1.08rem);
-                    line-height: 1.55;
-                    margin: 12px 0 18px;
-                }
-
-                .hero-tabulation {
-                    margin-top: 14px;
-                    padding: 18px;
-                    width: 100%;
-                }
-
-                .hero-tabulation-grid {
-                    gap: 12px;
+                    margin: 14px auto 24px;
+                    font-size: clamp(0.95rem, 4.4vw, 1.06rem);
+                    max-width: 520px;
                 }
 
                 .hero-cta {
                     justify-content: center;
-                    margin-top: 12px;
+                }
+
+                .hero-tabulation {
+                    width: min(560px, 100%);
+                    transform: none;
+                }
+
+                .about-section {
+                    padding: 1.5rem;
+                    margin: 2rem auto 1.5rem;
+                }
+            }
+
+            @media (max-width: 540px) {
+                .hero-static {
+                    min-height: 640px;
+                    padding: 70px 14px 52px;
+                    background-position: center top;
                 }
 
                 .hero-btn-primary {
@@ -446,162 +369,71 @@
                     text-align: center;
                 }
 
-                /* Hide stats card on small phones */
                 .hero-tabulation {
-                    display: none;
+                    display: block;
+                    width: 100%;
+                    padding: 14px;
+                }
+
+                .hero-tabulation-grid {
+                    gap: 12px;
+                }
+
+                .hero-stat strong {
+                    font-size: 32px;
+                }
+
+                .hero-stat span {
+                    font-size: 0.92rem;
+                }
+
+                .news-header {
+                    font-size: 1.4rem;
                 }
             }
-
-                @media (max-width: 620px) {
-                    .peso-brand-text {
-                        font-size: 2rem;
-                    }
-                    .peso-nav {
-                        gap: 10px;
-                    }
-                    .peso-nav a {
-                        font-size: 13px;
-                    }
-                    .peso-chip {
-                        min-width: 102px;
-                        padding: 8px 12px;
-                    }
-                    .hero-tabulation {
-                        padding: 16px;
-                    }
-                    .hero-tabulation-grid {
-                        gap: 10px 12px;
-                    }
-                    .hero-stat strong {
-                        font-size: clamp(24px, 10vw, 32px);
-                    }
-                    .hero-stat span {
-                        font-size: 0.9rem;
-                    }
-                }
-                .news-updates-section {
-    width: min(1300px, calc(100% - 24px));
-    margin: 2rem auto;
-}
-
-.news-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0a3764;
-    margin-bottom: 1.5rem;
-}
-
-.news-header span:first-child,
-.news-header span:last-child {
-    flex: 1;
-    height: 3px;
-    background: #dc2626;
-}
-
-/* 🔥 MAIN FIX: GRID SYSTEM */
-.news-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-/* CARD DESIGN */
-.news-card {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-    height: 100%;
-    background: white;
-}
-
-.news-card:hover {
-    transform: translateY(-5px);
-}
-
-.news-card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.news-card-body {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.news-card-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-
-.news-card-text {
-    flex-grow: 1;
-}
-
-.news-card .btn {
-    align-self: flex-start;
-}
-
         </style>
     </head>
     <body class="peso-body">
-        <!-- Navbar Blade Component -->
         @include('components.navbar')
 
         <main class="peso-main">
             <section class="peso-hero hero-section" aria-label="Welcome section">
-                <!-- HERO -->
-                <div class="hero-static" style="width: min(1360px, 100%); height: 700px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; box-sizing: border-box; background: url('{{ asset('css/images/background.png') }}') center/cover no-repeat; position: relative; overflow: hidden; padding: 100px 24px 90px;">
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.1);"></div>
+                <div class="hero-static">
+                    <div class="hero-copy">
+                        <h1 class="hero-top">Welcome to <span>PESO</span></h1>
 
-                    <div style="position: relative; z-index: 2; text-align: left; color: white; width: min(58%, 680px); transform: translateY(-2px);">
-                        <h1 style="font-size: 46px; font-weight: 700; line-height: 1.03; margin-bottom: 10px; color: #075cb2e6; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
-                            Welcome to <span style="color: #e74c3c;">PESO</span>
+                        <h2 class="hero-town">Manolo Fortich</h2>
+
+                        <h1 class="hero-main">
+                            Connecting People <span>with Opportunities</span>
                         </h1>
 
-                        <h2 style="font-size: 46px; font-weight: 700; line-height: 1.03; color: #e74c3c; margin-bottom: 20px;">
-                            Manolo Fortich
-                        </h2>
-
-                        <h1 style="font-size: 34px; font-weight: 700; line-height: 1.08; margin-bottom: 18px; color: #075cb2e6; text-shadow: 2px 2px 6px rgba(0,0,0,0.3);">
-                            Connecting People <span style="color: #e74c3c;">with Opportunities</span>
-                        </h1>
-
-                        <p style="font-size: 18px; color: rgb(7, 6, 6); margin-bottom: 30px; line-height: 1.6; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                        <p class="hero-description">
                             Connecting Filipino jobseekers with verified employers. Access thousands of local and overseas job opportunities through PESO.
                         </p>
 
-                        <div style="display: flex; justify-content: flex-start;">
-                            <a href="{{ route('login') }}" style="padding: 13px 45px; font-size: 15px; font-weight: 600; border-radius: 30px; border: 2px solid #3498db; color: white; background: #3498db; text-decoration: none;">
-                                Get Started
-                            </a>
+                        <div class="hero-cta">
+                            <a href="{{ route('login') }}" class="hero-btn-primary">Get Started</a>
                         </div>
                     </div>
 
-                    <aside aria-label="Quick statistics" style="position: relative; z-index: 2; width: min(340px, 36%); background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(7, 92, 178, 0.2); border-radius: 22px; padding: 20px; box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22); backdrop-filter: blur(10px); transform: translateY(100px);">
-                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px;">
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="500" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Job Seekers</span>
+                    <aside aria-label="Quick statistics" class="hero-tabulation">
+                        <div class="hero-tabulation-grid">
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="500" data-suffix="+">0</strong>
+                                <span>Job Seekers</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="50" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Employers</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="50" data-suffix="+">0</strong>
+                                <span>Employers</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="300" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Jobs Posted</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="300" data-suffix="+">0</strong>
+                                <span>Jobs Posted</span>
                             </div>
-                            <div style="text-align: center;">
-                                <strong class="stat-counter" data-count="85" data-suffix="+" style="display: block; font-size: 40px; line-height: 1; color: #075cb2e6; font-weight: 900;">0</strong>
-                                <span style="display: block; font-size: 1rem; margin-top: 8px; font-weight: 600; color: #e74c3c;">Placement Rate</span>
+                            <div class="hero-stat">
+                                <strong class="stat-counter" data-count="85" data-suffix="+">0</strong>
+                                <span>Placement Rate</span>
                             </div>
                         </div>
                     </aside>
@@ -629,99 +461,97 @@
                     </article>
                 </div>
             </section>
-<section id="features" class="news-updates-section">
-    <h2 class="news-header">
-        <span></span>
-        <span>News & Updates</span>
-        <span></span>
-    </h2>
 
-    <div class="news-cards">
+            <section id="features" class="news-updates-section">
+                <h2 class="news-header">
+                    <span></span>
+                    <span>News &amp; Updates</span>
+                    <span></span>
+                </h2>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Events</h5>
-                <p class="card-text">Upcoming PESO events and job fairs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                <div class="news-cards">
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Events</h5>
+                            <p class="card-text news-card-text">Upcoming PESO events and job fairs.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Announcements</h5>
-                <p class="card-text">Latest announcements and updates.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Announcements</h5>
+                            <p class="card-text news-card-text">Latest announcements and updates.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
 
-        <div class="card news-card">
-            <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
-            <div class="card-body news-card-body">
-                <h5 class="news-card-title">Community</h5>
-                <p class="card-text">Community initiatives and programs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
-            </div>
-        </div>
+                    <div class="card news-card">
+                        <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
+                        <div class="card-body news-card-body">
+                            <h5 class="news-card-title">Community</h5>
+                            <p class="card-text news-card-text">Community initiatives and programs.</p>
+                            <a href="#" class="btn btn-danger">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    </div>
-</section>
-        @include('components.services')
-        @include('components.footer')
-
+            @include('components.services')
+            @include('components.footer')
         </main>
 
-    <!-- Bootstrap JS (for dropdowns and navbar toggler) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- Stat counter animation -->
-    <script>
-    (function () {
-        const DURATION = 1800; // ms
+        <script>
+            (function () {
+                const DURATION = 1800;
 
-        function easeOutQuad(t) {
-            return t * (2 - t);
-        }
+                function easeOutQuad(t) {
+                    return t * (2 - t);
+                }
 
-        function animateCounter(el) {
-            const target = parseInt(el.dataset.count, 10);
-            const suffix = el.dataset.suffix || '';
-            const start = performance.now();
+                function animateCounter(el) {
+                    const target = parseInt(el.dataset.count, 10);
+                    const suffix = el.dataset.suffix || '';
+                    const start = performance.now();
 
-            function tick(now) {
-                const elapsed = now - start;
-                const progress = Math.min(elapsed / DURATION, 1);
-                const value = Math.floor(easeOutQuad(progress) * target);
-                el.textContent = value + (progress === 1 ? suffix : '');
-                if (progress < 1) {
+                    function tick(now) {
+                        const elapsed = now - start;
+                        const progress = Math.min(elapsed / DURATION, 1);
+                        const value = Math.floor(easeOutQuad(progress) * target);
+                        el.textContent = value + (progress === 1 ? suffix : '');
+                        if (progress < 1) {
+                            requestAnimationFrame(tick);
+                        }
+                    }
+
                     requestAnimationFrame(tick);
                 }
-            }
 
-            requestAnimationFrame(tick);
-        }
+                const counters = document.querySelectorAll('.stat-counter');
 
-        const counters = document.querySelectorAll('.stat-counter');
+                if ('IntersectionObserver' in window) {
+                    const observer = new IntersectionObserver(function (entries, obs) {
+                        entries.forEach(function (entry) {
+                            if (entry.isIntersecting) {
+                                animateCounter(entry.target);
+                                obs.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.25 });
 
-        if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver(function (entries, obs) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        animateCounter(entry.target);
-                        obs.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.25 });
-
-            counters.forEach(function (el) { observer.observe(el); });
-        } else {
-            // Fallback: just show final values immediately
-            counters.forEach(function (el) {
-                el.textContent = el.dataset.count + (el.dataset.suffix || '');
-            });
-        }
-    })();
-    </script>
+                    counters.forEach(function (el) {
+                        observer.observe(el);
+                    });
+                } else {
+                    counters.forEach(function (el) {
+                        el.textContent = el.dataset.count + (el.dataset.suffix || '');
+                    });
+                }
+            })();
+        </script>
     </body>
 </html>
