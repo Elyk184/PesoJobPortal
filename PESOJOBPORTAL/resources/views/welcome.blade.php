@@ -507,6 +507,18 @@
     background: #cccccc;
 }
 
+.news-header-title {
+    color: #444444;
+}
+
+.news-header-title .news-word {
+    color: #185fa5;
+}
+
+.news-header-title .updates-word {
+    color: #dc2626;
+}
+
 .news-updates-section .cards {
     display: flex;
     flex-wrap: wrap;
@@ -544,6 +556,17 @@
     transition: transform 0.22s ease;
 }
 
+.news-updates-section .card,
+.news-updates-section .card__content,
+.news-updates-section .card__image {
+    background-color: #ffffff;
+}
+
+.news-updates-section .card::before,
+.news-updates-section .card__image::after {
+    content: none !important;
+}
+
 .news-updates-section .card:hover {
     transform: translateY(-6px);
 }
@@ -563,7 +586,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
-    filter: none;
+    filter: none !important;
     overflow: hidden;
     position: relative;
     transition: filter 0.5s cubic-bezier(.43, .41, .22, .91);
@@ -770,7 +793,7 @@
 <section id="features" class="news-updates-section">
     <h2 class="news-header">
         <span></span>
-        <span>News & Updates</span>
+        <span class="news-header-title"><span class="news-word">News</span> &amp; <span class="updates-word">Updates</span></span>
         <span></span>
     </h2>
 
