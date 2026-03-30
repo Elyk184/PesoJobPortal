@@ -481,72 +481,123 @@
                 }
                 .news-updates-section {
     width: min(1300px, calc(100% - 24px));
-    margin: 2rem auto;
+    margin: 2.2rem auto 3rem;
+    padding: 1.25rem;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 251, 255, 0.95) 100%);
+    box-shadow: 0 18px 45px rgba(10, 55, 100, 0.12);
 }
 
 .news-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-size: 1.8rem;
+    gap: 14px;
+    font-size: clamp(1.35rem, 2.2vw, 1.9rem);
     font-weight: 700;
     color: #0a3764;
-    margin-bottom: 1.5rem;
+    margin: 0 0 1.8rem;
 }
 
 .news-header span:first-child,
 .news-header span:last-child {
     flex: 1;
     height: 3px;
-    background: #dc2626;
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.05), #dc2626);
 }
 
-/* 🔥 MAIN FIX: GRID SYSTEM */
 .news-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    align-items: stretch;
 }
 
-/* CARD DESIGN */
 .news-card {
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+    border: 1px solid rgba(8, 55, 105, 0.08);
+    box-shadow: 0 12px 30px rgba(7, 46, 84, 0.12);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
     height: 100%;
-    background: white;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
 }
 
 .news-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 22px 40px rgba(7, 46, 84, 0.18);
 }
 
 .news-card-img {
     width: 100%;
-    height: 180px;
+    height: 190px;
     object-fit: cover;
 }
 
 .news-card-body {
-    padding: 1rem;
+    padding: 1rem 1rem 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.65rem;
+    flex: 1;
+}
+
+.news-card-meta {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0a3764;
+    background: #e8f2ff;
+    border-radius: 999px;
+    padding: 0.3rem 0.6rem;
 }
 
 .news-card-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
+    line-height: 1.25;
+    color: #0a3764;
+    margin: 0;
 }
 
 .news-card-text {
+    margin: 0;
+    color: #374151;
+    line-height: 1.55;
     flex-grow: 1;
 }
 
-.news-card .btn {
+.news-link {
     align-self: flex-start;
+    margin-top: 0.3rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #dc2626;
+    border-bottom: 2px solid rgba(220, 38, 38, 0.35);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.news-link:hover {
+    color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+    .news-updates-section {
+        padding: 1rem;
+        border-radius: 18px;
+    }
+
+    .news-card-img {
+        height: 170px;
+    }
 }
 
         </style>
@@ -641,27 +692,30 @@
         <div class="card news-card">
             <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
             <div class="card-body news-card-body">
-                <h5 class="news-card-title">Events</h5>
-                <p class="card-text">Upcoming PESO events and job fairs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
+                <span class="news-card-meta">March 2026</span>
+                <h5 class="news-card-title">Events and Job Fairs</h5>
+                <p class="card-text news-card-text">Stay updated on upcoming PESO events, recruitment drives, and local job fairs open to all applicants.</p>
+                <a href="#" class="news-link">Learn more</a>
             </div>
         </div>
 
         <div class="card news-card">
             <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
             <div class="card-body news-card-body">
+                <span class="news-card-meta">Latest Notice</span>
                 <h5 class="news-card-title">Announcements</h5>
-                <p class="card-text">Latest announcements and updates.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
+                <p class="card-text news-card-text">Read recent advisories, office updates, and guidance for employers and jobseekers in Manolo Fortich.</p>
+                <a href="#" class="news-link">Learn more</a>
             </div>
         </div>
 
         <div class="card news-card">
             <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
             <div class="card-body news-card-body">
-                <h5 class="news-card-title">Community</h5>
-                <p class="card-text">Community initiatives and programs.</p>
-                <a href="#" class="btn btn-danger">Learn More</a>
+                <span class="news-card-meta">Program Spotlight</span>
+                <h5 class="news-card-title">Community Programs</h5>
+                <p class="card-text news-card-text">Explore skills training, livelihood initiatives, and community-led programs supported by PESO partners.</p>
+                <a href="#" class="news-link">Learn more</a>
             </div>
         </div>
 
