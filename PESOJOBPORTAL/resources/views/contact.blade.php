@@ -5,6 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/contact-section.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/contact-faq.css') }}">
     <style>
         #chatbot-widget{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:.75rem}
         #chat-window{width:20rem;background:#fff;border-radius:1rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);border:1px solid #e5e7eb;display:flex;flex-direction:column;overflow:hidden;height:420px}
@@ -34,75 +35,170 @@
     </header>
 
     <div class="contact-body">
-        <div class="contact-card">
-            <div class="contact-card-header">
-                <h2><i class="bi bi-chat-dots-fill me-2 text-danger" style="color: #d72638 !important;" aria-hidden="true"></i>Contact form</h2>
-                <p>Fields marked with <span class="text-danger">*</span> are required.</p>
+        <div class="contact-layout">
+            <div class="contact-card">
+                <div class="contact-card-header">
+                    <h2><i class="bi bi-chat-dots-fill me-2 text-danger" style="color: #d72638 !important;" aria-hidden="true"></i>Contact form</h2>
+                    <p>Fields marked with <span class="text-danger">*</span> are required.</p>
+                </div>
+                <div class="contact-form-wrap">
+                    @if (session('status'))
+                        <div class="alert contact-alert mb-4" role="status">
+                            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>{{ session('status') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4 rounded-3 border-0" style="border-left: 4px solid #d72638 !important;" role="alert">
+                            <strong>Please fix the following:</strong>
+                            <ul class="mb-0 mt-2 ps-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('contact.submit') }}" novalidate>
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Full name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required maxlength="120" autocomplete="name" placeholder="Your name">
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required maxlength="255" autocomplete="email" placeholder="you@example.com">
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-12">
+                                <label for="phone" class="form-label">Phone <span class="contact-hint fw-normal">(optional)</span></label>
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" maxlength="40" autocomplete="tel" placeholder="(088) 123-4567">
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-12">
+                                <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('subject') is-invalid @enderror" id="subject" name="subject" value="{{ old('subject') }}" required maxlength="180" placeholder="What is your inquiry about?">
+                                @error('subject')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                                <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" rows="5" required maxlength="5000" placeholder="Write your message here...">{{ old('message') }}</textarea>
+                                @error('message')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
+                            <button type="submit" class="btn btn-contact-submit">
+                                <i class="bi bi-send me-2" aria-hidden="true"></i>Send message
+                            </button>
+                            <p class="contact-hint mb-0">You can also reach us at the address and numbers in the footer.</p>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="contact-form-wrap">
-                @if (session('status'))
-                    <div class="alert contact-alert mb-4" role="status">
-                        <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>{{ session('status') }}
-                    </div>
-                @endif
 
-                @if ($errors->any())
-                    <div class="alert alert-danger mb-4 rounded-3 border-0" style="border-left: 4px solid #d72638 !important;" role="alert">
-                        <strong>Please fix the following:</strong>
-                        <ul class="mb-0 mt-2 ps-3">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+            <div class="faq-card">
+                <h2 class="faq-title">Frequently Asked Questions</h2>
 
-                <form method="POST" action="{{ route('contact.submit') }}" novalidate>
-                    @csrf
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="name" class="form-label">Full name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required maxlength="120" autocomplete="name" placeholder="Your name">
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required maxlength="255" autocomplete="email" placeholder="you@example.com">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-12">
-                            <label for="phone" class="form-label">Phone <span class="contact-hint fw-normal">(optional)</span></label>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" maxlength="40" autocomplete="tel" placeholder="(088) 123-4567">
-                            @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-12">
-                            <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('subject') is-invalid @enderror" id="subject" name="subject" value="{{ old('subject') }}" required maxlength="180" placeholder="What is your inquiry about?">
-                            @error('subject')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-12">
-                            <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" rows="5" required maxlength="5000" placeholder="Write your message here...">{{ old('message') }}</textarea>
-                            @error('message')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>How do I register as a jobseeker?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        <strong>Where to Register:</strong> Click the <strong>"Get Started"</strong> button on the homepage or visit the <strong>Sign Up page</strong> anytime.<br><br>
+                        <strong>Registration Steps:</strong><br>
+                        1. Click "Get Started" on homepage<br>
+                        2. Select "Jobseeker" account type<br>
+                        3. Enter your email and create a password<br>
+                        4. Verify your email address<br>
+                        5. Fill in your personal information, educational background, work experience, and skills<br>
+                        6. Upload a professional photo<br>
+                        7. Submit for verification<br><br>
+                        Your account will be reviewed within 24-48 hours. Once approved, you can start applying for jobs.
                     </div>
-                    <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
-                        <button type="submit" class="btn btn-contact-submit">
-                            <i class="bi bi-send me-2" aria-hidden="true"></i>Send message
-                        </button>
-                        <p class="contact-hint mb-0">You can also reach us at the address and numbers in the footer.</p>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>How can employers post job vacancies?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        Employers can register using the Employer Portal. Once verified, they can post job vacancies, review applicants, and manage hiring directly through the platform.
                     </div>
-                </form>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>What is a PESO clearance?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        A PESO clearance is an official document certifying that you completed registration and are eligible for job placement. It is required for overseas employment applications.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>Are there training programs available?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        Yes. PESO regularly conducts training programs to enhance skills. Check News & Updates or contact us for upcoming sessions.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>How long does job matching take?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        Timing varies by qualifications and openings. Career Guidance Officers assist throughout the process, typically 1-4 weeks.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>What documents do I need for job application?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        Commonly needed: valid ID, resume, educational certificates, work experience letters. For overseas roles, add PESO clearance and passport. Contact Career Guidance for a full checklist.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>Is PESO free to access?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        Yes. PESO services are free for jobseekers and employers—no hidden charges.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-toggle" onclick="toggleFAQ(this)" aria-expanded="false">
+                        <span>How can I track my job application status?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-content">
+                        After submitting applications, track status in your Jobseeker Portal dashboard. You will receive notifications about interviews, decisions, and feedback there.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -175,6 +271,13 @@
             } catch {
                 dots.textContent = 'Something went wrong. Please try again.';
             }
+        }
+
+        function toggleFAQ(button) {
+            const content = button.nextElementSibling;
+            const isOpen = content.classList.contains('show');
+            content.classList.toggle('show', !isOpen);
+            button.setAttribute('aria-expanded', String(!isOpen));
         }
     </script>
 @endpush
