@@ -495,20 +495,20 @@
     gap: 12px;
     font-size: clamp(1.25rem, 2vw, 1.8rem);
     font-weight: 700;
-    color: #444444;
+    color: #fffefe;
     margin: 0 0 1.2rem;
     letter-spacing: 1px;
 }
 
-.news-header span:first-child,
-.news-header span:last-child {
+.news-header > span:first-child,
+.news-header > span:last-child {
     flex: 1;
     height: 2px;
-    background: #cccccc;
+    background: #000000;
 }
 
 .news-header-title {
-    color: #444444;
+    color: #efecec;
 }
 
 .news-header-title .news-word {
@@ -517,6 +517,10 @@
 
 .news-header-title .updates-word {
     color: #dc2626;
+}
+
+.news-header-title .ampersand {
+    color: #000000;
 }
 
 .news-updates-section .cards {
@@ -621,7 +625,7 @@
 }
 
 .news-updates-section .card__title {
-    color: #696969;
+    color: #ffffff;
     font-size: 1.15rem;
     font-weight: 500;
     letter-spacing: 1.5px;
@@ -793,7 +797,7 @@
 <section id="features" class="news-updates-section">
     <h2 class="news-header">
         <span></span>
-        <span class="news-header-title"><span class="news-word">News</span> &amp; <span class="updates-word">Updates</span></span>
+        <span class="news-header-title"><span class="news-word">News</span> <span class="ampersand">&amp;</span> <span class="updates-word">Updates</span></span>
         <span></span>
     </h2>
 
