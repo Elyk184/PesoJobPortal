@@ -45,3 +45,10 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 });
+
+Route::get('/contact', function () {
+    return view('contact');
+});
+
+Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
+    ->name('chatbot.chat');
