@@ -8,9 +8,6 @@
 
 @section('content')
 <section id="history" class="py-20 bg-white relative overflow-hidden">
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img src="{{ asset('images/logo.png') }}" alt="" class="w-125 h-125 object-contain opacity-5">
-    </div>
     <div class="nav-container relative z-10">
         <div class="text-center mb-16">
             <h2 class="text-4xl font-bold text-gray-900 mb-4">The History of Excellence</h2>
