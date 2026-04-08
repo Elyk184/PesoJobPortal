@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\JobseekerController;
+use App\Http\Controllers\JobsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,7 +43,17 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::get('/dashboard', [EmployerController::class, 'dashboard'])->name('dashboard');
 });
 
+// Public jobs route
+Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 });
+
+Route::get('/contact', function () {
+    return view('contact');
+});
+
+Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
+    ->name('chatbot.chat');
