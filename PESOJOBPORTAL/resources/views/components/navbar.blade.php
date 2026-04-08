@@ -1,6 +1,5 @@
 <!-- NAVBAR HEADER -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top sticky-top custom-navbar">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
