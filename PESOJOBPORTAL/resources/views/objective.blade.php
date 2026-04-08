@@ -7,20 +7,56 @@
 @endpush
 
 @section('content')
-<section class="objective-section" id="objective" aria-label="PESO Manolo Fortich Objective">
-    <div class="objective-card">
-        <h2 class="objective-title">Our Objective</h2>
-        <div class="objective-divider" aria-hidden="true"></div>
-        <p class="objective-text">
-            The objective of PESO Manolo Fortich is to create job opportunities for residents,
-            reduce unemployment, and promote economic growth in the municipality. We aim to
-            provide training and skills development programs to enhance employability and
-            productivity, foster entrepreneurship by offering access to resources and business
-            support, and attract investments by showcasing the municipality's potential. We are
-            committed to strengthening partnerships with local stakeholders, government agencies,
-            and the private sector to ensure the effective implementation of the PESO program
-            and to drive sustainable economic development for the community.
+<section class="objective-page" id="objective" aria-label="PESO Manolo Fortich Objectives">
+    <div class="objective-hero container">
+        <p class="hero-kicker">Get To Know Us</p>
+        <h1>Our Objectives</h1>
+        <div class="underline" aria-hidden="true"></div>
+        <p class="hero-lead">
+            PESO Manolo Fortich is committed to building a responsive, inclusive, and opportunities-driven local labor ecosystem.
+            These objectives guide our services and partnerships with workers, employers, and institutions.
         </p>
     </div>
+
+    <div class="objective-content container">
+        <div class="objectives-grid">
+            <div class="objective-card">
+                <span class="card-number">OBJECTIVE 1</span>
+                <h3>To facilitate employment opportunities for local residents</h3>
+                <div class="objective-divider" aria-hidden="true"></div>
+                <p>PESO aims to provide employment assistance by connecting job seekers with local and overseas employers, helping reduce unemployment in the municipality.</p>
+            </div>
+
+            <div class="objective-card">
+                <span class="card-number">OBJECTIVE 2</span>
+                <h3>To provide timely and accurate labor market information</h3>
+                <div class="objective-divider" aria-hidden="true"></div>
+                <p>PESO ensures that job seekers and employers have access to updated information on job vacancies, employment trends, and labor demands to support informed decision-making.</p>
+            </div>
+
+            <div class="objective-card">
+                <span class="card-number">OBJECTIVE 3</span>
+                <h3>To deliver career guidance and employment coaching services</h3>
+                <div class="objective-divider" aria-hidden="true"></div>
+                <p>PESO supports students and job seekers through career guidance, counseling, and training programs to help them choose appropriate career paths and prepare for employment.</p>
+            </div>
+
+            <div class="objective-card">
+                <span class="card-number">OBJECTIVE 4</span>
+                <h3>To implement skills training and employability programs</h3>
+                <div class="objective-divider" aria-hidden="true"></div>
+                <p>PESO coordinates with government agencies and private partners to conduct skills training, workshops, and employment programs that enhance the competencies of the workforce.</p>
+            </div>
+
+            <div class="objective-card">
+                <span class="card-number">OBJECTIVE 5</span>
+                <h3>To strengthen partnerships with stakeholders for employment generation</h3>
+                <div class="objective-divider" aria-hidden="true"></div>
+                <p>PESO builds strong collaboration with local government units, private companies, and other agencies to create more job opportunities and improve employment services.</p>
+            </div>
+        </div>
+    </div>
 </section>
+
+@include('components.footer')
 @endsection
