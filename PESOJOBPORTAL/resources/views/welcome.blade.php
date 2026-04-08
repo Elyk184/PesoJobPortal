@@ -5,13 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>PESO Job Portal</title>
 
-        <!-- Preload hero background images to eliminate loading delay -->
         <link rel="preload" as="image" href="/images/background.png">
-        <link rel="preload" as="image" href="/images/background-desktop.png" media="(min-width: 1025px)">
-        <link rel="preload" as="image" href="/images/background-tablet.png" media="(min-width: 801px) and (max-width: 1024px)">
-        <link rel="preload" as="image" href="/images/background-mobile.png" media="(max-width: 800px)">
+        <link rel="preload" as="image" href="/images/mobile-background.png" media="(max-width: 800px)">
 
-        <!-- Bootstrap CSS for navbar and layout -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <!-- Bootstrap Icons CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -441,7 +437,6 @@
         </style>
     </head>
     <body class="peso-body">
-        <!-- Navbar Blade Component -->
         @include('components.navbar')
 
         <main class="peso-main">
