@@ -139,21 +139,21 @@ body{
 }
 .jobs-table{
     width:100%;
-    min-width:1120px;
+    min-width:1280px;
     border-collapse:collapse;
-    font-size:13px;
+    font-size:15px;
 }
 .jobs-table thead th{
     background:#1f2430;
     color:#fff;
-    padding:8px 8px;
+    padding:12px 10px;
     text-align:left;
     font-weight:600;
     border-right:1px solid #3b4352;
     white-space:nowrap;
 }
 .jobs-table tbody td{
-    padding:8px 8px;
+    padding:12px 10px;
     border-top:1px solid #2f3442;
     vertical-align:top;
 }
@@ -212,7 +212,7 @@ body{
 }
 
 .page-wrap{
-    max-width:1120px;
+    max-width:1320px;
     margin:0 auto;
     padding:0 10px 35px;
 }
