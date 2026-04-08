@@ -526,6 +526,17 @@
                             <p class="card-text">Upcoming PESO events and job fairs.</p>
                             <a href="#" class="btn btn-danger">Learn More</a>
                         </div>
+                        <div class="service-card-title">Events</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Upcoming PESO events and job fairs.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Upcoming PESO events</span></li>
+                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Job fairs and seminars</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-blue">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
 
                     <div class="card news-card">
@@ -535,6 +546,17 @@
                             <p class="card-text">Latest announcements and updates.</p>
                             <a href="#" class="btn btn-danger">Learn More</a>
                         </div>
+                        <div class="service-card-title">Announcements</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Latest announcements and updates.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Latest updates</span></li>
+                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Important notices</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-green">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
 
                     <div class="card news-card">
@@ -544,6 +566,17 @@
                             <p class="card-text">Community initiatives and programs.</p>
                             <a href="#" class="btn btn-danger">Learn More</a>
                         </div>
+                        <div class="service-card-title">Community</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Community initiatives and programs.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Community programs</span></li>
+                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Initiatives & outreach</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-amber">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
                 </div>
             </section>

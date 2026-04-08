@@ -17,6 +17,7 @@ Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');
 Route::view('/objectives', 'objective')->name('objectives');
 Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
+Route::view('/structure', 'structure')->name('structure');
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
