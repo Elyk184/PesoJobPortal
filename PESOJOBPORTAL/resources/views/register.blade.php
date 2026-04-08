@@ -112,6 +112,30 @@
             filter: brightness(1.05);
         }
 
+        .home-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--peso-blue-700);
+            border: 2px solid var(--peso-blue-700);
+            background: transparent;
+            font-size: 0.97rem;
+            margin: 1rem 0;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .home-button:hover {
+            background: var(--peso-blue-700);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(45, 101, 177, 0.3);
+            transform: translateY(-1px);
+        }
+
         .link-muted {
             color: #3186cc;
             text-decoration: none;
@@ -186,6 +210,10 @@
             <button type="submit" class="register-button">
                 <i class="bi bi-person-plus me-2"></i>Create Account
             </button>
+
+            <a href="/" class="home-button mb-3">
+                <i class="bi bi-house-door me-2"></i>Back to Home
+            </a>
         </form>
 
         <div class="divider"></div>
