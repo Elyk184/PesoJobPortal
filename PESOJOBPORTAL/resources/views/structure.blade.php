@@ -19,7 +19,7 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @endif
     <style>
-        body { background-color: #ffffff; color: #333333; }
+        body { background: none !important; color: inherit !important; }
         .site-header { background-color: #001a4d; border-bottom: 3px solid #ffd700; }
         .btn-primary { background-color: #ff4444; border-color: #ff4444; }
         .btn-primary:hover { background-color: #cc0000; }
@@ -48,7 +48,7 @@
         @media (max-width: 576px) { .page-title { font-size: 2rem; } .team-card { padding: 1.5rem; } .team-card .avatar { width: 80px; height: 80px; } .team-card .avatar svg { width: 40px; height: 40px; } .team-card.manager-card .avatar { width: 100px; height: 100px; } }
     </style>
 </head>
-<body>
+<body class="peso-body">
     <x-navbar />
     <main>
         <section class="team-section">
