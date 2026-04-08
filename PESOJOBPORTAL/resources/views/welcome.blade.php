@@ -233,7 +233,7 @@
                 background: #dc2626;
             }
 
-            .news-cards {
+            .news-cards services-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 20px;
@@ -469,32 +469,56 @@
                     <span></span>
                 </h2>
 
-                <div class="news-cards">
-                    <div class="card news-card">
-                        <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Events</h5>
-                            <p class="card-text news-card-text">Upcoming PESO events and job fairs.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                <div class="news-cards services-grid">
+                    <div class="service-card service-blue">
+                        <div class="news-card-img-wrapper" style="overflow:hidden;position:relative;border-top-left-radius:20px;border-top-right-radius:20px;">
+                            <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events" style="width:100%;height:180px;object-fit:cover;">
                         </div>
+                        <div class="service-card-title">Events</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Upcoming PESO events and job fairs.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Upcoming PESO events</span></li>
+                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Job fairs and seminars</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-blue">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
 
-                    <div class="card news-card">
-                        <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Announcements</h5>
-                            <p class="card-text news-card-text">Latest announcements and updates.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                    <div class="service-card service-green">
+                        <div class="news-card-img-wrapper" style="overflow:hidden;position:relative;border-top-left-radius:20px;border-top-right-radius:20px;">
+                            <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements" style="width:100%;height:180px;object-fit:cover;">
                         </div>
+                        <div class="service-card-title">Announcements</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Latest announcements and updates.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Latest updates</span></li>
+                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Important notices</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-green">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
 
-                    <div class="card news-card">
-                        <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Community</h5>
-                            <p class="card-text news-card-text">Community initiatives and programs.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                    <div class="service-card service-amber">
+                        <div class="news-card-img-wrapper" style="overflow:hidden;position:relative;border-top-left-radius:20px;border-top-right-radius:20px;">
+                            <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community" style="width:100%;height:180px;object-fit:cover;">
                         </div>
+                        <div class="service-card-title">Community</div>
+                        <div class="news-card-text mb-2" style="text-align:center;">Community initiatives and programs.</div>
+                        <ul class="service-features">
+                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Community programs</span></li>
+                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Initiatives & outreach</span></li>
+                        </ul>
+                        <div class="service-divider"></div>
+                        <a href="#" class="service-btn service-amber">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
                     </div>
                 </div>
             </section>
