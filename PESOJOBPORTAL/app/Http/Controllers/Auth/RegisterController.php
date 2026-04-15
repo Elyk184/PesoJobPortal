@@ -33,9 +33,9 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
+        // Auth::login($user); // Commented to redirect to login instead of auto-login
         $request->session()->regenerate();
 
-        return redirect($user->redirectToDashboard());
+        return redirect(route('login'))->with('success', 'Account created successfully! Please log in.');
     }
 }

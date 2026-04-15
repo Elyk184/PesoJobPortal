@@ -18,16 +18,22 @@
         <link rel="stylesheet" href="{{ asset('css/services.css') }}">
         <link rel="stylesheet" href="{{ asset('css/welcome.css') . '?v=' . filemtime(public_path('css/welcome.css')) }}">
 
-        
+
     </head>
     <body class="peso-body">
         @include('components.navbar')
 
         <main class="peso-main">
+            @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show position-absolute top-0 end-0 m-3" style="z-index: 9999; max-width: 400px;" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
             <section class="peso-hero hero-section" aria-label="Welcome section">
                 <div class="hero-static">
                     <div class="hero-copy">
-                        
+
 
                         <h1 class="hero-main">
                             Connecting People <span>with Opportunities</span>

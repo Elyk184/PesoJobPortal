@@ -1,4 +1,4 @@
-{{-- filepath: c:\xampp\htdocs\PESO-LINK\resources\views\dashboard\jobseeker.blade.php --}}
+{{-- Employer Dashboard View --}}
 <!doctype html>
 <html lang="en">
 <head>
