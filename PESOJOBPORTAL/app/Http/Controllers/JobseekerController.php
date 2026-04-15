@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class JobseekerController extends Controller
 {
@@ -32,13 +34,21 @@ class JobseekerController extends Controller
 
     public function resumeBuilder(): View
     {
-        $user = Auth::user();
-        $profile = $user?->profile;
+        $data = $this->resumeBuilderData(Auth::user());
 
-        return view('jobseeker.resume-builder', [
-            'user' => $user,
-            'profile' => $profile,
-        ]);
+        return view('jobseeker.resume-builder', $data);
+    }
+
+    public function exportResumeBuilder(): Response
+    {
+        $data = $this->resumeBuilderData(Auth::user());
+
+        $pdf = Pdf::loadView('jobseeker.resume-builder-pdf', $data)
+            ->setPaper('a4', 'portrait');
+
+        $fileName = trim(($data['resumeName'] ?: 'resume') . '-harvard-style.pdf');
+
+        return $pdf->download($fileName);
     }
 
     public function saveResumeBuilder(Request $request): RedirectResponse
@@ -126,5 +136,33 @@ class JobseekerController extends Controller
             })
             ->values()
             ->all();
+    }
+
+    private function resumeBuilderData(?\App\Models\User $user): array
+    {
+        $profile = $user?->profile;
+
+        $resumeName = old('name', $profile->resume_name ?? '');
+        $resumeEmail = old('email', $profile->resume_email ?? '');
+        $resumePhone = old('phone', $profile->phone ?? '');
+        $resumeAddress = old('address', $profile->address ?? '');
+        $resumeObjective = old('objective', $profile->objective ?? '');
+        $resumeSkills = old('skills', implode(', ', $profile->skills ?? []));
+        $educationRows = old('education', $profile->education ?? []);
+        $experienceRows = old('experience', $profile->experience ?? []);
+
+        return [
+            'user' => $user,
+            'profile' => $profile,
+            'resumeName' => $resumeName,
+            'resumeEmail' => $resumeEmail,
+            'resumePhone' => $resumePhone,
+            'resumeAddress' => $resumeAddress,
+            'resumeObjective' => $resumeObjective,
+            'resumeSkills' => $resumeSkills,
+            'educationRows' => $educationRows,
+            'experienceRows' => $experienceRows,
+            'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
+        ];
     }
 }

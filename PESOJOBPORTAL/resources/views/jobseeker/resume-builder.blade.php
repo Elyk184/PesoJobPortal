@@ -64,7 +64,6 @@
 
                 <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                     <h3 class="h5 mb-0 fw-bold">Resume Details</h3>
-                    <span class="badge text-bg-light border">CRUD form</span>
                 </div>
 
                 <div class="row g-3">
@@ -182,9 +181,9 @@
                 <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
                     <h3 class="h5 mb-0 fw-bold">Live Preview</h3>
                     <div class="d-flex gap-2">
-                        <span class="btn btn-sm btn-outline-secondary disabled">
+                        <a href="{{ route('jobseeker.resume-builder.export') }}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-download me-1"></i>Export PDF
-                        </span>
+                        </a>
                     </div>
                 </div>
 
