@@ -32,16 +32,18 @@
         }
 
         .dashboard-layout {
-            display: grid;
-            grid-template-columns: 270px minmax(0, 1fr);
-            gap: 0;
-            align-items: stretch;
+            display: block;
             min-height: 100vh;
         }
 
         .sidebar {
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             background: linear-gradient(180deg, #0b1228 0%, #16213f 100%);
             border: 1px solid rgba(148, 163, 184, 0.22);
             border-radius: 0;
@@ -49,14 +51,13 @@
             box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
             color: #cbd5e1;
             overflow: hidden;
-            min-height: 100vh;
         }
 
         .sidebar-brand {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 14px 14px 12px;
+            padding: 12px;
             border-bottom: 1px solid rgba(148, 163, 184, 0.2);
         }
 
@@ -73,7 +74,7 @@
         .sidebar-brand-title {
             margin: 0;
             color: #f8fafc;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             line-height: 1.2;
         }
@@ -85,15 +86,18 @@
         }
 
         .sidebar-inner {
-            padding: 8px;
-            display: grid;
-            gap: 12px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
         }
 
         .sidebar-group-title {
-            margin: 8px 10px 6px;
+            margin: 6px 8px 2px;
             color: #7d8ba5;
-            font-size: 11px;
+            font-size: 10px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             font-weight: 700;
@@ -104,7 +108,7 @@
             padding: 0;
             margin: 0;
             display: grid;
-            gap: 4px;
+            gap: 2px;
         }
 
         .sidebar a,
@@ -116,10 +120,10 @@
             color: #cbd5e1;
             background: transparent;
             border: 0;
-            border-radius: 10px;
-            padding: 10px 10px;
+            border-radius: 9px;
+            padding: 8px 9px;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px;
             width: 100%;
             text-align: left;
             cursor: pointer;
@@ -133,9 +137,9 @@
         }
 
         .nav-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 7px;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
             display: grid;
             place-items: center;
             background: rgba(148, 163, 184, 0.18);
@@ -144,8 +148,8 @@
         }
 
         .nav-icon svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
@@ -161,9 +165,10 @@
         }
 
         .sidebar-footer {
-            margin-top: 4px;
-            padding-top: 8px;
+            margin-top: auto;
+            padding-top: 6px;
             border-top: 1px solid rgba(148, 163, 184, 0.2);
+            background: linear-gradient(180deg, rgba(11, 18, 40, 0) 0%, rgba(11, 18, 40, 0.7) 18%, rgba(11, 18, 40, 1) 100%);
         }
 
         .content {
@@ -171,6 +176,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            margin-left: 270px;
         }
 
         .fill-remaining {
@@ -340,12 +346,14 @@
         }
 
         @media (max-width: 960px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr;
-            }
-
             .sidebar {
                 position: static;
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                margin-left: 0;
             }
         }
     </style>
