@@ -82,7 +82,7 @@
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.resume-builder') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.resume-builder') ? 'is-active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i>
                 <span>Resume Builder</span>
             </a>

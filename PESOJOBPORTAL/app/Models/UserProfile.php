@@ -15,12 +15,16 @@ class UserProfile extends Model
         'address',
         'resume_path',
         'skills',
+        'education',
+        'experience',
         'objective',
         'photo_path',
     ];
 
     protected $casts = [
         'skills' => 'array',
+        'education' => 'array',
+        'experience' => 'array',
     ];
 
     public function user()

@@ -56,10 +56,10 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Resume Builder (Optional)</h5>
-                    <p class="text-muted mb-3">Auto-generate a resume from your profile.</p>
-                    <button class="btn btn-outline-secondary w-100" type="button" disabled>
-                        <i class="bi bi-file-earmark-arrow-down me-2"></i>Generate Resume (coming soon)
-                    </button>
+                    <p class="text-muted mb-3">Open the Harvard-style resume builder and preview your CV.</p>
+                    <a class="btn btn-outline-primary w-100" href="{{ route('jobseeker.resume-builder') }}">
+                        <i class="bi bi-file-earmark-text me-2"></i>Open Resume Builder
+                    </a>
                 </div>
             </div>
 
