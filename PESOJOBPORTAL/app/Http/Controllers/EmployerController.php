@@ -16,37 +16,74 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
 
-        $jobs = PesoJob::query()
-            ->where('employer_id', $employer->id)
-            ->latest()
-            ->get();
-
-        $recruitmentRequests = RecruitmentActivityRequest::query()
-            ->where('employer_id', $employer->id)
-            ->latest()
-            ->get();
-
-        $referredApplications = JobApplication::query()
-            ->with(['user.profile', 'job'])
-            ->where('is_referred', true)
-            ->whereHas('job', function ($query) use ($employer) {
-                $query->where('employer_id', $employer->id);
-            })
-            ->latest()
-            ->get();
-
-        $notifications = EmployerNotification::query()
-            ->where('employer_id', $employer->id)
-            ->latest()
-            ->limit(20)
-            ->get();
-
         return view('dashboard.employer', [
-            'jobs' => $jobs,
-            'recruitmentRequests' => $recruitmentRequests,
-            'referredApplications' => $referredApplications,
-            'notifications' => $notifications,
+            'stats' => $this->buildDashboardStats($employer->id),
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+        ]);
+    }
+
+    public function postNewJobPage(Request $request): View
+    {
+        return view('dashboard.employer.post-new-job', [
+            'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
+        ]);
+    }
+
+    public function manageJobsPage(Request $request): View
+    {
+        $employer = $request->user();
+
+        return view('dashboard.employer.manage-jobs', [
+            'jobs' => $this->getEmployerJobs($employer->id),
+            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+        ]);
+    }
+
+    public function viewApplicantsPage(Request $request): View
+    {
+        return view('dashboard.employer.view-applicants', [
+            'referredApplications' => $this->getReferredApplications($request->user()->id),
+        ]);
+    }
+
+    public function requestLraSraPage(Request $request): View
+    {
+        return view('dashboard.employer.request-lra-sra', [
+            'recruitmentRequests' => $this->getRecruitmentRequests($request->user()->id),
+        ]);
+    }
+
+    public function submitDocumentsPage(Request $request): View
+    {
+        $defaultActivityType = $request->query('activity_type');
+
+        if (! in_array($defaultActivityType, ['lra', 'sra'], true)) {
+            $defaultActivityType = null;
+        }
+
+        return view('dashboard.employer.submit-documents', [
+            'defaultActivityType' => $defaultActivityType,
+            'recruitmentRequests' => $this->getRecruitmentRequests($request->user()->id),
+        ]);
+    }
+
+    public function companyProfilePage(Request $request): View
+    {
+        $employer = $request->user()->loadMissing('profile');
+
+        return view('dashboard.employer.company-profile', [
+            'employer' => $employer,
+            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+        ]);
+    }
+
+    public function notificationsPage(Request $request): View
+    {
+        $notifications = $this->getNotifications($request->user()->id, 50);
+
+        return view('dashboard.employer.notifications', [
+            'notifications' => $notifications,
+            'unreadCount' => $notifications->where('is_read', false)->count(),
         ]);
     }
 
@@ -217,5 +254,79 @@ class EmployerController extends Controller
         if ((int) $job->employer_id !== (int) $request->user()->id) {
             abort(403, 'This posting does not belong to your employer account.');
         }
+    }
+
+    private function getEmployerJobs(int $employerId)
+    {
+        return PesoJob::query()
+            ->where('employer_id', $employerId)
+            ->latest()
+            ->get();
+    }
+
+    private function getRecruitmentRequests(int $employerId)
+    {
+        return RecruitmentActivityRequest::query()
+            ->where('employer_id', $employerId)
+            ->latest()
+            ->get();
+    }
+
+    private function getReferredApplications(int $employerId)
+    {
+        return JobApplication::query()
+            ->with(['user.profile', 'job'])
+            ->where('is_referred', true)
+            ->whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->latest()
+            ->get();
+    }
+
+    private function getNotifications(int $employerId, int $limit = 20)
+    {
+        return EmployerNotification::query()
+            ->where('employer_id', $employerId)
+            ->latest()
+            ->limit($limit)
+            ->get();
+    }
+
+    private function buildDashboardStats(int $employerId): array
+    {
+        $activeJobsCount = PesoJob::query()
+            ->where('employer_id', $employerId)
+            ->where('status', 'active')
+            ->whereNull('archived_at')
+            ->where('is_filled', false)
+            ->count();
+
+        $totalApplications = JobApplication::query()
+            ->whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->count();
+
+        $hiredCandidates = JobApplication::query()
+            ->whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->where('final_decision', 'hired')
+            ->count();
+
+        $newApplicationsToday = JobApplication::query()
+            ->whereHas('job', function ($query) use ($employerId) {
+                $query->where('employer_id', $employerId);
+            })
+            ->whereDate('created_at', now()->toDateString())
+            ->count();
+
+        return [
+            'active_jobs_count' => $activeJobsCount,
+            'total_applications' => $totalApplications,
+            'hired_candidates' => $hiredCandidates,
+            'new_applications_today' => $newApplicationsToday,
+        ];
     }
 }

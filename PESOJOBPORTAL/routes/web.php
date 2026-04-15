@@ -40,6 +40,14 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
 // Employer routes (protected)
 Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer.')->group(function () {
     Route::get('/dashboard', [EmployerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/post-new-job', [EmployerController::class, 'postNewJobPage'])->name('jobs.post');
+    Route::get('/manage-jobs', [EmployerController::class, 'manageJobsPage'])->name('jobs.manage');
+    Route::get('/view-applicants', [EmployerController::class, 'viewApplicantsPage'])->name('applicants.index');
+    Route::get('/request-lra-sra', [EmployerController::class, 'requestLraSraPage'])->name('recruitment.index');
+    Route::get('/submit-documents', [EmployerController::class, 'submitDocumentsPage'])->name('documents.index');
+    Route::get('/company-profile', [EmployerController::class, 'companyProfilePage'])->name('company-profile');
+    Route::get('/notifications', [EmployerController::class, 'notificationsPage'])->name('notifications.index');
+
     Route::post('/jobs', [EmployerController::class, 'storeJob'])->name('jobs.store');
     Route::patch('/jobs/{job}/extend', [EmployerController::class, 'extendJob'])->name('jobs.extend');
     Route::patch('/jobs/{job}/archive', [EmployerController::class, 'archiveJob'])->name('jobs.archive');
