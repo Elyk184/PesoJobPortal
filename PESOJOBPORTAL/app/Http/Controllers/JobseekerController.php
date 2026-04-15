@@ -6,7 +6,6 @@ use App\Models\UserProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class JobseekerController extends Controller
@@ -48,7 +47,7 @@ class JobseekerController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:500'],
             'objective' => ['nullable', 'string', 'max:1000'],
@@ -68,6 +67,8 @@ class JobseekerController extends Controller
             ['user_id' => $user->id],
             [
                 'user_id' => $user->id,
+                'resume_name' => $validated['name'],
+                'resume_email' => $validated['email'],
                 'phone' => $validated['phone'] ?? null,
                 'address' => $validated['address'] ?? null,
                 'objective' => $validated['objective'] ?? null,
@@ -76,11 +77,6 @@ class JobseekerController extends Controller
                 'experience' => $this->normalizeResumeSection($validated['experience'] ?? [], ['title', 'company', 'period', 'details']),
             ]
         );
-
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-        ]);
 
         return redirect()
             ->route('jobseeker.resume-builder')

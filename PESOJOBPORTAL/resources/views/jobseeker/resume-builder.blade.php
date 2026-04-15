@@ -5,22 +5,15 @@
 @section('content')
 @php
     $profile = $profile ?? null;
-    $resumeName = old('name', $user->name ?? 'Your Name');
-    $resumeEmail = old('email', $user->email ?? 'your.email@example.com');
-    $resumePhone = old('phone', $profile->phone ?? '+63 900 000 0000');
-    $resumeAddress = old('address', $profile->address ?? 'Barangay, Manolo Fortich, Bukidnon');
-    $resumeObjective = old('objective', $profile->objective ?? 'Motivated jobseeker seeking an opportunity to contribute strong communication, organization, and customer support skills in a reputable workplace.');
-    $resumeSkills = old('skills', implode(', ', $profile->skills ?? ['Communication', 'Microsoft Office', 'Customer Service', 'Record Keeping']));
+    $resumeName = old('name', $profile->resume_name ?? '');
+    $resumeEmail = old('email', $profile->resume_email ?? '');
+    $resumePhone = old('phone', $profile->phone ?? '');
+    $resumeAddress = old('address', $profile->address ?? '');
+    $resumeObjective = old('objective', $profile->objective ?? '');
+    $resumeSkills = old('skills', implode(', ', $profile->skills ?? []));
 
-    $educationRows = old('education', $profile->education ?? [
-        ['school' => 'University / College Name', 'course' => 'Bachelor of Science in Information Technology', 'year' => '2024'],
-        ['school' => 'Senior High School Name', 'course' => 'Academic Track', 'year' => '2020'],
-    ]);
-
-    $experienceRows = old('experience', $profile->experience ?? [
-        ['title' => 'Administrative Assistant Intern', 'company' => 'Local Office / Company Name', 'period' => '2024', 'details' => 'Assisted with filing, data encoding, reception duties, and basic document preparation.'],
-        ['title' => 'Service Crew', 'company' => 'Business Name', 'period' => '2022 - 2023', 'details' => 'Handled customer inquiries, inventory support, and daily transaction coordination.'],
-    ]);
+    $educationRows = old('education', $profile->education ?? []);
+    $experienceRows = old('experience', $profile->experience ?? []);
 
     $skillsPreview = collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values();
 @endphp
@@ -55,10 +48,10 @@
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
             <div>
                 <h2 class="h4 mb-1 fw-bold">Build a clean, Harvard-style resume</h2>
-                <p class="mb-0 text-muted">Content-first, black-and-white, and focused on clear sections like education, experience, and skills.</p>
+                <p class="mb-0 text-muted">Start from scratch or save your existing profile data. Everything below is editable.</p>
             </div>
             <div class="text-lg-end">
-                <div class="fw-semibold text-secondary">{{ $resumeName }}</div>
+                <div class="fw-semibold text-secondary">{{ $resumeName ?: 'Resume draft' }}</div>
                 <div class="small text-muted">Saved to your jobseeker profile</div>
             </div>
         </div>
@@ -77,23 +70,23 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="name">Full name</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ $resumeName }}">
+                        <input type="text" name="name" id="name" class="form-control" value="{{ $resumeName }}" placeholder="Enter your full name">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" value="{{ $resumeEmail }}">
+                        <input type="email" name="email" id="email" class="form-control" value="{{ $resumeEmail }}" placeholder="Enter your email">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="phone">Phone</label>
-                        <input type="text" name="phone" id="phone" class="form-control" value="{{ $resumePhone }}">
+                        <input type="text" name="phone" id="phone" class="form-control" value="{{ $resumePhone }}" placeholder="Enter your phone number">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="address">Address</label>
-                        <textarea name="address" id="address" class="form-control" rows="2">{{ $resumeAddress }}</textarea>
+                        <textarea name="address" id="address" class="form-control" rows="2" placeholder="Enter your address">{{ $resumeAddress }}</textarea>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="objective">Career objective</label>
-                        <textarea name="objective" id="objective" class="form-control" rows="4">{{ $resumeObjective }}</textarea>
+                        <textarea name="objective" id="objective" class="form-control" rows="4" placeholder="Write a short professional objective">{{ $resumeObjective }}</textarea>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold" for="skills">Skills</label>
@@ -111,7 +104,7 @@
                     </div>
 
                     <div class="vstack gap-3" id="education-rows">
-                        @foreach ($educationRows as $index => $row)
+                        @forelse ($educationRows as $index => $row)
                             <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="education">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div class="fw-semibold small text-secondary">Education {{ $index + 1 }}</div>
@@ -131,7 +124,8 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                        @endforelse
                     </div>
                 </div>
 
@@ -144,7 +138,7 @@
                     </div>
 
                     <div class="vstack gap-3" id="experience-rows">
-                        @foreach ($experienceRows as $index => $row)
+                        @forelse ($experienceRows as $index => $row)
                             <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="experience">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <div class="fw-semibold small text-secondary">Experience {{ $index + 1 }}</div>
@@ -167,7 +161,8 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                        @endforelse
                     </div>
                 </div>
 
@@ -196,7 +191,7 @@
                 <div class="resume-preview mx-auto">
                     <div class="resume-header text-center pb-3 mb-4 border-bottom">
                         <h1 class="resume-name">{{ $resumeName }}</h1>
-                        <div class="resume-contact">{{ $resumeAddress }} | {{ $resumePhone }} | {{ $resumeEmail }}</div>
+                        <div class="resume-contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
                     </div>
 
                     <section class="resume-section mb-4">
@@ -217,7 +212,6 @@
                                 </div>
                             @endif
                         @empty
-                            <p class="text-muted">Add your education history.</p>
                         @endforelse
                     </section>
 
@@ -235,13 +229,12 @@
                                 </div>
                             @endif
                         @empty
-                            <p class="text-muted">Add your work experience.</p>
                         @endforelse
                     </section>
 
                     <section class="resume-section mb-0">
                         <h2>Skills</h2>
-                        <p class="mb-0">{{ $skillsPreview->count() ? $skillsPreview->join(', ') : 'Add your skills.' }}</p>
+                        <p class="mb-0">{{ $skillsPreview->count() ? $skillsPreview->join(', ') : ' ' }}</p>
                     </section>
                 </div>
             </div>
