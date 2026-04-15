@@ -1,8 +1,11 @@
-@extends('dashboard.layouts.employer')
+@extends('dashboard.employer.layout')
 
 @section('title', 'Company Profile - PESO')
 
 @push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
     .profile-wrapper {
         display: flex;
@@ -20,6 +23,7 @@
         top: 100px;
     }
     .profile-nav .nav-link {
+        display: block;
         color: #6c757d;
         padding: 10px 15px;
         border-left: 3px solid transparent;
@@ -74,7 +78,7 @@
     </aside>
 
     <div class="profile-content">
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('employer.profile.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -555,7 +559,7 @@
 
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mt-4">
-                <a href="{{ route('dashboard.employer') }}" class="btn btn-secondary-outline">
+                <a href="{{ route('employer.dashboard') }}" class="btn btn-secondary-outline">
                     <i class="bi bi-x-circle me-2"></i>Cancel
                 </a>
                 <button type="submit" class="btn btn-primary-solid flex-grow-1">
@@ -567,6 +571,7 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const sections = document.querySelectorAll('.form-section');

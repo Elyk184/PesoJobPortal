@@ -349,6 +349,7 @@
             }
         }
     </style>
+    @stack('styles')
 </head>
 <body>
     <div class="container">
@@ -448,5 +449,6 @@
             </main>
         </div>
     </div>
+    @stack('scripts')
 </body>
 </html>

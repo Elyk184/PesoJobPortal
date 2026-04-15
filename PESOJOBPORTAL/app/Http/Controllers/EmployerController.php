@@ -6,6 +6,7 @@ use App\Models\EmployerNotification;
 use App\Models\JobApplication;
 use App\Models\PesoJob;
 use App\Models\RecruitmentActivityRequest;
+use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -73,8 +74,37 @@ class EmployerController extends Controller
 
         return view('dashboard.employer.company-profile', [
             'employer' => $employer,
+            'user' => $employer,
+            'companyProfile' => $employer->profile,
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
         ]);
+    }
+
+    public function updateCompanyProfile(Request $request): RedirectResponse
+    {
+        $employer = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$employer->id],
+            'password' => ['nullable', 'confirmed', 'min:8'],
+        ]);
+
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ];
+
+        if (! empty($validated['password'])) {
+            $updateData['password'] = $validated['password'];
+        }
+
+        $employer->update($updateData);
+
+        // Ensure an employer profile row exists for views that expect it.
+        UserProfile::firstOrCreate(['user_id' => $employer->id]);
+
+        return back()->with('success', 'Company profile updated successfully.');
     }
 
     public function notificationsPage(Request $request): View
