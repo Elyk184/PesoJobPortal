@@ -12,12 +12,17 @@ class JobApplication extends Model
     protected $fillable = [
         'user_id',
         'peso_job_id',
+        'is_referred',
         'status',
+        'employer_status',
+        'final_decision',
         'notes',
+        'employer_feedback',
     ];
 
     protected $casts = [
         'applied_at' => 'datetime',
+        'is_referred' => 'boolean',
     ];
 
     public function user()

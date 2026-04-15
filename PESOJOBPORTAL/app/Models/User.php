@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\JobApplication;
+use App\Models\EmployerNotification;
+use App\Models\PesoJob;
+use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +27,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_employer_verified',
     ];
 
     public function redirectToDashboard(): string
@@ -55,6 +59,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_employer_verified' => 'boolean',
         ];
     }
 
@@ -66,6 +71,21 @@ class User extends Authenticatable
     public function applications()
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    public function employerJobs()
+    {
+        return $this->hasMany(PesoJob::class, 'employer_id');
+    }
+
+    public function recruitmentActivityRequests()
+    {
+        return $this->hasMany(RecruitmentActivityRequest::class, 'employer_id');
+    }
+
+    public function employerNotifications()
+    {
+        return $this->hasMany(EmployerNotification::class, 'employer_id');
     }
 }
 ?>

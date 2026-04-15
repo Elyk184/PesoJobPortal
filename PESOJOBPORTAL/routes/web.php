@@ -40,6 +40,20 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
 // Employer routes (protected)
 Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer.')->group(function () {
     Route::get('/dashboard', [EmployerController::class, 'dashboard'])->name('dashboard');
+    Route::post('/jobs', [EmployerController::class, 'storeJob'])->name('jobs.store');
+    Route::patch('/jobs/{job}/extend', [EmployerController::class, 'extendJob'])->name('jobs.extend');
+    Route::patch('/jobs/{job}/archive', [EmployerController::class, 'archiveJob'])->name('jobs.archive');
+    Route::post('/jobs/{job}/duplicate', [EmployerController::class, 'duplicateJob'])->name('jobs.duplicate');
+    Route::patch('/jobs/{job}/filled', [EmployerController::class, 'markJobFilled'])->name('jobs.filled');
+
+    Route::post('/recruitment-activities', [EmployerController::class, 'requestRecruitmentActivity'])
+        ->name('recruitment.request');
+
+    Route::patch('/applications/{application}', [EmployerController::class, 'updateApplicantDecision'])
+        ->name('applications.update');
+
+    Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
+        ->name('notifications.read');
 });
 
 // Public jobs route
