@@ -1,16 +1,27 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-</head>
-<body>
-    <h1>Admin Dashboard</h1>
-    <p>Welcome, {{ auth()->user()->name ?? 'Admin' }}.</p>
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('title', 'Admin Dashboard | PESO Job Portal')
+
+@section('content')
+<section class="container pt-5 mt-4 pb-4" aria-label="Admin dashboard">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
+        <div>
+            <h1 class="mb-1 fw-bold">Admin Dashboard</h1>
+            <p class="mb-0 text-muted">Welcome, {{ auth()->user()->name ?? 'Admin' }}.</p>
+        </div>
+        <form method="POST" action="{{ route('logout') }}" class="m-0">
+            @csrf
+            <button type="submit" class="btn btn-outline-danger">Logout</button>
+        </form>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold">Overview</h5>
+            <p class="text-muted mb-0">This dashboard is currently static. Typical admin features include user management, job postings moderation, and reports.</p>
+        </div>
+    </div>
+</section>
+
+@include('components.footer')
+@endsection
