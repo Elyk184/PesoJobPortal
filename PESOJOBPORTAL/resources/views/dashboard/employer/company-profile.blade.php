@@ -7,20 +7,32 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
     .profile-wrapper {
-        display: flex;
-        gap: 30px;
+        display: block;
+        width: 100%;
+        min-height: calc(100vh - 180px);
     }
     .profile-sidebar {
-        width: 250px;
-        flex-shrink: 0;
+        display: none;
     }
     .profile-content {
-        flex-grow: 1;
+        width: 100%;
+    }
+    .profile-content > form {
+        width: 100%;
+        display: grid;
+        gap: 16px;
     }
     .profile-nav {
         position: sticky;
-        top: 100px;
+        top: 24px;
     }
     .profile-nav .nav-link {
         display: block;
@@ -41,11 +53,23 @@
     }
     .form-section {
         scroll-margin-top: 100px;
-        margin-bottom: 40px;
-        padding: 30px;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin: 0;
+        padding: 16px;
+        background: var(--panel, #fff);
+        border: 1px solid var(--line, #dbe4ee);
+        border-radius: 14px;
+        box-shadow: 0 12px 25px rgba(15, 23, 42, 0.05);
+        transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .form-section:hover {
+        border-color: #c2d7ea;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+    .profile-content .header.panel {
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 14px;
+        margin-bottom: 0;
     }
     .section-heading {
         font-size: 20px;
@@ -61,22 +85,144 @@
     .section-heading i {
         font-size: 22px;
     }
+
+    .form-label-custom {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 6px;
+        letter-spacing: 0.01em;
+    }
+
+    .form-control-custom,
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        border: 1px solid #cdd9e5;
+        padding: 10px 12px;
+        box-shadow: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        background: #fbfdff;
+    }
+
+    .form-control-custom:focus,
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+        background: #ffffff;
+    }
+
+    .btn {
+        border-radius: 12px;
+        font-weight: 700;
+        padding: 10px 16px;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-auth-custom,
+    .btn-primary-solid {
+        background: linear-gradient(135deg, #0f766e 0%, #0ea5a8 100%);
+        color: #ffffff;
+        border: 1px solid #0f766e;
+        box-shadow: 0 10px 18px rgba(15, 118, 110, 0.2);
+    }
+
+    .btn-auth-custom:hover,
+    .btn-primary-solid:hover {
+        background: linear-gradient(135deg, #0d6a63 0%, #0d9597 100%);
+        color: #ffffff;
+        box-shadow: 0 14px 22px rgba(15, 118, 110, 0.28);
+    }
+
+    .btn-secondary-outline {
+        border: 1px solid #94a3b8;
+        color: #334155;
+        background: #ffffff;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    }
+
+    .btn-secondary-outline:hover {
+        border-color: #64748b;
+        color: #0f172a;
+        background: #f8fafc;
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.14);
+    }
+
+    .btn-outline-primary {
+        border-color: #2563eb;
+        color: #1d4ed8;
+        background: #eff6ff;
+        font-weight: 700;
+    }
+
+    .btn-outline-primary:hover {
+        border-color: #1d4ed8;
+        color: #ffffff;
+        background: #1d4ed8;
+    }
+
+    .profile-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-top: 4px;
+    }
+
+    .profile-actions .btn {
+        width: 220px;
+        justify-content: center;
+    }
+
+    .alert {
+        border-radius: 12px;
+        border-width: 1px;
+    }
+
+    .workforce-card {
+        border-radius: 12px;
+        border: 1px solid #d6e0ea;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .workforce-card:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 992px) {
+        .profile-wrapper {
+            min-height: auto;
+        }
+
+        .form-section {
+            padding: 14px;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-actions .btn {
+            width: 100%;
+            max-width: 320px;
+        }
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="profile-wrapper">
-    <aside class="profile-sidebar">
-        <nav class="nav profile-nav flex-column">
-            <a class="nav-link" href="#company-logo-section"><i class="fas fa-image me-2"></i> Company Logo</a>
-            <a class="nav-link" href="#verification-section"><i class="fas fa-shield-alt me-2"></i> Verification</a>
-            <a class="nav-link" href="#account-info-section"><i class="fas fa-user-circle me-2"></i> Account Info</a>
-            <a class="nav-link" href="#establishment-details-section"><i class="fas fa-building me-2"></i> Establishment Details</a>
-            <a class="nav-link" href="#contact-details-section"><i class="fas fa-address-book me-2"></i> Contact Details</a>
-            <a class="nav-link" href="#security-section"><i class="fas fa-lock me-2"></i> Security</a>
-        </nav>
-    </aside>
-
     <div class="profile-content">
         <form method="POST" action="{{ route('employer.profile.update') }}" enctype="multipart/form-data">
             @csrf
@@ -558,11 +704,11 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="d-flex gap-3 mt-4">
+            <div class="profile-actions">
                 <a href="{{ route('employer.dashboard') }}" class="btn btn-secondary-outline">
                     <i class="bi bi-x-circle me-2"></i>Cancel
                 </a>
-                <button type="submit" class="btn btn-primary-solid flex-grow-1">
+                <button type="submit" class="btn btn-primary-solid">
                     <i class="bi bi-check-circle me-2"></i>Save Changes
                 </button>
             </div>
