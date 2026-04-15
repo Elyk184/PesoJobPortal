@@ -40,22 +40,61 @@
     </div>
 
     <nav class="dashboard-nav" aria-label="Dashboard navigation">
-        <a href="{{ route('jobseeker.dashboard') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.dashboard') ? 'is-active' : '' }}">
-            <i class="bi bi-speedometer2"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="{{ route('jobseeker.vacancies') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
-            <i class="bi bi-briefcase"></i>
-            <span>Vacancies</span>
-        </a>
-        <a href="{{ route('jobseeker.applications') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.applications') ? 'is-active' : '' }}">
-            <i class="bi bi-clipboard-check"></i>
-            <span>Applications</span>
-        </a>
-        <a href="{{ route('jobseeker.profile') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.profile') ? 'is-active' : '' }}">
-            <i class="bi bi-person-lines-fill"></i>
-            <span>Profile</span>
-        </a>
+        <div class="dashboard-nav-section">
+            <div class="dashboard-nav-label">Overview</div>
+            <a href="{{ route('jobseeker.dashboard') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.dashboard') ? 'is-active' : '' }}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+
+        <div class="dashboard-nav-section">
+            <div class="dashboard-nav-label">Job Search</div>
+            <a href="{{ route('jobseeker.vacancies') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
+                <i class="bi bi-briefcase"></i>
+                <span>Browse Jobs</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-bookmark"></i>
+                <span>Saved Jobs</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-stars"></i>
+                <span>Recommendations</span>
+            </a>
+        </div>
+
+        <div class="dashboard-nav-section">
+            <div class="dashboard-nav-label">My Applications</div>
+            <a href="{{ route('jobseeker.applications') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.applications') ? 'is-active' : '' }}">
+                <i class="bi bi-send"></i>
+                <span>Applied Jobs</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+
+        <div class="dashboard-nav-section">
+            <div class="dashboard-nav-label">Account</div>
+            <a href="{{ route('jobseeker.profile') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.profile') ? 'is-active' : '' }}">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Resume Builder</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-graph-up"></i>
+                <span>Skill Gap</span>
+            </a>
+            <a href="#" class="dashboard-nav-link">
+                <i class="bi bi-shield-check"></i>
+                <span>PESO Clearance</span>
+            </a>
+        </div>
     </nav>
 
     <div class="dashboard-highlight">

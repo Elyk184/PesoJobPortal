@@ -3,163 +3,105 @@
 @section('title', 'Jobseeker Dashboard | PESO Job Portal')
 
 @section('content')
-<section class="container py-4" aria-label="Jobseeker dashboard">
-    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
+<section aria-label="Jobseeker dashboard">
+    <div class="dashboard-topbar">
         <div>
-            <h1 class="mb-1 fw-bold dashboard-section-title">Jobseeker Dashboard</h1>
-            <p class="mb-0 text-muted">Welcome, {{ auth()->user()->name ?? 'Jobseeker' }}.</p>
+            <div class="dashboard-topbar-title">Dashboard</div>
+            <div class="dashboard-topbar-subtitle">Find your dream job</div>
         </div>
-        <form method="POST" action="{{ route('logout') }}" class="m-0">
-            @csrf
-            <button type="submit" class="btn btn-outline-danger">Logout</button>
-        </form>
+        <div class="d-none d-md-block text-end">
+            <div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'Jobseeker' }}</div>
+            <div class="dashboard-topbar-subtitle">Jobseeker Portal</div>
+        </div>
     </div>
 
-    <div class="row g-3">
-        <div class="col-12 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
-                        <h5 class="card-title mb-0 fw-semibold">Active Job Vacancies</h5>
-                        <a class="btn btn-sm btn-danger" href="{{ route('jobseeker.vacancies') }}">View all</a>
-                    </div>
-                    <p class="text-muted mb-3">Preview of available jobs (static demo).</p>
-
-                    <div class="list-group">
-                        <div class="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                            <div>
-                                <div class="fw-semibold">Office Staff / Admin Assistant</div>
-                                <div class="text-muted small">Manolo Fortich • Admin/Clerical • Skills: MS Office, Filing</div>
-                            </div>
-                            <span class="badge text-bg-success">Open</span>
-                        </div>
-                        <div class="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                            <div>
-                                <div class="fw-semibold">Construction Laborer</div>
-                                <div class="text-muted small">Barangay Damilag • Construction • Skills: Basic tools</div>
-                            </div>
-                            <span class="badge text-bg-success">Open</span>
-                        </div>
-                        <div class="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                            <div>
-                                <div class="fw-semibold">Cashier</div>
-                                <div class="text-muted small">Barangay Tankulan • Retail • Skills: Customer service</div>
-                            </div>
-                            <span class="badge text-bg-warning">Expiring soon</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <div>
+                <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'Jobseeker' }}!</h2>
+                <p class="mb-0 text-muted">Your profile is complete. Keep it updated to receive relevant job recommendations.</p>
             </div>
+            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-primary px-3 shadow-sm">
+                <i class="bi bi-search me-2"></i>Browse Jobs
+            </a>
+        </div>
+    </div>
 
-            <div class="card shadow-sm mt-3">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between gap-3 mb-2">
-                        <h5 class="card-title mb-0 fw-semibold">My Application Status</h5>
-                        <a class="btn btn-sm btn-outline-danger" href="{{ route('jobseeker.applications') }}">Open tracker</a>
-                    </div>
-                    <p class="text-muted mb-3">Track the progress of your applications.</p>
-
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead>
-                                <tr class="text-muted">
-                                    <th>Job</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Updated</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">Office Staff / Admin Assistant</div>
-                                        <div class="text-muted small">PESO Review</div>
-                                    </td>
-                                    <td><span class="badge text-bg-secondary">Pending PESO Review</span></td>
-                                    <td class="text-end text-muted">—</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">Construction Laborer</div>
-                                        <div class="text-muted small">Employer Screening</div>
-                                    </td>
-                                    <td><span class="badge text-bg-info">Referred</span></td>
-                                    <td class="text-end text-muted">—</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">Cashier</div>
-                                        <div class="text-muted small">Interview Stage</div>
-                                    </td>
-                                    <td><span class="badge text-bg-primary">Interview Scheduled</span></td>
-                                    <td class="text-end text-muted">—</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3">
-                        <div class="small fw-semibold mb-2">Status flow</div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span class="badge rounded-pill text-bg-secondary">Pending PESO Review</span>
-                            <span class="badge rounded-pill text-bg-info">Referred</span>
-                            <span class="badge rounded-pill text-bg-primary">Interview Scheduled</span>
-                            <span class="badge rounded-pill text-bg-success">Hired</span>
-                            <span class="badge rounded-pill text-bg-danger">Not Selected</span>
-                        </div>
-                    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
+                <div>
+                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-label">Available Jobs</div>
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">PESO Clearance</h5>
-                    <p class="text-muted mb-3">View-only clearance status.</p>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <span class="fw-semibold">Status</span>
-                        <span class="badge text-bg-secondary">Not yet verified</span>
-                    </div>
+        <div class="col-12 col-md-4">
+            <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                <div class="dashboard-stat-icon" style="background: rgba(47, 157, 98, 0.12); color: var(--dash-success);"><i class="bi bi-send"></i></div>
+                <div>
+                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-label">Applications Sent</div>
                 </div>
             </div>
-
-            <div class="card shadow-sm mt-3">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">Notifications</h5>
-                    <p class="text-muted mb-3">Updates from PESO (static demo).</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item px-0">
-                            <div class="fw-semibold">Job match</div>
-                            <div class="text-muted small">New job posts that match your skills.</div>
-                        </li>
-                        <li class="list-group-item px-0">
-                            <div class="fw-semibold">Job fair / recruitment event</div>
-                            <div class="text-muted small">Upcoming PESO recruitment schedules.</div>
-                        </li>
-                        <li class="list-group-item px-0">
-                            <div class="fw-semibold">PESO programs</div>
-                            <div class="text-muted small">Training and livelihood announcements.</div>
-                        </li>
-                    </ul>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                <div class="dashboard-stat-icon" style="background: rgba(220, 164, 42, 0.12); color: var(--dash-warning);"><i class="bi bi-bookmark"></i></div>
+                <div>
+                    <div class="dashboard-stat-number">3</div>
+                    <div class="dashboard-stat-label">Saved Jobs</div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="card shadow-sm mt-3">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">Smart Features (Optional)</h5>
-                    <p class="text-muted mb-3">Planned improvements (coming soon).</p>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-secondary" type="button" disabled>
-                            <i class="bi bi-stars me-2"></i>Job matching recommendations
-                        </button>
-                        <button class="btn btn-outline-secondary" type="button" disabled>
-                            <i class="bi bi-file-earmark-text me-2"></i>Resume builder
-                        </button>
-                        <button class="btn btn-outline-secondary" type="button" disabled>
-                            <i class="bi bi-graph-up-arrow me-2"></i>Skill gap suggestions
-                        </button>
-                    </div>
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Application Status</h3>
+            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="dashboard-status-card p-3" style="background: rgba(255, 244, 206, 0.75); border-color: rgba(220, 164, 42, 0.2);">
+                    <div class="dashboard-status-number" style="color: var(--dash-warning);">0</div>
+                    <div class="dashboard-status-label" style="color: var(--dash-warning);">Pending Review</div>
                 </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="dashboard-status-card p-3" style="background: rgba(225, 243, 236, 0.9); border-color: rgba(47, 157, 98, 0.18);">
+                    <div class="dashboard-status-number" style="color: var(--dash-success);">1</div>
+                    <div class="dashboard-status-label" style="color: var(--dash-success);">Interview</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="dashboard-status-card p-3" style="background: rgba(223, 235, 255, 0.9); border-color: rgba(45, 107, 224, 0.18);">
+                    <div class="dashboard-status-number" style="color: #2d6be0;">2</div>
+                    <div class="dashboard-status-label" style="color: #2d6be0;">Hired</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="dashboard-status-card p-3" style="background: rgba(237, 230, 251, 0.9); border-color: rgba(142, 118, 217, 0.18);">
+                    <div class="dashboard-status-number" style="color: var(--dash-purple);">0</div>
+                    <div class="dashboard-status-label" style="color: var(--dash-purple);">Recommended</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-section-card p-3 p-lg-4">
+        <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-stars me-2"></i>Recommended Jobs</h3>
+            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+
+        <div class="dashboard-empty-state">
+            <div>
+                <div class="fs-1 mb-2">✦</div>
+                <div class="fw-semibold text-secondary">No job recommendations yet.</div>
+                <div class="small">Complete your profile to get personalized job suggestions.</div>
             </div>
         </div>
     </div>
