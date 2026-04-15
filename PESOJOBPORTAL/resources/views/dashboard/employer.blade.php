@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-    <div class="panel">
+    <div class="panel fill-remaining">
         <h2>Dashboard Statistics</h2>
         <p>This page now shows statistics only.</p>
 

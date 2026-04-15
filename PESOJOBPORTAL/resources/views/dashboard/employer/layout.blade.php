@@ -26,27 +26,30 @@
         }
 
         .container {
-            width: min(1280px, 96vw);
-            margin: 20px auto 34px;
+            width: 100%;
+            margin: 0;
+            min-height: 100vh;
         }
 
         .dashboard-layout {
             display: grid;
             grid-template-columns: 270px minmax(0, 1fr);
-            gap: 18px;
-            align-items: start;
+            gap: 0;
+            align-items: stretch;
+            min-height: 100vh;
         }
 
         .sidebar {
             position: sticky;
-            top: 16px;
+            top: 0;
             background: linear-gradient(180deg, #0b1228 0%, #16213f 100%);
             border: 1px solid rgba(148, 163, 184, 0.22);
-            border-radius: 16px;
+            border-radius: 0;
             padding: 0;
             box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
             color: #cbd5e1;
             overflow: hidden;
+            min-height: 100vh;
         }
 
         .sidebar-brand {
@@ -61,14 +64,10 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            display: grid;
-            place-items: center;
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-            background: linear-gradient(140deg, #0ea5a8 0%, #0f766e 100%);
             border: 2px solid rgba(255, 255, 255, 0.28);
             flex-shrink: 0;
+            object-fit: cover;
+            display: block;
         }
 
         .sidebar-brand-title {
@@ -134,16 +133,24 @@
         }
 
         .nav-icon {
-            width: 22px;
-            height: 22px;
+            width: 34px;
+            height: 34px;
             border-radius: 7px;
             display: grid;
             place-items: center;
             background: rgba(148, 163, 184, 0.18);
             color: #e2e8f0;
-            font-size: 11px;
-            font-weight: 700;
             flex-shrink: 0;
+        }
+
+        .nav-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .sidebar a:hover .nav-icon,
@@ -161,6 +168,14 @@
 
         .content {
             min-width: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .fill-remaining {
+            flex: 1;
+            margin-bottom: 0;
         }
 
         .header {
@@ -340,7 +355,7 @@
         <div class="dashboard-layout">
             <aside class="sidebar">
                 <div class="sidebar-brand">
-                    <div class="sidebar-logo">{{ strtoupper(substr(auth()->user()->name ?? 'E', 0, 1)) }}</div>
+                    <img class="sidebar-logo" src="{{ asset('images/logo.png') }}" alt="PESO Logo">
                     <div>
                         <p class="sidebar-brand-title">PESO Employer</p>
                         <p class="sidebar-brand-subtitle">Dashboard</p>
@@ -350,40 +365,40 @@
                 <div class="sidebar-inner">
                     <ul class="sidebar-nav">
                         <li>
-                            <a class="{{ request()->routeIs('employer.dashboard') ? 'active' : '' }}" href="{{ route('employer.dashboard') }}"><span class="nav-icon">D</span><span>Dashboard</span></a>
+                            <a class="{{ request()->routeIs('employer.dashboard') ? 'active' : '' }}" href="{{ route('employer.dashboard') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="4"></rect><rect x="14" y="10" width="7" height="11"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span><span>Dashboard</span></a>
                         </li>
                     </ul>
 
                     <p class="sidebar-group-title">Job Management</p>
                     <ul class="sidebar-nav">
                         <li>
-                            <a class="{{ request()->routeIs('employer.jobs.post') ? 'active' : '' }}" href="{{ route('employer.jobs.post') }}"><span class="nav-icon">P</span><span>Post New Job</span></a>
+                            <a class="{{ request()->routeIs('employer.jobs.post') ? 'active' : '' }}" href="{{ route('employer.jobs.post') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span>Post New Job</span></a>
                         </li>
                         <li>
-                            <a class="{{ request()->routeIs('employer.jobs.manage') ? 'active' : '' }}" href="{{ route('employer.jobs.manage') }}"><span class="nav-icon">M</span><span>Manage Jobs</span></a>
+                            <a class="{{ request()->routeIs('employer.jobs.manage') ? 'active' : '' }}" href="{{ route('employer.jobs.manage') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5a2 2 0 0 0-2 2v5"></path><path d="M14 3h5a2 2 0 0 1 2 2v5"></path><path d="M10 21H5a2 2 0 0 1-2-2v-5"></path><path d="M14 21h5a2 2 0 0 0 2-2v-5"></path><path d="M8 12h8"></path></svg></span><span>Manage Jobs</span></a>
                         </li>
                         <li>
-                            <a class="{{ request()->routeIs('employer.applicants.index') ? 'active' : '' }}" href="{{ route('employer.applicants.index') }}"><span class="nav-icon">V</span><span>View Applicants</span></a>
+                            <a class="{{ request()->routeIs('employer.applicants.index') ? 'active' : '' }}" href="{{ route('employer.applicants.index') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span><span>View Applicants</span></a>
                         </li>
                     </ul>
 
                     <p class="sidebar-group-title">Compliance</p>
                     <ul class="sidebar-nav">
                         <li>
-                            <a class="{{ request()->routeIs('employer.recruitment.index') ? 'active' : '' }}" href="{{ route('employer.recruitment.index') }}"><span class="nav-icon">R</span><span>Request LRA/SRA</span></a>
+                            <a class="{{ request()->routeIs('employer.recruitment.index') ? 'active' : '' }}" href="{{ route('employer.recruitment.index') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg></span><span>Request LRA/SRA</span></a>
                         </li>
                         <li>
-                            <a class="{{ request()->routeIs('employer.documents.index') ? 'active' : '' }}" href="{{ route('employer.documents.index') }}"><span class="nav-icon">S</span><span>Submit Documents</span></a>
+                            <a class="{{ request()->routeIs('employer.documents.index') ? 'active' : '' }}" href="{{ route('employer.documents.index') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M7 3h10l1 4H6z"></path><path d="M6 7l1 14h10l1-14"></path></svg></span><span>Submit Documents</span></a>
                         </li>
                     </ul>
 
                     <p class="sidebar-group-title">Account</p>
                     <ul class="sidebar-nav">
                         <li>
-                            <a class="{{ request()->routeIs('employer.company-profile') ? 'active' : '' }}" href="{{ route('employer.company-profile') }}"><span class="nav-icon">C</span><span>Company Profile</span></a>
+                            <a class="{{ request()->routeIs('employer.company-profile') ? 'active' : '' }}" href="{{ route('employer.company-profile') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 10h6"></path><path d="M9 14h6"></path></svg></span><span>Company Profile</span></a>
                         </li>
                         <li>
-                            <a class="{{ request()->routeIs('employer.notifications.index') ? 'active' : '' }}" href="{{ route('employer.notifications.index') }}"><span class="nav-icon">N</span><span>Notifications</span></a>
+                            <a class="{{ request()->routeIs('employer.notifications.index') ? 'active' : '' }}" href="{{ route('employer.notifications.index') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span><span>Notifications</span></a>
                         </li>
                     </ul>
 
@@ -391,7 +406,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="sidebar-logout" type="submit">
-                                <span class="nav-icon">L</span>
+                                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg></span>
                                 <span>Logout</span>
                             </button>
                         </form>
