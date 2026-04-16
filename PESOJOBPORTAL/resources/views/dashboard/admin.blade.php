@@ -20,10 +20,14 @@
     html, body {
         margin: 0;
         padding: 0;
+        font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.3px;
     }
 
     body {
-        background: #f5f7fa;
+        background: #f7f9fc;
+        color: #1f2937;
     }
     
     .peso-main {
@@ -39,15 +43,15 @@
 
     .admin-sidebar {
         width: 260px;
-        background: linear-gradient(180deg, #0f2d52 0%, #1f4b8f 100%);
+        background: linear-gradient(180deg, #0d1f3c 0%, #1a3a5c 100%);
         color: white;
-        padding: 2rem 0;
+        padding: 1.5rem 0;
         position: fixed;
         top: 0;
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         z-index: 100;
     }
 
@@ -71,26 +75,28 @@
     .sidebar-header {
         padding: 0 1.5rem;
         margin-bottom: 2rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         padding-bottom: 1.5rem;
     }
 
     .sidebar-user {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
     }
 
     .sidebar-user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
         font-size: 18px;
+        color: white;
+        box-shadow: 0 2px 8px rgba(215, 38, 56, 0.3);
     }
 
     .sidebar-user-name {
@@ -99,14 +105,17 @@
 
     .sidebar-user-name h6 {
         margin: 0;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 600;
+        color: white;
+        letter-spacing: 0.2px;
     }
 
     .sidebar-user-name p {
-        margin: 2px 0 0 0;
-        font-size: 11px;
-        opacity: 0.8;
+        margin: 4px 0 0 0;
+        font-size: 12px;
+        opacity: 0.75;
+        font-weight: 500;
     }
 
     .sidebar-menu {
@@ -123,43 +132,50 @@
     .sidebar-menu-link {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 1.5rem;
-        color: rgba(255, 255, 255, 0.7);
+        gap: 14px;
+        padding: 11px 1.5rem;
+        color: rgba(255, 255, 255, 0.68);
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         font-size: 14px;
         font-weight: 500;
+        letter-spacing: 0.3px;
     }
 
     .sidebar-menu-link:hover {
         color: white;
-        background: rgba(255, 255, 255, 0.1);
-        padding-left: 1.75rem;
+        background: rgba(255, 255, 255, 0.08);
+        padding-left: 1.8rem;
     }
 
     .sidebar-menu-link.active {
-        color: white;
-        background: rgba(215, 38, 56, 0.2);
+        color: #fff;
+        background: rgba(215, 38, 56, 0.25);
         border-right: 3px solid #d72638;
         padding-right: calc(1.5rem - 3px);
+        font-weight: 600;
     }
 
     .sidebar-menu-link i {
-        font-size: 18px;
-        min-width: 18px;
+        font-size: 20px;
+        min-width: 20px;
+        opacity: 0.9;
+    }
+
+    .sidebar-menu-link.active i {
+        opacity: 1;
     }
 
     .sidebar-menu-divider {
         height: 1px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.12);
         margin: 1rem 0;
     }
 
     .admin-main {
         margin-left: 260px;
         flex: 1;
-        padding: 2rem;
+        padding: 2.5rem;
     }
 
     .admin-dashboard {
@@ -169,37 +185,40 @@
 
     .stat-card {
         background: white;
-        border-left: 4px solid #0f2d52;
-        border-radius: 8px;
-        padding: 1.5rem;
+        border-left: 4px solid #0d1f3c;
+        border-radius: 10px;
+        padding: 1.75rem;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
         transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
     .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
     .stat-value {
-        font-size: 32px;
+        font-size: 36px;
         font-weight: 700;
-        color: #0f2d52;
-        margin: 10px 0;
+        color: #0d1f3c;
+        margin: 12px 0 8px 0;
+        letter-spacing: -0.5px;
     }
 
     .stat-label {
-        font-size: 13px;
-        color: #666;
+        font-size: 12px;
+        color: #6b7280;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
 
     .stat-icon {
-        font-size: 2rem;
-        opacity: 0.1;
+        font-size: 2.5rem;
+        opacity: 0.12;
         position: absolute;
         right: 15px;
         top: 15px;
@@ -207,18 +226,20 @@
 
     .dashboard-card {
         background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
+        border-radius: 10px;
+        padding: 1.75rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     }
 
     .dashboard-card h5 {
-        color: #0f2d52;
+        color: #0d1f3c;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
         border-bottom: 2px solid #d72638;
         padding-bottom: 0.75rem;
+        font-size: 16px;
+        letter-spacing: 0.3px;
     }
 
     .data-table {
@@ -226,86 +247,76 @@
     }
 
     .data-table th {
-        background: #f8f9fa;
-        color: #0f2d52;
+        background: #f3f4f6;
+        color: #0d1f3c;
         font-weight: 700;
-        border-bottom: 2px solid #e9ecef;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .data-table td {
-        padding: 12px 8px;
+        padding: 13px 10px;
         vertical-align: middle;
+        font-weight: 500;
     }
 
     .data-table tbody tr:hover {
-        background: #f8f9fa;
+        background: #f9fafb;
     }
 
     .badge-role {
         font-size: 11px;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: 600;
+        display: inline-block;
     }
 
     .badge-admin {
-        background: #dc2626;
-        color: white;
+        background: #fecaca;
+        color: #991b1b;
     }
 
     .badge-employer {
-        background: #2563eb;
-        color: white;
+        background: #bfdbfe;
+        color: #1e40af;
     }
 
     .badge-jobseeker {
-        background: #16a34a;
-        color: white;
+        background: #bbf7d0;
+        color: #065f46;
     }
 
     .badge-active {
-        background: #10b981;
-        color: white;
+        background: #d1fae5;
+        color: #065f46;
     }
 
     .badge-pending {
-        background: #f59e0b;
-        color: white;
+        background: #fed7aa;
+        color: #92400e;
     }
 
     .badge-closed {
-        background: #6b7280;
-        color: white;
+        background: #e5e7eb;
+        color: #374151;
     }
 
     .header-section {
         display: none;
     }
 
-    .logout-btn {
-        background: #d72638;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-
-    .logout-btn:hover {
-        background: #b81a2d;
-    }
-
     .quick-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
     }
 
     .list-item {
-        padding: 10px 0;
+        padding: 12px 0;
         border-bottom: 1px solid #f0f0f0;
         display: flex;
         justify-content: space-between;
@@ -319,25 +330,29 @@
     .list-item-label {
         flex: 1;
         font-size: 13px;
+        color: #6b7280;
+        font-weight: 500;
     }
 
     .list-item-value {
-        font-weight: 600;
-        color: #0f2d52;
+        font-weight: 700;
+        color: #0d1f3c;
+        font-size: 14px;
     }
 
     .empty-state {
         text-align: center;
         padding: 2rem;
-        color: #999;
+        color: #9ca3af;
+        font-size: 14px;
     }
 
     /* Top Bar with Title */
     .admin-topbar {
-        background: white;
-        padding: 1rem 0;
-        margin-bottom: 1.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        background: transparent;
+        padding: 1rem 0 1.5rem 0;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -345,8 +360,10 @@
 
     .admin-topbar h2 {
         margin: 0;
-        color: #0f2d52;
+        color: #0d1f3c;
         font-weight: 700;
+        font-size: 28px;
+        letter-spacing: -0.5px;
     }
 
     .admin-topbar-right {
@@ -357,13 +374,18 @@
 
     .toggle-sidebar-btn {
         display: none;
-        background: #0f2d52;
+        background: #0d1f3c;
         color: white;
         border: none;
-        padding: 8px 12px;
-        border-radius: 6px;
+        padding: 10px 14px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 18px;
+        transition: all 0.2s ease;
+    }
+
+    .toggle-sidebar-btn:hover {
+        background: #152d52;
     }
 
     @media (max-width: 768px) {
@@ -383,7 +405,11 @@
 
         .admin-main {
             margin-left: 0;
-            padding: 1rem;
+            padding: 1.5rem;
+        }
+
+        .admin-topbar h2 {
+            font-size: 22px;
         }
 
         .toggle-sidebar-btn {
@@ -392,6 +418,15 @@
 
         .quick-stats {
             grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 28px;
         }
     }
 </style>
