@@ -24,6 +24,7 @@
     }
     .profile-content {
         width: 100%;
+        padding-right: 360px;
     }
     .profile-content > form {
         width: 100%;
@@ -196,9 +197,105 @@
         transform: translateY(-1px);
     }
 
+    .profile-completion-summary {
+        background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+        border: 1px solid #cddff5;
+        position: fixed;
+        top: 110px;
+        right: 24px;
+        width: 330px;
+        z-index: 90;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+    }
+
+    .completion-meta {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .completion-percent {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0f4c8a;
+        line-height: 1;
+    }
+
+    .completion-text {
+        font-size: 0.92rem;
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .completion-progress {
+        height: 10px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+
+    .completion-progress .progress-bar {
+        background: linear-gradient(90deg, #0f766e 0%, #0ea5a8 60%, #22c55e 100%);
+        transition: width 0.25s ease;
+    }
+
+    .completion-status {
+        margin: 0;
+        font-size: 0.92rem;
+        color: #334155;
+        font-weight: 500;
+    }
+
+    .missing-fields-list {
+        margin-top: 8px;
+        padding-left: 1.1rem;
+    }
+
+    .missing-fields-list li + li {
+        margin-top: 4px;
+    }
+
+    .missing-field-link {
+        color: #9f1239;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .missing-field-link:hover {
+        text-decoration: underline;
+    }
+
+    .field-missing {
+        border-color: #dc2626 !important;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.14) !important;
+        background-color: #fff9f9;
+    }
+
+    .workforce-card.field-missing {
+        border-color: #dc2626 !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
+    }
+
     @media (max-width: 992px) {
         .profile-wrapper {
             min-height: auto;
+        }
+
+        .profile-content {
+            padding-right: 0;
+        }
+
+        .profile-completion-summary {
+            position: static;
+            top: auto;
+            right: auto;
+            width: 100%;
+            max-height: none;
+            overflow-y: visible;
         }
 
         .form-section {
@@ -235,6 +332,61 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             @endif
+
+            @php
+                $requiredProfileFields = [
+                    ['key' => 'name', 'label' => 'Full Name', 'section' => 'account-info-section', 'filled' => filled(old('name', $user->name ?? null))],
+                    ['key' => 'email', 'label' => 'Email Address', 'section' => 'account-info-section', 'filled' => filled(old('email', $user->email ?? null))],
+                    ['key' => 'business_name', 'label' => 'Business Name', 'section' => 'establishment-details-section', 'filled' => filled(old('business_name', $companyProfile->business_name ?? null))],
+                    ['key' => 'office_type', 'label' => 'Office Type', 'section' => 'establishment-details-section', 'filled' => filled(old('office_type', $companyProfile->office_type ?? (empty($companyProfile) ? 'main_office' : null)))],
+                    ['key' => 'employer_type_detail', 'label' => 'Employer Type', 'section' => 'establishment-details-section', 'filled' => filled(old('employer_type_detail', $companyProfile->employer_type_detail ?? null))],
+                    ['key' => 'workforce_size', 'label' => 'Total Work Force', 'section' => 'establishment-details-section', 'filled' => filled(old('workforce_size', $companyProfile->workforce_size ?? null))],
+                    ['key' => 'line_of_business', 'label' => 'Line of Business / Industry', 'section' => 'establishment-details-section', 'filled' => filled(old('line_of_business', $companyProfile->line_of_business ?? null))],
+                    ['key' => 'street_village', 'label' => 'Street / Village', 'section' => 'establishment-details-section', 'filled' => filled(old('street_village', $companyProfile->street_village ?? null))],
+                    ['key' => 'barangay', 'label' => 'Barangay', 'section' => 'establishment-details-section', 'filled' => filled(old('barangay', $companyProfile->barangay ?? null))],
+                    ['key' => 'city_municipality', 'label' => 'Municipal / City', 'section' => 'establishment-details-section', 'filled' => filled(old('city_municipality', $companyProfile->city_municipality ?? null))],
+                    ['key' => 'province', 'label' => 'Province', 'section' => 'establishment-details-section', 'filled' => filled(old('province', $companyProfile->province ?? null))],
+                    ['key' => 'establishment_contact_person', 'label' => 'Name of Owner / President', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_contact_person', $companyProfile->establishment_contact_person ?? null))],
+                    ['key' => 'contact_person_name', 'label' => 'Contact Person', 'section' => 'contact-details-section', 'filled' => filled(old('contact_person_name', $companyProfile->contact_person_name ?? null))],
+                    ['key' => 'establishment_contact_position', 'label' => 'Position', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_contact_position', $companyProfile->establishment_contact_position ?? null))],
+                    ['key' => 'contact_person_phone', 'label' => 'Mobile Number', 'section' => 'contact-details-section', 'filled' => filled(old('contact_person_phone', $companyProfile->contact_person_phone ?? null))],
+                    ['key' => 'establishment_email', 'label' => 'E-mail Address', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_email', $companyProfile->establishment_email ?? null))],
+                    ['key' => 'username', 'label' => 'Username', 'section' => 'security-section', 'filled' => filled(old('username', $user->username ?? null))],
+                ];
+
+                $requiredCount = count($requiredProfileFields);
+                $completedCount = collect($requiredProfileFields)->where('filled', true)->count();
+                $completionPercent = $requiredCount > 0 ? (int) round(($completedCount / $requiredCount) * 100) : 0;
+                $missingProfileFields = array_values(array_filter($requiredProfileFields, fn ($field) => !$field['filled']));
+            @endphp
+
+            <div id="profile-completion-section" class="form-section profile-completion-summary">
+                <h5 class="section-heading"><i class="fas fa-chart-pie"></i> Profile Completion</h5>
+                <div class="completion-meta">
+                    <span id="completionPercentText" class="completion-percent">{{ $completionPercent }}%</span>
+                    <span id="completionCountText" class="completion-text">{{ $completedCount }} of {{ $requiredCount }} required fields completed</span>
+                </div>
+                <div class="progress completion-progress" role="progressbar" aria-label="Profile completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $completionPercent }}">
+                    <div id="completionProgressBar" class="progress-bar" style="width: {{ $completionPercent }}%"></div>
+                </div>
+                <p id="completionStatusText" class="completion-status">
+                    {{ empty($missingProfileFields) ? 'Great job. Your required company profile fields are complete.' : 'Please complete the missing required fields listed below.' }}
+                </p>
+
+                <div id="missingFieldsReminder" class="alert alert-warning mt-3 mb-0 {{ empty($missingProfileFields) ? 'd-none' : '' }}">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Missing required fields:</strong>
+                    <ul id="missingFieldsList" class="missing-fields-list mb-0">
+                        @foreach($missingProfileFields as $missingField)
+                            <li data-field="{{ $missingField['key'] }}">
+                                <a href="#{{ $missingField['section'] }}" class="missing-field-link" data-scroll-target="{{ $missingField['section'] }}" data-field="{{ $missingField['key'] }}">
+                                    {{ $missingField['label'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
 
             <!-- Company Logo Section -->
             <div id="company-logo-section" class="form-section">
@@ -726,6 +878,153 @@
 document.addEventListener('DOMContentLoaded', function () {
     const sections = document.querySelectorAll('.form-section');
     const navLinks = document.querySelectorAll('.profile-nav .nav-link');
+
+    const requiredFields = [
+        { key: 'name', label: 'Full Name', sectionId: 'account-info-section', type: 'input', selector: '#name' },
+        { key: 'email', label: 'Email Address', sectionId: 'account-info-section', type: 'input', selector: '#email' },
+        { key: 'business_name', label: 'Business Name', sectionId: 'establishment-details-section', type: 'input', selector: '#business_name' },
+        { key: 'office_type', label: 'Office Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="office_type"]' },
+        { key: 'employer_type_detail', label: 'Employer Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="employer_type_detail"]' },
+        { key: 'workforce_size', label: 'Total Work Force', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="workforce_size"]' },
+        { key: 'line_of_business', label: 'Line of Business / Industry', sectionId: 'establishment-details-section', type: 'input', selector: '#line_of_business' },
+        { key: 'street_village', label: 'Street / Village', sectionId: 'establishment-details-section', type: 'input', selector: '#street_village' },
+        { key: 'barangay', label: 'Barangay', sectionId: 'establishment-details-section', type: 'input', selector: '#barangay' },
+        { key: 'city_municipality', label: 'Municipal / City', sectionId: 'establishment-details-section', type: 'input', selector: '#city_municipality' },
+        { key: 'province', label: 'Province', sectionId: 'establishment-details-section', type: 'input', selector: '#province' },
+        { key: 'establishment_contact_person', label: 'Name of Owner / President', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_person' },
+        { key: 'contact_person_name', label: 'Contact Person', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_name' },
+        { key: 'establishment_contact_position', label: 'Position', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_position' },
+        { key: 'contact_person_phone', label: 'Mobile Number', sectionId: 'contact-details-section', type: 'input', selector: '#contact_person_phone' },
+        { key: 'establishment_email', label: 'E-mail Address', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_email' },
+        { key: 'username', label: 'Username', sectionId: 'security-section', type: 'input', selector: '#username' },
+    ];
+
+    const completionPercentText = document.getElementById('completionPercentText');
+    const completionCountText = document.getElementById('completionCountText');
+    const completionProgressBar = document.getElementById('completionProgressBar');
+    const completionStatusText = document.getElementById('completionStatusText');
+    const missingFieldsReminder = document.getElementById('missingFieldsReminder');
+    const missingFieldsList = document.getElementById('missingFieldsList');
+
+    const normalizeFilled = (value) => value !== null && value !== undefined && String(value).trim() !== '';
+
+    const setMissingHighlight = (field, missing) => {
+        if (field.type === 'radio') {
+            const radios = document.querySelectorAll(field.selector);
+            const radioCards = radios.length ? radios[0].closest('.workforce-buttons')?.querySelectorAll('.workforce-card') : [];
+
+            radios.forEach(radio => {
+                radio.classList.toggle('field-missing', missing);
+            });
+
+            if (radioCards && radioCards.length) {
+                radioCards.forEach(card => card.classList.toggle('field-missing', missing));
+            }
+
+            return;
+        }
+
+        const element = document.querySelector(field.selector);
+        if (element) {
+            element.classList.toggle('field-missing', missing);
+        }
+    };
+
+    const evaluateField = (field) => {
+        if (field.type === 'radio') {
+            return document.querySelector(`${field.selector}:checked`) !== null;
+        }
+
+        const element = document.querySelector(field.selector);
+        return element ? normalizeFilled(element.value) : false;
+    };
+
+    const refreshProfileCompletion = () => {
+        if (!completionPercentText || !completionCountText || !completionProgressBar || !completionStatusText || !missingFieldsList || !missingFieldsReminder) {
+            return;
+        }
+
+        const missingFields = [];
+
+        requiredFields.forEach(field => {
+            const filled = evaluateField(field);
+            setMissingHighlight(field, !filled);
+
+            if (!filled) {
+                missingFields.push(field);
+            }
+        });
+
+        const total = requiredFields.length;
+        const completed = total - missingFields.length;
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        completionPercentText.textContent = `${percent}%`;
+        completionCountText.textContent = `${completed} of ${total} required fields completed`;
+        completionProgressBar.style.width = `${percent}%`;
+        completionProgressBar.parentElement?.setAttribute('aria-valuenow', String(percent));
+
+        if (missingFields.length === 0) {
+            completionStatusText.textContent = 'Great job. Your required company profile fields are complete.';
+            missingFieldsReminder.classList.add('d-none');
+            missingFieldsList.innerHTML = '';
+            return;
+        }
+
+        completionStatusText.textContent = 'Please complete the missing required fields listed below.';
+        missingFieldsReminder.classList.remove('d-none');
+        missingFieldsList.innerHTML = missingFields.map(field => (
+            `<li data-field="${field.key}"><a href="#${field.sectionId}" class="missing-field-link" data-scroll-target="${field.sectionId}" data-field="${field.key}">${field.label}</a></li>`
+        )).join('');
+    };
+
+    requiredFields.forEach(field => {
+        if (field.type === 'radio') {
+            document.querySelectorAll(field.selector).forEach(radio => {
+                radio.addEventListener('change', refreshProfileCompletion);
+            });
+            return;
+        }
+
+        const element = document.querySelector(field.selector);
+        if (element) {
+            element.addEventListener('input', refreshProfileCompletion);
+            element.addEventListener('change', refreshProfileCompletion);
+        }
+    });
+
+    document.addEventListener('click', function (event) {
+        const reminderLink = event.target.closest('.missing-field-link');
+        if (!reminderLink) {
+            return;
+        }
+
+        event.preventDefault();
+        const sectionId = reminderLink.getAttribute('data-scroll-target');
+        const section = sectionId ? document.getElementById(sectionId) : null;
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        const field = requiredFields.find(item => item.key === reminderLink.getAttribute('data-field'));
+        if (!field) {
+            return;
+        }
+
+        if (field.type === 'radio') {
+            const firstRadio = document.querySelector(field.selector);
+            if (firstRadio) {
+                firstRadio.focus();
+            }
+        } else {
+            const targetInput = document.querySelector(field.selector);
+            if (targetInput) {
+                targetInput.focus();
+            }
+        }
+    });
+
+    refreshProfileCompletion();
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
