@@ -6,7 +6,15 @@
 <style>
     /* Hide navbar on admin dashboard */
     .peso-header {
-        display: none;
+        display: none !important;
+    }
+    
+    nav {
+        display: none !important;
+    }
+    
+    .navbar {
+        display: none !important;
     }
 
     html, body {
@@ -16,6 +24,11 @@
 
     body {
         background: #f5f7fa;
+    }
+    
+    .peso-main {
+        margin: 0;
+        padding: 0;
     }
 
     .admin-wrapper {
@@ -699,353 +712,6 @@
     });
 </script>
 
-@endsection
-
-    .admin-sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .admin-sidebar::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    .admin-sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 3px;
-    }
-
-    .admin-sidebar::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .sidebar-header {
-        padding: 0 1.5rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 1.5rem;
-    }
-
-    .sidebar-user {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .sidebar-user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 18px;
-    }
-
-    .sidebar-user-name {
-        flex: 1;
-    }
-
-    .sidebar-user-name h6 {
-        margin: 0;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .sidebar-user-name p {
-        margin: 2px 0 0 0;
-        font-size: 11px;
-        opacity: 0.8;
-    }
-
-    .sidebar-menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .sidebar-menu-item {
-        margin: 0;
-        padding: 0;
-    }
-
-    .sidebar-menu-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 1.5rem;
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .sidebar-menu-link:hover {
-        color: white;
-        background: rgba(255, 255, 255, 0.1);
-        padding-left: 1.75rem;
-    }
-
-    .sidebar-menu-link.active {
-        color: white;
-        background: rgba(215, 38, 56, 0.2);
-        border-right: 3px solid #d72638;
-        padding-right: calc(1.5rem - 3px);
-    }
-
-    .sidebar-menu-link i {
-        font-size: 18px;
-        min-width: 18px;
-    }
-
-    .sidebar-menu-divider {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.1);
-        margin: 1rem 0;
-    }
-
-    .admin-main {
-        margin-left: 260px;
-        flex: 1;
-        padding: 2rem;
-    }
-
-    .admin-dashboard {
-        background: transparent;
-        min-height: 100%;
-    }
-
-    .stat-card {
-        background: white;
-        border-left: 4px solid #0f2d52;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    .stat-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: #0f2d52;
-        margin: 10px 0;
-    }
-
-    .stat-label {
-        font-size: 13px;
-        color: #666;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .stat-icon {
-        font-size: 2rem;
-        opacity: 0.1;
-        position: absolute;
-        right: 15px;
-        top: 15px;
-    }
-
-    .dashboard-card {
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    .dashboard-card h5 {
-        color: #0f2d52;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #d72638;
-        padding-bottom: 0.75rem;
-    }
-
-    .data-table {
-        font-size: 13px;
-    }
-
-    .data-table th {
-        background: #f8f9fa;
-        color: #0f2d52;
-        font-weight: 700;
-        border-bottom: 2px solid #e9ecef;
-    }
-
-    .data-table td {
-        padding: 12px 8px;
-        vertical-align: middle;
-    }
-
-    .data-table tbody tr:hover {
-        background: #f8f9fa;
-    }
-
-    .badge-role {
-        font-size: 11px;
-        padding: 4px 8px;
-        border-radius: 4px;
-    }
-
-    .badge-admin {
-        background: #dc2626;
-        color: white;
-    }
-
-    .badge-employer {
-        background: #2563eb;
-        color: white;
-    }
-
-    .badge-jobseeker {
-        background: #16a34a;
-        color: white;
-    }
-
-    .badge-active {
-        background: #10b981;
-        color: white;
-    }
-
-    .badge-pending {
-        background: #f59e0b;
-        color: white;
-    }
-
-    .badge-closed {
-        background: #6b7280;
-        color: white;
-    }
-
-    .header-section {
-        display: none;
-    }
-
-    .logout-btn {
-        background: #d72638;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-
-    .logout-btn:hover {
-        background: #b81a2d;
-    }
-
-    .quick-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .list-item {
-        padding: 10px 0;
-        border-bottom: 1px solid #f0f0f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .list-item:last-child {
-        border-bottom: none;
-    }
-
-    .list-item-label {
-        flex: 1;
-        font-size: 13px;
-    }
-
-    .list-item-value {
-        font-weight: 600;
-        color: #0f2d52;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: #999;
-    }
-
-    /* Top Bar with Title */
-    .admin-topbar {
-        background: white;
-        padding: 1rem 0;
-        margin-bottom: 1.5rem;
-        border-bottom: 2px solid #f0f0f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .admin-topbar h2 {
-        margin: 0;
-        color: #0f2d52;
-        font-weight: 700;
-    }
-
-    .admin-topbar-right {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .toggle-sidebar-btn {
-        display: none;
-        background: #0f2d52;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 18px;
-    }
-
-    @media (max-width: 768px) {
-        .admin-sidebar {
-            position: fixed;
-            left: -260px;
-            width: 260px;
-            height: calc(100vh - 76px);
-            transition: left 0.3s ease;
-            z-index: 200;
-            top: 76px;
-        }
-
-        .admin-sidebar.show {
-            left: 0;
-        }
-
-        .admin-main {
-            margin-left: 0;
-            padding: 1rem;
-        }
-
-        .toggle-sidebar-btn {
-            display: block;
-        }
-
-        .quick-stats {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
 <div class="admin-wrapper">
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="adminSidebar">
@@ -1362,6 +1028,5 @@
     });
 </script>
 
-@include('components.footer')
 @endsection
 
