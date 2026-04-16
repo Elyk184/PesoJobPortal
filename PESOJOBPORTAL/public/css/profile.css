@@ -394,7 +394,48 @@
     margin-bottom: 6px;
 }
 
+@media (max-width: 1199.98px) {
+    .profile-section-card {
+        border-radius: 16px;
+    }
+
+    .profile-address-card,
+    .profile-entry-card,
+    .profile-current-resume {
+        border-radius: 14px;
+    }
+
+    .profile-skill-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-language-head,
+    .profile-language-row {
+        grid-template-columns: 2.2fr repeat(4, 0.8fr);
+    }
+}
+
 @media (max-width: 991.98px) {
+    .dashboard-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .dashboard-topbar .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .profile-section-header {
+        gap: 10px;
+    }
+
+    .profile-section-icon {
+        width: 32px;
+        height: 32px;
+    }
+
     .profile-education-head,
     .profile-education-row {
         grid-template-columns: 1fr;
@@ -423,6 +464,24 @@
         align-items: flex-start;
     }
 
+    .profile-entry-header--toolbar {
+        flex-direction: column;
+    }
+
+    .profile-add-btn,
+    .profile-remove-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .profile-address-card {
+        padding: 14px;
+    }
+
+    .profile-inline-choice {
+        gap: 8px;
+    }
+
     .profile-work-question {
         align-items: flex-start;
     }
@@ -442,12 +501,60 @@
         padding: 10px 8px;
     }
 
+    .profile-save-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
     .profile-save-wrap {
         justify-content: center;
     }
 }
 
 @media (max-width: 575.98px) {
+    .profile-section-card {
+        padding: 14px !important;
+        border-radius: 14px;
+    }
+
+    .profile-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-section-title {
+        font-size: 1rem;
+    }
+
+    .profile-section-rule {
+        margin-bottom: 14px;
+    }
+
+    .profile-input,
+    .profile-file-input {
+        border-radius: 10px;
+    }
+
+    .profile-address-card,
+    .profile-entry-card,
+    .profile-current-resume {
+        padding: 12px;
+    }
+
+    .profile-check-label,
+    .profile-check-tile,
+    .profile-radio-inline,
+    .profile-radio-item,
+    .profile-work-question {
+        font-size: 0.95rem;
+    }
+
+    .profile-skill-grid,
+    .profile-disability-grid {
+        grid-template-columns: 1fr;
+        gap: 8px 12px;
+    }
+
     .profile-language-head,
     .profile-language-row {
         grid-template-columns: 1fr;
@@ -465,5 +572,16 @@
     .profile-language-row > * {
         border-right: 0;
         padding: 0;
+    }
+
+    .profile-entry-kicker,
+    .profile-section-kicker,
+    .profile-summary-label {
+        letter-spacing: 0.06em;
+    }
+
+    .profile-remove-btn,
+    .profile-add-btn {
+        width: 100%;
     }
 }
