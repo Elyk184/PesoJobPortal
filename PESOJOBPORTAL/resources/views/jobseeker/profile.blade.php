@@ -12,7 +12,7 @@
     $nameParts = $nameParts ?? ['surname' => '', 'first_name' => '', 'middle_name' => '', 'suffix' => ''];
     $addressParts = $addressParts ?? ['house_no' => '', 'barangay' => '', 'municipality' => '', 'province' => ''];
     $educationRows = $educationRows ?? [];
-    $workExperienceRows = $workExperienceRows ?? ($profile->experience ?? []);
+    $workExperienceRows = $workExperienceRows ?? ($profile?->experience ?? []);
     $resumeFileName = $resumeFileName ?? null;
     $resumeFileUrl = $resumeFileUrl ?? null;
 
@@ -40,6 +40,91 @@
         'license' => '',
         'valid_until' => '',
     ]];
+
+    $otherSkills = [
+        ['label' => 'Trade & Manual Skills', 'items' => [
+            ['label' => 'Auto Mechanic', 'checked' => false],
+            ['label' => 'Beautician', 'checked' => false],
+            ['label' => 'Carpentry Work', 'checked' => false],
+            ['label' => 'Plumbing', 'checked' => false],
+            ['label' => 'Housekeeping', 'checked' => false],
+            ['label' => 'Electrician', 'checked' => false],
+            ['label' => 'Embroidery', 'checked' => false],
+            ['label' => 'Tailoring', 'checked' => false],
+            ['label' => 'Masonry', 'checked' => false],
+            ['label' => 'Painting Jobs', 'checked' => false],
+            ['label' => 'Gardening/Farming', 'checked' => false],
+            ['label' => 'Driver', 'checked' => false],
+        ]],
+        ['label' => 'IT & Technical Skills', 'items' => [
+            ['label' => 'Computer Literate', 'checked' => true],
+            ['label' => 'Microsoft Office', 'checked' => true],
+            ['label' => 'Web Development', 'checked' => true],
+            ['label' => 'Programming', 'checked' => true],
+            ['label' => 'Database', 'checked' => true],
+            ['label' => 'JavaScript', 'checked' => true],
+            ['label' => 'HTML/CSS', 'checked' => true],
+            ['label' => 'Git', 'checked' => true],
+            ['label' => 'Database Management', 'checked' => true],
+            ['label' => 'Frontend Development (Web UI)', 'checked' => true],
+            ['label' => 'API Integration & Development', 'checked' => true],
+            ['label' => 'Software Development & Debugging', 'checked' => true],
+            ['label' => 'Network Configuration & Troubleshooting', 'checked' => true],
+            ['label' => 'Hardware Installation & Repair', 'checked' => true],
+            ['label' => 'Graphic Design', 'checked' => true],
+            ['label' => 'React.js', 'checked' => true],
+            ['label' => 'Node.js', 'checked' => true],
+            ['label' => 'REST API', 'checked' => false],
+            ['label' => 'Backend Development (Server-side)', 'checked' => true],
+            ['label' => 'Virtual Assistance', 'checked' => true],
+            ['label' => 'Data Entry and Record Keeping', 'checked' => false],
+            ['label' => 'Filing and Documentation', 'checked' => false],
+            ['label' => 'Scheduling and Calendar Management', 'checked' => false],
+            ['label' => 'MySQL (Database)', 'checked' => true],
+            ['label' => 'Flutter', 'checked' => false],
+            ['label' => 'Docker', 'checked' => false],
+            ['label' => 'Laravel (Backend)', 'checked' => true],
+        ]],
+        ['label' => 'Soft Skills', 'items' => [
+            ['label' => 'Critical Thinking', 'checked' => true],
+            ['label' => 'Problem-Solving', 'checked' => true],
+            ['label' => 'Adaptability', 'checked' => true],
+            ['label' => 'Time Management', 'checked' => true],
+            ['label' => 'Team Collaboration', 'checked' => true],
+        ]],
+    ];
+
+    $languageRows = [
+        ['language' => 'English', 'read' => true, 'write' => true, 'speak' => true, 'understand' => true],
+        ['language' => 'Tagalog', 'read' => true, 'write' => true, 'speak' => true, 'understand' => true],
+        ['language' => 'Visayan', 'read' => true, 'write' => true, 'speak' => true, 'understand' => true],
+        ['language' => 'Others:', 'other' => true, 'value' => '', 'read' => false, 'write' => false, 'speak' => false, 'understand' => false],
+    ];
+
+    $disabilityRows = [
+        ['label' => 'Visual', 'checked' => true],
+        ['label' => 'Speech', 'checked' => false],
+        ['label' => 'Mental', 'checked' => false],
+        ['label' => 'Hearing', 'checked' => false],
+        ['label' => 'Physical', 'checked' => false],
+        ['label' => 'Others (please specify)', 'checked' => false],
+    ];
+
+    $employmentTypes = [
+        ['label' => 'Wage employed (Please specify)', 'checked' => false],
+        ['label' => 'Self employed (Please specify)', 'checked' => false],
+        ['label' => 'Unemployed', 'checked' => true],
+    ];
+
+    $jobPreferences = [
+        ['label' => 'Part-time', 'checked' => true],
+        ['label' => 'Full-time', 'checked' => true],
+    ];
+
+    $preferredLocations = [
+        ['label' => 'Local (specify cities/municipalities)', 'checked' => true],
+        ['label' => 'Overseas (specify countries)', 'checked' => false],
+    ];
 
     $educationPreview = [
         [
@@ -482,6 +567,188 @@
 
             <button type="button" class="btn btn-outline-primary profile-add-btn" disabled>
                 <i class="bi bi-plus-circle me-1"></i>Add License/Eligibility
+            </button>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-star"></i></div>
+                <div>
+                    <div class="profile-section-kicker">VII.</div>
+                    <h2 class="profile-section-title">Other Skills Acquired</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            @foreach ($otherSkills as $group)
+                <div class="profile-skill-group mb-3">
+                    <div class="profile-skill-group-title">{{ $group['label'] }}</div>
+                    <div class="profile-skill-grid">
+                        @foreach ($group['items'] as $item)
+                            <label class="profile-check-tile">
+                                <input type="checkbox" @checked($item['checked']) disabled>
+                                <span>{{ $item['label'] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
+            <div class="profile-skill-group pt-3 border-top">
+                <label class="profile-check-tile profile-check-tile--full mb-3">
+                    <input type="checkbox" disabled>
+                    <span><strong>Others (please specify):</strong></span>
+                </label>
+                <input class="form-control profile-input" value="" placeholder="Specify" disabled>
+                <div class="row g-3 mt-1">
+                    <div class="col-12 col-md-6">
+                        <div class="profile-inline-choice">
+                            <span class="fw-semibold">With Certificate</span>
+                            <label class="profile-radio-inline"><input type="radio" disabled> Yes</label>
+                            <label class="profile-radio-inline"><input type="radio" checked disabled> No</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="profile-inline-choice">
+                            <span class="fw-semibold">By Experience</span>
+                            <label class="profile-radio-inline"><input type="radio" disabled> Yes</label>
+                            <label class="profile-radio-inline"><input type="radio" checked disabled> No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-briefcase-fill"></i></div>
+                <div>
+                    <div class="profile-section-kicker">VIII.</div>
+                    <h2 class="profile-section-title">Employment Status / Type</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <div class="profile-block-heading">Employed</div>
+                    @foreach ($employmentTypes as $item)
+                        @if ($item['label'] !== 'Unemployed')
+                            <label class="profile-check-tile profile-check-tile--stacked">
+                                <input type="checkbox" @checked($item['checked']) disabled>
+                                <span>{{ $item['label'] }}</span>
+                            </label>
+                        @endif
+                    @endforeach
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="profile-block-heading">Unemployed</div>
+                    <label class="profile-check-tile profile-check-tile--stacked">
+                        <input type="checkbox" checked disabled>
+                        <span>Unemployed</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-search"></i></div>
+                <div>
+                    <div class="profile-section-kicker">IX.</div>
+                    <h2 class="profile-section-title">Job Preference</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <div class="profile-block-heading">Preferred Occupation</div>
+                    @foreach ($jobPreferences as $item)
+                        <label class="profile-check-tile profile-check-tile--stacked">
+                            <input type="checkbox" @checked($item['checked']) disabled>
+                            <span>{{ $item['label'] }}</span>
+                        </label>
+                    @endforeach
+                    <textarea class="form-control profile-input profile-notes mt-3" rows="4" disabled>programming, web development, graphic design</textarea>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="profile-block-heading">Preferred Work Location</div>
+                    @foreach ($preferredLocations as $item)
+                        <label class="profile-check-tile profile-check-tile--stacked">
+                            <input type="checkbox" @checked($item['checked']) disabled>
+                            <span>{{ $item['label'] }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-chat-square-dots"></i></div>
+                <div>
+                    <div class="profile-section-kicker">X.</div>
+                    <h2 class="profile-section-title">Language / Dialect Proficiency</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="profile-language-table">
+                <div class="profile-language-head">
+                    <div>Language/Dialect</div>
+                    <div>Read</div>
+                    <div>Write</div>
+                    <div>Speak</div>
+                    <div>Understand</div>
+                </div>
+
+                @foreach ($languageRows as $row)
+                    <div class="profile-language-row">
+                        <div class="profile-language-name">
+                            {{ $row['language'] }}
+                            @if (!empty($row['other']))
+                                <input class="form-control profile-input profile-language-other" value="{{ $row['value'] ?? '' }}" placeholder="Specify" disabled>
+                            @endif
+                        </div>
+                        <label class="profile-language-check"><input type="checkbox" @checked($row['read'] ?? false) disabled></label>
+                        <label class="profile-language-check"><input type="checkbox" @checked($row['write'] ?? false) disabled></label>
+                        <label class="profile-language-check"><input type="checkbox" @checked($row['speak'] ?? false) disabled></label>
+                        <label class="profile-language-check"><input type="checkbox" @checked($row['understand'] ?? false) disabled></label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-universal-access"></i></div>
+                <div>
+                    <div class="profile-section-kicker">XI.</div>
+                    <h2 class="profile-section-title">Disability</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="profile-disability-grid">
+                @foreach ($disabilityRows as $item)
+                    <label class="profile-check-tile profile-check-tile--stacked">
+                        <input type="checkbox" @checked($item['checked']) disabled>
+                        <span>{{ $item['label'] }}</span>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="profile-save-wrap">
+            <button type="button" class="btn profile-save-btn" disabled>
+                <i class="bi bi-cloud-arrow-up me-2"></i>Save Profile
             </button>
         </div>
     </div>
