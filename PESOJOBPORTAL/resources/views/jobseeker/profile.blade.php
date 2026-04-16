@@ -15,7 +15,7 @@
     </div>
 
     <div class="row g-3">
-        <div class="col-12 col-lg-8">
+        <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Basic Information</h5>
@@ -48,25 +48,6 @@
                             <i class="bi bi-pencil-square me-2"></i>Edit Profile (coming soon)
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">Resume Builder (Optional)</h5>
-                    <p class="text-muted mb-3">Open the Harvard-style resume builder and preview your CV.</p>
-                    <a class="btn btn-outline-primary w-100" href="{{ route('jobseeker.resume-builder') }}">
-                        <i class="bi bi-file-earmark-text me-2"></i>Open Resume Builder
-                    </a>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mt-3">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">Skill Gap Suggestions (Optional)</h5>
-                    <p class="text-muted mb-0">Recommendations will appear based on your target roles.</p>
                 </div>
             </div>
         </div>
