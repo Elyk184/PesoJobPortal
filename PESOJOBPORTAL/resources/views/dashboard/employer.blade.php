@@ -22,12 +22,12 @@
     .dashboard-hero {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(135deg, #0f766e 0%, #0e9aa7 46%, #22d3ee 100%);
+        background: linear-gradient(90deg, #0f2d52, #1f4b8f);
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.28);
+        border: 2px solid #d72638;
         padding: 20px;
-        color: #ecfeff;
-        box-shadow: 0 14px 26px rgba(8, 47, 73, 0.22);
+        color: #f5f7fb;
+        box-shadow: 0 14px 26px rgba(15, 35, 64, 0.22);
     }
 
     .dashboard-hero::after {
@@ -53,7 +53,7 @@
         position: relative;
         z-index: 1;
         margin: 0;
-        color: rgba(236, 254, 255, 0.92);
+        color: rgba(245, 247, 251, 0.92);
         max-width: 720px;
     }
 
@@ -71,9 +71,9 @@
         border-radius: 999px;
         font-size: 12px;
         font-weight: 700;
-        border: 1px solid rgba(255, 255, 255, 0.28);
-        background: rgba(8, 47, 73, 0.24);
-        color: #ecfeff;
+        border: 1px solid rgba(215, 38, 56, 0.4);
+        background: rgba(215, 38, 56, 0.16);
+        color: #f5f7fb;
         backdrop-filter: blur(8px);
     }
 
