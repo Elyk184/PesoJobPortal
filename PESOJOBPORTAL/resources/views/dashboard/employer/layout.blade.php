@@ -44,12 +44,12 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(90deg, #0f2d52, #1f4b8f);
-            border-right: 3px solid #d72638;
+            background: linear-gradient(180deg, #0b1228 0%, #16213f 100%);
+            border: 1px solid rgba(148, 163, 184, 0.22);
             border-radius: 0;
             padding: 0;
-            box-shadow: 0 14px 30px rgba(15, 35, 64, 0.28);
-            color: #dfe7f5;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
+            color: #cbd5e1;
             overflow: hidden;
         }
 
@@ -58,7 +58,7 @@
             align-items: center;
             gap: 10px;
             padding: 12px;
-            border-bottom: 1px solid rgba(215, 38, 56, 0.3);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
         }
 
         .sidebar-logo {
@@ -73,7 +73,7 @@
 
         .sidebar-brand-title {
             margin: 0;
-            color: #f5f7fb;
+            color: #f8fafc;
             font-size: 17px;
             font-weight: 700;
             line-height: 1.2;
@@ -81,7 +81,7 @@
 
         .sidebar-brand-subtitle {
             margin: 0;
-            color: #b8c6d8;
+            color: #94a3b8;
             font-size: 12px;
         }
 
@@ -96,7 +96,7 @@
 
         .sidebar-group-title {
             margin: 6px 8px 2px;
-            color: #a5b4c4;
+            color: #7d8ba5;
             font-size: 10px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -117,7 +117,7 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            color: #dfe7f5;
+            color: #cbd5e1;
             background: transparent;
             border: 0;
             border-radius: 9px;
@@ -130,15 +130,10 @@
         }
 
         .sidebar a:hover,
-        .sidebar-logout:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
+        .sidebar-logout:hover,
         .sidebar a.active {
-            background: rgba(215, 38, 56, 0.16);
-            color: #ffffff;
-            box-shadow: inset 0 0 0 1px rgba(215, 38, 56, 0.6);
+            background: rgba(14, 165, 168, 0.22);
+            color: #f8fafc;
         }
 
         .nav-icon {
@@ -147,7 +142,7 @@
             border-radius: 6px;
             display: grid;
             place-items: center;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(148, 163, 184, 0.18);
             color: #e2e8f0;
             flex-shrink: 0;
         }
