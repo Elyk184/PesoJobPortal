@@ -122,16 +122,17 @@
 
                 <div class="row g-3">
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
-                        <input class="form-control profile-input" name="personal_information[surname]" value="{{ old('personal_information.surname', $personalInformation['surname'] ?? '') }}">
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[first_name]" value="{{ old('personal_information.first_name', $personalInformation['first_name'] ?? '') }}">
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Middle Name</label>
-                        <input class="form-control profile-input" name="personal_information[middle_name]" value="{{ old('personal_information.middle_name', $personalInformation['middle_name'] ?? '') }}">
+                        <label class="form-label fw-semibold">Middle Initial</label>
+                        <input class="form-control profile-input" name="personal_information[middle_initial]" maxlength="5" placeholder="M."
+                            value="{{ old('personal_information.middle_initial', $personalInformation['middle_initial'] ?? $personalInformation['middle_name'] ?? '') }}">
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <label class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
+                        <input class="form-control profile-input" name="personal_information[surname]" value="{{ old('personal_information.surname', $personalInformation['surname'] ?? '') }}">
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Suffix</label>

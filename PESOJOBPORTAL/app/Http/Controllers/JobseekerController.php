@@ -40,7 +40,7 @@ class JobseekerController extends Controller
         $validated = $request->validate([
             'personal_information.surname' => ['required', 'string', 'max:255'],
             'personal_information.first_name' => ['required', 'string', 'max:255'],
-            'personal_information.middle_name' => ['nullable', 'string', 'max:255'],
+            'personal_information.middle_initial' => ['nullable', 'string', 'max:10'],
             'personal_information.suffix' => ['nullable', 'string', 'max:50'],
             'personal_information.date_of_birth' => ['nullable', 'date'],
             'personal_information.sex' => ['nullable', 'in:Male,Female'],
@@ -174,9 +174,9 @@ class JobseekerController extends Controller
         ];
 
         $fullName = collect([
-            $personal['surname'] ?? '',
             $personal['first_name'] ?? '',
-            $personal['middle_name'] ?? '',
+            $personal['middle_initial'] ?? '',
+            $personal['surname'] ?? '',
             $personal['suffix'] ?? '',
         ])->filter()->join(' ');
 
@@ -203,6 +203,9 @@ class JobseekerController extends Controller
                 'disability' => $disability,
             ]
         );
+
+        $user->name = $fullName ?: $user->name;
+        $user->save();
 
         return redirect()
             ->route('jobseeker.profile')
@@ -399,7 +402,7 @@ class JobseekerController extends Controller
         $personalInformation = array_merge([
             'surname' => $nameParts['surname'],
             'first_name' => $nameParts['first_name'],
-            'middle_name' => $nameParts['middle_name'],
+            'middle_initial' => $nameParts['middle_initial'],
             'suffix' => $nameParts['suffix'],
             'date_of_birth' => '',
             'sex' => 'Female',
@@ -533,10 +536,39 @@ class JobseekerController extends Controller
             }
         }
 
+        $firstName = $segments[0] ?? '';
+        $middleInitial = '';
+        $surname = '';
+
+        if (count($segments) === 2) {
+            $surname = $segments[1] ?? '';
+        } elseif (count($segments) === 3) {
+            $secondSegment = (string) ($segments[1] ?? '');
+
+            if (preg_match('/^[A-Za-z]\.?$/', $secondSegment)) {
+                $middleInitial = $secondSegment;
+                $surname = $segments[2] ?? '';
+            } else {
+                $firstName = trim(($segments[0] ?? '') . ' ' . $secondSegment);
+                $surname = $segments[2] ?? '';
+            }
+        } elseif (count($segments) > 3) {
+            $penultimateSegment = (string) ($segments[count($segments) - 2] ?? '');
+
+            if (preg_match('/^[A-Za-z]\.?$/', $penultimateSegment)) {
+                $surname = array_pop($segments) ?? '';
+                $middleInitial = array_pop($segments) ?? '';
+                $firstName = implode(' ', $segments);
+            } else {
+                $firstName = implode(' ', array_slice($segments, 0, 2));
+                $surname = array_pop($segments) ?? '';
+            }
+        }
+
         return [
-            'surname' => $segments[0] ?? '',
-            'first_name' => $segments[1] ?? '',
-            'middle_name' => count($segments) > 2 ? implode(' ', array_slice($segments, 2)) : '',
+            'first_name' => $firstName,
+            'middle_initial' => $middleInitial,
+            'surname' => $surname,
             'suffix' => $suffix,
         ];
     }
