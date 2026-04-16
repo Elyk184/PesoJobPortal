@@ -9,6 +9,7 @@ use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -282,6 +283,7 @@ class EmployerController extends Controller
         $status = $isDraft
             ? 'draft'
             : ($employer->is_employer_verified ? 'active' : 'pending');
+        $status = $this->normalizeJobStatusForStorage($status);
 
         $rules = [
             'title' => ['required', 'string', 'max:255'],
@@ -335,6 +337,11 @@ class EmployerController extends Controller
         }
 
         $jobData['status'] = $status;
+
+        // Keep inserts compatible with environments where some optional columns
+        // have not been migrated yet.
+        $jobColumns = array_flip(Schema::getColumnListing('peso_jobs'));
+        $jobData = array_intersect_key($jobData, $jobColumns);
 
         $job = PesoJob::create($jobData);
 
@@ -567,5 +574,37 @@ class EmployerController extends Controller
             'internship' => 'Internship',
             'freelance' => 'Freelance',
         ];
+    }
+
+    private function normalizeJobStatusForStorage(string $requestedStatus): string
+    {
+        $fallback = 'active';
+
+        try {
+            $result = DB::selectOne("SHOW COLUMNS FROM `peso_jobs` LIKE 'status'");
+
+            if (! $result || ! isset($result->Type)) {
+                return $requestedStatus;
+            }
+
+            if (! str_starts_with($result->Type, 'enum(')) {
+                return $requestedStatus;
+            }
+
+            preg_match_all("/'([^']+)'/", $result->Type, $matches);
+            $allowedStatuses = $matches[1] ?? [];
+
+            if (in_array($requestedStatus, $allowedStatuses, true)) {
+                return $requestedStatus;
+            }
+
+            if (in_array($fallback, $allowedStatuses, true)) {
+                return $fallback;
+            }
+
+            return $allowedStatuses[0] ?? $requestedStatus;
+        } catch (\Throwable) {
+            return $requestedStatus;
+        }
     }
 }

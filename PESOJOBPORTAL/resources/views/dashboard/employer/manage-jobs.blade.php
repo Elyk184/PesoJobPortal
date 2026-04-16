@@ -85,11 +85,21 @@
         color: #4f5f78;
         border-bottom: 1px solid #dfe6f3;
         background: #f7f9fc;
-        white-space: nowrap;
+        white-space: normal;
+        padding: 0.72rem 0.7rem;
+        line-height: 1.15;
+        text-align: center;
     }
     .jobs-grid td {
         border-bottom: 1px solid #e7ecf5;
-        vertical-align: middle;
+        vertical-align: top;
+        padding: 0.72rem 0.7rem;
+        font-size: 0.9rem;
+    }
+    .jobs-grid {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
     }
     .jobs-grid tbody tr:hover {
         background: #f9fbff;
@@ -103,6 +113,24 @@
     .job-sub {
         color: #596680;
         font-size: 0.88rem;
+    }
+    .cell-company,
+    .cell-location {
+        color: #334155;
+        line-height: 1.35;
+        white-space: normal;
+        word-break: break-word;
+    }
+    .cell-num,
+    .cell-date,
+    .cell-status {
+        white-space: nowrap;
+        text-align: center;
+    }
+    .cell-actions {
+        white-space: nowrap;
+        min-width: 0;
+        text-align: center;
     }
     .employment-pill {
         display: inline-block;
@@ -143,13 +171,13 @@
     }
     .action-row {
         display: flex;
-        justify-content: flex-end;
-        gap: 0.3rem;
-        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.22rem;
+        flex-wrap: nowrap;
     }
     .icon-btn {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
         padding: 0;
         border-radius: 7px;
         display: inline-flex;
@@ -163,9 +191,31 @@
         background: #f0f5ff;
         color: #1347c0;
     }
+    .action-icon {
+        width: 15px;
+        height: 15px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .empty-jobs-row {
+        text-align: center;
+        color: #64748b;
+        padding: 1.25rem !important;
+        font-weight: 500;
+    }
     @media (max-width: 1200px) {
         .jobs-grid {
-            min-width: 1180px;
+            font-size: 0.85rem;
+        }
+        .jobs-grid th,
+        .jobs-grid td {
+            padding: 0.58rem 0.45rem;
+        }
+        .job-title {
+            font-size: 0.98rem;
         }
     }
     @media (max-width: 768px) {
@@ -298,7 +348,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($jobs as $job)
+                    @forelse($jobs as $job)
                         @php
                             [$statusClass, $statusLabel] = $resolveStatus($job);
                         @endphp
@@ -307,27 +357,27 @@
                                 <div class="job-title">{{ $job->title ?: ($job->position ?: 'Untitled Job') }}</div>
                                 <div class="job-sub">{{ $formatEmployment($job->job_type) }}</div>
                             </td>
-                            <td>{{ $job->employer_name ?: (auth()->user()->profile->company_name ?? auth()->user()->name) }}</td>
-                            <td>{{ $job->location ?: 'No location' }}</td>
+                            <td class="cell-company">{{ $job->employer_name ?: (auth()->user()->profile->company_name ?? auth()->user()->name) }}</td>
+                            <td class="cell-location">{{ $job->location ?: 'No location' }}</td>
                             <td><span class="employment-pill">{{ $formatEmployment($job->job_type) }}</span></td>
                             <td>{{ $formatSalary($job) }}</td>
-                            <td>{{ $job->vacancies ?? 0 }}</td>
-                            <td><span class="apps-pill">{{ $job->applications_count ?? 0 }}</span></td>
-                            <td>{{ $job->views ?? $job->view_count ?? 0 }}</td>
-                            <td>{{ optional($job->application_end_date)->format('M d, Y') ?: 'No deadline' }}</td>
-                            <td>
+                            <td class="cell-num">{{ $job->vacancies ?? 0 }}</td>
+                            <td class="cell-num"><span class="apps-pill">{{ $job->applications_count ?? 0 }}</span></td>
+                            <td class="cell-num">{{ $job->views ?? $job->view_count ?? 0 }}</td>
+                            <td class="cell-date">{{ optional($job->application_end_date)->format('M d, Y') ?: 'No deadline' }}</td>
+                            <td class="cell-status">
                                 <span class="status-chip {{ $statusClass }}">{{ $statusLabel }}</span>
                             </td>
-                            <td class="text-end">
+                            <td class="text-end cell-actions">
                                 <div class="action-row">
                                     <a href="{{ route('employer.applicants.index') }}" class="icon-btn" title="View Applicants" aria-label="View Applicants">
-                                        <i class="bi bi-eye"></i>
+                                        <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                     </a>
 
                                     <form action="{{ route('employer.jobs.duplicate', $job) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="icon-btn" title="Duplicate Job" aria-label="Duplicate Job">
-                                            <i class="bi bi-pencil"></i>
+                                            <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>
                                         </button>
                                     </form>
 
@@ -336,7 +386,7 @@
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="icon-btn" title="Mark as Filled" aria-label="Mark as Filled">
-                                                <i class="bi bi-check2-square"></i>
+                                                <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             </button>
                                         </form>
                                     @endif
@@ -346,14 +396,18 @@
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="icon-btn" title="Archive Job" aria-label="Archive Job">
-                                                <i class="bi bi-archive"></i>
+                                                <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="4"></rect><path d="M5 8v12h14V8"></path><path d="M10 12h4"></path></svg>
                                             </button>
                                         </form>
                                     @endif
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="11" class="empty-jobs-row">No jobs found in this tab yet.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

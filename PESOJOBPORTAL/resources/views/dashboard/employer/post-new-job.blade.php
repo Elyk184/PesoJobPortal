@@ -95,18 +95,67 @@
         color: #1f2937;
         margin-bottom: 0.5rem;
         font-size: 0.92rem;
+        letter-spacing: 0.01em;
+    }
+    .form-block .mb-3 {
+        border: 1px solid #e4ebf7;
+        border-radius: 12px;
+        padding: 0.9rem 1rem;
+        background: linear-gradient(180deg, #f9fbff 0%, #f5f8ff 100%);
+        margin-bottom: 0.95rem !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .form-block .mb-3:focus-within {
+        border-color: #8cb5f7;
+        box-shadow: 0 0 0 4px rgba(47, 110, 200, 0.12);
+        background: #ffffff;
     }
     .form-control, .form-select {
         border: 1px solid #d6dbe7;
         border-radius: 10px;
         padding: 0.75rem 1rem;
-        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;
         background: #fff;
+        font-size: 0.93rem;
+        color: #1e293b;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+    .form-control::placeholder,
+    .form-select::placeholder {
+        color: #94a3b8;
+    }
+    .form-control:hover,
+    .form-select:hover {
+        border-color: #b9c7df;
+        background: #ffffff;
     }
     .form-control:focus, .form-select:focus {
         border-color: #2f6ec8;
         box-shadow: 0 0 0 4px rgba(47, 110, 200, 0.14);
         background: #fff;
+        transform: translateY(-1px);
+    }
+    textarea.form-control {
+        min-height: 120px;
+        line-height: 1.45;
+    }
+    .text-muted {
+        color: #64748b !important;
+        font-size: 0.8rem;
+    }
+    .invalid-feedback,
+    .text-danger.small {
+        font-size: 0.79rem;
+        font-weight: 600;
+    }
+    .is-invalid {
+        border-color: #e11d48 !important;
+        box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12) !important;
+    }
+    .form-control[readonly] {
+        background: #eef3fb;
+        border-color: #d5deee;
+        color: #334155;
     }
     .salary-input-group {
         display: flex;
@@ -269,11 +318,13 @@
         border-bottom-left-radius: 18px;
         border-bottom-right-radius: 18px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
         gap: 0.75rem;
     }
     .form-actions .btn {
-        width: 100%;
+        width: auto;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -285,7 +336,9 @@
     }
     .action-buttons {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-end;
+        flex-wrap: wrap;
         gap: 0.5rem;
     }
     .tips-card {
@@ -309,6 +362,9 @@
         .job-form-card {
             padding: 1.3rem;
         }
+        .form-block .mb-3 {
+            padding: 0.8rem 0.85rem;
+        }
         .form-actions {
             margin: 1rem -1.3rem -1.3rem;
             padding: 0.9rem 1.3rem;
@@ -330,6 +386,9 @@
         }
         .form-actions {
             position: static;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
             border-radius: 12px;
             margin: 1rem 0 0;
             padding: 0;
@@ -337,10 +396,9 @@
             background: transparent;
             backdrop-filter: none;
         }
-        .form-actions .d-flex {
+        .action-buttons {
             flex-direction: column;
             width: 100%;
-            gap: 0.75rem !important;
         }
         .form-actions .btn {
             width: 100%;
@@ -492,7 +550,7 @@
                     </h5>
 
                     <div class="mb-3">
-                        <textarea class="form-control @error('key_responsibilities') is-invalid @enderror"
+                        <textarea class="form-control bullet-field @error('key_responsibilities') is-invalid @enderror"
                                   id="key_responsibilities" name="key_responsibilities" rows="5"
                                   placeholder="List the main duties and responsibilities for this role...">{{ old('key_responsibilities') }}</textarea>
                         @error('key_responsibilities')
@@ -515,7 +573,7 @@
                     </h5>
 
                     <div class="mb-3">
-                        <textarea class="form-control @error('qualifications') is-invalid @enderror"
+                        <textarea class="form-control bullet-field @error('qualifications') is-invalid @enderror"
                                   id="qualifications" name="qualifications" rows="5"
                                   placeholder="List the required qualifications...">{{ old('qualifications') }}</textarea>
                         @error('qualifications')
@@ -538,7 +596,7 @@
                     </h5>
 
                     <div class="mb-3">
-                        <textarea class="form-control @error('preferred_skills') is-invalid @enderror"
+                        <textarea class="form-control bullet-field @error('preferred_skills') is-invalid @enderror"
                                   id="preferred_skills" name="preferred_skills" rows="4"
                                   placeholder="List the required skills for this position...">{{ old('preferred_skills') }}</textarea>
                         @error('preferred_skills')
@@ -561,7 +619,7 @@
                     </h5>
 
                     <div class="mb-3">
-                        <textarea class="form-control @error('experience') is-invalid @enderror"
+                        <textarea class="form-control bullet-field @error('experience') is-invalid @enderror"
                                   id="experience" name="experience" rows="4"
                                   placeholder="e.g. 2-3 years of experience in software development...">{{ old('experience') }}</textarea>
                         @error('experience')
@@ -607,7 +665,7 @@
                     </h5>
 
                     <div class="mb-3">
-                        <textarea class="form-control @error('benefits') is-invalid @enderror"
+                        <textarea class="form-control bullet-field @error('benefits') is-invalid @enderror"
                                   id="benefits" name="benefits" rows="4"
                                   placeholder="List the benefits and perks...">{{ old('benefits') }}</textarea>
                         @error('benefits')
@@ -719,6 +777,96 @@
         tomorrow.setDate(tomorrow.getDate() + 1);
         const minDate = tomorrow.toISOString().split('T')[0];
         document.getElementById('application_deadline').min = minDate;
+
+        const bulletFields = document.querySelectorAll('.bullet-field');
+
+        const normalizeBullets = (text) => {
+            const normalized = text.replace(/\r\n/g, '\n');
+
+            return normalized
+                .split('\n')
+                .map((line) => {
+                    const trimmed = line.trim();
+
+                    if (trimmed === '') {
+                        return '';
+                    }
+
+                    if (trimmed.startsWith('• ')) {
+                        return trimmed;
+                    }
+
+                    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                        return '• ' + trimmed.slice(2).trimStart();
+                    }
+
+                    return '• ' + trimmed;
+                })
+                .join('\n');
+        };
+
+        bulletFields.forEach((field) => {
+            if (field.value.trim() !== '') {
+                field.value = normalizeBullets(field.value);
+            }
+
+            field.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter') {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const start = field.selectionStart;
+                const end = field.selectionEnd;
+                const value = field.value;
+                const insertion = '\n• ';
+
+                field.value = value.slice(0, start) + insertion + value.slice(end);
+                const newCursor = start + insertion.length;
+                field.setSelectionRange(newCursor, newCursor);
+            });
+
+            field.addEventListener('paste', (event) => {
+                const clipboardText = (event.clipboardData || window.clipboardData)?.getData('text') ?? '';
+
+                if (clipboardText.trim() === '') {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const start = field.selectionStart;
+                const end = field.selectionEnd;
+                const value = field.value;
+
+                const before = value.slice(0, start);
+                const after = value.slice(end);
+                const pastedBullets = normalizeBullets(clipboardText).trim();
+
+                const needsLeadingBreak = before.length > 0 && !before.endsWith('\n');
+                const needsTrailingBreak = after.length > 0 && !after.startsWith('\n');
+
+                const insertion =
+                    (needsLeadingBreak ? '\n' : '') +
+                    pastedBullets +
+                    (needsTrailingBreak ? '\n' : '');
+
+                field.value = before + insertion + after;
+
+                const cursor = before.length + insertion.length;
+                field.setSelectionRange(cursor, cursor);
+            });
+
+            field.addEventListener('blur', () => {
+                if (field.value.trim() === '' || field.value.trim() === '•') {
+                    field.value = '';
+                    return;
+                }
+
+                field.value = normalizeBullets(field.value);
+            });
+        });
     });
 </script>
 @endpush
