@@ -73,8 +73,8 @@
     }
 
     .sidebar-header {
-        padding: 0 1.5rem;
-        margin-bottom: 2rem;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         padding-bottom: 1.5rem;
     }
@@ -356,6 +356,31 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 2rem;
+    }
+
+    .admin-topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex: 1;
+    }
+
+    .topbar-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .topbar-logo img {
+        height: 56px;
+        width: auto;
+    }
+
+    .topbar-title {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
     }
 
     .admin-topbar h2 {
@@ -366,10 +391,50 @@
         letter-spacing: -0.5px;
     }
 
+    .topbar-subtitle {
+        font-size: 13px;
+        color: #6b7280;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+
     .admin-topbar-right {
         display: flex;
-        gap: 1rem;
+        gap: 1.5rem;
         align-items: center;
+    }
+
+    .topbar-datetime {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+    }
+
+    .topbar-time {
+        text-align: right;
+    }
+
+    .topbar-time-display {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0d1f3c;
+        line-height: 1;
+    }
+
+    .topbar-date-display {
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+
+    .topbar-datetime-icon {
+        font-size: 24px;
+        color: #d72638;
     }
 
     .toggle-sidebar-btn {
@@ -408,8 +473,47 @@
             padding: 1.5rem;
         }
 
+        .admin-topbar {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .admin-topbar-left {
+            width: 100%;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        .topbar-logo {
+            height: 48px;
+            width: auto;
+        }
+
+        .topbar-logo img {
+            height: 48px;
+        }
+
+        .topbar-title {
+            text-align: center;
+        }
+
         .admin-topbar h2 {
-            font-size: 22px;
+            font-size: 20px;
+        }
+
+        .topbar-subtitle {
+            font-size: 11px;
+        }
+
+        .admin-topbar-right {
+            width: 100%;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .topbar-datetime {
+            flex: 1;
         }
 
         .toggle-sidebar-btn {
@@ -603,8 +707,23 @@
     <main class="admin-main">
         <!-- Top Bar -->
         <div class="admin-topbar">
-            <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+            <div class="admin-topbar-left">
+                <div class="topbar-logo">
+                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+                </div>
+                <div class="topbar-title">
+                    <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+                    <div class="topbar-subtitle">Welcome to PESO Admin Portal</div>
+                </div>
+            </div>
             <div class="admin-topbar-right">
+                <div class="topbar-datetime">
+                    <i class="bi bi-clock-history topbar-datetime-icon"></i>
+                    <div class="topbar-time">
+                        <div class="topbar-time-display" id="currentTime">--:--</div>
+                        <div class="topbar-date-display" id="currentDate">--/--/----</div>
+                    </div>
+                </div>
                 <button class="toggle-sidebar-btn" id="toggleSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -841,6 +960,33 @@
             }
         });
     });
+
+    // Update date and time
+    function updateDateTime() {
+        const now = new Date();
+        
+        // Format time as HH:MM
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+        
+        // Format date as MMM DD, YYYY
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        const dateString = now.toLocaleDateString('en-US', options);
+        
+        // Update the display
+        const timeElement = document.getElementById('currentTime');
+        const dateElement = document.getElementById('currentDate');
+        
+        if (timeElement) timeElement.textContent = timeString;
+        if (dateElement) dateElement.textContent = dateString;
+    }
+
+    // Update on page load
+    updateDateTime();
+    
+    // Update every minute
+    setInterval(updateDateTime, 60000);
 </script>
 
 @endsection
