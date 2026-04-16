@@ -227,6 +227,7 @@
         <form method="POST" action="{{ route('employer.profile.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <input type="hidden" id="logo_only" name="logo_only" value="0">
 
             @if(session('success'))
             <div class="alert alert-success m-3 mb-0 alert-dismissible fade show" role="alert">
@@ -239,8 +240,11 @@
             <div id="company-logo-section" class="form-section">
                 <h5 class="section-heading"><i class="fas fa-image"></i> Company Logo</h5>
                 <div class="text-center mb-3">
-                    @if($companyProfile && $companyProfile->logo_path)
-                    <img src="{{ Storage::url($companyProfile->logo_path) }}" alt="Company Logo" class="rounded-circle" style="width: 200px; height: 200px; object-fit: cover; border: 3px solid #2d5aa0;">
+                    @php
+                        $hasCompanyLogo = $companyProfile && $companyProfile->logo_path && Storage::disk('public')->exists($companyProfile->logo_path);
+                    @endphp
+                    @if($hasCompanyLogo)
+                    <img src="{{ asset('storage/' . $companyProfile->logo_path) }}" alt="Company Logo" class="rounded-circle" style="width: 200px; height: 200px; object-fit: cover; border: 3px solid #2d5aa0;">
                     @else
                         <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 200px; height: 200px; background: #e9ecef; border: 3px dashed #2d5aa0;">
                             <i class="bi bi-building" style="font-size: 5rem; color: #6c757d;"></i>
@@ -249,10 +253,10 @@
                 </div>
                 <div class="text-center">
                     <label for="company_logo" class="btn btn-auth-custom d-inline-flex align-items-center justify-content-center" style="width: auto; padding: 10px 25px; cursor: pointer;">
-                        <i class="bi bi-upload me-2"></i><span id="logo-label">{{ $companyProfile && $companyProfile->logo_path ? 'Change Logo' : 'Upload Logo' }}</span>
+                        <i class="bi bi-upload me-2"></i><span id="logo-label">{{ $hasCompanyLogo ? 'Change Logo' : 'Upload Logo' }}</span>
                     </label>
-                    <input type="file" id="company_logo" name="company_logo" accept=".jpg,.jpeg,.png,.gif" style="display: none;" onchange="document.getElementById('logo-label').innerHTML = '<i class=\'bi bi-check-circle me-2\'></i>' + (this.files[0] ? this.files[0].name : 'Upload Logo')">
-                    <small class="d-block text-muted mt-2">JPG, PNG, GIF (max 2MB)</small>
+                    <input type="file" id="company_logo" name="company_logo" accept=".jpg,.jpeg,.png,.gif" style="display: none;" onchange="handleCompanyLogoChange(this)">
+                    <small class="d-block text-muted mt-2">JPG, PNG, GIF (max 2MB). Logo uploads right after file selection.</small>
                 </div>
             </div>
 
@@ -751,6 +755,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+function handleCompanyLogoChange(input) {
+    const label = document.getElementById('logo-label');
+    const logoOnlyFlag = document.getElementById('logo_only');
+    const form = input.closest('form');
+
+    if (!input.files || !input.files[0] || !form) {
+        return;
+    }
+
+    if (label) {
+        label.textContent = 'Uploading...';
+    }
+
+    if (logoOnlyFlag) {
+        logoOnlyFlag.value = '1';
+    }
+
+    form.submit();
+}
 </script>
 @endpush
 @endsection

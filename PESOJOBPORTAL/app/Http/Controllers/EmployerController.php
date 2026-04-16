@@ -10,17 +10,23 @@ use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class EmployerController extends Controller
 {
     public function dashboard(Request $request): View
     {
-        $employer = $request->user();
+        $employer = $request->user()->loadMissing('profile');
+        $logoPath = $employer->profile->logo_path ?? null;
+        $companyLogoUrl = ($logoPath && Storage::disk('public')->exists($logoPath))
+            ? asset('storage/'.$logoPath)
+            : null;
 
         return view('dashboard.employer', [
             'stats' => $this->buildDashboardStats($employer->id),
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+            'companyLogoUrl' => $companyLogoUrl,
         ]);
     }
 
@@ -101,6 +107,24 @@ class EmployerController extends Controller
     public function updateCompanyProfile(Request $request): RedirectResponse
     {
         $employer = $request->user();
+
+        if ($request->boolean('logo_only')) {
+            $validated = $request->validate([
+                'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            ]);
+
+            $profile = UserProfile::firstOrCreate(['user_id' => $employer->id]);
+
+            if ($profile->logo_path && Storage::disk('public')->exists($profile->logo_path)) {
+                Storage::disk('public')->delete($profile->logo_path);
+            }
+
+            $profile->update([
+                'logo_path' => $request->file('company_logo')->store('company-profiles', 'public'),
+            ]);
+
+            return back()->with('success', 'Company logo updated successfully.');
+        }
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],

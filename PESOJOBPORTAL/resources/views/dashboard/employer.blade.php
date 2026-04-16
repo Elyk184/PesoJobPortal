@@ -16,7 +16,7 @@
 <style>
     .dashboard-shell {
         display: grid;
-        gap: 16px;
+        gap: 20px;
     }
 
     .dashboard-hero {
@@ -25,7 +25,7 @@
         background: linear-gradient(90deg, #0f2d52, #1f4b8f);
         border-radius: 14px;
         border: 2px solid #d72638;
-        padding: 20px;
+        padding: 24px;
         color: #f5f7fb;
         box-shadow: 0 14px 26px rgba(15, 35, 64, 0.22);
     }
@@ -49,21 +49,69 @@
         font-size: 24px;
     }
 
+    .hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .hero-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    .hero-company-logo,
+    .hero-company-logo-fallback {
+        position: relative;
+        z-index: 1;
+        width: 210px;
+        height: 210px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 10px;
+    }
+
+    .hero-company-logo {
+        object-fit: contain;
+        padding: 3px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 10px 24px rgba(15, 35, 64, 0.28);
+    }
+
+    .hero-company-logo-fallback {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.12);
+        border: 2px dashed rgba(255, 255, 255, 0.38);
+        color: #f5f7fb;
+    }
+
+    .hero-company-logo-fallback svg {
+        width: 42px;
+        height: 42px;
+    }
+
     .dashboard-hero p {
         position: relative;
         z-index: 1;
         margin: 0;
         color: rgba(245, 247, 251, 0.92);
-        max-width: 720px;
+        max-width: 680px;
+        line-height: 1.6;
     }
 
     .hero-badges {
         position: relative;
         z-index: 1;
-        margin-top: 14px;
+        margin-top: 16px;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
     }
 
     .hero-badge {
@@ -80,13 +128,13 @@
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px;
+        gap: 14px;
     }
 
     .metric-card {
         position: relative;
         overflow: hidden;
-        padding: 16px;
+        padding: 18px;
         border-radius: 12px;
         border: 1px solid var(--line);
         background: linear-gradient(160deg, #ffffff 0%, #f6fbff 100%);
@@ -136,9 +184,9 @@
     }
 
     .metric-value {
-        font-size: 34px;
+        font-size: 36px;
         line-height: 1.05;
-        margin: 8px 0 0;
+        margin: 10px 0 0;
         color: #0f172a;
         font-weight: 700;
     }
@@ -153,7 +201,7 @@
     .quick-actions {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-        gap: 10px;
+        gap: 14px;
     }
 
     .quick-link {
@@ -161,10 +209,10 @@
         border: 1.5px solid #dbe4ee;
         border-radius: 12px;
         background: #ffffff;
-        padding: 14px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         transition: all 0.18s ease;
         position: relative;
         overflow: hidden;
@@ -206,7 +254,28 @@
 
     @media (max-width: 768px) {
         .dashboard-hero {
-            padding: 16px;
+            padding: 18px;
+        }
+
+        .hero-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hero-main {
+            align-items: flex-start;
+        }
+
+        .hero-company-logo,
+        .hero-company-logo-fallback {
+            width: 86px;
+            height: 86px;
+            margin-top: 6px;
+        }
+
+        .hero-company-logo-fallback svg {
+            width: 34px;
+            height: 34px;
         }
 
         .dashboard-hero h2 {
@@ -227,15 +296,30 @@
 @section('content')
     <div class="dashboard-shell fill-remaining">
         <div class="dashboard-hero">
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
-                    <path d="M12 6v6l4 2"></path>
-                </svg>
-                <div>
-                    <h2 style="margin: 0 0 6px;">Recruitment Command Center</h2>
-                    <p style="margin: 0; color: rgba(236, 254, 255, 0.92); max-width: 720px;">Track your hiring pipeline and take action quickly from one place. Keep jobs active, respond faster to applicants, and stay compliant.</p>
+            <div class="hero-top">
+                <div class="hero-main">
+                    <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+                        <path d="M12 6v6l4 2"></path>
+                    </svg>
+                    <div>
+                        <h2 style="margin: 0 0 6px;">Recruitment Command Center</h2>
+                        <p style="margin: 0; color: rgba(236, 254, 255, 0.92); max-width: 720px;">Track your hiring pipeline and take action quickly from one place. Keep jobs active, respond faster to applicants, and stay compliant.</p>
+                    </div>
                 </div>
+
+                @if (!empty($companyLogoUrl))
+                    <img src="{{ $companyLogoUrl }}" alt="Company Logo" class="hero-company-logo">
+                @else
+                    <span class="hero-company-logo-fallback" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
+                            <path d="M3 21h18"></path>
+                            <path d="M5 21V7l7-4 7 4v14"></path>
+                            <path d="M9 10h6"></path>
+                            <path d="M9 14h6"></path>
+                        </svg>
+                    </span>
+                @endif
             </div>
             <div class="hero-badges">
                 <span class="hero-badge">⚡ Employer Dashboard</span>
