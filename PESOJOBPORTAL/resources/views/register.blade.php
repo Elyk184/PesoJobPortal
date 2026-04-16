@@ -169,7 +169,6 @@
                     <option value="" selected disabled>Select your role</option>
                     <option value="jobseeker">Jobseeker</option>
                     <option value="employer">Employer</option>
-                    <option value="admin">Admin</option>
                 </select>
             </div>
 
