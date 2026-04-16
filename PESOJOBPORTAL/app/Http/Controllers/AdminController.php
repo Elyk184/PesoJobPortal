@@ -18,6 +18,7 @@ class AdminController extends Controller
             'active_jobs' => PesoJob::where('status', 'active')->count(),
             'total_employers' => User::where('role', 'employer')->count(),
             'total_jobseekers' => User::where('role', 'jobseeker')->count(),
+            'total_admins' => User::where('role', 'admin')->count(),
             'pending_applications' => JobApplication::where('status', 'pending')->count(),
         ];
 
