@@ -12,8 +12,34 @@
     $nameParts = $nameParts ?? ['surname' => '', 'first_name' => '', 'middle_name' => '', 'suffix' => ''];
     $addressParts = $addressParts ?? ['house_no' => '', 'barangay' => '', 'municipality' => '', 'province' => ''];
     $educationRows = $educationRows ?? [];
+    $workExperienceRows = $workExperienceRows ?? ($profile->experience ?? []);
     $resumeFileName = $resumeFileName ?? null;
     $resumeFileUrl = $resumeFileUrl ?? null;
+
+    if (empty($workExperienceRows)) {
+        $workExperienceRows = [[
+            'company' => '',
+            'title' => '',
+            'period' => '',
+            'details' => '',
+        ]];
+    }
+
+    $trainingRows = $trainingRows ?? [[
+        'course' => '',
+        'hours' => '',
+        'institution' => '',
+        'dates' => '',
+        'skills' => '',
+        'certificates' => '',
+    ]];
+
+    $eligibilityRows = $eligibilityRows ?? [[
+        'eligibility' => '',
+        'date_taken' => '',
+        'license' => '',
+        'valid_until' => '',
+    ]];
 
     $educationPreview = [
         [
@@ -218,6 +244,37 @@
 
         <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
             <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-upload"></i></div>
+                <div>
+                    <div class="profile-section-kicker">Resume Upload</div>
+                    <h2 class="profile-section-title">Upload Resume</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-8">
+                    <label class="form-label fw-semibold">Upload Resume (PDF, DOC, DOCX - max 5MB)</label>
+                    <input type="file" class="form-control profile-file-input" disabled>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="profile-current-resume">
+                        <div class="profile-summary-label">Current resume:</div>
+                        @if ($resumeFileUrl)
+                            <a href="{{ $resumeFileUrl }}" class="profile-resume-link" target="_blank" rel="noopener">
+                                <i class="bi bi-file-earmark-text me-1"></i>{{ $resumeLabel }}
+                            </a>
+                        @else
+                            <span class="text-muted">{{ $resumeLabel }}</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
                 <div class="profile-section-icon"><i class="bi bi-book"></i></div>
                 <div>
                     <div class="profile-section-kicker">III.</div>
@@ -255,33 +312,177 @@
 
         <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
             <div class="profile-section-header">
-                <div class="profile-section-icon"><i class="bi bi-upload"></i></div>
+                <div class="profile-section-icon"><i class="bi bi-tools"></i></div>
                 <div>
-                    <div class="profile-section-kicker">Resume Upload</div>
-                    <h2 class="profile-section-title">Upload Resume</h2>
+                    <div class="profile-section-kicker">IV.</div>
+                    <h2 class="profile-section-title">Technical/Vocational and Other Training</h2>
                 </div>
             </div>
 
             <div class="profile-section-rule"></div>
 
-            <div class="row g-3 align-items-end">
-                <div class="col-12 col-lg-8">
-                    <label class="form-label fw-semibold">Upload Resume (PDF, DOC, DOCX - max 5MB)</label>
-                    <input type="file" class="form-control profile-file-input" disabled>
-                </div>
-                <div class="col-12 col-lg-4">
-                    <div class="profile-current-resume">
-                        <div class="profile-summary-label">Current resume:</div>
-                        @if ($resumeFileUrl)
-                            <a href="{{ $resumeFileUrl }}" class="profile-resume-link" target="_blank" rel="noopener">
-                                <i class="bi bi-file-earmark-text me-1"></i>{{ $resumeLabel }}
-                            </a>
-                        @else
-                            <span class="text-muted">{{ $resumeLabel }}</span>
-                        @endif
+            @foreach ($trainingRows as $index => $row)
+                <div class="profile-entry-card profile-entry-card--blue mb-3">
+                    <div class="profile-entry-header">
+                        <div>
+                            <div class="profile-entry-kicker">Training #{{ $index + 1 }}</div>
+                        </div>
+                        <button type="button" class="btn btn-sm profile-remove-btn" disabled>
+                            <i class="bi bi-trash3 me-1"></i>Remove
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-5">
+                            <label class="form-label fw-semibold">Training/Vocational Course</label>
+                            <input class="form-control profile-input" value="{{ $row['course'] ?? '' }}" placeholder="Web Development Fundamentals" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-2">
+                            <label class="form-label fw-semibold">Hours</label>
+                            <input class="form-control profile-input" value="{{ $row['hours'] ?? '' }}" placeholder="80" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label fw-semibold">Training Institution</label>
+                            <input class="form-control profile-input" value="{{ $row['institution'] ?? '' }}" placeholder="TESDA Training Center" disabled>
+                        </div>
+                        <div class="col-12 col-lg-2">
+                            <label class="form-label fw-semibold">Inclusive Dates</label>
+                            <input class="form-control profile-input" value="{{ $row['dates'] ?? '' }}" placeholder="01/2023 - 03/2023" disabled>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label class="form-label fw-semibold">Skills Acquired</label>
+                            <input class="form-control profile-input" value="{{ $row['skills'] ?? '' }}" placeholder="HTML, CSS, JavaScript basics" disabled>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label class="form-label fw-semibold">Certificates (NC I, NCII, etc.)</label>
+                            <input class="form-control profile-input" value="{{ $row['certificates'] ?? '' }}" placeholder="NC II - Web Development" disabled>
+                        </div>
                     </div>
                 </div>
+            @endforeach
+
+            <button type="button" class="btn btn-outline-primary profile-add-btn" disabled>
+                <i class="bi bi-plus-circle me-1"></i>Add Training
+            </button>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-briefcase"></i></div>
+                <div>
+                    <div class="profile-section-kicker">V.</div>
+                    <h2 class="profile-section-title">Work Experience</h2>
+                </div>
             </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="profile-work-question mb-3">
+                <span class="fw-semibold me-2">Do you have work experience?</span>
+                <label class="profile-radio-inline me-3"><input type="radio" checked disabled> Yes</label>
+                <label class="profile-radio-inline"><input type="radio" disabled> No</label>
+                <span class="text-muted ms-2">If yes, please provide more information</span>
+            </div>
+
+            @foreach ($workExperienceRows as $index => $row)
+                <div class="profile-entry-card profile-entry-card--teal mb-3">
+                    <div class="profile-entry-header profile-entry-header--toolbar">
+                        <div class="profile-entry-kicker">Work Experience #{{ $index + 1 }}</div>
+                        <button type="button" class="btn btn-sm profile-remove-btn" disabled>
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-4">
+                            <label class="form-label fw-semibold">Company Name <span class="text-danger">*</span></label>
+                            <input class="form-control profile-input" value="{{ $row['company'] ?? '' }}" placeholder="PixelCraft Web Services" disabled>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <label class="form-label fw-semibold">Position/Job Title <span class="text-danger">*</span></label>
+                            <input class="form-control profile-input" value="{{ $row['title'] ?? '' }}" placeholder="Freelance Web Developer" disabled>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label class="form-label fw-semibold">Location (City) <span class="text-danger">*</span></label>
+                            <input class="form-control profile-input" value="" placeholder="Cagayan de Oro City" disabled>
+                        </div>
+                        <div class="col-12 col-lg-1">
+                            <label class="form-label fw-semibold">Status</label>
+                            <input class="form-control profile-input" value="" placeholder="Yes" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label fw-semibold">From Date</label>
+                            <input class="form-control profile-input" value="{{ $row['period'] ?? '' }}" placeholder="June 2024" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label fw-semibold">To Date</label>
+                            <input class="form-control profile-input" value="" placeholder="September 2024" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label fw-semibold">Salary Amount</label>
+                            <input class="form-control profile-input" value="" placeholder="15000" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <label class="form-label fw-semibold">Salary Type</label>
+                            <input class="form-control profile-input" value="" placeholder="Monthly" disabled>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Reason Left / Duties</label>
+                            <textarea class="form-control profile-input" rows="4" disabled>{{ $row['details'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <button type="button" class="btn btn-outline-primary profile-add-btn" disabled>
+                <i class="bi bi-plus-circle me-1"></i>Add Work Experience
+            </button>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-award"></i></div>
+                <div>
+                    <div class="profile-section-kicker">VI.</div>
+                    <h2 class="profile-section-title">Eligibility / Professional License</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            @foreach ($eligibilityRows as $index => $row)
+                <div class="profile-entry-card profile-entry-card--orange mb-3">
+                    <div class="profile-entry-header profile-entry-header--toolbar">
+                        <div class="profile-entry-kicker">Eligibility #{{ $index + 1 }}</div>
+                        <button type="button" class="btn btn-sm profile-remove-btn profile-remove-btn--danger" disabled>
+                            <i class="bi bi-trash3 me-1"></i>Remove
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-5">
+                            <label class="form-label fw-semibold">Eligibility (Civil Service)</label>
+                            <input class="form-control profile-input" value="{{ $row['eligibility'] ?? '' }}" placeholder="Civil Service Professional Eligibility (Sub-Professional)" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-2">
+                            <label class="form-label fw-semibold">Date Taken</label>
+                            <input class="form-control profile-input" value="{{ $row['date_taken'] ?? '' }}" placeholder="08/14/2023" disabled>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <label class="form-label fw-semibold">Professional License (PRC)</label>
+                            <input class="form-control profile-input" value="{{ $row['license'] ?? '' }}" placeholder="" disabled>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label class="form-label fw-semibold">Valid Until</label>
+                            <input class="form-control profile-input" value="{{ $row['valid_until'] ?? '' }}" placeholder="mm/dd/yyyy" disabled>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <button type="button" class="btn btn-outline-primary profile-add-btn" disabled>
+                <i class="bi bi-plus-circle me-1"></i>Add License/Eligibility
+            </button>
         </div>
     </div>
 </section>
