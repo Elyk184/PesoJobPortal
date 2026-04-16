@@ -9,6 +9,7 @@ use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class EmployerController extends Controller
@@ -25,8 +26,25 @@ class EmployerController extends Controller
 
     public function postNewJobPage(Request $request): View
     {
+        $employer = $request->user()->loadMissing('profile');
+        $companyProfile = $employer->profile;
+
+        if ($companyProfile === null) {
+            $companyProfile = (object) [
+                'company_name' => $employer->name,
+                'is_verified' => (bool) $employer->is_employer_verified,
+            ];
+        } else {
+            $companyProfile->company_name = $companyProfile->company_name ?? $employer->name;
+            $companyProfile->is_verified = (bool) ($companyProfile->is_verified
+                ?? (($companyProfile->verification_status ?? null) === 'verified')
+                ?? $employer->is_employer_verified);
+        }
+
         return view('dashboard.employer.post-new-job', [
-            'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
+            'companyProfile' => $companyProfile,
+            'employmentTypes' => $this->employmentTypes(),
+            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
         ]);
     }
 
@@ -84,11 +102,38 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
 
-        $validated = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$employer->id],
             'password' => ['nullable', 'confirmed', 'min:8'],
-        ]);
+            'business_name' => ['required', 'string', 'max:255'],
+            'trade_name' => ['nullable', 'string', 'max:255'],
+            'acronym_abbreviation' => ['nullable', 'string', 'max:100'],
+            'office_type' => ['required', 'in:main_office,branch'],
+            'tin' => ['nullable', 'string', 'max:50'],
+            'employer_type_detail' => ['required', 'in:national_gov,local_gov,gocc,state_college,direct_hire,local_recruitment,overseas_recruitment,do174'],
+            'workforce_size' => ['required', 'in:micro,small,medium,large'],
+            'line_of_business' => ['required', 'string', 'max:255'],
+            'street_village' => ['required', 'string', 'max:255'],
+            'barangay' => ['required', 'string', 'max:255'],
+            'city_municipality' => ['required', 'string', 'max:255'],
+            'province' => ['required', 'string', 'max:255'],
+            'establishment_contact_person' => ['required', 'string', 'max:255'],
+            'contact_person_name' => ['required', 'string', 'max:255'],
+            'establishment_contact_position' => ['required', 'string', 'max:255'],
+            'establishment_phone' => ['nullable', 'string', 'max:50'],
+            'contact_person_phone' => ['required', 'string', 'max:50'],
+            'establishment_email' => ['required', 'email', 'max:255'],
+            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            'business_permit' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'dti_sec_registration' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+        ];
+
+        if (Schema::hasColumn('users', 'username')) {
+            $rules['username'] = ['required', 'string', 'max:100', 'alpha_dash', 'unique:users,username,'.$employer->id];
+        }
+
+        $validated = $request->validate($rules);
 
         $updateData = [
             'name' => $validated['name'],
@@ -99,10 +144,71 @@ class EmployerController extends Controller
             $updateData['password'] = $validated['password'];
         }
 
+        if (Schema::hasColumn('users', 'username') && isset($validated['username'])) {
+            $updateData['username'] = $validated['username'];
+        }
+
         $employer->update($updateData);
 
-        // Ensure an employer profile row exists for views that expect it.
-        UserProfile::firstOrCreate(['user_id' => $employer->id]);
+        $profile = UserProfile::firstOrCreate(['user_id' => $employer->id]);
+
+        $profileColumns = Schema::getColumnListing('user_profiles');
+        $inputToColumn = [
+            'business_name' => 'business_name',
+            'trade_name' => 'trade_name',
+            'acronym_abbreviation' => 'acronym_abbreviation',
+            'office_type' => 'office_type',
+            'tin' => 'tin',
+            'employer_type_detail' => 'employer_type_detail',
+            'workforce_size' => 'workforce_size',
+            'line_of_business' => 'line_of_business',
+            'street_village' => 'street_village',
+            'barangay' => 'barangay',
+            'city_municipality' => 'city_municipality',
+            'province' => 'province',
+            'establishment_contact_person' => 'establishment_contact_person',
+            'contact_person_name' => 'contact_person_name',
+            'establishment_contact_position' => 'establishment_contact_position',
+            'establishment_phone' => 'establishment_phone',
+            'contact_person_phone' => 'contact_person_phone',
+            'establishment_email' => 'establishment_email',
+        ];
+
+        $profileData = [];
+
+        foreach ($inputToColumn as $input => $column) {
+            if (in_array($column, $profileColumns, true) && array_key_exists($input, $validated)) {
+                $profileData[$column] = $validated[$input];
+            }
+        }
+
+        if (in_array('company_name', $profileColumns, true)) {
+            $profileData['company_name'] = $validated['business_name'];
+        }
+
+        if ($request->hasFile('company_logo') && in_array('logo_path', $profileColumns, true)) {
+            $profileData['logo_path'] = $request->file('company_logo')->store('company-profiles', 'public');
+        }
+
+        if ($request->hasFile('business_permit') && in_array('business_permit_path', $profileColumns, true)) {
+            $profileData['business_permit_path'] = $request->file('business_permit')->store('company-documents', 'public');
+        }
+
+        if ($request->hasFile('dti_sec_registration') && in_array('dti_sec_registration_path', $profileColumns, true)) {
+            $profileData['dti_sec_registration_path'] = $request->file('dti_sec_registration')->store('company-documents', 'public');
+        }
+
+        if (in_array('verification_status', $profileColumns, true)) {
+            $hasUploadedVerificationDoc = $request->hasFile('business_permit') || $request->hasFile('dti_sec_registration');
+
+            if ($hasUploadedVerificationDoc && $profile->verification_status !== 'verified') {
+                $profileData['verification_status'] = 'under_review';
+            }
+        }
+
+        if (! empty($profileData)) {
+            $profile->update($profileData);
+        }
 
         return back()->with('success', 'Company profile updated successfully.');
     }
@@ -357,6 +463,18 @@ class EmployerController extends Controller
             'total_applications' => $totalApplications,
             'hired_candidates' => $hiredCandidates,
             'new_applications_today' => $newApplicationsToday,
+        ];
+    }
+
+    private function employmentTypes(): array
+    {
+        return [
+            'full_time' => 'Full-time',
+            'part_time' => 'Part-time',
+            'contract' => 'Contract',
+            'temporary' => 'Temporary',
+            'internship' => 'Internship',
+            'freelance' => 'Freelance',
         ];
     }
 }

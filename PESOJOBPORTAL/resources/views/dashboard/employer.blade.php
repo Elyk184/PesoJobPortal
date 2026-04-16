@@ -12,27 +12,346 @@
     @endif
 @endsection
 
-@section('content')
-    <div class="panel fill-remaining">
-        <h2>Dashboard Statistics</h2>
-        <p>This page now shows statistics only.</p>
+@push('styles')
+<style>
+    .dashboard-shell {
+        display: grid;
+        gap: 16px;
+    }
 
-        <div class="grid">
-            <div class="metric-card">
-                <p class="metric-value">{{ $stats['active_jobs_count'] }}</p>
-                <p class="metric-label">Active Job Posts</p>
+    .dashboard-hero {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0f766e 0%, #0e9aa7 46%, #22d3ee 100%);
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        padding: 20px;
+        color: #ecfeff;
+        box-shadow: 0 14px 26px rgba(8, 47, 73, 0.22);
+    }
+
+    .dashboard-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        right: -60px;
+        top: -80px;
+    }
+
+    .dashboard-hero h2 {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 24px;
+    }
+
+    .dashboard-hero p {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: rgba(236, 254, 255, 0.92);
+        max-width: 720px;
+    }
+
+    .hero-badges {
+        position: relative;
+        z-index: 1;
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .hero-badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(8, 47, 73, 0.24);
+        color: #ecfeff;
+        backdrop-filter: blur(8px);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .metric-card {
+        position: relative;
+        overflow: hidden;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, #ffffff 0%, #f6fbff 100%);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .metric-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #0f766e 0%, #22d3ee 100%);
+    }
+
+    .metric-card:hover {
+        transform: translateY(-3px);
+        border-color: #9ac8ef;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .metric-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .metric-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0b3f67;
+        background: linear-gradient(135deg, #dff2ff 0%, #e6fffb 100%);
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .metric-card:hover .metric-icon {
+        transform: scale(1.08) rotate(2deg);
+    }
+
+    .metric-value {
+        font-size: 34px;
+        line-height: 1.05;
+        margin: 8px 0 0;
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .metric-label {
+        margin: 0;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 10px;
+    }
+
+    .quick-link {
+        text-decoration: none;
+        border: 1.5px solid #dbe4ee;
+        border-radius: 12px;
+        background: #ffffff;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        transition: all 0.18s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quick-link::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.06), transparent);
+        transition: right 0.5s ease;
+    }
+
+    .quick-link:hover {
+        transform: translateY(-2px);
+        border-color: #0f766e;
+        box-shadow: 0 12px 20px rgba(15, 118, 110, 0.1);
+    }
+
+    .quick-link:hover::after {
+        right: 100%;
+    }
+
+    .quick-link-title {
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .quick-link-note {
+        color: #64748b;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-hero {
+            padding: 16px;
+        }
+
+        .dashboard-hero h2 {
+            font-size: 20px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+    <div class="dashboard-shell fill-remaining">
+        <div class="dashboard-hero">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+                    <path d="M12 6v6l4 2"></path>
+                </svg>
+                <div>
+                    <h2 style="margin: 0 0 6px;">Recruitment Command Center</h2>
+                    <p style="margin: 0; color: rgba(236, 254, 255, 0.92); max-width: 720px;">Track your hiring pipeline and take action quickly from one place. Keep jobs active, respond faster to applicants, and stay compliant.</p>
+                </div>
             </div>
-            <div class="metric-card">
-                <p class="metric-value">{{ $stats['total_applications'] }}</p>
-                <p class="metric-label">Total Applications</p>
+            <div class="hero-badges">
+                <span class="hero-badge">⚡ Employer Dashboard</span>
+                <span class="hero-badge">📊 Live Snapshot</span>
+                <span class="hero-badge">📅 Updated Daily</span>
             </div>
-            <div class="metric-card">
-                <p class="metric-value">{{ $stats['hired_candidates'] }}</p>
-                <p class="metric-label">Hired Candidates</p>
+        </div>
+
+        <div class="panel">
+            <h2>Dashboard Statistics</h2>
+
+            <div class="stats-grid">
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <p class="metric-label">Active Job Posts</p>
+                        <span class="metric-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 3h-3V2h-2v1H8"></path>
+                                <path d="M7 11v3"></path>
+                                <path d="M12 11v3"></path>
+                                <path d="M17 11v3"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <p class="metric-value">{{ $stats['active_jobs_count'] }}</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <p class="metric-label">Total Applications</p>
+                        <span class="metric-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                <path d="M9 10h6"></path>
+                                <path d="M9 14h4"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <p class="metric-value">{{ $stats['total_applications'] }}</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <p class="metric-label">Hired Candidates</p>
+                        <span class="metric-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                    <p class="metric-value">{{ $stats['hired_candidates'] }}</p>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <p class="metric-label">New Applications Today</p>
+                        <span class="metric-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 7-3 7h18s-3 0-3-7"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <p class="metric-value">{{ $stats['new_applications_today'] }}</p>
+                </div>
             </div>
-            <div class="metric-card">
-                <p class="metric-value">{{ $stats['new_applications_today'] }}</p>
-                <p class="metric-label">New Applications Today</p>
+        </div>
+
+        <div class="panel">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions">
+                <a class="quick-link" href="{{ route('employer.jobs.post') }}">
+                    <span style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: #0f766e;">
+                            <path d="M12 5v14"></path>
+                            <path d="M5 12h14"></path>
+                        </svg>
+                        <span class="quick-link-title">Post A New Job</span>
+                    </span>
+                    <span class="quick-link-note">Create and publish a new vacancy.</span>
+                </a>
+                <a class="quick-link" href="{{ route('employer.jobs.manage') }}">
+                    <span style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: #0f766e;">
+                            <path d="M6 9a6 6 0 1 0 12 0A6 6 0 0 0 6 9z"></path>
+                            <path d="M12 9v6"></path>
+                            <path d="M15 12h-6"></path>
+                        </svg>
+                        <span class="quick-link-title">Manage Existing Jobs</span>
+                    </span>
+                    <span class="quick-link-note">Edit, archive, or extend active posts.</span>
+                </a>
+                <a class="quick-link" href="{{ route('employer.applicants.index') }}">
+                    <span style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: #0f766e;">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span class="quick-link-title">Review Applicants</span>
+                    </span>
+                    <span class="quick-link-note">Track referrals and update decisions.</span>
+                </a>
+                <a class="quick-link" href="{{ route('employer.company-profile') }}">
+                    <span style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: #0f766e;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="quick-link-title">Update Company Profile</span>
+                    </span>
+                    <span class="quick-link-note">Keep your employer information current.</span>
+                </a>
             </div>
         </div>
     </div>
