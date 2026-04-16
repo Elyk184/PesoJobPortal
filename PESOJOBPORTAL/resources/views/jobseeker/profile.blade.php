@@ -2,51 +2,283 @@
 
 @section('title', 'Profile | Jobseeker | PESO Job Portal')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+@endpush
+
 @section('content')
+@php
+    $profile = $profile ?? null;
+    $nameParts = $nameParts ?? ['surname' => '', 'first_name' => '', 'middle_name' => '', 'suffix' => ''];
+    $addressParts = $addressParts ?? ['house_no' => '', 'barangay' => '', 'municipality' => '', 'province' => ''];
+    $educationRows = $educationRows ?? [];
+    $resumeFileName = $resumeFileName ?? null;
+    $resumeFileUrl = $resumeFileUrl ?? null;
+
+    $educationPreview = [
+        [
+            'label' => 'Elementary',
+            'school' => $educationRows[0]['school'] ?? '',
+            'year' => $educationRows[0]['year'] ?? '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Secondary (Non-K12)',
+            'school' => $educationRows[1]['school'] ?? '',
+            'year' => $educationRows[1]['year'] ?? '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Secondary (K-12)',
+            'school' => $educationRows[1]['school'] ?? '',
+            'year' => $educationRows[1]['year'] ?? '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Senior High Strand',
+            'school' => $educationRows[1]['course'] ?? '',
+            'year' => '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Tertiary',
+            'school' => $educationRows[2]['school'] ?? '',
+            'year' => $educationRows[2]['year'] ?? '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Course',
+            'school' => $educationRows[2]['course'] ?? '',
+            'year' => '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+        [
+            'label' => 'Graduate Studies/Post-graduate',
+            'school' => $educationRows[3]['school'] ?? '',
+            'year' => $educationRows[3]['year'] ?? '',
+            'level_reached' => '',
+            'last_attended' => '',
+        ],
+    ];
+
+    $resumeLabel = $resumeFileName ?: 'No file uploaded yet';
+@endphp
+
 <section class="container py-4" aria-label="Jobseeker profile">
-    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
+    <div class="dashboard-topbar">
         <div>
-            <h1 class="mb-1 fw-bold dashboard-section-title">My Profile</h1>
-            <p class="mb-0 text-muted">Profile details used for job matching (static demo).</p>
+            <div class="dashboard-topbar-title">My Profile</div>
+            <div class="dashboard-topbar-subtitle">Manage your jobseeker profile</div>
         </div>
-        <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger">
+        <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger btn-sm">
             <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
         </a>
     </div>
 
-    <div class="row g-3">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold mb-3">Basic Information</h5>
+    <div class="profile-sections vstack gap-3 mt-3">
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-person-circle"></i></div>
+                <div>
+                    <div class="profile-section-kicker">I.</div>
+                    <h2 class="profile-section-title">Personal Information</h2>
+                </div>
+            </div>
 
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <label class="form-label">Full name</label>
-                            <input class="form-control" value="{{ auth()->user()->name ?? '' }}" disabled>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label">Email</label>
-                            <input class="form-control" value="{{ auth()->user()->email ?? '' }}" disabled>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label">Location / Barangay</label>
-                            <input class="form-control" value="" placeholder="(coming soon)" disabled>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label">Preferred industry</label>
-                            <input class="form-control" value="" placeholder="(coming soon)" disabled>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Skills</label>
-                            <textarea class="form-control" rows="3" placeholder="(coming soon)" disabled></textarea>
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
+                    <input class="form-control profile-input" value="{{ $nameParts['surname'] }}" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+                    <input class="form-control profile-input" value="{{ $nameParts['first_name'] }}" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Middle Name</label>
+                    <input class="form-control profile-input" value="{{ $nameParts['middle_name'] }}" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Suffix</label>
+                    <input class="form-control profile-input" value="{{ $nameParts['suffix'] }}" placeholder="Sr., Jr., II" disabled>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Date of Birth <span class="text-danger">*</span></label>
+                    <input class="form-control profile-input" value="" placeholder="mm/dd/yyyy" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Sex</label>
+                    <div class="profile-radio-stack">
+                        <label class="profile-radio-item"><input type="radio" disabled> Male</label>
+                        <label class="profile-radio-item"><input type="radio" checked disabled> Female</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Religion</label>
+                    <input class="form-control profile-input" value="" placeholder="Roman Catholic" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Civil Status</label>
+                    <input class="form-control profile-input" value="" placeholder="Single" disabled>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Height <span class="text-muted">(cm)</span></label>
+                    <input class="form-control profile-input" value="" placeholder="160" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">TIN</label>
+                    <input class="form-control profile-input" value="" placeholder="123-456" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Contact Number/s</label>
+                    <input class="form-control profile-input" value="{{ $profile->phone ?? '' }}" placeholder="0912-345-6789" disabled>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    <input class="form-control profile-input" value="{{ $profile->resume_email ?? $user->email ?? '' }}" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-geo-alt"></i></div>
+                <div>
+                    <div class="profile-section-kicker">II.</div>
+                    <h2 class="profile-section-title">Address</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-3">
+                <div class="col-12 col-xl-6">
+                    <div class="profile-address-card">
+                        <div class="profile-address-title">Present Address</div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">House No./Street/Village</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['house_no'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Barangay</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['barangay'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Municipality/City</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['municipality'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Province</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['province'] }}" disabled>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mt-3">
-                        <button class="btn btn-danger" type="button" disabled>
-                            <i class="bi bi-pencil-square me-2"></i>Edit Profile (coming soon)
-                        </button>
+                <div class="col-12 col-xl-6">
+                    <div class="profile-address-card">
+                        <div class="profile-address-title">Permanent Address</div>
+                        <label class="profile-check-label">
+                            <input type="checkbox" disabled>
+                            Same as present address
+                        </label>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">House No./Street/Village</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['house_no'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Barangay</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['barangay'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Municipality/City</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['municipality'] }}" disabled>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Province</label>
+                                <input class="form-control profile-input" value="{{ $addressParts['province'] }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-book"></i></div>
+                <div>
+                    <div class="profile-section-kicker">III.</div>
+                    <h2 class="profile-section-title">Educational Background</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <label class="profile-check-label mb-3">
+                <input type="checkbox" disabled>
+                Currently in school?
+            </label>
+
+            <div class="profile-education-table">
+                <div class="profile-education-head">
+                    <div>Level</div>
+                    <div>Name of School</div>
+                    <div>Year Graduated</div>
+                    <div>If Undergraduate - Level Reached</div>
+                    <div>If Undergraduate - Year Last Attended</div>
+                </div>
+
+                @foreach ($educationPreview as $row)
+                    <div class="profile-education-row">
+                        <div class="profile-education-level">{{ $row['label'] }}</div>
+                        <input class="form-control profile-input profile-education-input" value="{{ $row['school'] }}" disabled>
+                        <input class="form-control profile-input profile-education-input" value="{{ $row['year'] }}" disabled>
+                        <input class="form-control profile-input profile-education-input" value="{{ $row['level_reached'] }}" disabled>
+                        <input class="form-control profile-input profile-education-input" value="{{ $row['last_attended'] }}" disabled>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="profile-section-card dashboard-section-card p-3 p-lg-4">
+            <div class="profile-section-header">
+                <div class="profile-section-icon"><i class="bi bi-upload"></i></div>
+                <div>
+                    <div class="profile-section-kicker">Resume Upload</div>
+                    <h2 class="profile-section-title">Upload Resume</h2>
+                </div>
+            </div>
+
+            <div class="profile-section-rule"></div>
+
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-8">
+                    <label class="form-label fw-semibold">Upload Resume (PDF, DOC, DOCX - max 5MB)</label>
+                    <input type="file" class="form-control profile-file-input" disabled>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="profile-current-resume">
+                        <div class="profile-summary-label">Current resume:</div>
+                        @if ($resumeFileUrl)
+                            <a href="{{ $resumeFileUrl }}" class="profile-resume-link" target="_blank" rel="noopener">
+                                <i class="bi bi-file-earmark-text me-1"></i>{{ $resumeLabel }}
+                            </a>
+                        @else
+                            <span class="text-muted">{{ $resumeLabel }}</span>
+                        @endif
                     </div>
                 </div>
             </div>

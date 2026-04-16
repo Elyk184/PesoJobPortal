@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +30,7 @@ class JobseekerController extends Controller
 
     public function profile(): View
     {
-        return view('jobseeker.profile');
+        return view('jobseeker.profile', $this->profilePageData(Auth::user()));
     }
 
     public function resumeBuilder(): View
@@ -163,6 +164,67 @@ class JobseekerController extends Controller
             'educationRows' => $educationRows,
             'experienceRows' => $experienceRows,
             'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
+        ];
+    }
+
+    private function profilePageData(?User $user): array
+    {
+        $profile = $user?->profile;
+        $displayName = trim((string) ($user?->name ?? ''));
+        $nameParts = $this->splitDisplayName($displayName);
+        $addressParts = $this->splitAddress((string) ($profile?->address ?? ''));
+        $educationRows = $profile?->education ?? [];
+
+        return [
+            'user' => $user,
+            'profile' => $profile,
+            'nameParts' => $nameParts,
+            'addressParts' => $addressParts,
+            'educationRows' => $educationRows,
+            'resumeFileName' => $profile?->resume_path ? basename($profile->resume_path) : null,
+            'resumeFileUrl' => $profile?->resume_path ? asset('storage/' . ltrim($profile->resume_path, '/')) : null,
+        ];
+    }
+
+    private function splitDisplayName(string $displayName): array
+    {
+        $segments = collect(preg_split('/\s+/', trim($displayName)) ?: [])
+            ->filter()
+            ->values()
+            ->all();
+
+        $suffixes = ['jr', 'jr.', 'sr', 'sr.', 'ii', 'iii', 'iv', 'v'];
+        $suffix = '';
+
+        if (! empty($segments)) {
+            $lastSegment = strtolower(rtrim((string) end($segments), ','));
+
+            if (in_array($lastSegment, $suffixes, true)) {
+                $suffix = array_pop($segments);
+            }
+        }
+
+        return [
+            'surname' => $segments[0] ?? '',
+            'first_name' => $segments[1] ?? '',
+            'middle_name' => count($segments) > 2 ? implode(' ', array_slice($segments, 2)) : '',
+            'suffix' => $suffix,
+        ];
+    }
+
+    private function splitAddress(string $address): array
+    {
+        $segments = collect(preg_split('/[\r\n,]+/', $address) ?: [])
+            ->map(fn ($segment) => trim($segment))
+            ->filter()
+            ->values()
+            ->all();
+
+        return [
+            'house_no' => $segments[0] ?? '',
+            'barangay' => $segments[1] ?? '',
+            'municipality' => $segments[2] ?? '',
+            'province' => $segments[3] ?? '',
         ];
     }
 }
