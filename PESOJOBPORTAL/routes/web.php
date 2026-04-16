@@ -35,6 +35,7 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
+    Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
