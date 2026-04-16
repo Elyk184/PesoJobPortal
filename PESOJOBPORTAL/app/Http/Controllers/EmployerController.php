@@ -57,9 +57,37 @@ class EmployerController extends Controller
     public function manageJobsPage(Request $request): View
     {
         $employer = $request->user();
+        $selectedTab = $request->query('status', 'active');
+        $availableTabs = ['active', 'pending', 'draft', 'archived', 'filled', 'all'];
+
+        if (! in_array($selectedTab, $availableTabs, true)) {
+            $selectedTab = 'active';
+        }
+
+        $allJobs = $this->getEmployerJobs($employer->id);
+
+        $tabCounts = [
+            'active' => $allJobs->filter(fn ($job) => $job->status === 'active' && ! $job->is_filled && $job->archived_at === null)->count(),
+            'pending' => $allJobs->where('status', 'pending')->count(),
+            'draft' => $allJobs->where('status', 'draft')->count(),
+            'archived' => $allJobs->filter(fn ($job) => $job->status === 'closed' && $job->is_filled === false)->count(),
+            'filled' => $allJobs->where('is_filled', true)->count(),
+            'all' => $allJobs->count(),
+        ];
+
+        $jobs = match ($selectedTab) {
+            'active' => $allJobs->filter(fn ($job) => $job->status === 'active' && ! $job->is_filled && $job->archived_at === null),
+            'pending' => $allJobs->where('status', 'pending'),
+            'draft' => $allJobs->where('status', 'draft'),
+            'archived' => $allJobs->filter(fn ($job) => $job->status === 'closed' && $job->is_filled === false),
+            'filled' => $allJobs->where('is_filled', true),
+            default => $allJobs,
+        };
 
         return view('dashboard.employer.manage-jobs', [
-            'jobs' => $this->getEmployerJobs($employer->id),
+            'jobs' => $jobs,
+            'selectedTab' => $selectedTab,
+            'tabCounts' => $tabCounts,
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
         ]);
     }
@@ -250,40 +278,78 @@ class EmployerController extends Controller
     public function storeJob(Request $request): RedirectResponse
     {
         $employer = $request->user();
+        $isDraft = $request->boolean('save_as_draft');
+        $status = $isDraft
+            ? 'draft'
+            : ($employer->is_employer_verified ? 'active' : 'pending');
 
-        if (! $employer->is_employer_verified) {
-            return back()->with('error', 'Only verified employers can post job vacancies.');
+        $rules = [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'location' => ['required', 'string', 'max:255'],
+            'employment_type' => ['required', 'string', 'in:full_time,part_time,contract,temporary,internship,freelance'],
+            'vacancies' => ['required', 'integer', 'min:1', 'max:999'],
+            'key_responsibilities' => ['nullable', 'string'],
+            'qualifications' => ['nullable', 'string'],
+            'preferred_skills' => ['nullable', 'string'],
+            'experience' => ['nullable', 'string'],
+            'education' => ['nullable', 'string'],
+            'benefits' => ['nullable', 'string'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0'],
+            'application_deadline' => ['nullable', 'date', 'after:today'],
+        ];
+
+        $validated = $request->validate($rules);
+
+        // Map form fields to model
+        $jobData = [
+            'employer_id' => $employer->id,
+            'employer_name' => $employer->profile?->company_name ?? $employer->name,
+            'title' => $validated['title'],
+            'position' => $validated['title'], // Use title as position for legacy
+            'description' => $validated['description'],
+            'qualifications' => $validated['qualifications'] ?? $validated['description'],
+            'location' => $validated['location'],
+            'job_type' => $validated['employment_type'],
+            'vacancies' => $validated['vacancies'],
+            'key_responsibilities' => $validated['key_responsibilities'],
+            'preferred_skills' => $validated['preferred_skills'],
+            'experience' => $validated['experience'],
+            'education' => $validated['education'],
+            'benefits' => $validated['benefits'],
+        ];
+
+        // Salary
+        if (isset($validated['salary_min']) || isset($validated['salary_max'])) {
+            $jobData['salary_range'] = ($validated['salary_min'] ?? '') . ' - ' . ($validated['salary_max'] ?? '');
+            $jobData['salary'] = $jobData['salary_range'];
         }
 
-        $validated = $request->validate([
-            'position' => ['required', 'string', 'max:255'],
-            'qualifications' => ['required', 'string'],
-            'salary' => ['nullable', 'string', 'max:255'],
-            'location' => ['required', 'string', 'max:255'],
-            'job_type' => ['required', 'string', 'max:100'],
-            'vacancies' => ['required', 'integer', 'min:1'],
-            'application_start_date' => ['required', 'date'],
-            'application_end_date' => ['required', 'date', 'after_or_equal:application_start_date'],
-        ]);
+        // Dates
+        $jobData['application_start_date'] = now()->toDateString();
+        if ($validated['application_deadline']) {
+            $jobData['application_end_date'] = $validated['application_deadline'];
+        } else {
+            $jobData['application_end_date'] = now()->addDays(30)->toDateString();
+        }
 
-        PesoJob::create([
-            'employer_id' => $employer->id,
-            'employer_name' => $employer->name,
-            'title' => $validated['position'],
-            'position' => $validated['position'],
-            'description' => $validated['qualifications'],
-            'qualifications' => $validated['qualifications'],
-            'salary_range' => $validated['salary'] ?? null,
-            'salary' => $validated['salary'] ?? null,
-            'location' => $validated['location'],
-            'job_type' => $validated['job_type'],
-            'vacancies' => $validated['vacancies'],
-            'application_start_date' => $validated['application_start_date'],
-            'application_end_date' => $validated['application_end_date'],
-            'status' => 'active',
-        ]);
+        $jobData['status'] = $status;
 
-        return back()->with('success', 'Job vacancy posted successfully.');
+        $job = PesoJob::create($jobData);
+
+        $message = match (true) {
+            $isDraft => 'Job saved as draft successfully.',
+            ! $employer->is_employer_verified => 'Job submitted successfully and is now in Pending Approval.',
+            default => 'Job posted successfully and is now visible in Active Jobs.',
+        };
+
+        $redirectStatus = $job->status;
+        if (! in_array($redirectStatus, ['active', 'pending', 'draft', 'archived', 'filled', 'all'], true)) {
+            $redirectStatus = 'active';
+        }
+
+        return redirect()->route('employer.jobs.manage', ['status' => $redirectStatus])->with('success', $message);
     }
 
     public function extendJob(Request $request, PesoJob $job): RedirectResponse
@@ -420,6 +486,7 @@ class EmployerController extends Controller
     {
         return PesoJob::query()
             ->where('employer_id', $employerId)
+            ->withCount('applications')
             ->latest()
             ->get();
     }

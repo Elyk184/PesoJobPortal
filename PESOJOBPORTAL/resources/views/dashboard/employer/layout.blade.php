@@ -429,15 +429,17 @@
             </aside>
 
             <main class="content">
-                <div class="header panel">
-                    <div>
-                        <h1>@yield('page_title', 'Employer Dashboard')</h1>
-                        <p>@yield('page_subtitle', 'Manage your employer account activity.')</p>
+                @unless(View::hasSection('hide_header'))
+                    <div class="header panel">
+                        <div>
+                            <h1>@yield('page_title', 'Employer Dashboard')</h1>
+                            <p>@yield('page_subtitle', 'Manage your employer account activity.')</p>
+                        </div>
+                        @hasSection('header_actions')
+                            <div>@yield('header_actions')</div>
+                        @endif
                     </div>
-                    @hasSection('header_actions')
-                        <div>@yield('header_actions')</div>
-                    @endif
-                </div>
+                @endunless
 
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>

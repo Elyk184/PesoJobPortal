@@ -385,7 +385,11 @@
         <div class="notice-card notice-approval mb-4" role="alert">
             <i class="bi bi-info-circle me-2"></i>
             <div>
-                <strong>Note:</strong> All job posts require approval from PESO Admin before being published. Your job will be set to "Pending" after submission and will be reviewed within 1-2 business days.
+                @if($isVerifiedEmployer)
+                    <strong>Note:</strong> Posted jobs are published to your Active Jobs list right away. You can still archive, duplicate, or mark them as filled from Manage Jobs.
+                @else
+                    <strong>Note:</strong> Your job post will be saved to Pending Approval and will appear in Manage Jobs under the Pending tab.
+                @endif
             </div>
         </div>
 

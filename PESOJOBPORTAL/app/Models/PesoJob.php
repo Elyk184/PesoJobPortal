@@ -12,11 +12,16 @@ class PesoJob extends Model
 
     protected $fillable = [
         'employer_id',
+        'employer_name',
         'title',
         'position',
         'description',
         'qualifications',
-        'employer_name',
+        'key_responsibilities',
+        'preferred_skills',
+        'experience',
+        'education',
+        'benefits',
         'location',
         'salary_range',
         'salary',
