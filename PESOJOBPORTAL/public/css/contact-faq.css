@@ -1,0 +1,11 @@
+.contact-layout{display:grid;grid-template-columns:1fr 1.15fr;gap:2rem;align-items:start;margin-top:1rem}
+@media (max-width: 992px){.contact-layout{grid-template-columns:1fr}}
+.faq-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 20px -8px rgba(0,0,0,0.12);padding:1.5rem}
+.faq-title{font-size:1.9rem;font-weight:700;color:#2d5aa0;margin-bottom:1.5rem}
+.faq-item{margin-bottom:1rem}
+.faq-toggle{width:100%;text-align:left;background:#fff;border:1px solid #e0e0e0;padding:1rem 1.25rem;border-radius:10px;cursor:pointer;font-weight:600;color:#2c3e50;display:flex;justify-content:space-between;align-items:center;font-size:0.95rem;transition:all .25s ease;gap:.75rem}
+.faq-toggle:hover{background:#f8f9ff;transform:translateX(6px)}
+.faq-toggle .faq-icon{font-size:1.2rem;color:#2d5aa0;transition:transform .2s ease}
+.faq-toggle[aria-expanded="true"] .faq-icon{transform:rotate(45deg)}
+.faq-content{display:none;background:#f8f9ff;padding:1rem 1.25rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 10px 10px;color:#555;line-height:1.6;font-size:0.9rem}
+.faq-content.show{display:block}

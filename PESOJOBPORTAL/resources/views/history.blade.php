@@ -15,7 +15,7 @@
                     <h2>Welcome to Manolo Fortich, Bukidnon</h2>
                     <p>Gateway to the Northern Highlands</p>
                 </div>
-                <img src="{{ asset('images/bg.png') }}" alt="Manolo Fortich History">
+                <img src="{{ asset('images/historybg.png') }}" alt="Manolo Fortich History">
             </div>
 
             <div class="history-text-col">
