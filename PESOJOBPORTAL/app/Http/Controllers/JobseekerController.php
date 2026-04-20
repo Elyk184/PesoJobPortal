@@ -6,10 +6,13 @@ use App\Models\UserProfile;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class JobseekerController extends Controller
 {
@@ -221,14 +224,34 @@ class JobseekerController extends Controller
 
     public function exportResumeBuilder(): Response
     {
-        $data = $this->resumeBuilderData(Auth::user());
+        try {
+            $data = $this->resumeBuilderData(Auth::user());
 
-        $pdf = Pdf::loadView('jobseeker.resume-builder-pdf', $data)
-            ->setPaper('a4', 'portrait');
+            $pdf = Pdf::loadView('jobseeker.resume-builder-pdf', $data)
+                ->setPaper('a4', 'portrait');
 
-        $fileName = trim(($data['resumeName'] ?: 'resume') . '-harvard-style.pdf');
+            $resumeName = trim((string) ($data['resumeName'] ?? 'resume'));
+            $safeName = Str::of($resumeName)
+                ->ascii()
+                ->replaceMatches('/[^A-Za-z0-9\-_\s]/', '')
+                ->squish()
+                ->replace(' ', '-')
+                ->lower()
+                ->value();
 
-        return $pdf->download($fileName);
+            $fileName = ($safeName !== '' ? $safeName : 'resume') . '-harvard-style.pdf';
+
+            return $pdf->download($fileName);
+        } catch (Throwable $exception) {
+            Log::error('Resume PDF export failed.', [
+                'user_id' => Auth::id(),
+                'message' => $exception->getMessage(),
+            ]);
+
+            return redirect()
+                ->route('jobseeker.resume-builder')
+                ->withErrors(['resume_export' => 'Unable to export PDF right now. Please try again.']);
+        }
     }
 
     public function saveResumeBuilder(Request $request): RedirectResponse
