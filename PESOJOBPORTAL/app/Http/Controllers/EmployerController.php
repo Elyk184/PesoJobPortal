@@ -97,8 +97,16 @@ class EmployerController extends Controller
 
     public function viewApplicantsPage(Request $request): View
     {
+        $referredApplications = $this->getReferredApplications($request->user()->id);
+
         return view('dashboard.employer.view-applicants', [
-            'referredApplications' => $this->getReferredApplications($request->user()->id),
+            'referredApplications' => $referredApplications,
+            'totalApplicants' => $referredApplications->count(),
+            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
+            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
+            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
+            'jobs' => $request->user()->employerJobs()->get(),
+            'isVerifiedEmployer' => $request->user()->is_employer_verified,
         ]);
     }
 
