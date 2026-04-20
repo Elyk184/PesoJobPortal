@@ -267,7 +267,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="consentCancelButton" class="btn btn-light" data-bs-dismiss="modal" onclick="closePrivacyConsent()">Cancel</button>
+                    <button type="button" id="consentCancelButton" class="btn btn-light" onclick="cancelPrivacyConsent()">Cancel</button>
                     <button type="button" class="btn btn-primary" id="confirmConsent" onclick="confirmPrivacyConsent()" disabled>Proceed to Registration</button>
                 </div>
             </div>
@@ -388,10 +388,15 @@
             }
         }
 
+        function cancelPrivacyConsent() {
+            window.location.href = "{{ url('/') }}";
+        }
+
         window.openPrivacyConsent = openPrivacyConsent;
         window.closePrivacyConsent = closePrivacyConsent;
         window.togglePrivacyConsentButton = togglePrivacyConsentButton;
         window.confirmPrivacyConsent = confirmPrivacyConsent;
+        window.cancelPrivacyConsent = cancelPrivacyConsent;
 
         document.addEventListener('DOMContentLoaded', function () {
             const { form, hiddenConsent } = getConsentElements();
