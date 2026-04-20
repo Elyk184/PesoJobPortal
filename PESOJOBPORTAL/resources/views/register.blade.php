@@ -238,12 +238,11 @@
         </p>
     </main>
 
-    <div class="modal fade consent-modal" id="privacyConsentModal" tabindex="-1" aria-labelledby="privacyConsentModalLabel" aria-hidden="true">
+    <div class="modal fade consent-modal" id="privacyConsentModal" tabindex="-1" aria-labelledby="privacyConsentModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="privacyConsentModalLabel">Data Privacy Act Consent</h5>
-                    <button type="button" id="consentCloseButton" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closePrivacyConsent()"></button>
                 </div>
                 <div class="modal-body">
                     <p class="consent-note">
