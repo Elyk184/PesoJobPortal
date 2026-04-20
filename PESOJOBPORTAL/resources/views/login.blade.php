@@ -25,7 +25,7 @@
             display: grid;
             place-items: center;
             background: linear-gradient(rgba(246, 248, 252, 0.9), rgba(246, 248, 252, 0.9)),
-                        url('{{ asset('images/P1so.png') }}') center center / min(88vw, 980px) auto no-repeat,
+                        url("{{ asset('images/P1so.png') }}") center center / min(88vw, 980px) auto no-repeat,
                         #f6f8fc;
             position: relative;
             padding: 24px 16px;
