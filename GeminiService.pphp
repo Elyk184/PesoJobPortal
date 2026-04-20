@@ -1,0 +1,39 @@
+<?php
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+
+class GeminiService
+{
+    public function generatedContent($prompt)
+    {
+        try {
+            $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . env('GEMINI_API_KEY');
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($url, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            [
+                                'text' => $prompt
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+            $json = $response->json();
+            // Fix: Gemini API returns 'content' not 'contents' in candidates
+            if (isset($json['candidates'][0]['content']['parts'][0]['text'])) {
+                return $json['candidates'][0]['content']['parts'][0]['text'];
+            }
+            // Fallback for older response format
+            if (isset($json['candidates'][0]['contents'][0]['text'])) {
+                return $json['candidates'][0]['contents'][0]['text'];
+            }
+            return 'Gemini API error: ' . json_encode($json);
+        } catch (\Exception $e) {
+            return 'GeminiService error: ' . $e->getMessage();
+        }
+    }
+}

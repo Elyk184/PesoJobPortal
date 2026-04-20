@@ -129,6 +129,18 @@
         <h1 class="login-title">Sign In</h1>
         <p class="login-subtitle">Welcome back to PESO Manolo Fortich</p>
 
+        @if (session('status'))
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger" role="alert">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
 <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="mb-3">

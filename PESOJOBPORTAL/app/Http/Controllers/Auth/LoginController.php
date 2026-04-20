@@ -32,7 +32,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/');
+        $user = $request->user();
+
+        return redirect()->intended($user?->redirectToDashboard() ?? '/');
     }
 
     public function logout(Request $request): RedirectResponse
