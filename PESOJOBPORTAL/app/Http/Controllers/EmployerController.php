@@ -19,7 +19,7 @@ class EmployerController extends Controller
     public function dashboard(Request $request): View
     {
         $employer = $request->user()->loadMissing('profile');
-        $logoPath = $employer->profile->logo_path ?? null;
+        $logoPath = $employer->profile?->logo_path;
         $companyLogoUrl = ($logoPath && Storage::disk('public')->exists($logoPath))
             ? asset('storage/'.$logoPath)
             : null;

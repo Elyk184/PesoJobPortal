@@ -175,36 +175,47 @@
         <h1 class="register-title">Create Account</h1>
         <p class="register-subtitle">Join PESO and find your perfect job</p>
 
-<form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register') }}" method="POST" autocomplete="on">
             @csrf
+
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="mb-3">
-                <label for="full_name" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Enter your full name" value="{{ old('name') }}" autocomplete="name" required>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" autocomplete="email" required>
             </div>
 
             <div class="mb-3">
                 <label for="role" class="form-label">Register as</label>
-                <select class="form-select" id="role" name="role" required>
-                    <option value="" selected disabled>Select your role</option>
-                    <option value="jobseeker">Jobseeker</option>
-                    <option value="employer">Employer</option>
-                    <option value="admin">Admin</option>
+                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" autocomplete="off" required>
+                    <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
+                    <option value="jobseeker" {{ old('role') === 'jobseeker' ? 'selected' : '' }}>Jobseeker</option>
+                    <option value="employer" {{ old('role') === 'employer' ? 'selected' : '' }}>Employer</option>
+                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Create a secure password" required>
+                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" required>
             </div>
 
             <div class="mb-4">
                 <label for="password_confirmation" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" required>
+                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" autocomplete="new-password" required>
             </div>
 
             <button type="submit" class="register-button">

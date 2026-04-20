@@ -501,7 +501,7 @@
                                 <div class="job-title">{{ $job->title ?: ($job->position ?: 'Untitled Job') }}</div>
                                 <div class="job-sub">{{ $formatEmployment($job->job_type) }}</div>
                             </td>
-                            <td class="cell-company">{{ $job->employer_name ?: (auth()->user()->profile->company_name ?? auth()->user()->name) }}</td>
+                            <td class="cell-company">{{ $job->employer_name ?: (auth()->user()->profile?->company_name ?? auth()->user()->name) }}</td>
                             <td class="cell-location">{{ $job->location ?: 'No location' }}</td>
                             <td><span class="employment-pill">{{ $formatEmployment($job->job_type) }}</span></td>
                             <td>{{ $formatSalary($job) }}</td>

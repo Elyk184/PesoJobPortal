@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,9 +34,23 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        // Ensure newly-registered employers have a profile record so employer
+        // dashboard pages can safely read profile-backed fields.
+        if ($validated['role'] === 'employer') {
+            UserProfile::firstOrCreate(['user_id' => $user->id]);
+        }
+
         // Auth::login($user); // Commented to redirect to login instead of auto-login
         $request->session()->regenerate();
 
-        return redirect(route('login'))->with('success', 'Account created successfully! Please log in.');
+        $roleLabel = match ($validated['role']) {
+            'employer' => 'Employer',
+            'admin' => 'Admin',
+            default => 'Jobseeker',
+        };
+
+        return redirect()
+            ->route('login')
+            ->with('success', "Registration complete! Your {$roleLabel} account is ready. Please log in to continue.");
     }
 }
