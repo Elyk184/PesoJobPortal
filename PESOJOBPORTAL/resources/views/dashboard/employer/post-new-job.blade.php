@@ -91,6 +91,14 @@
         box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
         padding: 2rem;
     }
+    .form-grid-two {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+    .form-grid-two .mb-3 {
+        margin-bottom: 0 !important;
+    }
     .form-label {
         font-weight: 600;
         color: #1f2937;
@@ -353,6 +361,15 @@
         flex-wrap: wrap;
         gap: 0.5rem;
     }
+    .required-note {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.82rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
     @media (max-width: 992px) {
         .job-form-card {
             padding: 1.3rem;
@@ -378,6 +395,9 @@
         }
         .salary-separator {
             text-align: center;
+        }
+        .form-grid-two {
+            grid-template-columns: 1fr;
         }
         .form-actions {
             position: static;
@@ -492,31 +512,33 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('location') is-invalid @enderror"
-                               id="location" name="location"
-                               placeholder="e.g. Manila, Philippines or Remote"
-                               value="{{ old('location') }}" required>
-                        @error('location')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <div class="form-grid-two mb-3">
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('location') is-invalid @enderror"
+                                   id="location" name="location"
+                                   placeholder="e.g. Manila, Philippines or Remote"
+                                   value="{{ old('location') }}" required>
+                            @error('location')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
-                        <select class="form-select @error('employment_type') is-invalid @enderror"
-                                id="employment_type" name="employment_type" required>
-                            <option value="">Select employment type</option>
-                            @foreach($employmentTypes as $value => $label)
-                                <option value="{{ $value }}" {{ old('employment_type') == $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('employment_type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class="mb-3">
+                            <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                            <select class="form-select @error('employment_type') is-invalid @enderror"
+                                    id="employment_type" name="employment_type" required>
+                                <option value="">Select employment type</option>
+                                @foreach($employmentTypes as $value => $label)
+                                    <option value="{{ $value }}" {{ old('employment_type') == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('employment_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -732,11 +754,12 @@
                 <!-- Submit Buttons -->
                 <div class="pt-4 form-actions">
                     <div>
+                        <p class="required-note"><i class="bi bi-asterisk text-danger"></i>Fields marked with * are required.</p>
+                    </div>
+                    <div class="action-buttons">
                         <a href="{{ route('employer.dashboard') }}" class="btn btn-cancel">
                             <i class="bi bi-x-lg me-2"></i>Cancel
                         </a>
-                    </div>
-                    <div class="action-buttons">
                         <button type="submit" name="save_as_draft" value="1" class="btn btn-save-draft">
                             <i class="bi bi-file-earmark me-2"></i>Save as Draft
                         </button>

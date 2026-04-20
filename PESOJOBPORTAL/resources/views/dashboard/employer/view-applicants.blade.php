@@ -1,32 +1,62 @@
 @extends('dashboard.employer.layout')
 
 @section('title', 'Applicants - PESO')
+@section('hide_header')
+@endsection
 
 @section('content')
 
 <style>
     .applicants-page {
-        --ap-primary: #1f4f8f;
+        --ap-primary: #075cb2;
         --ap-primary-soft: #ecf3ff;
         --ap-border: #d9e6f6;
         --ap-shadow: 0 12px 26px rgba(21, 61, 117, 0.08);
+        --ap-landing-blue: #075cb2;
+        --ap-landing-blue-soft: #3498db;
+        --ap-landing-blue-deep: #2980b9;
     }
     .page-hero {
-        background: linear-gradient(135deg, #ffffff 0%, #f3f8ff 100%);
-        border: 2px solid var(--ap-border);
+        background: linear-gradient(135deg, var(--ap-landing-blue) 0%, var(--ap-landing-blue-soft) 100%);
+        border: 2px solid rgba(7, 92, 178, 0.5);
         border-radius: 18px;
         padding: 2rem 2rem;
-        box-shadow: 0 8px 16px rgba(21, 61, 117, 0.06);
+        box-shadow: 0 12px 24px rgba(7, 92, 178, 0.28);
+    }
+    .page-hero-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .hero-copy {
+        flex: 1 1 420px;
+    }
+    .hero-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 0.55rem 1rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+    .hero-meta i {
+        font-size: 0.95rem;
     }
     .page-hero h4 {
-        color: #163f74;
+        color: #ffffff;
         font-weight: 800;
         letter-spacing: 0.5px;
         margin-bottom: 0.5rem;
     }
     .page-hero p {
         margin: 0;
-        color: #5a6c7d;
+        color: rgba(255, 255, 255, 0.92);
         line-height: 1.5;
     }
 
@@ -43,6 +73,11 @@
         box-shadow: 0 4px 12px rgba(15, 49, 96, 0.06);
         position: relative;
         overflow: hidden;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
     }
     .stat-card::before {
         content: '';
@@ -111,9 +146,51 @@
         background: #fff;
         border-radius: 16px;
         border: 1px solid var(--ap-border);
-        padding: 2rem;
+        padding: 2.25rem;
         box-shadow: 0 4px 12px rgba(15, 49, 96, 0.05);
         transition: all 0.3s ease;
+    }
+    .filters-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1.1fr 1.6fr auto;
+        gap: 1.1rem;
+        align-items: end;
+    }
+    .filter-field {
+        min-width: 0;
+    }
+    .filter-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid #e4edf7;
+    }
+    .filter-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+        color: #1c4c85;
+        letter-spacing: 0.2px;
+    }
+    .filter-title i {
+        color: #2b67b1;
+    }
+    .filter-caption {
+        margin: 0;
+        color: #73849a;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .label-with-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
     }
     .filter-card .form-label {
         color: #274f82;
@@ -129,9 +206,14 @@
         border: 1.5px solid #d3dfe8;
         border-radius: 10px;
         padding: 0.7rem 1rem;
+        height: 46px;
         font-size: 0.95rem;
+        color: #243447;
         transition: all 0.25s ease;
         background: #fafbfc;
+    }
+    .filter-card .form-control::placeholder {
+        color: #7b8a9a;
     }
     .filter-card .form-control:hover,
     .filter-card .form-select:hover {
@@ -147,12 +229,17 @@
     .filter-actions {
         display: flex;
         gap: 0.75rem;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
     }
     .filter-actions .btn {
         transition: all 0.25s ease;
         font-weight: 600;
         border-radius: 10px;
+        height: 46px;
         padding: 0.7rem 1.2rem;
+        white-space: nowrap;
     }
     .filter-actions .btn-primary {
         background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);
@@ -163,6 +250,33 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(31, 79, 143, 0.3);
     }
+    .btn-reset-filters {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-width: 112px;
+        color: #125b5b;
+        background: #e8f7f5;
+        border: 1.5px solid #8ed7ce;
+        box-shadow: 0 2px 10px rgba(18, 91, 91, 0.08);
+    }
+    .btn-reset-filters:hover {
+        color: #0f4e4e;
+        background: #d7f0ed;
+        border-color: #56b9ab;
+    }
+    .btn-reset-filters i {
+        font-size: 0.9rem;
+    }
+    .table-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
 
     .applicants-table-card {
         background: #fff;
@@ -171,6 +285,41 @@
         box-shadow: 0 4px 16px rgba(15, 49, 96, 0.06);
         overflow: hidden;
         transition: all 0.3s ease;
+    }
+    .table-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: #f8fbff;
+        border-bottom: 1px solid #deebf9;
+    }
+    .table-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+        color: #1a467d;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .table-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        background: #eaf3ff;
+        color: #1f4f8f;
+        border: 1px solid #cadff7;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .th-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
     }
     .table {
         min-width: 880px;
@@ -262,12 +411,21 @@
         border-radius: 10px;
         width: 38px;
         height: 38px;
+        padding: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 0.35rem;
         transition: all 0.25s ease;
         border: 1.5px solid transparent;
         font-size: 0.95rem;
+    }
+    .action-text {
+        display: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1px;
+        line-height: 1;
     }
     .action-btn:hover {
         transform: translateY(-2px);
@@ -319,6 +477,12 @@
     }
 
     @media (max-width: 1199px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .filters-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
         .stat-card {
             padding: 1.5rem;
         }
@@ -335,8 +499,20 @@
         .page-hero {
             padding: 1.5rem;
         }
+        .hero-meta {
+            width: 100%;
+            justify-content: center;
+        }
         .filter-card {
             padding: 1.5rem;
+        }
+        .filter-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .filters-grid {
+            grid-template-columns: 1fr;
         }
         .filter-actions {
             width: 100%;
@@ -344,6 +520,9 @@
         }
         .filter-actions .btn {
             flex: 1;
+        }
+        .btn-reset-filters {
+            min-width: 0;
         }
         .stat-card {
             padding: 1.5rem;
@@ -356,6 +535,24 @@
         }
         .stat-info h3 {
             font-size: 1.5rem;
+        }
+        .table-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    @media (min-width: 992px) {
+        .filters-row-desktop {
+            flex-wrap: nowrap;
+        }
+        .action-btn {
+            width: auto;
+            min-width: 38px;
+            padding: 0.55rem 0.75rem;
+            border-radius: 999px;
+        }
+        .action-text {
+            display: inline;
         }
     }
     @media (max-width: 768px) {
@@ -386,15 +583,23 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="page-hero">
-                <h4>All Applicants</h4>
-                <p>Manage application progress, review candidate details, and move hiring decisions faster.</p>
+                <div class="page-hero-content">
+                    <div class="hero-copy">
+                        <h4>All Applicants</h4>
+                        <p>Manage application progress, review candidate details, and move hiring decisions faster.</p>
+                    </div>
+                    <div class="hero-meta">
+                        <i class="bi bi-people"></i>
+                        <span>{{ $totalApplicants }} Total Applicants</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Overview Section -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-3 col-md-6">
+    <div class="stats-grid mb-4">
+        <div>
             <div class="stat-card">
                 <div class="stat-icon bg-primary text-white"><i class="bi bi-people-fill"></i></div>
                 <div class="stat-info">
@@ -403,7 +608,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div>
             <div class="stat-card">
                 <div class="stat-icon bg-warning text-white"><i class="bi bi-clock-history"></i></div>
                 <div class="stat-info">
@@ -412,7 +617,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div>
             <div class="stat-card">
                 <div class="stat-icon bg-success text-white"><i class="bi bi-check-circle-fill"></i></div>
                 <div class="stat-info">
@@ -421,7 +626,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div>
             <div class="stat-card">
                 <div class="stat-icon bg-danger text-white"><i class="bi bi-x-circle-fill"></i></div>
                 <div class="stat-info">
@@ -436,9 +641,13 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="filter-card">
-                <form method="GET" class="row g-3 align-items-end">
-                    <div class="col-lg-3 col-md-6">
-                        <label class="form-label fw-medium">Job Position</label>
+                <div class="filter-card-header">
+                    <h5 class="filter-title"><i class="bi bi-sliders"></i>Filter Applicants</h5>
+                    <p class="filter-caption">Use fields below to find matching candidates faster.</p>
+                </div>
+                <form method="GET" class="filters-grid filters-row-desktop">
+                    <div class="filter-field">
+                        <label class="form-label fw-medium"><span class="label-with-icon"><i class="bi bi-briefcase"></i>Job Position</span></label>
                         <select name="job_id" class="form-select">
                             <option value="">All Jobs</option>
                             @foreach($jobs as $job)
@@ -448,8 +657,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <label class="form-label fw-medium">Application Status</label>
+                    <div class="filter-field">
+                        <label class="form-label fw-medium"><span class="label-with-icon"><i class="bi bi-clipboard-check"></i>Application Status</span></label>
                         <select name="status" class="form-select">
                             <option value="">All Status</option>
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
@@ -460,17 +669,18 @@
                             <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
-                    <div class="col-lg-4 col-md-8">
-                        <label class="form-label fw-medium">Search Applicant</label>
+                    <div class="filter-field">
+                        <label class="form-label fw-medium"><span class="label-with-icon"><i class="bi bi-search"></i>Search Applicant</span></label>
                         <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="{{ request('search') }}">
                     </div>
-                    <div class="col-lg-2 col-md-4">
+                    <div class="filter-field">
                         <div class="d-flex gap-2 filter-actions">
                             <button type="submit" class="btn btn-primary flex-grow-1">
                                 <i class="bi bi-funnel-fill me-1"></i>Filter
                             </button>
-                            <a href="{{ route('employer.applicants.index') }}" class="btn btn-outline-secondary" title="Reset Filters">
+                            <a href="{{ route('employer.applicants.index') }}" class="btn btn-reset-filters" title="Reset Filters">
                                 <i class="bi bi-arrow-clockwise"></i>
+                                <span>Reset</span>
                             </a>
                         </div>
                     </div>
@@ -482,6 +692,10 @@
     <div class="row">
         <div class="col-12">
             <div class="applicants-table-card">
+                <div class="table-card-header">
+                    <h5 class="table-title"><i class="bi bi-person-lines-fill"></i>Applicant Results</h5>
+                    <span class="table-count"><i class="bi bi-people"></i>{{ $referredApplications->count() }} records</span>
+                </div>
                 @if($referredApplications->isEmpty())
                 <div class="text-center empty-state">
                     <i class="bi bi-inbox text-muted d-block mb-3" style="font-size: 4rem;"></i>
@@ -493,11 +707,11 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th class="ps-4">Name</th>
-                                <th>Job Applied</th>
-                                <th>Date Applied</th>
-                                <th>Status</th>
-                                <th class="text-center">Actions</th>
+                                <th class="ps-4"><span class="th-label"><i class="bi bi-person"></i>Name</span></th>
+                                <th><span class="th-label"><i class="bi bi-briefcase"></i>Job Applied</span></th>
+                                <th><span class="th-label"><i class="bi bi-calendar-event"></i>Date Applied</span></th>
+                                <th><span class="th-label"><i class="bi bi-activity"></i>Status</span></th>
+                                <th class="text-center"><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -537,9 +751,10 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                                    <div class="table-actions">
                                         <a href="{{ route('dashboard.applicants.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
                                             <i class="bi bi-eye-fill"></i>
+                                            <span class="action-text">View</span>
                                         </a>
                                         @if($application->status != 'hired')
                                         <form method="POST" action="{{ route('dashboard.applicants.updateStatus', $application->id) }}" style="display: inline;">
@@ -548,6 +763,7 @@
                                             <input type="hidden" name="status" value="hired">
                                             <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
                                                 <i class="bi bi-check-lg"></i>
+                                                <span class="action-text">Hire</span>
                                             </button>
                                         </form>
                                         @endif
@@ -558,6 +774,7 @@
                                             <input type="hidden" name="status" value="rejected">
                                             <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
                                                 <i class="bi bi-x-lg"></i>
+                                                <span class="action-text">Reject</span>
                                             </button>
                                         </form>
                                         @endif

@@ -29,7 +29,7 @@
         background: var(--mj-card);
         border: 1px solid var(--mj-line);
         border-radius: 16px;
-        padding: 1.45rem;
+        padding: 1.75rem;
         box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
     }
 
@@ -38,11 +38,11 @@
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 16px;
+        gap: 18px;
         position: relative;
         overflow: hidden;
         border-radius: 14px;
-        padding: 1.2rem 1.25rem;
+        padding: 1.35rem 1.45rem;
         background: linear-gradient(135deg, #2d5da9 0%, #3e76ca 52%, #5f99e3 100%);
         box-shadow: 0 14px 28px rgba(31, 79, 151, 0.28);
     }
@@ -60,7 +60,7 @@
 
     .manage-heading {
         display: grid;
-        gap: 6px;
+        gap: 8px;
         position: relative;
         z-index: 1;
     }
@@ -77,19 +77,20 @@
         margin: 0;
         color: rgba(255, 255, 255, 0.92);
         font-size: 0.95rem;
+        max-width: 640px;
     }
 
     .manage-hero-meta {
         display: flex;
         flex-wrap: wrap;
         gap: 0.45rem;
-        margin-top: 0.25rem;
+        margin-top: 0.45rem;
     }
 
     .hero-chip {
         border: 1px solid rgba(255, 255, 255, 0.38);
         border-radius: 999px;
-        padding: 0.28rem 0.7rem;
+        padding: 0.34rem 0.78rem;
         font-size: 0.82rem;
         font-weight: 600;
         color: #ffffff;
@@ -99,8 +100,12 @@
 
     .btn-post-job {
         border: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
         border-radius: 11px;
-        padding: 0.6rem 0.95rem;
+        padding: 0.7rem 1.05rem;
         font-weight: 700;
         color: #1f4f97;
         text-decoration: none;
@@ -119,14 +124,14 @@
 
     .jobs-tabbar {
         display: flex;
-        gap: 0.45rem;
+        gap: 0.55rem;
         flex-wrap: wrap;
         border: 1px solid var(--mj-line);
         border-radius: 12px;
         background: #f8faff;
-        padding: 0.45rem;
-        margin-top: 1rem;
-        margin-bottom: 1.2rem;
+        padding: 0.55rem;
+        margin-top: 1.2rem;
+        margin-bottom: 1.35rem;
     }
 
     .jobs-tab {
@@ -172,9 +177,41 @@
 
     .jobs-table-wrap {
         border: 1px solid var(--mj-line);
-        border-radius: 12px;
+        border-radius: 14px;
         overflow: hidden;
         background: #fff;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .jobs-table-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .jobs-table-title {
+        margin: 0;
+        color: #1a3e76;
+        font-size: 1rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jobs-table-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        border: 1px solid #d3e2f8;
+        background: #eef4ff;
+        color: #214a91;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.35rem 0.72rem;
     }
 
     .jobs-grid th {
@@ -189,11 +226,21 @@
         line-height: 1.15;
         text-align: center;
     }
+    .th-with-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.38rem;
+    }
+    .th-with-icon i {
+        font-size: 0.82rem;
+        color: #5473a3;
+    }
 
     .jobs-grid td {
         border-bottom: 1px solid #e7ecf5;
         vertical-align: middle;
-        padding: 0.72rem 0.7rem;
+        padding: 0.88rem 0.7rem;
         font-size: 0.9rem;
     }
 
@@ -208,7 +255,11 @@
     }
 
     .jobs-grid tbody tr:hover {
-        background: #f9fbff;
+        background: #f5f9ff;
+    }
+
+    .jobs-grid tbody tr:nth-child(even) {
+        background: #fcfdff;
     }
 
     .job-title {
@@ -220,6 +271,22 @@
     .job-sub {
         color: #596680;
         font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .job-sub i {
+        font-size: 0.8rem;
+        color: #6a7f9f;
+    }
+    .value-with-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.38rem;
+    }
+    .value-with-icon i {
+        font-size: 0.85rem;
+        color: #6c7f99;
     }
     .cell-company,
     .cell-location {
@@ -279,7 +346,7 @@
     .action-row {
         display: flex;
         justify-content: center;
-        gap: 0.35rem;
+        gap: 0.45rem;
         flex-wrap: nowrap;
     }
 
@@ -341,7 +408,7 @@
     .empty-jobs-row {
         text-align: center;
         color: #64748b;
-        padding: 1.3rem !important;
+        padding: 1.8rem !important;
         font-weight: 600;
         background: #fbfdff;
     }
@@ -374,6 +441,11 @@
         }
         .manage-hero {
             padding: 1rem;
+        }
+        .jobs-table-head {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
         .btn-post-job {
             width: 100%;
@@ -474,21 +546,26 @@
             };
         @endphp
 
+        <div class="jobs-table-head">
+            <h5 class="jobs-table-title"><i class="bi bi-kanban"></i>Job Listings</h5>
+            <span class="jobs-table-meta"><i class="bi bi-collection"></i>{{ $jobs->count() }} items</span>
+        </div>
+
         <div class="table-responsive jobs-table-wrap">
             <table class="table align-middle jobs-grid mb-0">
                 <thead>
                     <tr>
-                        <th>Job Title</th>
-                        <th>Company</th>
-                        <th>Location</th>
-                        <th>Employment</th>
-                        <th>Salary</th>
-                        <th>Vacancies</th>
-                        <th>Applications</th>
-                        <th>Views</th>
-                        <th>Deadline</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th><span class="th-with-icon"><i class="bi bi-briefcase"></i>Job Title</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-building"></i>Company</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-geo-alt"></i>Location</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-person-workspace"></i>Employment</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-cash-stack"></i>Salary</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-people"></i>Vacancies</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-person-lines-fill"></i>Applications</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-eye"></i>Views</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-calendar-event"></i>Deadline</span></th>
+                        <th><span class="th-with-icon"><i class="bi bi-activity"></i>Status</span></th>
+                        <th class="text-end"><span class="th-with-icon"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -499,16 +576,16 @@
                         <tr>
                             <td>
                                 <div class="job-title">{{ $job->title ?: ($job->position ?: 'Untitled Job') }}</div>
-                                <div class="job-sub">{{ $formatEmployment($job->job_type) }}</div>
+                                <div class="job-sub"><i class="bi bi-briefcase"></i>{{ $formatEmployment($job->job_type) }}</div>
                             </td>
-                            <td class="cell-company">{{ $job->employer_name ?: (auth()->user()->profile?->company_name ?? auth()->user()->name) }}</td>
-                            <td class="cell-location">{{ $job->location ?: 'No location' }}</td>
+                            <td class="cell-company"><span class="value-with-icon"><i class="bi bi-building"></i>{{ $job->employer_name ?: (auth()->user()->profile?->company_name ?? auth()->user()->name) }}</span></td>
+                            <td class="cell-location"><span class="value-with-icon"><i class="bi bi-geo-alt"></i>{{ $job->location ?: 'No location' }}</span></td>
                             <td><span class="employment-pill">{{ $formatEmployment($job->job_type) }}</span></td>
-                            <td>{{ $formatSalary($job) }}</td>
+                            <td><span class="value-with-icon"><i class="bi bi-currency-dollar"></i>{{ $formatSalary($job) }}</span></td>
                             <td class="cell-num">{{ $job->vacancies ?? 0 }}</td>
                             <td class="cell-num"><span class="apps-pill">{{ $job->applications_count ?? 0 }}</span></td>
                             <td class="cell-num">{{ $job->views ?? $job->view_count ?? 0 }}</td>
-                            <td class="cell-date">{{ optional($job->application_end_date)->format('M d, Y') ?: 'No deadline' }}</td>
+                            <td class="cell-date"><span class="value-with-icon"><i class="bi bi-calendar3"></i>{{ optional($job->application_end_date)->format('M d, Y') ?: 'No deadline' }}</span></td>
                             <td class="cell-status">
                                 <span class="status-chip {{ $statusClass }}">{{ $statusLabel }}</span>
                             </td>
