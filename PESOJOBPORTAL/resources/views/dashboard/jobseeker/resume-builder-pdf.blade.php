@@ -97,6 +97,23 @@
     </div>
 
     <div class="section">
+        <div class="section-title">Training</div>
+        @forelse ($trainingRows ?? [] as $item)
+            @if(collect($item)->filter()->isNotEmpty())
+                <div class="item">
+                    <div class="item-head">
+                        <div>{{ $item['course'] ?? '' }}</div>
+                        <div>{{ $item['dates'] ?? '' }}</div>
+                    </div>
+                    <div class="muted">{{ $item['institution'] ?? '' }}</div>
+                    <div>{{ collect([$item['hours'] ?? '', $item['skills'] ?? '', $item['certificates'] ?? ''])->filter()->join(' | ') }}</div>
+                </div>
+            @endif
+        @empty
+        @endforelse
+    </div>
+
+    <div class="section">
         <div class="section-title">Experience</div>
         @forelse ($experienceRows as $item)
             @if(collect($item)->filter()->isNotEmpty())
@@ -107,6 +124,23 @@
                     </div>
                     <div class="muted">{{ $item['company'] ?? '' }}</div>
                     <div>{{ $item['details'] ?? '' }}</div>
+                </div>
+            @endif
+        @empty
+        @endforelse
+    </div>
+
+    <div class="section">
+        <div class="section-title">Eligibility</div>
+        @forelse ($eligibilityRows ?? [] as $item)
+            @if(collect($item)->filter()->isNotEmpty())
+                <div class="item">
+                    <div class="item-head">
+                        <div>{{ $item['eligibility'] ?? '' }}</div>
+                        <div>{{ $item['valid_until'] ?? '' }}</div>
+                    </div>
+                    <div class="muted">{{ $item['license'] ?? '' }}</div>
+                    <div>{{ $item['date_taken'] ?? '' }}</div>
                 </div>
             @endif
         @empty

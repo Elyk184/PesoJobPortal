@@ -15,22 +15,22 @@ class JobseekerController extends Controller
 {
     public function dashboard(): View
     {
-        return view('jobseeker.dashboard');
+        return view('dashboard.jobseeker.dashboard');
     }
 
     public function vacancies(): View
     {
-        return view('jobseeker.vacancies');
+        return view('dashboard.jobseeker.vacancies');
     }
 
     public function applications(): View
     {
-        return view('jobseeker.applications');
+        return view('dashboard.jobseeker.applications');
     }
 
     public function profile(): View
     {
-        return view('jobseeker.profile', $this->profileFormData(Auth::user()));
+        return view('dashboard.jobseeker.profile', $this->profileFormData(Auth::user()));
     }
 
     public function saveProfile(Request $request): RedirectResponse
@@ -216,14 +216,14 @@ class JobseekerController extends Controller
     {
         $data = $this->resumeBuilderData(Auth::user());
 
-        return view('jobseeker.resume-builder', $data);
+        return view('dashboard.jobseeker.resume-builder', $data);
     }
 
     public function exportResumeBuilder(): Response
     {
         $data = $this->resumeBuilderData(Auth::user());
 
-        $pdf = Pdf::loadView('jobseeker.resume-builder-pdf', $data)
+        $pdf = Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $data)
             ->setPaper('a4', 'portrait');
 
         $fileName = trim(($data['resumeName'] ?: 'resume') . '-harvard-style.pdf');
@@ -275,10 +275,17 @@ class JobseekerController extends Controller
 
     public function resetResumeBuilder(Request $request): RedirectResponse
     {
-        $profile = $request->user()?->profile;
+        $user = $request->user();
+        $profile = $user?->profile;
 
         if ($profile) {
-            $profile->delete();
+            $profile->update([
+                // Marker values indicate "resume reset mode" while preserving profile data.
+                'resume_name' => '',
+                'resume_email' => '',
+                'objective' => '',
+                'resume_path' => null,
+            ]);
         }
 
         return redirect()
@@ -355,6 +362,57 @@ class JobseekerController extends Controller
             ->all();
     }
 
+    private function buildResumeNameFromProfile(?User $user, array $personalInformation): string
+    {
+        $parts = collect([
+            data_get($personalInformation, 'first_name', ''),
+            data_get($personalInformation, 'middle_initial', ''),
+            data_get($personalInformation, 'surname', ''),
+            data_get($personalInformation, 'suffix', ''),
+        ])->filter();
+
+        return $parts->isNotEmpty() ? $parts->join(' ') : trim((string) ($user?->name ?? ''));
+    }
+
+    private function buildResumeSkillsFromProfile(?UserProfile $profile): array
+    {
+        if (! $profile) {
+            return [];
+        }
+
+        $skills = $profile->skills ?? [];
+
+        if (! empty($skills)) {
+            return $skills;
+        }
+
+        return $this->buildSkillList($profile->other_skills ?? []);
+    }
+
+    private function buildResumeObjectiveFromProfile(array $personalInformation, ?UserProfile $profile): string
+    {
+        $occupation = trim((string) data_get($profile, 'job_preferences.occupation_text', ''));
+        $skillText = collect($profile?->skills ?? [])->take(3)->implode(', ');
+
+        if ($occupation !== '' && $skillText !== '') {
+            return 'To secure a position in ' . $occupation . ' where I can apply my skills in ' . $skillText . ' and contribute to organizational success.';
+        }
+
+        if ($occupation !== '') {
+            return 'To secure a position in ' . $occupation . ' where I can contribute my skills and experience to a growing organization.';
+        }
+
+        if ($skillText !== '') {
+            return 'To secure a position where I can apply my skills in ' . $skillText . ' and contribute to organizational success.';
+        }
+
+        $firstName = trim((string) data_get($personalInformation, 'first_name', ''));
+
+        return $firstName !== ''
+            ? 'To secure a position where I can apply my skills and contribute to the success of the organization.'
+            : '';
+    }
+
     private function formatAddress(array $address): string
     {
         return collect([
@@ -369,14 +427,29 @@ class JobseekerController extends Controller
     {
         $profile = $user?->profile;
 
-        $resumeName = old('name', $profile->resume_name ?? '');
-        $resumeEmail = old('email', $profile->resume_email ?? '');
-        $resumePhone = old('phone', $profile->phone ?? '');
-        $resumeAddress = old('address', $profile->address ?? '');
-        $resumeObjective = old('objective', $profile->objective ?? '');
-        $resumeSkills = old('skills', implode(', ', $profile->skills ?? []));
-        $educationRows = old('education', $profile->education ?? []);
-        $experienceRows = old('experience', $profile->experience ?? []);
+        $isResumeReset = $profile
+            && $profile->resume_name === ''
+            && $profile->resume_email === '';
+
+        $profilePersonal = $profile?->personal_information ?? [];
+        $profilePresentAddress = $profile?->present_address ?? [];
+        $profilePermanentAddress = $profile?->permanent_address ?? [];
+        $profileSkills = $profile?->skills ?? [];
+        $profileEducationRows = $profile?->education ?? [];
+        $profileTrainingRows = $profile?->training ?? [];
+        $profileExperienceRows = $profile?->experience ?? [];
+        $profileEligibilityRows = $profile?->eligibility ?? [];
+
+        $resumeName = old('name', $isResumeReset ? '' : ($profile->resume_name ?? $this->buildResumeNameFromProfile($user, $profilePersonal)));
+        $resumeEmail = old('email', $isResumeReset ? '' : ($profile->resume_email ?? data_get($profilePersonal, 'email_address', $user?->email ?? '')));
+        $resumePhone = old('phone', $isResumeReset ? '' : ($profile->phone ?? data_get($profilePersonal, 'contact_number', '')));
+        $resumeAddress = old('address', $isResumeReset ? '' : ($profile->address ?? ($this->formatAddress($profilePresentAddress) ?: $this->formatAddress($profilePermanentAddress))));
+        $resumeObjective = old('objective', $isResumeReset ? '' : ($profile->objective ?? $this->buildResumeObjectiveFromProfile($profilePersonal, $profile)));
+        $resumeSkills = old('skills', $isResumeReset ? '' : implode(', ', $profileSkills ?: $this->buildResumeSkillsFromProfile($profile)));
+        $educationRows = old('education', $isResumeReset ? [] : $profileEducationRows);
+        $trainingRows = old('training', $isResumeReset ? [] : $profileTrainingRows);
+        $experienceRows = old('experience', $isResumeReset ? [] : $profileExperienceRows);
+        $eligibilityRows = old('eligibility', $isResumeReset ? [] : $profileEligibilityRows);
 
         return [
             'user' => $user,
@@ -388,7 +461,9 @@ class JobseekerController extends Controller
             'resumeObjective' => $resumeObjective,
             'resumeSkills' => $resumeSkills,
             'educationRows' => $educationRows,
+            'trainingRows' => $trainingRows,
             'experienceRows' => $experienceRows,
+            'eligibilityRows' => $eligibilityRows,
             'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
         ];
     }

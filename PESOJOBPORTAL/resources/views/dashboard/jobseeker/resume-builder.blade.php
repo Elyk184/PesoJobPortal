@@ -5,15 +5,17 @@
 @section('content')
 @php
     $profile = $profile ?? null;
-    $resumeName = old('name', $profile->resume_name ?? '');
-    $resumeEmail = old('email', $profile->resume_email ?? '');
-    $resumePhone = old('phone', $profile->phone ?? '');
-    $resumeAddress = old('address', $profile->address ?? '');
-    $resumeObjective = old('objective', $profile->objective ?? '');
-    $resumeSkills = old('skills', implode(', ', $profile->skills ?? []));
+    $resumeName = old('name', $resumeName ?? ($profile->resume_name ?? ''));
+    $resumeEmail = old('email', $resumeEmail ?? ($profile->resume_email ?? ''));
+    $resumePhone = old('phone', $resumePhone ?? ($profile->phone ?? ''));
+    $resumeAddress = old('address', $resumeAddress ?? ($profile->address ?? ''));
+    $resumeObjective = old('objective', $resumeObjective ?? ($profile->objective ?? ''));
+    $resumeSkills = old('skills', $resumeSkills ?? implode(', ', $profile->skills ?? []));
 
-    $educationRows = old('education', $profile->education ?? []);
-    $experienceRows = old('experience', $profile->experience ?? []);
+    $educationRows = old('education', $educationRows ?? ($profile->education ?? []));
+    $trainingRows = old('training', $trainingRows ?? ($profile->training ?? []));
+    $experienceRows = old('experience', $experienceRows ?? ($profile->experience ?? []));
+    $eligibilityRows = old('eligibility', $eligibilityRows ?? ($profile->eligibility ?? []));
 
     $skillsPreview = collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values();
 @endphp
@@ -48,7 +50,7 @@
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
             <div>
                 <h2 class="h4 mb-1 fw-bold">Build a clean, Harvard-style resume</h2>
-                <p class="mb-0 text-muted">Start from scratch or save your existing profile data. Everything below is editable.</p>
+                <p class="mb-0 text-muted">Your profile data now fills this draft automatically, and everything below is still editable.</p>
             </div>
             <div class="text-lg-end">
                 <div class="fw-semibold text-secondary">{{ $resumeName ?: 'Resume draft' }}</div>
@@ -215,6 +217,23 @@
                     </section>
 
                     <section class="resume-section mb-4">
+                        <h2>Training</h2>
+                        @forelse ($trainingRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div class="resume-item mb-3">
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <div class="fw-semibold">{{ $item['course'] ?? '' }}</div>
+                                        <div class="text-muted">{{ $item['dates'] ?? '' }}</div>
+                                    </div>
+                                    <div class="fst-italic text-muted">{{ $item['institution'] ?? '' }}</div>
+                                    <p class="mb-0">{{ collect([$item['hours'] ?? '', $item['skills'] ?? '', $item['certificates'] ?? ''])->filter()->join(' | ') }}</p>
+                                </div>
+                            @endif
+                        @empty
+                        @endforelse
+                    </section>
+
+                    <section class="resume-section mb-4">
                         <h2>Experience</h2>
                         @forelse ($experienceRows as $item)
                             @if(collect($item)->filter()->isNotEmpty())
@@ -225,6 +244,23 @@
                                     </div>
                                     <div class="fst-italic text-muted">{{ $item['company'] ?? '' }}</div>
                                     <p class="mb-0">{{ $item['details'] ?? '' }}</p>
+                                </div>
+                            @endif
+                        @empty
+                        @endforelse
+                    </section>
+
+                    <section class="resume-section mb-4">
+                        <h2>Eligibility</h2>
+                        @forelse ($eligibilityRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div class="resume-item mb-3">
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <div class="fw-semibold">{{ $item['eligibility'] ?? '' }}</div>
+                                        <div class="text-muted">{{ $item['valid_until'] ?? '' }}</div>
+                                    </div>
+                                    <div class="fst-italic text-muted">{{ $item['license'] ?? '' }}</div>
+                                    <p class="mb-0">{{ $item['date_taken'] ?? '' }}</p>
                                 </div>
                             @endif
                         @empty
