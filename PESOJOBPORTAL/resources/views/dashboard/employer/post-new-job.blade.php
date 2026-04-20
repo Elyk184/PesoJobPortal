@@ -353,23 +353,6 @@
         flex-wrap: wrap;
         gap: 0.5rem;
     }
-    .tips-card {
-        background: linear-gradient(180deg, #ffffff 0%, var(--bg-soft) 100%);
-        border: 1px solid #e8edf7;
-        border-radius: 16px;
-        box-shadow: 0 8px 20px rgba(31, 41, 55, 0.07);
-    }
-    .tips-list {
-        margin: 0;
-        padding-left: 1.1rem;
-        color: #4b5563;
-    }
-    .tips-list li {
-        margin-bottom: 0.35rem;
-    }
-    .tips-list li:last-child {
-        margin-bottom: 0;
-    }
     @media (max-width: 992px) {
         .job-form-card {
             padding: 1.3rem;
@@ -765,19 +748,6 @@
             </form>
         </div>
 
-        <!-- Tips Card -->
-        <div class="card mt-4 tips-card">
-            <div class="card-body">
-                <h6 class="mb-3"><i class="bi bi-lightbulb text-warning me-2"></i>Tips for a Great Job Post</h6>
-                <ul class="tips-list small">
-                    <li>Use a clear and specific job title</li>
-                    <li>Include detailed responsibilities and requirements</li>
-                    <li>Mention benefits and growth opportunities</li>
-                    <li>Specify if remote work or hybrid is available</li>
-                    <li>Include salary range to attract more applicants</li>
-                </ul>
-            </div>
-        </div>
     </div>
 </div>
 </div>

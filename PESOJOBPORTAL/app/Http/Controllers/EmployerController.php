@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\EmployerNotification;
 use App\Models\JobApplication;
 use App\Models\PesoJob;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class EmployerController extends Controller
@@ -115,9 +117,27 @@ class EmployerController extends Controller
             $defaultActivityType = null;
         }
 
+        $employer = $request->user()->loadMissing('profile');
+        $companyProfile = $employer->profile;
+
+        $companyProfilePreview = [
+            'company_name' => $companyProfile?->company_name ?? $employer->name,
+            'logo_path' => $companyProfile?->logo_path,
+            'establishment_contact_person' => $companyProfile?->establishment_contact_person,
+            'establishment_contact_position' => $companyProfile?->establishment_contact_position,
+            'establishment_phone' => $companyProfile?->establishment_phone,
+            'establishment_email' => $companyProfile?->establishment_email,
+            'street_village' => $companyProfile?->street_village,
+            'barangay' => $companyProfile?->barangay,
+            'city_municipality' => $companyProfile?->city_municipality,
+            'province' => $companyProfile?->province,
+        ];
+
         return view('dashboard.employer.submit-documents', [
             'defaultActivityType' => $defaultActivityType,
             'recruitmentRequests' => $this->getRecruitmentRequests($request->user()->id),
+            'companyProfile' => $companyProfile,
+            'companyProfilePreview' => $companyProfilePreview,
         ]);
     }
 
@@ -131,6 +151,30 @@ class EmployerController extends Controller
             'companyProfile' => $employer->profile,
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
         ]);
+    }
+
+    public function downloadCompanyProfile(Request $request)
+    {
+        $employer = $request->user()->loadMissing('profile');
+        $companyProfile = $employer->profile;
+        $logoPath = $companyProfile?->logo_path;
+        $logoFullPath = null;
+
+        if ($logoPath && Storage::disk('public')->exists($logoPath)) {
+            $logoFullPath = Storage::disk('public')->path($logoPath);
+        }
+
+        $pdf = Pdf::loadView('dashboard.employer.company-profile-pdf', [
+            'employer' => $employer,
+            'companyProfile' => $companyProfile,
+            'logoFullPath' => $logoFullPath,
+            'generatedAt' => now(),
+        ])->setPaper('a4');
+
+        return $pdf->download(sprintf(
+            '%s-company-profile.pdf',
+            Str::slug($companyProfile?->company_name ?? $employer->name)
+        ));
     }
 
     public function updateCompanyProfile(Request $request): RedirectResponse
@@ -421,17 +465,58 @@ class EmployerController extends Controller
     {
         $validated = $request->validate([
             'activity_type' => ['required', 'in:lra,sra'],
-            'letter_of_intent' => ['required', 'file', 'mimes:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'company_profile' => ['required', 'file', 'mimes:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'job_advertisement' => ['required', 'file', 'mimes:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'company_profile_source' => ['nullable', 'in:upload,profile_details'],
+            'letter_of_intent' => ['required', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'company_profile' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_advertisement' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
         ]);
 
+        $employer = $request->user()->loadMissing('profile');
+        $companyProfile = $employer->profile;
+
+        $companyProfileSource = $validated['company_profile_source'] ?? 'upload';
+        $companyProfilePath = null;
+
+        if ($request->hasFile('company_profile')) {
+            $companyProfilePath = $request->file('company_profile')->store('recruitment-documents');
+        } elseif ($companyProfileSource === 'profile_details' && $companyProfile) {
+            $summaryLines = [
+                'COMPANY PROFILE',
+                '================',
+                'Company Name: '.($companyProfile->company_name ?? $employer->name),
+                'Logo Path: '.($companyProfile->logo_path ?? 'N/A'),
+                'Establishment Contact Person: '.($companyProfile->establishment_contact_person ?? 'N/A'),
+                'Establishment Contact Position: '.($companyProfile->establishment_contact_position ?? 'N/A'),
+                'Establishment Phone: '.($companyProfile->establishment_phone ?? 'N/A'),
+                'Establishment Email: '.($companyProfile->establishment_email ?? 'N/A'),
+                'Address: '.trim(implode(', ', array_filter([
+                    $companyProfile->street_village ?? null,
+                    $companyProfile->barangay ?? null,
+                    $companyProfile->city_municipality ?? null,
+                    $companyProfile->province ?? null,
+                ]))),
+            ];
+
+            $companyProfilePath = 'recruitment-documents/company-profile-'.now()->format('YmdHis').'.txt';
+            Storage::disk('public')->put($companyProfilePath, implode("\n", $summaryLines));
+        }
+
+        if (! $companyProfilePath) {
+            return back()
+                ->withErrors(['company_profile' => 'Please upload a company profile file or choose the saved company profile details source.'])
+                ->withInput();
+        }
+
+        $jobAdvertisementPath = $request->hasFile('job_advertisement')
+            ? $request->file('job_advertisement')->store('recruitment-documents')
+            : '';
+
         RecruitmentActivityRequest::create([
-            'employer_id' => $request->user()->id,
+            'employer_id' => $employer->id,
             'activity_type' => $validated['activity_type'],
             'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
-            'company_profile_path' => $request->file('company_profile')->store('recruitment-documents'),
-            'job_advertisement_path' => $request->file('job_advertisement')->store('recruitment-documents'),
+            'company_profile_path' => $companyProfilePath,
+            'job_advertisement_path' => $jobAdvertisementPath,
         ]);
 
         return back()->with('success', 'LRA/SRA request submitted successfully.');

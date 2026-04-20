@@ -862,6 +862,9 @@
 
             <!-- Action Buttons -->
             <div class="profile-actions">
+                <a href="{{ route('employer.company-profile.download') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-download me-2"></i>Download PDF
+                </a>
                 <a href="{{ route('employer.dashboard') }}" class="btn btn-secondary-outline">
                     <i class="bi bi-x-circle me-2"></i>Cancel
                 </a>

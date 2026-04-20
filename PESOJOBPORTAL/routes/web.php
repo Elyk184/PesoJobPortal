@@ -47,6 +47,7 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::get('/request-lra-sra', [EmployerController::class, 'requestLraSraPage'])->name('recruitment.index');
     Route::get('/submit-documents', [EmployerController::class, 'submitDocumentsPage'])->name('documents.index');
     Route::get('/company-profile', [EmployerController::class, 'companyProfilePage'])->name('company-profile');
+    Route::get('/company-profile/download', [EmployerController::class, 'downloadCompanyProfile'])->name('company-profile.download');
     Route::put('/company-profile', [EmployerController::class, 'updateCompanyProfile'])->name('profile.update');
     Route::get('/notifications', [EmployerController::class, 'notificationsPage'])->name('notifications.index');
 
