@@ -248,7 +248,9 @@
                 </div>
                 <div class="modal-body">
                     <p class="consent-note">
-                        In accordance with the Data Privacy Act of 2012 (RA 10173), PESO Manolo Fortich protects your personal information and uses it only for legitimate PESO services.
+                        In accordance with the
+                        <a href="https://privacy.gov.ph/data-privacy-act/" target="_blank" rel="noopener noreferrer">Data Privacy Act of 2012 (RA 10173)</a>,
+                        PESO Manolo Fortich protects your personal information and uses it only for legitimate PESO services.
                     </p>
                     <p class="fw-semibold mb-2">By clicking Proceed, you agree that:</p>
                     <ul class="consent-list">
