@@ -212,7 +212,6 @@
                     <option value="" selected disabled>Select your role</option>
                     <option value="jobseeker" @selected(old('role') === 'jobseeker')>Jobseeker</option>
                     <option value="employer" @selected(old('role') === 'employer')>Employer</option>
-                    <option value="admin" @selected(old('role') === 'admin')>Admin</option>
                 </select>
             </div>
 
