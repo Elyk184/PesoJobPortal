@@ -22,17 +22,17 @@ body.peso-body {
     width: min(1360px, 100%);
     min-height: 700px;
     margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 22px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 420px);
+    align-items: center;
+    column-gap: clamp(24px, 4vw, 56px);
     box-sizing: border-box;;
     background-repeat: no-repeat;
     background-position: center top;
     background-size: 100% 420px;
     position: relative;
     overflow: hidden;
-    padding: 190px 24px 100px;
+    padding: 150px 24px 84px;
     border-radius: 0;
 }
 
@@ -40,8 +40,9 @@ body.peso-body {
     position: relative;
     z-index: 2;
     text-align: left;
-    width: min(58%, 680px);
-    transform: translateY(-2px);
+    width: 100%;
+    max-width: 700px;
+    transform: none;
 }
 
 .hero-copy h1 {
@@ -66,7 +67,7 @@ body.peso-body {
 }
 
 .hero-main {
-    font-size: 36px;
+    font-size: clamp(2.15rem, 2.9vw, 2.9rem);
     font-weight: 800;
     line-height: 1.08;
     margin-top: 10px;
@@ -82,14 +83,14 @@ body.peso-body {
 }
 
 .hero-description {
-    font-size: 19px;
+    font-size: clamp(1.08rem, 1.35vw, 1.34rem);
     color: #070606;
     text-align: justify;
     margin-top: 8px;
     margin-bottom: 30px;
     line-height: 1.6;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    max-width: 640px;
+    max-width: 620px;
 }
 
 .hero-cta {
@@ -117,20 +118,22 @@ body.peso-body {
 .hero-tabulation {
     position: relative;
     z-index: 2;
-    width: min(340px, 36%);
+    width: 100%;
+    max-width: 420px;
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid rgba(7, 92, 178, 0.2);
-    border-radius: 22px;
-    padding: 20px;
+    border-radius: 24px;
+    padding: 26px 24px;
     box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22);
     backdrop-filter: blur(10px);
-    transform: translateY(80px);
+    transform: translateY(18px);
+    justify-self: end;
 }
 
 .hero-tabulation-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 24px;
+    gap: 24px 28px;
 }
 
 .hero-stat {
@@ -139,7 +142,7 @@ body.peso-body {
 
 .hero-stat strong {
     display: block;
-    font-size: 40px;
+    font-size: clamp(2.6rem, 3.1vw, 3.35rem);
     line-height: 1;
     color: #075cb2e6;
     font-weight: 900;
@@ -147,7 +150,7 @@ body.peso-body {
 
 .hero-stat span {
     display: block;
-    font-size: 1rem;
+    font-size: 1.16rem;
     margin-top: 8px;
     font-weight: 600;
     color: #e74c3c;
@@ -264,11 +267,13 @@ body.peso-body {
 @media (max-width: 1024px) {
     .hero-static {
         min-height: 620px;
-        padding: 140px 20px 94px;
+        padding: 130px 20px 86px;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+        column-gap: 20px;
     }
 
     .hero-copy {
-        width: min(62%, 640px);
+        max-width: 620px;
     }
 
     .hero-top,
@@ -282,7 +287,8 @@ body.peso-body {
     }
 
     .hero-tabulation {
-        transform: translateY(60px);
+        transform: translateY(24px);
+        padding: 20px;
     }
 }
 
