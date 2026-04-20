@@ -22,37 +22,32 @@
         <div class="objectives-grid">
             <div class="objective-card">
                 <span class="card-number">OBJECTIVE 1</span>
-                <h3>To facilitate employment opportunities for local residents</h3>
+                <h3>To create job opportunities for the residents of Manolo Fortich, reducing unemployment rates and promoting econimic growth in the municipality.</h3>
                 <div class="objective-divider" aria-hidden="true"></div>
-                <p>PESO aims to provide employment assistance by connecting job seekers with local and overseas employers, helping reduce unemployment in the municipality.</p>
             </div>
 
             <div class="objective-card">
                 <span class="card-number">OBJECTIVE 2</span>
-                <h3>To provide timely and accurate labor market information</h3>
+                <h3>To provide training and skills development programs for job seekers, enhancing their employability and productivity in the workplace.</h3>
                 <div class="objective-divider" aria-hidden="true"></div>
-                <p>PESO ensures that job seekers and employers have access to updated information on job vacancies, employment trends, and labor demands to support informed decision-making.</p>
             </div>
 
             <div class="objective-card">
                 <span class="card-number">OBJECTIVE 3</span>
-                <h3>To deliver career guidance and employment coaching services</h3>
+                <h3>To promote entrepreneurship by providing access to resources, financial assistance, and business development services to aspiring entrepreneurs.</h3>
                 <div class="objective-divider" aria-hidden="true"></div>
-                <p>PESO supports students and job seekers through career guidance, counseling, and training programs to help them choose appropriate career paths and prepare for employment.</p>
             </div>
 
             <div class="objective-card">
                 <span class="card-number">OBJECTIVE 4</span>
-                <h3>To implement skills training and employability programs</h3>
+                <h3>To attracts investments in the municipality by showcasing its potential for growth, resources, and business opportunities.</h3>
                 <div class="objective-divider" aria-hidden="true"></div>
-                <p>PESO coordinates with government agencies and private partners to conduct skills training, workshops, and employment programs that enhance the competencies of the workforce.</p>
             </div>
 
             <div class="objective-card">
                 <span class="card-number">OBJECTIVE 5</span>
-                <h3>To strengthen partnerships with stakeholders for employment generation</h3>
+                <h3>To strengthen partnerships with local stakeholders, government agencies, and private sectors in the implementation of the PESO program, fostering collaboration and innovation in promoting economic development.</h3>
                 <div class="objective-divider" aria-hidden="true"></div>
-                <p>PESO builds strong collaboration with local government units, private companies, and other agencies to create more job opportunities and improve employment services.</p>
             </div>
         </div>
     </div>

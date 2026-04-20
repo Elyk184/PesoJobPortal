@@ -13,9 +13,7 @@
     position: relative;
     padding-top: 72px;
     padding-bottom: 56px;
-    background:
-        linear-gradient(135deg, rgba(15, 45, 82, 0.93), rgba(31, 75, 143, 0.88) 55%, rgba(215, 38, 56, 0.74)),
-        url('/images/objective.png') center/cover no-repeat;
+    background: #ffffff;
     overflow: hidden;
 }
 
@@ -23,9 +21,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(circle at 10% 12%, rgba(255, 255, 255, 0.16), transparent 40%),
-        radial-gradient(circle at 92% 80%, rgba(245, 200, 75, 0.2), transparent 38%);
+    background: none;
     pointer-events: none;
 }
 
@@ -36,7 +32,7 @@
 
 .objective-hero {
     text-align: center;
-    color: #f5f7fb;
+    color: var(--objective-blue);
     margin-bottom: 2.2rem;
 }
 
@@ -45,8 +41,8 @@
     margin: 0;
     padding: 0.4rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid rgba(245, 200, 75, 0.55);
-    background: rgba(15, 45, 82, 0.45);
+    border: 1px solid rgba(15, 45, 82, 0.22);
+    background: rgba(15, 45, 82, 0.08);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.09em;
@@ -58,12 +54,13 @@
     font-size: clamp(2rem, 4.2vw, 3.25rem);
     font-weight: 800;
     letter-spacing: 0.02em;
+    color: var(--objective-blue);
 }
 
 .underline {
     width: 90px;
     height: 4px;
-    background: linear-gradient(90deg, #ffffff 0%, var(--objective-gold) 100%);
+    background: linear-gradient(90deg, var(--objective-blue) 0%, var(--objective-gold) 100%);
     margin: 0.8rem auto 1rem;
     border-radius: 999px;
 }
@@ -73,7 +70,7 @@
     max-width: 920px;
     font-size: clamp(1rem, 1.3vw, 1.08rem);
     line-height: 1.8;
-    color: #e6eefb;
+    color: #294d75;
 }
 
 .objective-content {
@@ -135,7 +132,7 @@
     margin: 0;
     font-size: 1.1rem;
     color: var(--objective-blue);
-    font-weight: 800;
+    font-weight: 400;
     line-height: 1.4;
 }
 
