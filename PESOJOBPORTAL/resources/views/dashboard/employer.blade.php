@@ -1,16 +1,7 @@
 @extends('dashboard.employer.layout')
 
 @section('title', 'Employer Dashboard')
-@section('page_title', 'Dashboard')
-@section('page_subtitle', 'Quick overview of your recruitment activity.')
-
-@section('header_actions')
-    @if ($isVerifiedEmployer)
-        <span class="pill">Verified Employer</span>
-    @else
-        <span class="pill" style="background:#fef2f2;color:#b91c1c;">Not Verified</span>
-    @endif
-@endsection
+@section('hide_header', true)
 
 @push('styles')
 <style>
@@ -56,6 +47,14 @@
         gap: 24px;
     }
 
+    .hero-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
     .hero-main {
         display: flex;
         align-items: center;
@@ -94,6 +93,20 @@
     .hero-company-logo-fallback svg {
         width: 42px;
         height: 42px;
+    }
+
+    .hero-status-badge {
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(248, 250, 252, 0.96);
+        color: #0f172a;
+    }
+
+    .hero-status-badge.is-unverified {
+        color: #b91c1c;
     }
 
     .dashboard-hero p {
@@ -262,6 +275,11 @@
             align-items: flex-start;
         }
 
+        .hero-side {
+            width: 100%;
+            align-items: flex-start;
+        }
+
         .hero-main {
             align-items: flex-start;
         }
@@ -303,23 +321,31 @@
                         <path d="M12 6v6l4 2"></path>
                     </svg>
                     <div>
-                        <h2 style="margin: 0 0 6px;">Recruitment Command Center</h2>
-                        <p style="margin: 0; color: rgba(236, 254, 255, 0.92); max-width: 720px;">Track your hiring pipeline and take action quickly from one place. Keep jobs active, respond faster to applicants, and stay compliant.</p>
+                        <h2 style="margin: 0 0 6px;">Employer Dashboard</h2>
+                        <p style="margin: 0; color: rgba(236, 254, 255, 0.92); max-width: 720px;">Manage jobs, review applicants, and keep your hiring workflow moving from one place.</p>
                     </div>
                 </div>
 
-                @if (!empty($companyLogoUrl))
-                    <img src="{{ $companyLogoUrl }}" alt="Company Logo" class="hero-company-logo">
-                @else
-                    <span class="hero-company-logo-fallback" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
-                            <path d="M3 21h18"></path>
-                            <path d="M5 21V7l7-4 7 4v14"></path>
-                            <path d="M9 10h6"></path>
-                            <path d="M9 14h6"></path>
-                        </svg>
-                    </span>
-                @endif
+                <div class="hero-side">
+                    @if (!empty($companyLogoUrl))
+                        <img src="{{ $companyLogoUrl }}" alt="Company Logo" class="hero-company-logo">
+                    @else
+                        <span class="hero-company-logo-fallback" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;">
+                                <path d="M3 21h18"></path>
+                                <path d="M5 21V7l7-4 7 4v14"></path>
+                                <path d="M9 10h6"></path>
+                                <path d="M9 14h6"></path>
+                            </svg>
+                        </span>
+                    @endif
+
+                    @if ($isVerifiedEmployer)
+                        <span class="hero-status-badge">Verified Employer</span>
+                    @else
+                        <span class="hero-status-badge is-unverified">Not Verified</span>
+                    @endif
+                </div>
             </div>
             <div class="hero-badges">
                 <span class="hero-badge">⚡ Employer Dashboard</span>
@@ -364,7 +390,7 @@
 
                 <div class="metric-card">
                     <div class="metric-top">
-                        <p class="metric-label">Hired Candidates</p>
+                        <p class="metric-label">Pending Job Posts</p>
                         <span class="metric-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -372,7 +398,7 @@
                             </svg>
                         </span>
                     </div>
-                    <p class="metric-value">{{ $stats['hired_candidates'] }}</p>
+                    <p class="metric-value">{{ $stats['pending_jobs_count'] }}</p>
                 </div>
 
                 <div class="metric-card">

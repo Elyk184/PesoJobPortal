@@ -351,12 +351,7 @@ class EmployerController extends Controller
             default => 'Job posted successfully and is now visible in Active Jobs.',
         };
 
-        $redirectStatus = $job->status;
-        if (! in_array($redirectStatus, ['active', 'pending', 'draft', 'archived', 'filled', 'all'], true)) {
-            $redirectStatus = 'active';
-        }
-
-        return redirect()->route('employer.jobs.manage', ['status' => $redirectStatus])->with('success', $message);
+        return redirect()->route('employer.jobs.post')->with('success', $message);
     }
 
     public function extendJob(Request $request, PesoJob $job): RedirectResponse
@@ -542,11 +537,10 @@ class EmployerController extends Controller
             })
             ->count();
 
-        $hiredCandidates = JobApplication::query()
-            ->whereHas('job', function ($query) use ($employerId) {
-                $query->where('employer_id', $employerId);
-            })
-            ->where('final_decision', 'hired')
+        $pendingJobsCount = PesoJob::query()
+            ->where('employer_id', $employerId)
+            ->where('status', 'pending')
+            ->whereNull('archived_at')
             ->count();
 
         $newApplicationsToday = JobApplication::query()
@@ -559,7 +553,7 @@ class EmployerController extends Controller
         return [
             'active_jobs_count' => $activeJobsCount,
             'total_applications' => $totalApplications,
-            'hired_candidates' => $hiredCandidates,
+            'pending_jobs_count' => $pendingJobsCount,
             'new_applications_today' => $newApplicationsToday,
         ];
     }

@@ -1,6 +1,7 @@
 @extends('dashboard.employer.layout')
 
 @section('title', 'Post New Job - PESO')
+@section('hide_header', true)
 
 @section('content')
 <style>
@@ -280,11 +281,22 @@
     }
     .section-title {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 0.6rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.1rem;
         font-weight: 700;
         color: #1f2937;
+    }
+    .section-title > i,
+    .section-title .section-icon {
+        margin-top: 0.12rem;
+    }
+    .section-title-basic {
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .section-title-basic > i {
+        margin-top: 0;
     }
     .section-heading {
         display: flex;
@@ -458,7 +470,7 @@
 
                 <!-- Basic Information Section -->
                 <div class="mb-4 form-block block-primary">
-                    <h5 class="section-title">
+                    <h5 class="section-title section-title-basic">
                         <i class="bi bi-info-circle text-primary"></i>
                         <span class="section-heading">
                             Basic Information

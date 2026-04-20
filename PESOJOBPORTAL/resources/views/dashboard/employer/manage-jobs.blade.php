@@ -1,71 +1,162 @@
 @extends('dashboard.employer.layout')
 
 @section('title', 'Manage Jobs - PESO')
-@section('hide_header')@endsection
+@section('hide_header', true)
 
 @section('content')
 <style>
+    :root {
+        --mj-bg: #edf2fb;
+        --mj-card: #ffffff;
+        --mj-line: #d8e2f1;
+        --mj-ink: #12243f;
+        --mj-muted: #5f6f86;
+        --mj-accent: #215ae8;
+        --mj-accent-soft: #eaf0ff;
+    }
+
     .manage-jobs-wrap {
-        background: #eff1f6;
+        background:
+            radial-gradient(circle at top right, rgba(84, 133, 255, 0.12), transparent 48%),
+            radial-gradient(circle at left bottom, rgba(14, 165, 198, 0.08), transparent 42%),
+            var(--mj-bg);
         margin: -1rem;
-        padding: 1.3rem;
+        padding: 1.5rem;
         min-height: 100vh;
     }
-    .manage-jobs-head {
-        background: #ffffff;
-        border: 1px solid #e3e8f3;
-        border-radius: 12px;
-        padding: 1.2rem 1.4rem;
-        margin-bottom: 1rem;
-    }
-    .manage-jobs-head h3 {
-        margin: 0;
-        font-size: 1.9rem;
-        font-weight: 700;
-        color: #16233a;
-    }
-    .manage-jobs-head p {
-        margin: 0.2rem 0 0;
-        color: #5a667a;
-    }
+
     .manage-jobs-card {
-        background: #ffffff;
-        border: 1px solid #dfe5f1;
-        border-radius: 12px;
-        padding: 1.35rem;
+        background: var(--mj-card);
+        border: 1px solid var(--mj-line);
+        border-radius: 16px;
+        padding: 1.45rem;
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
     }
+
+    .manage-hero {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 14px;
+        padding: 1.2rem 1.25rem;
+        background: linear-gradient(135deg, #2d5da9 0%, #3e76ca 52%, #5f99e3 100%);
+        box-shadow: 0 14px 28px rgba(31, 79, 151, 0.28);
+    }
+
+    .manage-hero::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.14);
+        right: -70px;
+        top: -86px;
+    }
+
+    .manage-heading {
+        display: grid;
+        gap: 6px;
+        position: relative;
+        z-index: 1;
+    }
+
     .manage-title {
         font-size: 2rem;
         margin: 0;
         font-weight: 700;
-        color: #16233a;
+        color: #ffffff;
+        letter-spacing: -0.01em;
     }
+
+    .manage-subtitle {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 0.95rem;
+    }
+
+    .manage-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-top: 0.25rem;
+    }
+
+    .hero-chip {
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        border-radius: 999px;
+        padding: 0.28rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(3px);
+    }
+
+    .btn-post-job {
+        border: 0;
+        border-radius: 11px;
+        padding: 0.6rem 0.95rem;
+        font-weight: 700;
+        color: #1f4f97;
+        text-decoration: none;
+        background: #ffffff;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-post-job:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 24px rgba(15, 23, 42, 0.28);
+        color: #173d77;
+    }
+
     .jobs-tabbar {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.45rem;
         flex-wrap: wrap;
-        border-bottom: 1px solid #e5eaf4;
-        margin-top: 1.2rem;
+        border: 1px solid var(--mj-line);
+        border-radius: 12px;
+        background: #f8faff;
+        padding: 0.45rem;
+        margin-top: 1rem;
         margin-bottom: 1.2rem;
     }
+
     .jobs-tab {
         color: #3f4f68;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.75rem 0.85rem;
-        border-bottom: 2px solid transparent;
-        font-weight: 500;
+        border-radius: 10px;
+        padding: 0.55rem 0.75rem;
+        font-weight: 600;
+        transition: background-color 0.15s ease, color 0.15s ease;
     }
+
+    .jobs-tab:hover {
+        background: #eef3fb;
+        color: #1f3c70;
+    }
+
     .jobs-tab i {
         font-size: 1rem;
     }
+
     .jobs-tab.active {
-        color: #2360f1;
-        border-bottom-color: #2360f1;
+        color: #0f3fa8;
+        background: var(--mj-accent-soft);
+        box-shadow: inset 0 0 0 1px #c6d6fb;
         font-weight: 700;
     }
+
     .jobs-tab-badge {
         font-size: 0.73rem;
         font-weight: 700;
@@ -78,32 +169,48 @@
     .jobs-tab-badge.gray { background: #6b778c; }
     .jobs-tab-badge.yellow { background: #f5b700; }
     .jobs-tab-badge.teal { background: #0ea5c6; }
+
+    .jobs-table-wrap {
+        border: 1px solid var(--mj-line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
     .jobs-grid th {
         font-size: 0.83rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         color: #4f5f78;
         border-bottom: 1px solid #dfe6f3;
-        background: #f7f9fc;
+        background: linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
         white-space: normal;
-        padding: 0.72rem 0.7rem;
+        padding: 0.75rem 0.7rem;
         line-height: 1.15;
         text-align: center;
     }
+
     .jobs-grid td {
         border-bottom: 1px solid #e7ecf5;
-        vertical-align: top;
+        vertical-align: middle;
         padding: 0.72rem 0.7rem;
         font-size: 0.9rem;
     }
+
     .jobs-grid {
         width: 100%;
         min-width: 0;
         table-layout: fixed;
     }
+
+    .jobs-grid tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
     .jobs-grid tbody tr:hover {
         background: #f9fbff;
     }
+
     .job-title {
         font-size: 1.08rem;
         font-weight: 700;
@@ -172,25 +279,56 @@
     .action-row {
         display: flex;
         justify-content: center;
-        gap: 0.22rem;
+        gap: 0.35rem;
         flex-wrap: nowrap;
     }
+
     .icon-btn {
-        width: 28px;
-        height: 28px;
+        width: 30px;
+        height: 30px;
         padding: 0;
-        border-radius: 7px;
+        border-radius: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         border: 1px solid #cfd8ea;
         background: #fff;
         color: #2a5fdf;
+        box-shadow: 0 3px 6px rgba(15, 23, 42, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     }
+
     .icon-btn:hover {
         background: #f0f5ff;
         color: #1347c0;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(15, 23, 42, 0.1);
     }
+
+    .icon-btn.view {
+        color: #2563eb;
+        border-color: #c7dbff;
+        background: #f5f9ff;
+    }
+
+    .icon-btn.duplicate {
+        color: #7c3aed;
+        border-color: #dfceff;
+        background: #f8f5ff;
+    }
+
+    .icon-btn.filled {
+        color: #0f8c4a;
+        border-color: #c6efd6;
+        background: #f0fbf5;
+    }
+
+    .icon-btn.archive {
+        color: #b45309;
+        border-color: #fde3c1;
+        background: #fff9f0;
+    }
+
     .action-icon {
         width: 15px;
         height: 15px;
@@ -203,9 +341,11 @@
     .empty-jobs-row {
         text-align: center;
         color: #64748b;
-        padding: 1.25rem !important;
-        font-weight: 500;
+        padding: 1.3rem !important;
+        font-weight: 600;
+        background: #fbfdff;
     }
+
     @media (max-width: 1200px) {
         .jobs-grid {
             font-size: 0.85rem;
@@ -223,32 +363,36 @@
             margin: -0.7rem;
             padding: 0.75rem;
         }
-        .manage-jobs-head,
         .manage-jobs-card {
             padding: 1rem;
         }
         .manage-title {
             font-size: 1.5rem;
         }
+        .manage-subtitle {
+            font-size: 0.88rem;
+        }
+        .manage-hero {
+            padding: 1rem;
+        }
+        .btn-post-job {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
 <div class="manage-jobs-wrap">
-    <div class="manage-jobs-head d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <div>
-            <h3>Dashboard</h3>
-            <p>Manage your job postings and applicants</p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-building text-primary"></i>
-            <strong>{{ auth()->user()->profile->company_name ?? auth()->user()->name }}</strong>
-        </div>
-    </div>
-
     <div class="manage-jobs-card">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <h4 class="manage-title">Manage Jobs</h4>
-            <a href="{{ route('employer.jobs.post') }}" class="btn btn-primary">
+        <div class="manage-hero">
+            <div class="manage-heading">
+                <h4 class="manage-title">Manage Jobs</h4>
+                <p class="manage-subtitle">Monitor posting status, application flow, and hiring momentum in one view.</p>
+                <div class="manage-hero-meta">
+                    <span class="hero-chip">Employer Portal</span>
+                </div>
+            </div>
+            <a href="{{ route('employer.jobs.post') }}" class="btn-post-job">
                 <i class="bi bi-plus-lg me-1"></i> Post New Job
             </a>
         </div>
@@ -330,7 +474,7 @@
             };
         @endphp
 
-        <div class="table-responsive">
+        <div class="table-responsive jobs-table-wrap">
             <table class="table align-middle jobs-grid mb-0">
                 <thead>
                     <tr>
@@ -370,13 +514,13 @@
                             </td>
                             <td class="text-end cell-actions">
                                 <div class="action-row">
-                                    <a href="{{ route('employer.applicants.index') }}" class="icon-btn" title="View Applicants" aria-label="View Applicants">
+                                    <a href="{{ route('employer.applicants.index') }}" class="icon-btn view" title="View Applicants" aria-label="View Applicants">
                                         <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                     </a>
 
                                     <form action="{{ route('employer.jobs.duplicate', $job) }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="icon-btn" title="Duplicate Job" aria-label="Duplicate Job">
+                                        <button type="submit" class="icon-btn duplicate" title="Duplicate Job" aria-label="Duplicate Job">
                                             <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>
                                         </button>
                                     </form>
@@ -385,7 +529,7 @@
                                         <form action="{{ route('employer.jobs.filled', $job) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="icon-btn" title="Mark as Filled" aria-label="Mark as Filled">
+                                            <button type="submit" class="icon-btn filled" title="Mark as Filled" aria-label="Mark as Filled">
                                                 <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                             </button>
                                         </form>
@@ -395,7 +539,7 @@
                                         <form action="{{ route('employer.jobs.archive', $job) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="icon-btn" title="Archive Job" aria-label="Archive Job">
+                                            <button type="submit" class="icon-btn archive" title="Archive Job" aria-label="Archive Job">
                                                 <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="4"></rect><path d="M5 8v12h14V8"></path><path d="M10 12h4"></path></svg>
                                             </button>
                                         </form>
