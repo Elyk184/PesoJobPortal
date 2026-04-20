@@ -296,21 +296,26 @@ body.peso-body {
     .peso-hero {
         min-height: auto;
         padding: 0;
+        background-image: none;
+        background-size: auto;
     }
 
     .hero-static {
+        display: flex;
+        flex-direction: column;
         background-image: url('/images/mobile-background.png');
         background-size: cover;
         background-position: center top;
+        background-repeat: no-repeat;
         min-height: 720px;
-        padding: 170px 16px 90px;
+        padding: 156px 16px 64px;
         gap: 16px;
-        flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         justify-content: flex-start;
     }
 
     .hero-copy {
+        order: 1;
         width: 100%;
         text-align: left;
         transform: none;
@@ -336,11 +341,15 @@ body.peso-body {
     }
 
     .hero-cta {
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .hero-tabulation {
+        order: 2;
         width: min(560px, 100%);
+        margin-top: 6px;
+        margin-left: auto;
+        margin-right: auto;
         transform: none;
     }
 
@@ -353,7 +362,7 @@ body.peso-body {
 @media (max-width: 540px) {
     .hero-static {
         min-height: 660px;
-        padding: 176px 14px 86px;
+        padding: 150px 14px 70px;
         background-position: center top;
     }
 
