@@ -23,6 +23,9 @@ class RegisterController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', 'in:admin,employer,jobseeker'],
             'password' => ['required', 'confirmed', 'min:8'],
+            'privacy_consent' => ['accepted'],
+        ], [
+            'privacy_consent.accepted' => 'You must agree to the PESO Data Privacy Policy before registering.',
         ]);
 
         $user = User::create([
