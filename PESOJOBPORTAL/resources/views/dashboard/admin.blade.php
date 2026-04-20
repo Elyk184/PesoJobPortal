@@ -551,7 +551,7 @@
         <ul class="sidebar-menu">
             <!-- Dashboard -->
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link active">
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-link active">
                     <i class="bi bi-speedometer2"></i>
                     <span>Dashboard</span>
                 </a>
@@ -565,31 +565,31 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-person-check"></i>
                     <span>Jobseeker Approvals</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-building"></i>
                     <span>Employer Verification</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-check"></i>
                     <span>Job Approvals</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.lra-sra-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-clipboard-check"></i>
                     <span>LRA/SRA Approvals</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.document-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-earmark"></i>
                     <span>Document Verification</span>
                 </a>
@@ -603,25 +603,25 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.jobseekers-management') }}" class="sidebar-menu-link">
                     <i class="bi bi-people"></i>
                     <span>Jobseekers</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.employers-management') }}" class="sidebar-menu-link">
                     <i class="bi bi-shop"></i>
                     <span>Employers</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.jobs-management') }}" class="sidebar-menu-link">
                     <i class="bi bi-briefcase"></i>
                     <span>Jobs</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.applications-management') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-earmark-check"></i>
                     <span>Applications</span>
                 </a>
@@ -635,31 +635,31 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.employment-stats') }}" class="sidebar-menu-link">
                     <i class="bi bi-bar-chart-line"></i>
                     <span>Employment Stats</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.skills-gap-analysis') }}" class="sidebar-menu-link">
                     <i class="bi bi-diagram-3"></i>
                     <span>Skills Gap Analysis</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.barangay-intelligence') }}" class="sidebar-menu-link">
                     <i class="bi bi-map"></i>
                     <span>Barangay Intelligence</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.report-builder') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Dynamic Report Builder</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-pdf"></i>
                     <span>PESO Clearances</span>
                 </a>
@@ -673,19 +673,19 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.settings') }}" class="sidebar-menu-link">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.alerts-notifications') }}" class="sidebar-menu-link">
                     <i class="bi bi-bell"></i>
                     <span>Alerts & Notifications</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="{{ route('admin.qr-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-qr-code"></i>
                     <span>QR Verification</span>
                 </a>
@@ -953,7 +953,8 @@
     // Menu item active state
     document.querySelectorAll('.sidebar-menu-link').forEach(link => {
         link.addEventListener('click', function(e) {
-            if (!this.closest('form')) {
+            // Only prevent default for placeholder links (#)
+            if (this.getAttribute('href') === '#') {
                 e.preventDefault();
                 document.querySelectorAll('.sidebar-menu-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
