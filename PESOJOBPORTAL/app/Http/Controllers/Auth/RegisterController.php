@@ -24,6 +24,7 @@ class RegisterController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', 'in:employer,jobseeker'],
             'password' => ['required', 'confirmed', 'min:8'],
+            'policy_consent' => ['accepted'],
         ]);
 
         $user = User::create([

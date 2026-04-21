@@ -161,6 +161,24 @@
             font-weight: 700;
         }
 
+        .policy-consent {
+            margin-top: 10px;
+            padding: 12px 14px;
+            border: 1px solid #d7dfeb;
+            border-radius: 10px;
+            background: #f8fbff;
+        }
+
+        .policy-consent .form-check-label {
+            font-size: 0.92rem;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .policy-consent .form-check-input {
+            margin-top: 0.24rem;
+        }
+
         @media (max-width: 480px) {
             .register-card {
                 border-radius: 14px;
@@ -224,6 +242,21 @@
             <a href="/" class="home-button mb-3">
                 <i class="bi bi-house-door me-2"></i>Back to Home
             </a>
+
+            <div class="policy-consent mb-3">
+                <div class="form-check">
+                    <input class="form-check-input @error('policy_consent') is-invalid @enderror" type="checkbox" value="1" id="policy_consent" name="policy_consent" {{ old('policy_consent') ? 'checked' : '' }} required>
+                    <label class="form-check-label" for="policy_consent">
+                        I agree to the
+                        <a href="{{ route('privacy-policy') }}" class="link-muted" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                        and
+                        <a href="{{ route('terms-of-service') }}" class="link-muted" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+                    </label>
+                    @error('policy_consent')
+                        <div class="invalid-feedback d-block">You must agree to the Privacy Policy and Terms of Service.</div>
+                    @enderror
+                </div>
+            </div>
         </form>
 
         <div class="divider"></div>

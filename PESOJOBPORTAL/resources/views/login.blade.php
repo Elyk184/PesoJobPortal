@@ -145,6 +145,17 @@
             margin: 16px 0;
             border-top: 1px solid #e4e9ef;
         }
+
+        .legal-links {
+            text-align: center;
+            font-size: 0.84rem;
+            color: #7b8794;
+            margin-bottom: 8px;
+        }
+
+        .legal-links a {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -220,6 +231,11 @@
         </form>
 
         <div class="divider"></div>
+        <p class="legal-links mb-1">
+            <a href="{{ route('privacy-policy') }}" class="link-muted">Privacy Policy</a>
+            <span class="mx-2">|</span>
+            <a href="{{ route('terms-of-service') }}" class="link-muted">Terms of Service</a>
+        </p>
         <p class="text-center mb-0" style="color: #5f6c7a;">
             Don't have an account? <a href="{{ route('register') }}" class="link-muted">Register</a>
         </p>
