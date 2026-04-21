@@ -96,7 +96,6 @@
             <div class="card news-card objective-card">
                 <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
                 <div class="card-body news-card-body">
-                    <span class="feature-chip">Feature 01</span>
                     <h5 class="news-card-title">Events</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Upcoming PESO events and job fairs.</p>
@@ -107,7 +106,6 @@
             <div class="card news-card objective-card">
                 <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
                 <div class="card-body news-card-body">
-                    <span class="feature-chip">Feature 02</span>
                     <h5 class="news-card-title">Announcements</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Latest announcements and updates.</p>
@@ -118,7 +116,6 @@
             <div class="card news-card objective-card">
                 <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
                 <div class="card-body news-card-body">
-                    <span class="feature-chip">Feature 03</span>
                     <h5 class="news-card-title">Community</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Community initiatives and programs.</p>
