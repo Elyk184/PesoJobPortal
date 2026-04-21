@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PortalNotification;
 use App\Models\User;
 use App\Models\UserNotification;
+use App\Services\JobRecommendationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -64,5 +65,49 @@ class AdminController extends Controller
         return redirect()
             ->route('admin.dashboard')
             ->with('status', 'Notification sent to ' . count($payload) . ' jobseeker(s).');
+    }
+
+    public function pushRecommendations(JobRecommendationService $recommendationService): RedirectResponse
+    {
+        $jobseekers = User::query()
+            ->where('role', 'jobseeker')
+            ->with('profile')
+            ->get();
+
+        $notifiedCount = 0;
+
+        foreach ($jobseekers as $jobseeker) {
+            $recommendations = $recommendationService->recommendForUser($jobseeker, 3);
+
+            if ($recommendations->isEmpty()) {
+                continue;
+            }
+
+            $summary = $recommendations
+                ->map(function (array $item) {
+                    $title = (string) data_get($item, 'job.title', 'Untitled Job');
+                    $score = (int) data_get($item, 'score', 0);
+
+                    return $title . ' (' . $score . '% match)';
+                })
+                ->implode('; ');
+
+            $notification = PortalNotification::query()->create([
+                'title' => 'New Job Recommendations for You',
+                'message' => 'Based on your profile, we found jobs that fit your skillset: ' . $summary,
+                'created_by' => Auth::id(),
+            ]);
+
+            UserNotification::query()->create([
+                'user_id' => $jobseeker->id,
+                'portal_notification_id' => $notification->id,
+            ]);
+
+            $notifiedCount++;
+        }
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('status', 'Recommendation notifications sent to ' . $notifiedCount . ' jobseeker(s).');
     }
 }

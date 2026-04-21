@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobApplication;
+use App\Models\PesoJob;
 use App\Models\UserProfile;
 use App\Models\UserNotification;
 use App\Models\User;
+use App\Services\JobRecommendationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +29,22 @@ class JobseekerController extends Controller
     public function vacancies(): View
     {
         return view('jobseeker.vacancies');
+    }
+
+    public function recommendations(JobRecommendationService $recommendationService): View
+    {
+        $user = Auth::user();
+        $profile = $user?->profile;
+
+        $recommendations = $recommendationService->recommendForUser($user, 12);
+
+        return view('jobseeker.recommendations', [
+            'recommendations' => $recommendations,
+            'recommendedCount' => $recommendations->count(),
+            'activeJobsCount' => PesoJob::query()->where('status', 'active')->count(),
+            'appliedJobsCount' => JobApplication::query()->where('user_id', $user->id)->count(),
+            'profileHasSkills' => $this->profileHasRecommendationData($profile),
+        ]);
     }
 
     public function applications(): View
@@ -679,5 +698,27 @@ class JobseekerController extends Controller
             'municipality' => $segments[2] ?? '',
             'province' => $segments[3] ?? '',
         ];
+    }
+
+    private function profileHasRecommendationData(?UserProfile $profile): bool
+    {
+        if (! $profile) {
+            return false;
+        }
+
+        $skillGroups = [
+            $profile->skills ?? [],
+            data_get($profile, 'other_skills.trade_manual', []),
+            data_get($profile, 'other_skills.it_technical', []),
+            data_get($profile, 'other_skills.soft_skills', []),
+        ];
+
+        foreach ($skillGroups as $group) {
+            if (is_array($group) && collect($group)->filter()->isNotEmpty()) {
+                return true;
+            }
+        }
+
+        return filled((string) data_get($profile, 'job_preferences.occupation_text', ''));
     }
 }

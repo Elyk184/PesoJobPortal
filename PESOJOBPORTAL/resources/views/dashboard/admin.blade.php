@@ -73,6 +73,22 @@
                             </button>
                         </div>
                     </form>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                        <div>
+                            <h6 class="fw-semibold mb-1">Auto-recommend matched jobs</h6>
+                            <p class="small text-muted mb-0">Generate personalized job recommendations based on each jobseeker profile and send via notifications.</p>
+                        </div>
+
+                        <form method="POST" action="{{ route('admin.recommendations.push') }}" class="m-0">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-stars me-2"></i>Push Recommendations
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

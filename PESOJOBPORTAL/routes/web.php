@@ -33,6 +33,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
     Route::get('/dashboard', [JobseekerController::class, 'dashboard'])->name('dashboard');
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
+    Route::get('/recommendations', [JobseekerController::class, 'recommendations'])->name('recommendations');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
     Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
     Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
@@ -57,6 +58,7 @@ Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/notifications', [AdminController::class, 'storeNotification'])->name('notifications.store');
+    Route::post('/recommendations/push', [AdminController::class, 'pushRecommendations'])->name('recommendations.push');
 });
 
 Route::get('/contact', function () {
