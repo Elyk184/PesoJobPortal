@@ -200,11 +200,10 @@
 
             <div class="mb-3">
                 <label for="role" class="form-label">Register as</label>
-                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" autocomplete="off" required>
-                    <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
-                    <option value="jobseeker" {{ old('role') === 'jobseeker' ? 'selected' : '' }}>Jobseeker</option>
-                    <option value="employer" {{ old('role') === 'employer' ? 'selected' : '' }}>Employer</option>
-                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="" selected disabled>Select your role</option>
+                    <option value="jobseeker">Jobseeker</option>
+                    <option value="employer">Employer</option>
                 </select>
             </div>
 

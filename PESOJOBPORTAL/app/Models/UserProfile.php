@@ -11,10 +11,14 @@ class UserProfile extends Model
 
     protected $fillable = [
         'user_id',
+        'resume_name',
+        'resume_email',
         'phone',
         'address',
         'resume_path',
         'skills',
+        'education',
+        'experience',
         'objective',
         'photo_path',
         'company_name',
@@ -45,6 +49,8 @@ class UserProfile extends Model
 
     protected $casts = [
         'skills' => 'array',
+        'education' => 'array',
+        'experience' => 'array',
     ];
 
     public function user()

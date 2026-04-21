@@ -17,6 +17,7 @@
         @else
             <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         @endif
+        <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
         <link rel="stylesheet" href="{{ asset('css/services.css') }}">
         
 
@@ -335,7 +336,7 @@
             }
 
             .news-card-body {
-                padding: 1rem;
+                padding: 1.5rem;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;

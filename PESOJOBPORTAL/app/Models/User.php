@@ -28,7 +28,12 @@ class User extends Authenticatable
         'username',
         'password',
         'role',
-        'is_employer_verified',
+        'is_approved',
+        'approved_at',
+        'approved_by',
+        'rejection_reason',
+        'rejected_at',
+        'rejected_by',
     ];
 
     public function redirectToDashboard(): string
@@ -60,7 +65,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_employer_verified' => 'boolean',
+            'is_approved' => 'boolean',
+            'approved_at' => 'datetime',
+            'rejected_at' => 'datetime',
         ];
     }
 
@@ -74,19 +81,14 @@ class User extends Authenticatable
         return $this->hasMany(JobApplication::class);
     }
 
-    public function employerJobs()
+    public function approvedBy()
     {
-        return $this->hasMany(PesoJob::class, 'employer_id');
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function recruitmentActivityRequests()
+    public function rejectedBy()
     {
-        return $this->hasMany(RecruitmentActivityRequest::class, 'employer_id');
-    }
-
-    public function employerNotifications()
-    {
-        return $this->hasMany(EmployerNotification::class, 'employer_id');
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 }
 ?>
