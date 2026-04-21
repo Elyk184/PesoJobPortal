@@ -52,6 +52,12 @@ class AdminController extends Controller
         return view('admin.approvals.jobs', compact('pendingJobs'));
     }
 
+    public function viewJob(PesoJob $job): View
+    {
+        $job->load(['employer', 'approver', 'applications']);
+        return view('admin.approvals.job-detail', compact('job'));
+    }
+
     public function approveJob(Request $request, PesoJob $job): RedirectResponse
     {
         $job->update([

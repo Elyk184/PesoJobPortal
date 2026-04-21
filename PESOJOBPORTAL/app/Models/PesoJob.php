@@ -62,6 +62,11 @@ class PesoJob extends Model
         return $this->belongsTo(User::class, 'employer_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
     public function sourceJob()
     {
         return $this->belongsTo(self::class, 'source_job_id');

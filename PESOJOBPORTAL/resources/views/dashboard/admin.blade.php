@@ -920,7 +920,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($recentJobs as $job)
-                                        <tr>
+                                        <tr style="cursor: pointer;" onclick="window.location.href='{{ route('admin.jobs.review', $job) }}';" title="Click to review">
                                             <td><strong>{{ Str::limit($job->title, 15) }}</strong></td>
                                             <td>{{ Str::limit($job->employer_name, 12) }}</td>
                                             <td>
@@ -1085,7 +1085,20 @@
     
     // Update every minute
     setInterval(updateDateTime, 60000);
+});
 </script>
+
+<style>
+    /* Clickable table rows styling */
+    .data-table tbody tr[onclick] {
+        transition: all 0.2s ease;
+    }
+    
+    .data-table tbody tr[onclick]:hover {
+        background-color: rgba(0, 123, 255, 0.08);
+        box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.15);
+    }
+</style>
 
 @endsection
 
