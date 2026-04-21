@@ -173,6 +173,12 @@ body.peso-body {
     margin: 0.55rem 0 0.8rem;
 }
 
+.news-card-body .objective-divider {
+    width: 46px;
+    height: 2px;
+    margin: 0.25rem 0 0.45rem;
+}
+
 .about-grid .objective-card:last-child,
 .news-cards .objective-card:last-child {
     grid-column: auto;
@@ -297,7 +303,7 @@ body.peso-body {
     padding: 1rem 1rem 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.5rem;
     background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
 }
 
@@ -324,6 +330,7 @@ body.peso-body {
 .news-card-text {
     flex-grow: 1;
     color: #35516f;
+    margin: 0 0 0.45rem;
 }
 
 .news-card .btn {
