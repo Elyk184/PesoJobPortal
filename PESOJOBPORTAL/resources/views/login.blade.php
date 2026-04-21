@@ -156,6 +156,26 @@
         .legal-links a {
             font-weight: 600;
         }
+
+        .password-toggle {
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 1.2em;
+            padding: 0 8px;
+            border-left: 1px solid #e5e7eb;
+            background: transparent;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--peso-blue-700);
+        }
+
+        @media (max-width: 480px) {
+            .password-toggle {
+                font-size: 1.1em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -208,16 +228,17 @@
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" required>
             </div>
 
-            <div class="mb-3">
+<div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    <span class="input-group-text password-toggle" id="toggle-password-icon" onclick="togglePasswordVisibility('password', 'toggle-password-icon')">
+                        <i class="bi bi-eye"></i>
+                    </span>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
-                    <label class="form-check-label" for="remember">Remember me</label>
-                </div>
+            <div class="d-flex justify-content-end align-items-center mb-4">
                 <a href="#" class="link-muted">Forgot your password?</a>
             </div>
 
@@ -242,5 +263,21 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId).querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>
