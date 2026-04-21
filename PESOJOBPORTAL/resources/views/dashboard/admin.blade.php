@@ -667,6 +667,44 @@
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
+            <!-- Jobseeker Portal Access Section -->
+            <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
+                <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Jobseeker Portal</small>
+            </li>
+
+            <li class="sidebar-menu-item">
+                <a href="{{ route('jobseeker.dashboard') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Jobseeker Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('jobseeker.vacancies') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-briefcase"></i>
+                    <span>Browse Vacancies</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('jobseeker.applications') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-file-earmark-check"></i>
+                    <span>My Applications</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('jobseeker.profile') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-person"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('jobseeker.resume-builder') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-file-pdf"></i>
+                    <span>Resume Builder</span>
+                </a>
+            </li>
+
+            <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
+
             <!-- Tools & Settings Section -->
             <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Tools & Settings</small>
