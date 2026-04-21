@@ -157,6 +157,46 @@
 </style>
 @endpush
 
+@push('scripts')
+<script>
+    (function () {
+        const counters = document.querySelectorAll('[data-counter-target]');
+
+        if (!counters.length) {
+            return;
+        }
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        counters.forEach(function (element) {
+            const target = Number(element.getAttribute('data-counter-target')) || 0;
+
+            if (prefersReducedMotion || target <= 0) {
+                element.textContent = target.toLocaleString();
+                return;
+            }
+
+            const duration = 900;
+            const startTime = performance.now();
+
+            function tick(now) {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.round(target * easedProgress);
+
+                element.textContent = currentValue.toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(tick);
+                }
+            }
+
+            requestAnimationFrame(tick);
+        });
+    })();
+</script>
+@endpush
+
 @section('content')
 <section class="jobseeker-dashboard" aria-label="Jobseeker dashboard">
     <div class="dashboard-topbar">
@@ -191,7 +231,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $availableJobsCount ?? 0 }}">{{ $availableJobsCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Available Jobs</div>
                 </div>
             </div>
@@ -200,7 +240,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-apps"><i class="bi bi-send"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $applicationsSentCount ?? 0 }}">{{ $applicationsSentCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Applications Sent</div>
                 </div>
             </div>
@@ -209,7 +249,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">3</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $savedJobsCount ?? 0 }}">{{ $savedJobsCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Saved Jobs</div>
                 </div>
             </div>

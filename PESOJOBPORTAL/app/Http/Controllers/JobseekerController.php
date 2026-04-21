@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobApplication;
+use App\Models\PesoJob;
 use App\Models\UserProfile;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,7 +17,26 @@ class JobseekerController extends Controller
 {
     public function dashboard(): View
     {
-        return view('dashboard.jobseeker.dashboard');
+        $availableJobsCount = PesoJob::query()
+            ->where('status', 'active')
+            ->count();
+
+        if ($availableJobsCount === 0) {
+            $availableJobsCount = PesoJob::query()->count();
+        }
+
+        $applicationsSentCount = JobApplication::query()
+            ->where('user_id', Auth::id())
+            ->count();
+
+        // Saved jobs are not yet modeled in the database; keep zero until implemented.
+        $savedJobsCount = 0;
+
+        return view('dashboard.jobseeker.dashboard', compact(
+            'availableJobsCount',
+            'applicationsSentCount',
+            'savedJobsCount'
+        ));
     }
 
     public function vacancies(): View
