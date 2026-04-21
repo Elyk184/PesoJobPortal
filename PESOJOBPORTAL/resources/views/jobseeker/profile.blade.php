@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Profile | Jobseeker | Link Job Resource Portal')
+@section('title', 'Jobseeker | Link Job Resource Portal')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
