@@ -105,7 +105,7 @@ class EmployerController extends Controller
             'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
             'approved' => $referredApplications->where('employer_status', 'hired')->count(),
             'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
-            'jobs' => $request->user()->employerJobs()->get(),
+            'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $request->user()->is_employer_verified,
         ]);
     }
