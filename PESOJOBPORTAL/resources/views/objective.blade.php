@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Our Objective - PESO Manolo Fortich')
+@section('title', 'Our Objectives | Link Job Resource Portal')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/objective-section.css') }}">
 @endpush
 
 @section('content')
-<section class="objective-page" id="objective" aria-label="PESO Manolo Fortich Objectives">
+<section class="objective-page" id="objective" aria-label="Link Job Resource Portal Objectives">
     <div class="objective-hero container">
-        <p class="hero-kicker">Get To Know Us</p>
+        <p class="hero-kicker">Link Job Resource Portal</p>
         <h1>Our Objectives</h1>
         <div class="underline" aria-hidden="true"></div>
         <p class="hero-lead">

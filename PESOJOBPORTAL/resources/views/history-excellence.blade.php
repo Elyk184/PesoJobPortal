@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'History of Excellence - PESO Manolo Fortich')
+@section('title', 'History of Excellence | Link Job Resource Portal')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/history-timeline.css') }}">
@@ -13,7 +13,7 @@
             <h2 class="text-4xl font-bold text-gray-900 mb-4">The History of Excellence</h2>
             <div class="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p class="text-gray-600 max-w-3xl mx-auto text-lg">
-                The journey of PESO Manolo Fortich — dedicated to bridging the gap between jobseekers and employers in our community since 2005.
+                The journey of Link Job Resource Portal at PESO Manolo Fortich, dedicated to bridging the gap between jobseekers and employers in our community since 2005.
             </p>
         </div>
 
