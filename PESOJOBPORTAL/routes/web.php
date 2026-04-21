@@ -34,6 +34,9 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/dashboard', [JobseekerController::class, 'dashboard'])->name('dashboard');
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
+    Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
+    Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
+    Route::post('/notifications/{userNotification}/read', [JobseekerController::class, 'markNotificationAsRead'])->name('notifications.read');
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
     Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
@@ -53,6 +56,7 @@ Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/notifications', [AdminController::class, 'storeNotification'])->name('notifications.store');
 });
 
 Route::get('/contact', function () {

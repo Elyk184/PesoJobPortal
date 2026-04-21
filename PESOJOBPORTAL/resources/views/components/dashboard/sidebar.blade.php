@@ -70,7 +70,7 @@
                 <i class="bi bi-send"></i>
                 <span>Applied Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.notifications') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.notifications') ? 'is-active' : '' }}">
                 <i class="bi bi-bell"></i>
                 <span>Notifications</span>
             </a>

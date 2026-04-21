@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
+use App\Models\UserNotification;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -29,6 +31,73 @@ class JobseekerController extends Controller
     public function applications(): View
     {
         return view('jobseeker.applications');
+    }
+
+    public function notifications(): View
+    {
+        $user = Auth::user();
+
+        $notifications = UserNotification::query()
+            ->where('user_id', $user->id)
+            ->with('portalNotification:id,title,message,created_at')
+            ->latest()
+            ->limit(40)
+            ->get();
+
+        return view('jobseeker.notifications', [
+            'notifications' => $notifications,
+            'unreadCount' => $notifications->whereNull('read_at')->count(),
+            'latestNotificationId' => (int) ($notifications->max('id') ?? 0),
+        ]);
+    }
+
+    public function notificationsFeed(Request $request): JsonResponse
+    {
+        $afterId = max((int) $request->query('after_id', 0), 0);
+
+        $notifications = UserNotification::query()
+            ->where('user_id', $request->user()->id)
+            ->where('id', '>', $afterId)
+            ->with('portalNotification:id,title,message,created_at')
+            ->orderBy('id')
+            ->limit(20)
+            ->get();
+
+        $items = $notifications->map(function (UserNotification $notification) {
+            return [
+                'id' => $notification->id,
+                'title' => $notification->portalNotification?->title ?? 'Notification',
+                'message' => $notification->portalNotification?->message ?? '',
+                'created_at' => optional($notification->portalNotification?->created_at)->toIso8601String(),
+                'is_read' => ! is_null($notification->read_at),
+            ];
+        })->values();
+
+        return response()->json([
+            'items' => $items,
+            'latest_id' => (int) ($notifications->max('id') ?? $afterId),
+            'unread_count' => UserNotification::query()
+                ->where('user_id', $request->user()->id)
+                ->whereNull('read_at')
+                ->count(),
+        ]);
+    }
+
+    public function markNotificationAsRead(Request $request, UserNotification $userNotification): JsonResponse
+    {
+        abort_unless($userNotification->user_id === $request->user()->id, 403);
+
+        if (is_null($userNotification->read_at)) {
+            $userNotification->update(['read_at' => now()]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'unread_count' => UserNotification::query()
+                ->where('user_id', $request->user()->id)
+                ->whereNull('read_at')
+                ->count(),
+        ]);
     }
 
     public function profile(): View

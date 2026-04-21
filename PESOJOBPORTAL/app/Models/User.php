@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\JobApplication;
+use App\Models\PortalNotification;
 use App\Models\UserProfile;
+use App\Models\UserNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -66,6 +68,16 @@ class User extends Authenticatable
     public function applications()
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    public function sentPortalNotifications()
+    {
+        return $this->hasMany(PortalNotification::class, 'created_by');
+    }
+
+    public function userNotifications()
+    {
+        return $this->hasMany(UserNotification::class);
     }
 }
 ?>
