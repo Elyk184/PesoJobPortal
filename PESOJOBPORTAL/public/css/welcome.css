@@ -10,12 +10,18 @@ body.peso-body {
     --orig-yellow-300: #fcd34d;
 }
 
+
 .peso-hero {
     min-height: calc(100vh - 76px);
     position: relative;
     display: flex;
     align-items: center;
     padding: clamp(22px, 3vw, 36px) 0;
+    background-image: url('/images/background.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    width: 100%;
 }
 
 .hero-static {
@@ -26,10 +32,7 @@ body.peso-body {
     align-items: flex-start;
     justify-content: space-between;
     gap: 22px;
-    box-sizing: border-box;;
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-size: 100% 420px;
+    box-sizing: border-box;
     position: relative;
     overflow: hidden;
     padding: 190px 24px 100px;

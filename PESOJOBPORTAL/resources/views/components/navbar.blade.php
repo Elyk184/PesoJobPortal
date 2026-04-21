@@ -1,9 +1,127 @@
 <!-- NAVBAR HEADER -->
 
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top sticky-top custom-navbar">
+<style>
+  .custom-navbar {
+    background: linear-gradient(90deg, #0f2d52, #1f4b8f);
+    border-bottom: 3px solid #d72638;
+    box-shadow: 0 8px 22px rgba(10, 35, 80, 0.22);
+    z-index: 1000;
+    padding: 0.55rem 0;
+  }
+
+  .logo-img {
+    width: 86px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  .navbar-brand-text,
+  .navbar-brand-text-sm {
+    color: #f5f7fb;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+
+  .navbar-brand-text {
+    font-size: 1rem;
+  }
+
+  .navbar-brand-text-sm {
+    font-size: 0.95rem;
+  }
+
+  .navbar-nav-custom {
+    gap: 0.2rem;
+  }
+
+  .nav-link-custom {
+    color: #dfe7f5 !important;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem !important;
+    transition: all 0.18s ease;
+  }
+
+  .nav-link-custom:hover,
+  .nav-link-custom.active,
+  .show > .nav-link-custom {
+    background: rgba(215, 38, 56, 0.92);
+    color: #ffffff !important;
+  }
+
+  .navbar-toggler-custom {
+    border-color: rgba(245, 247, 251, 0.65);
+    padding: 0.3rem 0.45rem;
+  }
+
+  .navbar-toggler-custom:focus {
+    box-shadow: 0 0 0 0.2rem rgba(179, 198, 224, 0.28);
+  }
+
+  .dropdown-menu-custom {
+    background: #10315a;
+    border: 1px solid #2f5e9e;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(6, 24, 51, 0.35);
+    padding: 0.45rem;
+  }
+
+  .dropdown-item-custom {
+    border-radius: 8px;
+    color: #dfe7f5;
+    font-weight: 500;
+  }
+
+  .dropdown-item-custom:hover,
+  .dropdown-item-custom.active {
+    background: rgba(215, 38, 56, 0.92);
+    color: #ffffff;
+  }
+
+  .cta-button {
+    background: linear-gradient(120deg, #d72638, #f24b5d);
+    color: #ffffff;
+    border: 1px solid #d72638;
+    border-radius: 999px;
+    padding: 0.42rem 1rem;
+    transition: all 0.18s ease;
+  }
+
+  .cta-button:hover {
+    background: linear-gradient(120deg, #c21e30, #e33f52);
+    border-color: #c21e30;
+    color: #ffffff;
+  }
+
+  @media (max-width: 991.98px) {
+    .navbar-brand-text {
+      font-size: 0.9rem;
+    }
+
+    .logo-img {
+      width: 74px;
+    }
+
+    .navbar-collapse {
+      margin-top: 0.45rem;
+      background: linear-gradient(180deg, #0f2d52, #19437f);
+      border-radius: 12px;
+      padding: 0.55rem;
+      border: 1px solid #2f5e9e;
+    }
+
+    .nav-link-custom {
+      border-radius: 10px;
+      padding: 0.55rem 0.8rem !important;
+    }
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-      <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" title="PESO Logo" class="logo-img me-2" style="width: 95px; height: auto; border-radius: 4px; object-fit: contain;">
+      <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" title="PESO Logo" class="logo-img me-2">
       <span class="d-none d-sm-inline navbar-brand-text">PUBLIC EMPLOYMENT SERVICES OFFICE</span>
       <span class="d-sm-none navbar-brand-text-sm">Manolo Fortich</span>
     </a>

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\JobApplication;
+use App\Models\EmployerNotification;
+use App\Models\PesoJob;
+use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
         'role',
         'is_approved',
