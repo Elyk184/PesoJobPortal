@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Resume Builder | PESO Job Portal')
+@section('title', 'Resume Builder | Link Job Resource Portal')
 
 @section('content')
 @php

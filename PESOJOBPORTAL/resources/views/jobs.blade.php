@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 @extends('layouts.app')
 
-@section('title', 'Job Opportunities - PESO Job Portal')
+@section('title', 'Job Opportunities - Link Job Resource Portal')
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">

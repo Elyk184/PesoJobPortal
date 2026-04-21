@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PESO Job Portal')
+@section('title', 'Link Job Resource Portal')
 
 @push('styles')
     <link rel="preload" as="image" href="/images/bg.png">

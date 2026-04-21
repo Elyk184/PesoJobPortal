@@ -9,7 +9,7 @@
                 <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
             </div>
             <div>
-                <div class="dashboard-brand-kicker">PESO Job Portal</div>
+                <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
                 <div class="dashboard-brand-title">Jobseeker Portal</div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
         </div>
         <div>
-            <div class="dashboard-brand-kicker">PESO Job Portal</div>
+            <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
             <div class="dashboard-brand-title">Jobseeker Portal</div>
         </div>
     </div>
