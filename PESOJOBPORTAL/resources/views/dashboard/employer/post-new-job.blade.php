@@ -458,11 +458,7 @@
         <div class="notice-card notice-approval mb-4" role="alert">
             <i class="bi bi-info-circle me-2"></i>
             <div>
-                @if($isVerifiedEmployer)
-                    <strong>Note:</strong> Posted jobs are published to your Active Jobs list right away. You can still archive, duplicate, or mark them as filled from Manage Jobs.
-                @else
-                    <strong>Note:</strong> Your job post will be saved to Pending Approval and will appear in Manage Jobs under the Pending tab.
-                @endif
+                <strong>Note:</strong> All job postings are submitted for admin approval before becoming active. You can view the status of your submissions in Manage Jobs. Once approved by admin, jobs will appear in Active Jobs and be visible to jobseekers.
             </div>
         </div>
 

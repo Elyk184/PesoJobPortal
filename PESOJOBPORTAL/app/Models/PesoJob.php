@@ -35,6 +35,13 @@ class PesoJob extends Model
         'source_job_id',
         'requirements',
         'status',
+        'approved_at',
+        'approved_by',
+        'rejection_reason',
+    ];
+    
+    protected $attributes = [
+        'status' => 'pending', // Default status for admin approval
     ];
 
     protected $casts = [

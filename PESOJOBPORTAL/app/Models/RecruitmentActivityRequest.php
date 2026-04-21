@@ -17,6 +17,12 @@ class RecruitmentActivityRequest extends Model
         'job_advertisement_path',
         'status',
         'notes',
+        'approved_at',
+        'approved_by',
+    ];
+    
+    protected $attributes = [
+        'status' => 'pending', // Default status for admin approval
     ];
 
     public function employer()

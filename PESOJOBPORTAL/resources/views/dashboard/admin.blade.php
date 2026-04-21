@@ -705,6 +705,44 @@
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
+            <!-- Employer Portal Access Section -->
+            <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
+                <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Employer Portal</small>
+            </li>
+
+            <li class="sidebar-menu-item">
+                <a href="{{ route('employer.dashboard') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Employer Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('employer.jobs.post') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Post New Job</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('employer.jobs.manage') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-briefcase"></i>
+                    <span>Manage Jobs</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('employer.applicants.index') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-people"></i>
+                    <span>Review Applicants</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('employer.company-profile') }}" class="sidebar-menu-link" target="_blank">
+                    <i class="bi bi-building"></i>
+                    <span>Company Profile</span>
+                </a>
+            </li>
+
+            <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
+
             <!-- Tools & Settings Section -->
             <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Tools & Settings</small>
@@ -799,6 +837,27 @@
                     <div class="stat-label">System Status</div>
                     <div class="stat-value" style="color: #10b981;">Online</div>
                     <small style="color: #999;">All systems operational</small>
+                </div>
+
+                <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+                    <div class="stat-icon" style="color: #f59e0b;"><i class="bi bi-hourglass-split"></i></div>
+                    <div class="stat-label">Pending Job Approvals</div>
+                    <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
+                    <a href="{{ route('admin.job-approvals') }}" style="color: #f59e0b; text-decoration: none; font-weight: 500;">Review →</a>
+                </div>
+
+                <div class="stat-card" style="border-left: 4px solid #f97316;">
+                    <div class="stat-icon" style="color: #f97316;"><i class="bi bi-file-earmark-check"></i></div>
+                    <div class="stat-label">Pending LRA/SRA Requests</div>
+                    <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
+                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: #f97316; text-decoration: none; font-weight: 500;">Review →</a>
+                </div>
+
+                <div class="stat-card" style="border-left: 4px solid #ec4899;">
+                    <div class="stat-icon" style="color: #ec4899;"><i class="bi bi-shield-check"></i></div>
+                    <div class="stat-label">Pending Document Approvals</div>
+                    <div class="stat-value">{{ $stats['pending_documents'] }}</div>
+                    <a href="{{ route('admin.document-verification') }}" style="color: #ec4899; text-decoration: none; font-weight: 500;">Review →</a>
                 </div>
             </div>
 

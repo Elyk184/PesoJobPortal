@@ -88,10 +88,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
     
     // Approvals & Verification Section
-    Route::view('/employer-verification', 'admin.employer-verification')->name('employer-verification');
-    Route::view('/job-approvals', 'admin.job-approvals')->name('job-approvals');
-    Route::view('/lra-sra-approvals', 'admin.lra-sra-approvals')->name('lra-sra-approvals');
-    Route::view('/document-verification', 'admin.document-verification')->name('document-verification');
+    Route::get('/employer-verification', [AdminController::class, 'employerVerification'])->name('employer-verification');
+    
+    Route::get('/job-approvals', [AdminController::class, 'jobApprovals'])->name('job-approvals');
+    Route::post('/jobs/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
+    Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
+    
+    Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
+    Route::post('/lra-sra/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
+    Route::post('/lra-sra/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
+    
+    Route::get('/document-verification', [AdminController::class, 'documentVerification'])->name('document-verification');
+    Route::post('/documents/{document}/approve', [AdminController::class, 'approveDocument'])->name('documents.approve');
+    Route::post('/documents/{document}/reject', [AdminController::class, 'rejectDocument'])->name('documents.reject');
     
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');

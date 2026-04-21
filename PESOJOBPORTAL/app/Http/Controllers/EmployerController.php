@@ -332,9 +332,8 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $isDraft = $request->boolean('save_as_draft');
-        $status = $isDraft
-            ? 'draft'
-            : ($employer->is_employer_verified ? 'active' : 'pending');
+        // All non-draft jobs go to pending approval by default
+        $status = $isDraft ? 'draft' : 'pending';
         $status = $this->normalizeJobStatusForStorage($status);
 
         $rules = [
@@ -399,8 +398,7 @@ class EmployerController extends Controller
 
         $message = match (true) {
             $isDraft => 'Job saved as draft successfully.',
-            ! $employer->is_employer_verified => 'Job submitted successfully and is now in Pending Approval.',
-            default => 'Job posted successfully and is now visible in Active Jobs.',
+            default => 'Job submitted successfully and is now awaiting admin approval.',
         };
 
         return redirect()->route('employer.jobs.post')->with('success', $message);
@@ -527,7 +525,7 @@ class EmployerController extends Controller
             'job_advertisement_path' => $jobAdvertisementPath,
         ]);
 
-        return back()->with('success', 'LRA/SRA request submitted successfully.');
+        return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
     }
 
     public function updateApplicantDecision(Request $request, JobApplication $application): RedirectResponse
