@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');
@@ -35,6 +35,11 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
+    Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
+    Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
+    Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
+    Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
+    Route::delete('/resume-builder', [JobseekerController::class, 'resetResumeBuilder'])->name('resume-builder.reset');
 });
 
 // Employer routes (protected)
