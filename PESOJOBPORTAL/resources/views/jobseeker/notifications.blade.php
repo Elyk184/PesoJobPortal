@@ -7,7 +7,7 @@
 	<div class="dashboard-topbar">
 		<div>
 			<div class="dashboard-topbar-title">Notifications</div>
-			<div class="dashboard-topbar-subtitle">Updates from the PESO admin team</div>
+			<div class="dashboard-topbar-subtitle">Updates from PESO Manolo Fortich</div>
 		</div>
 		<div class="text-end">
 			<span class="badge text-bg-primary" id="notificationUnreadBadge">{{ $unreadCount }} unread</span>
