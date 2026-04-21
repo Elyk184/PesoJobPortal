@@ -105,29 +105,6 @@
                 </div>
             @endif
         </div>
-    </main>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('adminSidebar');
-        const toggleBtn = document.getElementById('toggleSidebar');
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('show');
-            });
-        }
-
-        // Close sidebar when clicking on a menu item (mobile)
-        document.querySelectorAll('.sidebar-menu-link').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('show');
-                }
-            });
-        });
-    });
-</script>
+    </div>
 
 @endsection
