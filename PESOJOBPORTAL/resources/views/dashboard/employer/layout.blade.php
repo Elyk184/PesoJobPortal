@@ -17,7 +17,6 @@
         }
 
         * { box-sizing: border-box; }
-    @stack('styles')
 
         body {
             margin: 0;
