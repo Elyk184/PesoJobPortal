@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @endif
 
+    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+
     @stack('styles')
 </head>
 <body class="peso-body">
