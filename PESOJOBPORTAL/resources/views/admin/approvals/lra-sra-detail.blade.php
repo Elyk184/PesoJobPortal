@@ -2,23 +2,26 @@
 
 @section('title', strtoupper($activityRequest->activity_type) . ' Request - Review')
 
-@section('content')
-<div class="container-lg py-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2>{{ strtoupper($activityRequest->activity_type) }} Request - Review</h2>
-        </div>
-        <a href="{{ route('admin.lra-sra-approvals') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2"></i>Back
-        </a>
-    </div>
+@section('admin-content')
+@include('admin.layouts.topbar', [
+    'title' => strtoupper($activityRequest->activity_type) . ' Request Review',
+    'subtitle' => 'Review and ' . ($activityRequest->status === 'pending' ? 'approve or reject' : 'view') . ' the LRA/SRA request documents',
+    'icon' => 'bi-clipboard-check'
+])
 
-    <div class="row g-4">
-        <!-- Main Content -->
-        <div class="col-lg-9">
-            <!-- Request Overview -->
-            <div class="card border-0 shadow-sm mb-4">
+<div class="admin-dashboard">
+    <div class="dashboard-card">
+        <div class="mb-4">
+            <a href="{{ route('admin.lra-sra-approvals') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Back to Approvals
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Request Overview -->
+                <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
@@ -145,9 +148,10 @@
                 </div>
             </div>
         </div>
+            </div>
 
-        <!-- Sidebar -->
-        <div class="col-lg-3">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
             @if($activityRequest->status === 'pending')
                 <!-- Action Card -->
                 <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
@@ -194,6 +198,7 @@
                     </div>
                 </div>
             @endif
+            </div>
         </div>
     </div>
 </div>
