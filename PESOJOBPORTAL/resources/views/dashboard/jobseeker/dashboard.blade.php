@@ -145,6 +145,24 @@
         background: #fbfdff;
     }
 
+    .jobseeker-dashboard .recommended-job-card {
+        border: 1px solid #dbe5f1;
+        border-radius: 12px;
+        background: #fbfdff;
+        padding: 14px;
+        height: 100%;
+    }
+
+    .jobseeker-dashboard .recommended-job-title {
+        font-weight: 700;
+        color: #2f4561;
+    }
+
+    .jobseeker-dashboard .recommended-job-meta {
+        font-size: 0.86rem;
+        color: #6c8098;
+    }
+
     .jobseeker-dashboard .empty-icon {
         width: 54px;
         height: 54px;
@@ -311,13 +329,52 @@
             <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
         </div>
 
-        <div class="dashboard-empty-state">
-            <div>
-                <div class="empty-icon"><i class="bi bi-briefcase"></i></div>
-                <div class="fw-semibold text-secondary">No job recommendations yet.</div>
-                <div class="small">Complete your profile to get personalized job suggestions.</div>
+        @if (($recommendedJobs ?? collect())->isNotEmpty())
+            @if ($isUsingSampleRecommendations ?? false)
+                <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
+                    Showing sample recommendations while waiting for active job posts.
+                </div>
+            @endif
+
+            <div class="row g-3">
+                @foreach ($recommendedJobs as $job)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="recommended-job-card d-flex flex-column">
+                            <div class="recommended-job-title mb-1">{{ $job['title'] }}</div>
+                            <div class="recommended-job-meta mb-2">{{ $job['location'] }} • {{ $job['employer_name'] }}</div>
+
+                            @if (! empty($job['salary_range']))
+                                <div class="small mb-2"><strong>Salary:</strong> {{ $job['salary_range'] }}</div>
+                            @endif
+
+                            <p class="small text-muted mb-3">{{ \Illuminate\Support\Str::limit($job['description'], 100) }}</p>
+
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                @forelse (collect($job['requirements_list'])->take(3) as $requirement)
+                                    <span class="badge rounded-pill text-bg-light">{{ $requirement }}</span>
+                                @empty
+                                    <span class="badge rounded-pill text-bg-light">No listed requirements</span>
+                                @endforelse
+                            </div>
+
+                            <div class="mt-auto">
+                                <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary w-100">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        </div>
+        @else
+            <div class="dashboard-empty-state">
+                <div>
+                    <div class="empty-icon"><i class="bi bi-briefcase"></i></div>
+                    <div class="fw-semibold text-secondary">No job recommendations yet.</div>
+                    <div class="small">Complete your profile to get personalized job suggestions.</div>
+                </div>
+            </div>
+        @endif
     </div>
 </section>
 @endsection

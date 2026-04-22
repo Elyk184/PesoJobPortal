@@ -21,11 +21,38 @@ class JobseekerController extends Controller
         $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
         $sampleJobsCount = count($this->sampleVacancies());
         $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
+        $recommendedJobs = PesoJob::query()
+            ->where('status', 'active')
+            ->latest()
+            ->limit(3)
+            ->get()
+            ->map(function (PesoJob $job) {
+                return [
+                    'title' => $job->title,
+                    'location' => $job->location,
+                    'employer_name' => $job->employer_name,
+                    'salary_range' => $job->salary_range,
+                    'description' => $job->description,
+                    'requirements_list' => $this->extractJobRequirements($job),
+                ];
+            })
+            ->values();
+
+        $isUsingSampleRecommendations = false;
+
+        if ($recommendedJobs->isEmpty()) {
+            $recommendedJobs = collect($this->sampleVacancies())
+                ->take(3)
+                ->values();
+            $isUsingSampleRecommendations = true;
+        }
 
         return view('dashboard.jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
             'profileCompletionPercent' => $profileCompletionPercent,
             'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
+            'recommendedJobs' => $recommendedJobs,
+            'isUsingSampleRecommendations' => $isUsingSampleRecommendations,
         ]);
     }
 
