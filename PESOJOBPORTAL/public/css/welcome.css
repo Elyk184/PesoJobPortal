@@ -5,9 +5,13 @@ body.peso-body {
 }
 
 :root {
-    --orig-blue-900: #1e3a8a;
-    --orig-red-600: #dc2626;
-    --orig-yellow-300: #fcd34d;
+    --home-blue: #0f2d52;
+    --home-blue-soft: #1f4b8f;
+    --home-red: #d72638;
+    --home-red-soft: #f24b5d;
+    --home-gold: #f5c84b;
+    --home-surface: #ffffff;
+    --home-border: rgba(15, 45, 82, 0.14);
 }
 
 .peso-hero {
@@ -72,14 +76,14 @@ body.peso-body {
     line-height: 1.08;
     margin-top: 10px;
     margin-bottom: 18px;
-    color: #075cb2e6;
+    color: var(--home-blue-soft);
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
     white-space: nowrap;
 }
 
 .hero-main span,
 .hero-top span {
-    color: #e74c3c;
+    color: var(--home-red);
 }
 
 .hero-description {
@@ -99,20 +103,21 @@ body.peso-body {
 }
 
 .hero-btn-primary {
-    padding: 13px 45px;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 30px;
-    border: 2px solid #3498db;
+    padding: 0.65rem 1.3rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 999px;
+    border: 1px solid var(--home-blue);
     color: #fff;
-    background: #3498db;
+    background: linear-gradient(90deg, var(--home-blue), var(--home-blue-soft));
     text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .hero-btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(7, 92, 178, 0.25);
+    box-shadow: 0 10px 20px rgba(15, 45, 82, 0.35);
+    filter: brightness(1.03);
 }
 
 .hero-tabulation {
@@ -280,7 +285,7 @@ body.peso-body {
 .news-card {
     border-radius: 18px;
     overflow: hidden;
-    border: 1px solid rgba(15, 45, 82, 0.14);
+    border: 1px solid var(--home-border);
     box-shadow: 0 14px 28px rgba(11, 34, 70, 0.15);
     transition: transform 0.22s ease, box-shadow 0.22s ease;
     height: 100%;
@@ -335,9 +340,29 @@ body.peso-body {
 
 .news-card .btn {
     align-self: flex-start;
+}
+
+.news-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     border-radius: 999px;
-    padding: 0.45rem 1rem;
+    padding: 0.58rem 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid var(--home-red);
+    background: linear-gradient(90deg, var(--home-red), var(--home-red-soft));
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.news-btn:hover {
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(215, 38, 56, 0.3);
+    filter: brightness(1.03);
 }
 
 @media (max-width: 1024px) {

@@ -3,7 +3,7 @@
 @section('title', 'Our Objectives | Link Job Resource Portal')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/objective-section.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/objective-section.css') }}?v={{ filemtime(public_path('css/objective-section.css')) }}">
 @endpush
 
 @section('content')

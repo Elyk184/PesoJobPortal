@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 .peso-services-section {
     --service-blue: #0f2d52;
@@ -7,7 +7,7 @@
     --service-gold: #f5c84b;
     --service-text: #183a61;
     --service-muted: #3c5f86;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--service-text);
     position: relative;
     isolation: isolate;
@@ -15,9 +15,9 @@
     margin: 2rem auto;
     width: min(1300px, calc(100% - 24px));
     background: linear-gradient(180deg, #f9fbff 0%, #f2f7ff 65%, #fef9f2 100%);
-    border-radius: 30px;
+    border-radius: 24px;
     border: 1px solid rgba(15, 45, 82, 0.12);
-    box-shadow: 0 18px 42px rgba(17, 45, 83, 0.16);
+    box-shadow: 0 16px 34px rgba(16, 43, 81, 0.12);
 }
 
 .peso-services-section::before {
@@ -53,9 +53,8 @@
 }
 
 .services-header h2 {
-    font-family: 'Syne', sans-serif;
     font-size: clamp(1.8rem, 3.3vw, 2.45rem);
-    font-weight: 700;
+    font-weight: 800;
     color: var(--service-blue);
     line-height: 1.2;
     margin: 0.75rem 0 0;
@@ -111,7 +110,7 @@
     border-radius: 18px;
     border: 1px solid rgba(15, 45, 82, 0.14);
     padding: 1.25rem 1.2rem 1.2rem;
-    box-shadow: 0 14px 30px rgba(15, 45, 82, 0.14);
+    box-shadow: 0 14px 28px rgba(11, 34, 70, 0.15);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     position: relative;
     overflow: hidden;
@@ -131,7 +130,7 @@
 
 .service-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 36px rgba(15, 45, 82, 0.19);
+    box-shadow: 0 20px 34px rgba(11, 34, 70, 0.2);
 }
 
 .service-card.service-blue:hover {
@@ -211,9 +210,8 @@
 }
 
 .service-card-title {
-    font-family: 'Syne', sans-serif;
     font-size: 1.22rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--service-blue);
     margin-bottom: 0.45rem;
     transition: color 0.2s ease;
@@ -301,7 +299,6 @@
     gap: 0.45rem;
     padding: 0.62rem 1rem;
     border-radius: 999px;
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;

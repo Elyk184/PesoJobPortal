@@ -5,8 +5,8 @@
 @push('styles')
     <link rel="preload" as="image" href="/images/bg.png">
     <link rel="preload" as="image" href="/images/mobile-background.png" media="(max-width: 800px)">
-    <link rel="stylesheet" href="{{ asset('css/objective-section.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/objective-section.css') . '?v=' . filemtime(public_path('css/objective-section.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/services.css') . '?v=' . filemtime(public_path('css/services.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') . '?v=' . filemtime(public_path('css/welcome.css')) }}">
 @endpush
 
@@ -99,7 +99,7 @@
                     <h5 class="news-card-title">Events</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Upcoming PESO events and job fairs.</p>
-                    <a href="#" class="btn btn-danger">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+                    <a href="#" class="news-btn">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
 
@@ -109,7 +109,7 @@
                     <h5 class="news-card-title">Announcements</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Latest announcements and updates.</p>
-                    <a href="#" class="btn btn-danger">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+                    <a href="#" class="news-btn">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
 
@@ -119,7 +119,7 @@
                     <h5 class="news-card-title">Community</h5>
                     <div class="objective-divider" aria-hidden="true"></div>
                     <p class="card-text news-card-text">Community initiatives and programs.</p>
-                    <a href="#" class="btn btn-danger">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
+                    <a href="#" class="news-btn">Learn More <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
                 </div>
             </div>
         </div>
