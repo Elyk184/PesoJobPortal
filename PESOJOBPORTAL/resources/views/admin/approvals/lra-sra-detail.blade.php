@@ -153,46 +153,108 @@
             <!-- Sidebar -->
             <div class="col-lg-3">
             @if($activityRequest->status === 'pending')
+                <!-- Request Summary Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="text-center pb-3 border-bottom">
+                            <h6 class="mb-2 text-muted">Request Type</h6>
+                            <div class="badge bg-info" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                                {{ strtoupper($activityRequest->activity_type) }}
+                            </div>
+                        </div>
+                        <div class="mt-3 small">
+                            <div class="mb-3">
+                                <p class="text-muted mb-1">Submitted by</p>
+                                <p class="mb-0"><strong>{{ $activityRequest->employer?->name }}</strong></p>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1">Submitted on</p>
+                                <p class="mb-0">{{ optional($activityRequest->created_at)->format('M d, Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Card -->
                 <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
-                    <div class="card-header bg-light border-0 py-3">
-                        <h6 class="mb-0">Review Actions</h6>
+                    <div class="card-header bg-light border-0 py-3 border-bottom">
+                        <h6 class="mb-0"><i class="bi bi-shield-check me-2"></i>Review & Approve</h6>
                     </div>
                     <div class="card-body">
+                        <div class="alert alert-info alert-sm mb-3" role="alert">
+                            <small><i class="bi bi-info-circle me-1"></i>Please review all documents before deciding.</small>
+                        </div>
                         <form method="POST" class="d-grid gap-2">
                             @csrf
                             <button type="submit" formaction="{{ route('admin.lra-sra.approve', $activityRequest) }}" 
                                     class="btn btn-success btn-sm">
-                                <i class="bi bi-check-circle me-1"></i>Approve
+                                <i class="bi bi-check-lg me-1"></i>Approve Request
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" 
                                     data-bs-target="#rejectModal">
-                                <i class="bi bi-x-circle me-1"></i>Reject
+                                <i class="bi bi-x-lg me-1"></i>Reject Request
                             </button>
                         </form>
                     </div>
                 </div>
             @else
+                <!-- Request Summary Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="text-center pb-3 border-bottom">
+                            <h6 class="mb-2 text-muted">Request Type</h6>
+                            <div class="badge bg-info" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                                {{ strtoupper($activityRequest->activity_type) }}
+                            </div>
+                        </div>
+                        <div class="mt-3 small">
+                            <div class="mb-3">
+                                <p class="text-muted mb-1">Submitted by</p>
+                                <p class="mb-0"><strong>{{ $activityRequest->employer?->name }}</strong></p>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1">Submitted on</p>
+                                <p class="mb-0">{{ optional($activityRequest->created_at)->format('M d, Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Status Info Card -->
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-0 py-3">
-                        <h6 class="mb-0">Status</h6>
+                    <div class="card-header bg-light border-0 py-3 border-bottom">
+                        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Review Status</h6>
                     </div>
                     <div class="card-body">
                         @if($activityRequest->status === 'approved')
                             <div class="alert alert-success alert-sm mb-0" role="alert">
-                                <i class="bi bi-check-circle-fill me-1"></i>
-                                <strong>Approved</strong>
-                                <p class="mb-0 mt-2 small">
-                                    {{ optional($activityRequest->approved_at)->format('M d, Y') }}<br>
-                                    {{ $activityRequest->approvedBy?->name ?? 'Admin' }}
-                                </p>
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-check-circle-fill me-2 mt-1" style="font-size: 1.2rem;"></i>
+                                    <div>
+                                        <strong>Approved</strong>
+                                        <p class="mb-0 mt-2 small">
+                                            <strong>Approved on:</strong><br>
+                                            {{ optional($activityRequest->approved_at)->format('M d, Y \a\t g:i A') }}
+                                        </p>
+                                        <p class="mb-0 mt-2 small">
+                                            <strong>Approved by:</strong><br>
+                                            {{ $activityRequest->approvedBy?->name ?? 'System' }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         @elseif($activityRequest->status === 'rejected')
                             <div class="alert alert-danger alert-sm mb-0" role="alert">
-                                <i class="bi bi-x-circle-fill me-1"></i>
-                                <strong>Rejected</strong>
-                                <p class="mb-0 mt-2 small">{{ $activityRequest->notes ?? 'No reason provided' }}</p>
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-x-circle-fill me-2 mt-1" style="font-size: 1.2rem;"></i>
+                                    <div>
+                                        <strong>Rejected</strong>
+                                        <p class="mb-0 mt-2 small">
+                                            <strong>Reason:</strong><br>
+                                            {{ $activityRequest->notes ?? 'No reason provided' }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         @endif
                     </div>
