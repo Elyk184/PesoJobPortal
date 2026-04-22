@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\UserProfile;
 use App\Models\User;
 use App\Models\PesoJob;
+use App\Models\JobApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +19,7 @@ class JobseekerController extends Controller
     {
         $user = Auth::user();
         $profile = $user?->profile;
+        $userId = $user?->id;
         $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
         $sampleJobsCount = count($this->sampleVacancies());
         $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
@@ -47,12 +49,35 @@ class JobseekerController extends Controller
             $isUsingSampleRecommendations = true;
         }
 
+        $applicationStatusCounts = [
+            'pending' => 0,
+            'interview' => 0,
+            'hired' => 0,
+            'recommended' => 0,
+            'total' => 0,
+        ];
+
+        if ($userId) {
+            $rawApplicationCounts = JobApplication::query()
+                ->where('user_id', $userId)
+                ->selectRaw('status, COUNT(*) as aggregate')
+                ->groupBy('status')
+                ->pluck('aggregate', 'status');
+
+            $applicationStatusCounts['pending'] = (int) ($rawApplicationCounts['pending'] ?? 0);
+            $applicationStatusCounts['interview'] = (int) ($rawApplicationCounts['interviewed'] ?? 0);
+            $applicationStatusCounts['hired'] = (int) ($rawApplicationCounts['hired'] ?? 0);
+            $applicationStatusCounts['recommended'] = (int) ($rawApplicationCounts['reviewed'] ?? 0);
+            $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
+        }
+
         return view('dashboard.jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
             'profileCompletionPercent' => $profileCompletionPercent,
             'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
             'recommendedJobs' => $recommendedJobs,
             'isUsingSampleRecommendations' => $isUsingSampleRecommendations,
+            'applicationStatusCounts' => $applicationStatusCounts,
         ]);
     }
 
@@ -153,9 +178,54 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function applications(): View
+    public function applications(Request $request): View
     {
-        return view('dashboard.jobseeker.applications');
+        $statusMap = [
+            'all' => ['pending', 'reviewed', 'interviewed', 'hired', 'rejected'],
+            'pending' => ['pending'],
+            'recommended' => ['reviewed'],
+            'interview' => ['interviewed'],
+            'hired' => ['hired'],
+            'rejected' => ['rejected'],
+        ];
+
+        $statusFilter = (string) $request->query('status', 'all');
+
+        if (! array_key_exists($statusFilter, $statusMap)) {
+            $statusFilter = 'all';
+        }
+
+        $userId = (int) Auth::id();
+
+        $applications = JobApplication::query()
+            ->where('user_id', $userId)
+            ->whereIn('status', $statusMap[$statusFilter])
+            ->with('job')
+            ->orderByDesc('applied_at')
+            ->orderByDesc('created_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        $rawStatusCounts = JobApplication::query()
+            ->where('user_id', $userId)
+            ->selectRaw('status, COUNT(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
+        $statusSummary = [
+            'all' => (int) $rawStatusCounts->sum(),
+            'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
+            'recommended' => (int) ($rawStatusCounts['reviewed'] ?? 0),
+            'interview' => (int) ($rawStatusCounts['interviewed'] ?? 0),
+            'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
+            'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
+        ];
+
+        return view('dashboard.jobseeker.applications', [
+            'applications' => $applications,
+            'statusFilter' => $statusFilter,
+            'statusSummary' => $statusSummary,
+        ]);
     }
 
     public function profile(): View

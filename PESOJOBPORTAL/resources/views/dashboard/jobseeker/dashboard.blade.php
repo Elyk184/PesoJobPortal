@@ -106,6 +106,17 @@
         justify-content: center;
     }
 
+    .jobseeker-dashboard a.status-item {
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .jobseeker-dashboard a.status-item:hover {
+        border-color: #c7d6e7;
+        box-shadow: 0 6px 16px rgba(24, 43, 66, 0.06);
+    }
+
     .jobseeker-dashboard .status-item-label {
         font-size: 0.74rem;
         letter-spacing: 0.06em;
@@ -121,6 +132,38 @@
         font-weight: 800;
         color: #2f4561;
     }
+
+    .jobseeker-dashboard .status-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .jobseeker-dashboard .status-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid #dbe5f1;
+        background: #f7faff;
+        color: #3b536e;
+    }
+
+    .jobseeker-dashboard .status-legend-item .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .jobseeker-dashboard .status-legend-pending .dot { background: #c69123; }
+    .jobseeker-dashboard .status-legend-interview .dot { background: #2f8f5e; }
+    .jobseeker-dashboard .status-legend-hired .dot { background: #2d65b1; }
+    .jobseeker-dashboard .status-legend-recommended .dot { background: #7f67c7; }
 
     .jobseeker-dashboard .status-pending {
         border-left: 4px solid #c69123;
@@ -281,7 +324,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-apps"><i class="bi bi-send"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['total'] ?? 0 }}</div>
                     <div class="dashboard-stat-label">Applications Sent</div>
                 </div>
             </div>
@@ -303,23 +346,30 @@
             <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
         </div>
 
+        <div class="status-legend" aria-label="Application status legend">
+            <span class="status-legend-item status-legend-pending"><span class="dot" aria-hidden="true"></span><i class="bi bi-hourglass-split"></i>Pending</span>
+            <span class="status-legend-item status-legend-interview"><span class="dot" aria-hidden="true"></span><i class="bi bi-mic"></i>Interview</span>
+            <span class="status-legend-item status-legend-hired"><span class="dot" aria-hidden="true"></span><i class="bi bi-person-check"></i>Hired</span>
+            <span class="status-legend-item status-legend-recommended"><span class="dot" aria-hidden="true"></span><i class="bi bi-stars"></i>Recommended</span>
+        </div>
+
         <div class="status-grid">
-            <div class="status-item status-pending">
+            <a href="{{ route('jobseeker.applications', ['status' => 'pending']) }}" class="status-item status-pending">
                 <div class="status-item-label">Pending Review</div>
-                <div class="status-item-value">0</div>
-            </div>
-            <div class="status-item status-interview">
+                <div class="status-item-value">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+            </a>
+            <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="status-item status-interview">
                 <div class="status-item-label">Interview</div>
-                <div class="status-item-value">1</div>
-            </div>
-            <div class="status-item status-hired">
+                <div class="status-item-value">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
+            </a>
+            <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="status-item status-hired">
                 <div class="status-item-label">Hired</div>
-                <div class="status-item-value">2</div>
-            </div>
-            <div class="status-item status-recommended">
+                <div class="status-item-value">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
+            </a>
+            <a href="{{ route('jobseeker.applications', ['status' => 'recommended']) }}" class="status-item status-recommended">
                 <div class="status-item-label">Recommended</div>
-                <div class="status-item-value">0</div>
-            </div>
+                <div class="status-item-value">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
+            </a>
         </div>
     </div>
 
