@@ -41,6 +41,37 @@ class JobseekerController extends Controller
             })
             ->values();
 
+        $recentlyViewedJobIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        $recentlyViewedJobs = collect();
+
+        if ($recentlyViewedJobIds->isNotEmpty()) {
+            $recentlyViewedMap = PesoJob::query()
+                ->where('status', 'active')
+                ->whereIn('id', $recentlyViewedJobIds->all())
+                ->get()
+                ->keyBy('id');
+
+            $recentlyViewedJobs = $recentlyViewedJobIds
+                ->map(fn ($id) => $recentlyViewedMap->get($id))
+                ->filter()
+                ->take(3)
+                ->map(function (PesoJob $job) {
+                    return [
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                    ];
+                })
+                ->values();
+        }
+
         $isUsingSampleRecommendations = false;
 
         if ($recommendedJobs->isEmpty()) {
@@ -147,6 +178,8 @@ class JobseekerController extends Controller
             'applicationStatusCounts' => $applicationStatusCounts,
             'dashboardNotifications' => $notifications,
             'unreadNotificationsCount' => $unreadNotificationsCount,
+            'recentlyViewedJobs' => $recentlyViewedJobs,
+            'recentlyViewedCount' => $recentlyViewedJobIds->count(),
         ]);
     }
 
@@ -232,6 +265,27 @@ class JobseekerController extends Controller
 
             return $job;
         });
+
+        $currentPageJobIds = $jobs->getCollection()
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => $id > 0)
+            ->values();
+
+        if ($currentPageJobIds->isNotEmpty()) {
+            $existingViewedIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
+                ->map(fn ($id) => (int) $id)
+                ->filter(fn ($id) => $id > 0);
+
+            $mergedViewedIds = $currentPageJobIds
+                ->concat($existingViewedIds)
+                ->unique()
+                ->take(15)
+                ->values()
+                ->all();
+
+            $request->session()->put('jobseeker_recently_viewed_job_ids', $mergedViewedIds);
+        }
 
         return view('dashboard.jobseeker.vacancies', [
             'jobs' => $jobs,

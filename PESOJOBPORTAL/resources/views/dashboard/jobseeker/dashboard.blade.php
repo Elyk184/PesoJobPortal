@@ -251,6 +251,25 @@
         color: #60758e;
     }
 
+    .jobseeker-dashboard .recently-viewed-item {
+        border: 1px solid #dbe5f1;
+        border-radius: 10px;
+        background: #fbfdff;
+        padding: 10px 12px;
+        height: 100%;
+    }
+
+    .jobseeker-dashboard .recently-viewed-title {
+        font-weight: 700;
+        color: #2f4561;
+        margin-bottom: 2px;
+    }
+
+    .jobseeker-dashboard .recently-viewed-meta {
+        font-size: 0.8rem;
+        color: #60758e;
+    }
+
     .jobseeker-dashboard .empty-icon {
         width: 54px;
         height: 54px;
@@ -378,8 +397,8 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">3</div>
-                    <div class="dashboard-stat-label">Saved Jobs</div>
+                    <div class="dashboard-stat-number">{{ $recentlyViewedCount ?? 0 }}</div>
+                    <div class="dashboard-stat-label">Recently Viewed</div>
                 </div>
             </div>
         </div>
@@ -450,6 +469,38 @@
                 <div class="status-item-value">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
             </a>
         </div>
+    </div>
+
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Recently Viewed Jobs</h3>
+            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">Browse More</a>
+        </div>
+
+        @if (($recentlyViewedJobs ?? collect())->isNotEmpty())
+            <div class="row g-3">
+                @foreach ($recentlyViewedJobs as $job)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="recently-viewed-item">
+                            <div class="recently-viewed-title">{{ $job['title'] }}</div>
+                            <div class="recently-viewed-meta mb-1">{{ $job['location'] }} • {{ $job['employer_name'] }}</div>
+                            @if (! empty($job['salary_range']))
+                                <div class="small mb-1"><strong>Salary:</strong> {{ $job['salary_range'] }}</div>
+                            @endif
+                            <div class="small text-muted">{{ \Illuminate\Support\Str::limit($job['description'], 80) }}</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="dashboard-empty-state">
+                <div>
+                    <div class="empty-icon"><i class="bi bi-clock-history"></i></div>
+                    <div class="fw-semibold text-secondary">No recently viewed jobs yet.</div>
+                    <div class="small">Open the vacancies page to build your recent list.</div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <div class="dashboard-section-card p-3 p-lg-4">
