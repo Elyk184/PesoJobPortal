@@ -90,6 +90,12 @@ class AdminController extends Controller
         return view('admin.approvals.lra-sra', compact('pendingRequests'));
     }
 
+    public function viewLraSraRequest(RecruitmentActivityRequest $activityRequest): View
+    {
+        $activityRequest->load(['employer', 'approvedBy']);
+        return view('admin.approvals.lra-sra-detail', compact('activityRequest'));
+    }
+
     public function approveLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse
     {
         $activityRequest->update([

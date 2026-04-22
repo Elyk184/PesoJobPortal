@@ -45,6 +45,10 @@
                                 <td class="text-center">
                                     <form method="POST" class="d-inline-flex gap-2">
                                         @csrf
+                                        <a href="{{ route('admin.lra-sra.review', $request) }}" 
+                                           class="btn btn-sm btn-info" title="Review this request">
+                                            <i class="bi bi-eye"></i> Review
+                                        </a>
                                         <button type="submit" formaction="{{ route('admin.lra-sra.approve', $request) }}" 
                                                 class="btn btn-sm btn-success" title="Approve this request">
                                             <i class="bi bi-check-circle"></i> Approve

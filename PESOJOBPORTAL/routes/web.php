@@ -96,6 +96,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
     
     Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
+    Route::get('/lra-sra/{activityRequest}/review', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
     Route::post('/lra-sra/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
     Route::post('/lra-sra/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
     
