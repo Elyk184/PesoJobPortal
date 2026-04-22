@@ -175,7 +175,28 @@
             font-weight: 800;
             letter-spacing: 0.03em;
             color: #fff;
-            background: #2f6ec8;
+        }
+
+        .request-status.pending {
+            background: #f59e0b;
+        }
+
+        .request-status.approved {
+            background: #10b981;
+        }
+
+        .request-status.rejected {
+            background: #ef4444;
+        }
+
+        .request-approval-info {
+            font-size: 0.85rem;
+            color: #5f6f86;
+            margin-top: 0.4rem;
+        }
+
+        .request-approval-info strong {
+            color: #12243f;
         }
 
         .request-meta {
