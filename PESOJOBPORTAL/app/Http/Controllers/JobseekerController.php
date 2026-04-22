@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JobseekerController extends Controller
 {
-    public function dashboard(): View
+    public function dashboard(Request $request): View
     {
         $user = Auth::user();
         $profile = $user?->profile;
@@ -71,6 +72,72 @@ class JobseekerController extends Controller
             $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
         }
 
+        if ($request->query('notifications') === 'read') {
+            $request->session()->put('jobseeker_notifications_read_at', now()->toIso8601String());
+        }
+
+        $notifications = collect();
+
+        if ($profileCompletionPercent < 100) {
+            $notifications->push([
+                'type' => 'profile',
+                'icon' => 'bi-person-lines-fill',
+                'title' => 'Complete your profile',
+                'message' => 'Your profile is only ' . $profileCompletionPercent . '% complete. Add missing details to improve job matches.',
+                'url' => route('jobseeker.profile'),
+                'created_at' => now(),
+            ]);
+        }
+
+        if ($applicationStatusCounts['interview'] > 0) {
+            $notifications->push([
+                'type' => 'interview',
+                'icon' => 'bi-mic',
+                'title' => 'Interview updates available',
+                'message' => 'You have ' . $applicationStatusCounts['interview'] . ' application(s) in interview status.',
+                'url' => route('jobseeker.applications', ['status' => 'interview']),
+                'created_at' => now()->subMinutes(10),
+            ]);
+        }
+
+        if ($applicationStatusCounts['pending'] > 0) {
+            $notifications->push([
+                'type' => 'pending',
+                'icon' => 'bi-hourglass-split',
+                'title' => 'Pending applications for review',
+                'message' => 'You currently have ' . $applicationStatusCounts['pending'] . ' pending application(s).',
+                'url' => route('jobseeker.applications', ['status' => 'pending']),
+                'created_at' => now()->subMinutes(20),
+            ]);
+        }
+
+        $recentJobsCount = PesoJob::query()
+            ->where('status', 'active')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->count();
+
+        if ($recentJobsCount > 0) {
+            $notifications->push([
+                'type' => 'jobs',
+                'icon' => 'bi-briefcase',
+                'title' => 'New job posts this week',
+                'message' => $recentJobsCount . ' new active job(s) were posted in the last 7 days.',
+                'url' => route('jobseeker.vacancies'),
+                'created_at' => now()->subHours(1),
+            ]);
+        }
+
+        $notifications = $notifications
+            ->sortByDesc('created_at')
+            ->values();
+
+        $notificationsReadAt = $request->session()->get('jobseeker_notifications_read_at');
+        $notificationsReadAt = $notificationsReadAt ? Carbon::parse($notificationsReadAt) : null;
+
+        $unreadNotificationsCount = $notificationsReadAt
+            ? $notifications->filter(fn ($item) => Carbon::parse($item['created_at'])->gt($notificationsReadAt))->count()
+            : $notifications->count();
+
         return view('dashboard.jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
             'profileCompletionPercent' => $profileCompletionPercent,
@@ -78,6 +145,8 @@ class JobseekerController extends Controller
             'recommendedJobs' => $recommendedJobs,
             'isUsingSampleRecommendations' => $isUsingSampleRecommendations,
             'applicationStatusCounts' => $applicationStatusCounts,
+            'dashboardNotifications' => $notifications,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
         ]);
     }
 

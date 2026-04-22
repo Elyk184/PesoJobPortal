@@ -206,6 +206,51 @@
         color: #6c8098;
     }
 
+    .jobseeker-dashboard .notifications-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .jobseeker-dashboard .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        border: 1px solid #dbe5f1;
+        border-radius: 10px;
+        background: #fbfdff;
+        padding: 10px 12px;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .jobseeker-dashboard .notification-item:hover {
+        border-color: #c7d6e7;
+        box-shadow: 0 4px 12px rgba(24, 43, 66, 0.06);
+    }
+
+    .jobseeker-dashboard .notification-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background: #edf3fa;
+        color: #456487;
+        flex: 0 0 auto;
+    }
+
+    .jobseeker-dashboard .notification-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #2f4561;
+        margin-bottom: 2px;
+    }
+
+    .jobseeker-dashboard .notification-message {
+        font-size: 0.8rem;
+        color: #60758e;
+    }
+
     .jobseeker-dashboard .empty-icon {
         width: 54px;
         height: 54px;
@@ -338,6 +383,40 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-bell me-2"></i>Notifications</h3>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-danger">{{ $unreadNotificationsCount ?? 0 }} unread</span>
+                @if (($unreadNotificationsCount ?? 0) > 0)
+                    <a href="{{ route('jobseeker.dashboard', ['notifications' => 'read']) }}" class="btn btn-sm btn-outline-secondary">Mark all as read</a>
+                @endif
+            </div>
+        </div>
+
+        @if (($dashboardNotifications ?? collect())->isNotEmpty())
+            <div class="notifications-list">
+                @foreach ($dashboardNotifications as $notification)
+                    <a href="{{ $notification['url'] }}" class="notification-item">
+                        <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
+                        <div>
+                            <div class="notification-title">{{ $notification['title'] }}</div>
+                            <div class="notification-message">{{ $notification['message'] }}</div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @else
+            <div class="dashboard-empty-state">
+                <div>
+                    <div class="empty-icon"><i class="bi bi-bell"></i></div>
+                    <div class="fw-semibold text-secondary">All caught up.</div>
+                    <div class="small">No new notifications right now.</div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <div class="dashboard-section-card p-3 p-lg-4 mb-4">
