@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Jobseeker | Link Job Resource Portal')
+@section('title', 'Dashboard | Jobseeker')
 
 @section('content')
 <section aria-label="Jobseeker dashboard">
