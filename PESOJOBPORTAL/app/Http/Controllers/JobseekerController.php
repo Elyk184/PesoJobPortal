@@ -24,22 +24,27 @@ class JobseekerController extends Controller
         $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
         $sampleJobsCount = count($this->sampleVacancies());
         $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
-        $recommendedJobs = PesoJob::query()
-            ->where('status', 'active')
-            ->latest()
-            ->limit(3)
-            ->get()
-            ->map(function (PesoJob $job) {
-                return [
-                    'title' => $job->title,
-                    'location' => $job->location,
-                    'employer_name' => $job->employer_name,
-                    'salary_range' => $job->salary_range,
-                    'description' => $job->description,
-                    'requirements_list' => $this->extractJobRequirements($job),
-                ];
-            })
-            ->values();
+        $recommendedJobs = $this->buildProfileBasedRecommendations($profile);
+        $isProfileMatchedRecommendations = $recommendedJobs->isNotEmpty();
+
+        if ($recommendedJobs->isEmpty()) {
+            $recommendedJobs = PesoJob::query()
+                ->where('status', 'active')
+                ->latest()
+                ->limit(3)
+                ->get()
+                ->map(function (PesoJob $job) {
+                    return [
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                        'requirements_list' => $this->extractJobRequirements($job),
+                    ];
+                })
+                ->values();
+        }
 
         $recentlyViewedJobIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
             ->map(fn ($id) => (int) $id)
@@ -175,6 +180,7 @@ class JobseekerController extends Controller
             'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
             'recommendedJobs' => $recommendedJobs,
             'isUsingSampleRecommendations' => $isUsingSampleRecommendations,
+            'isProfileMatchedRecommendations' => $isProfileMatchedRecommendations,
             'applicationStatusCounts' => $applicationStatusCounts,
             'dashboardNotifications' => $notifications,
             'unreadNotificationsCount' => $unreadNotificationsCount,
@@ -1010,6 +1016,161 @@ class JobseekerController extends Controller
             ->filter()
             ->values()
             ->all();
+    }
+
+    private function buildProfileBasedRecommendations(?UserProfile $profile)
+    {
+        $signals = $this->buildRecommendationSignalsFromProfile($profile);
+
+        if (collect($signals)->flatten()->isEmpty()) {
+            return collect();
+        }
+
+        $activeJobs = PesoJob::query()
+            ->where('status', 'active')
+            ->latest()
+            ->limit(40)
+            ->get();
+
+        $rankedJobs = $activeJobs
+            ->map(function (PesoJob $job) use ($signals) {
+                return [
+                    'job' => $job,
+                    'score' => $this->scoreJobAgainstProfileSignals($job, $signals),
+                    'created_at' => $job->created_at?->getTimestamp() ?? 0,
+                ];
+            })
+            ->filter(fn ($item) => $item['score'] > 0)
+            ->sort(function ($left, $right) {
+                if ($left['score'] === $right['score']) {
+                    return $right['created_at'] <=> $left['created_at'];
+                }
+
+                return $right['score'] <=> $left['score'];
+            })
+            ->take(3)
+            ->values();
+
+        return $rankedJobs
+            ->map(function ($item) {
+                /** @var PesoJob $job */
+                $job = $item['job'];
+
+                return [
+                    'title' => $job->title,
+                    'location' => $job->location,
+                    'employer_name' => $job->employer_name,
+                    'salary_range' => $job->salary_range,
+                    'description' => $job->description,
+                    'requirements_list' => $this->extractJobRequirements($job),
+                    'match_score' => $item['score'],
+                ];
+            })
+            ->values();
+    }
+
+    private function buildRecommendationSignalsFromProfile(?UserProfile $profile): array
+    {
+        if (! $profile) {
+            return [
+                'skills' => [],
+                'occupations' => [],
+                'experience' => [],
+                'locations' => [],
+            ];
+        }
+
+        $otherSkills = $profile->other_skills ?? [];
+
+        $skills = collect($profile->skills ?? [])
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''))
+            ->all();
+
+        $occupationPref = (string) data_get($profile, 'job_preferences.occupation_text', '');
+
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->all();
+
+        $locations = [
+            (string) data_get($profile, 'present_address.barangay', ''),
+            (string) data_get($profile, 'present_address.municipality', ''),
+            (string) data_get($profile, 'present_address.province', ''),
+        ];
+
+        return [
+            'skills' => $this->normalizeRecommendationTerms($skills),
+            'occupations' => $this->normalizeRecommendationTerms([$occupationPref]),
+            'experience' => $this->normalizeRecommendationTerms($experienceTitles),
+            'locations' => $this->normalizeRecommendationTerms($locations),
+        ];
+    }
+
+    private function normalizeRecommendationTerms(array $rawValues): array
+    {
+        $stopWords = ['the', 'and', 'for', 'with', 'from', 'that', 'this', 'are', 'your', 'you', 'job', 'work'];
+
+        return collect($rawValues)
+            ->map(fn ($value) => trim(mb_strtolower((string) $value)))
+            ->filter()
+            ->flatMap(function ($value) {
+                $parts = collect(preg_split('/[\r\n,\/|]+/', $value) ?: [])
+                    ->map(fn ($part) => trim((string) $part))
+                    ->filter();
+
+                $expanded = [];
+
+                foreach ($parts as $part) {
+                    $expanded[] = $part;
+
+                    foreach (preg_split('/\s+/', $part) ?: [] as $word) {
+                        $word = trim((string) $word);
+
+                        if ($word !== '') {
+                            $expanded[] = $word;
+                        }
+                    }
+                }
+
+                return $expanded;
+            })
+            ->map(fn ($term) => trim((string) $term, " \t\n\r\0\x0B.-_"))
+            ->filter(fn ($term) => mb_strlen($term) >= 3)
+            ->reject(fn ($term) => in_array($term, $stopWords, true))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function scoreJobAgainstProfileSignals(PesoJob $job, array $signals): int
+    {
+        $requirementsText = implode(' ', $this->extractJobRequirements($job));
+
+        $haystack = mb_strtolower(implode(' ', [
+            (string) $job->title,
+            (string) $job->description,
+            (string) $job->employer_name,
+            (string) $job->location,
+            $requirementsText,
+        ]));
+
+        $score = 0;
+        $score += $this->countTermMatches($haystack, $signals['skills'] ?? []) * 6;
+        $score += $this->countTermMatches($haystack, $signals['occupations'] ?? []) * 8;
+        $score += $this->countTermMatches($haystack, $signals['experience'] ?? []) * 4;
+        $score += $this->countTermMatches($haystack, $signals['locations'] ?? []) * 3;
+
+        return $score;
+    }
+
+    private function countTermMatches(string $haystack, array $terms): int
+    {
+        return collect($terms)
+            ->filter(fn ($term) => $term !== '' && str_contains($haystack, mb_strtolower((string) $term)))
+            ->count();
     }
 
     private function sampleVacancies(): array

@@ -550,6 +550,12 @@
             <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
         </div>
 
+        @if (($isProfileMatchedRecommendations ?? false) && ! ($isUsingSampleRecommendations ?? false))
+            <div class="alert alert-success py-2 px-3 small mb-3" role="alert">
+                These recommendations are based on your profile details.
+            </div>
+        @endif
+
         @if (($recommendedJobs ?? collect())->isNotEmpty())
             @if ($isUsingSampleRecommendations ?? false)
                 <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
