@@ -24,6 +24,10 @@ class JobseekerController extends Controller
         $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
         $sampleJobsCount = count($this->sampleVacancies());
         $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
+        $jobsThisWeek = PesoJob::query()
+            ->where('status', 'active')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->count();
         $recommendedJobs = $this->buildProfileBasedRecommendations($profile);
         $isProfileMatchedRecommendations = $recommendedJobs->isNotEmpty();
 
@@ -108,6 +112,21 @@ class JobseekerController extends Controller
             $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
         }
 
+        $applicationsThisWeek = $userId
+            ? JobApplication::query()
+                ->where('user_id', $userId)
+                ->where('created_at', '>=', now()->subDays(7))
+                ->count()
+            : 0;
+
+        $interviewsThisWeek = $userId
+            ? JobApplication::query()
+                ->where('user_id', $userId)
+                ->where('status', 'interviewed')
+                ->where('updated_at', '>=', now()->subDays(7))
+                ->count()
+            : 0;
+
         if ($request->query('notifications') === 'read') {
             $request->session()->put('jobseeker_notifications_read_at', now()->toIso8601String());
         }
@@ -117,6 +136,7 @@ class JobseekerController extends Controller
         if ($profileCompletionPercent < 100) {
             $notifications->push([
                 'type' => 'profile',
+                'priority' => 'medium',
                 'icon' => 'bi-person-lines-fill',
                 'title' => 'Complete your profile',
                 'message' => 'Your profile is only ' . $profileCompletionPercent . '% complete. Add missing details to improve job matches.',
@@ -128,6 +148,7 @@ class JobseekerController extends Controller
         if ($applicationStatusCounts['interview'] > 0) {
             $notifications->push([
                 'type' => 'interview',
+                'priority' => 'high',
                 'icon' => 'bi-mic',
                 'title' => 'Interview updates available',
                 'message' => 'You have ' . $applicationStatusCounts['interview'] . ' application(s) in interview status.',
@@ -139,6 +160,7 @@ class JobseekerController extends Controller
         if ($applicationStatusCounts['pending'] > 0) {
             $notifications->push([
                 'type' => 'pending',
+                'priority' => 'medium',
                 'icon' => 'bi-hourglass-split',
                 'title' => 'Pending applications for review',
                 'message' => 'You currently have ' . $applicationStatusCounts['pending'] . ' pending application(s).',
@@ -147,17 +169,13 @@ class JobseekerController extends Controller
             ]);
         }
 
-        $recentJobsCount = PesoJob::query()
-            ->where('status', 'active')
-            ->where('created_at', '>=', now()->subDays(7))
-            ->count();
-
-        if ($recentJobsCount > 0) {
+        if ($jobsThisWeek > 0) {
             $notifications->push([
                 'type' => 'jobs',
+                'priority' => 'low',
                 'icon' => 'bi-briefcase',
                 'title' => 'New job posts this week',
-                'message' => $recentJobsCount . ' new active job(s) were posted in the last 7 days.',
+                'message' => $jobsThisWeek . ' new active job(s) were posted in the last 7 days.',
                 'url' => route('jobseeker.vacancies'),
                 'created_at' => now()->subHours(1),
             ]);
@@ -186,6 +204,11 @@ class JobseekerController extends Controller
             'unreadNotificationsCount' => $unreadNotificationsCount,
             'recentlyViewedJobs' => $recentlyViewedJobs,
             'recentlyViewedCount' => $recentlyViewedJobIds->count(),
+            'kpiTrends' => [
+                'jobsThisWeek' => $jobsThisWeek,
+                'applicationsThisWeek' => $applicationsThisWeek,
+                'interviewsThisWeek' => $interviewsThisWeek,
+            ],
         ]);
     }
 
@@ -1034,9 +1057,12 @@ class JobseekerController extends Controller
 
         $rankedJobs = $activeJobs
             ->map(function (PesoJob $job) use ($signals) {
+                $matchDetails = $this->buildJobMatchDetails($job, $signals);
+
                 return [
                     'job' => $job,
-                    'score' => $this->scoreJobAgainstProfileSignals($job, $signals),
+                    'score' => $matchDetails['score'],
+                    'match_reasons' => $matchDetails['reasons'],
                     'created_at' => $job->created_at?->getTimestamp() ?? 0,
                 ];
             })
@@ -1064,6 +1090,7 @@ class JobseekerController extends Controller
                     'description' => $job->description,
                     'requirements_list' => $this->extractJobRequirements($job),
                     'match_score' => $item['score'],
+                    'match_reasons' => $item['match_reasons'],
                 ];
             })
             ->values();
@@ -1147,6 +1174,13 @@ class JobseekerController extends Controller
 
     private function scoreJobAgainstProfileSignals(PesoJob $job, array $signals): int
     {
+        $details = $this->buildJobMatchDetails($job, $signals);
+
+        return $details['score'];
+    }
+
+    private function buildJobMatchDetails(PesoJob $job, array $signals): array
+    {
         $requirementsText = implode(' ', $this->extractJobRequirements($job));
 
         $haystack = mb_strtolower(implode(' ', [
@@ -1157,13 +1191,27 @@ class JobseekerController extends Controller
             $requirementsText,
         ]));
 
-        $score = 0;
-        $score += $this->countTermMatches($haystack, $signals['skills'] ?? []) * 6;
-        $score += $this->countTermMatches($haystack, $signals['occupations'] ?? []) * 8;
-        $score += $this->countTermMatches($haystack, $signals['experience'] ?? []) * 4;
-        $score += $this->countTermMatches($haystack, $signals['locations'] ?? []) * 3;
+        $skillsMatches = $this->countTermMatches($haystack, $signals['skills'] ?? []);
+        $occupationMatches = $this->countTermMatches($haystack, $signals['occupations'] ?? []);
+        $experienceMatches = $this->countTermMatches($haystack, $signals['experience'] ?? []);
+        $locationMatches = $this->countTermMatches($haystack, $signals['locations'] ?? []);
 
-        return $score;
+        $score = ($skillsMatches * 6)
+            + ($occupationMatches * 8)
+            + ($experienceMatches * 4)
+            + ($locationMatches * 3);
+
+        $reasons = collect([
+            $occupationMatches > 0 ? 'Occupation Preference' : null,
+            $skillsMatches > 0 ? 'Skills Match' : null,
+            $experienceMatches > 0 ? 'Experience Match' : null,
+            $locationMatches > 0 ? 'Location Match' : null,
+        ])->filter()->values()->all();
+
+        return [
+            'score' => $score,
+            'reasons' => $reasons,
+        ];
     }
 
     private function countTermMatches(string $haystack, array $terms): int

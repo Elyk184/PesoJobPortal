@@ -5,12 +5,32 @@
 @push('styles')
 <style>
     .jobseeker-dashboard {
-        color: #2e3f52;
+        --dash-bg: #eef2f7;
+        --dash-card: #ffffff;
+        --dash-border: #d8e1ec;
+        --dash-text: #1f2f43;
+        --dash-muted: #60758e;
+        --dash-accent: #0f5ba7;
+        --dash-success: #23865a;
+        --dash-warning: #b98520;
+        --dash-violet: #7356bf;
+        color: var(--dash-text);
+        font-family: "Manrope", "Segoe UI", sans-serif;
+        background:
+            radial-gradient(90rem 50rem at 92% -10%, #dbe8f7 0%, rgba(219, 232, 247, 0) 62%),
+            radial-gradient(85rem 45rem at -12% 0%, #e7f1fc 0%, rgba(231, 241, 252, 0) 57%),
+            var(--dash-bg);
+        border-radius: 18px;
+        padding: 16px;
     }
 
     .jobseeker-dashboard .dashboard-topbar {
-        border-radius: 14px;
+        border-radius: 16px;
+        border: 1px solid var(--dash-border);
+        background: var(--dash-card);
+        padding: 12px 14px;
         margin-bottom: 20px;
+        box-shadow: 0 10px 24px rgba(16, 30, 52, 0.06);
     }
 
     .jobseeker-dashboard .dashboard-topbar-title {
@@ -19,16 +39,17 @@
     }
 
     .jobseeker-dashboard .dashboard-hero {
-        border-radius: 14px;
-        border: 1px solid #d4deea;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border-radius: 16px;
+        border: 1px solid var(--dash-border);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 44%, #f3f8ff 100%);
+        box-shadow: 0 12px 30px rgba(17, 30, 52, 0.08);
     }
 
     .jobseeker-dashboard .dashboard-hero-meta {
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #62758b;
+        color: var(--dash-muted);
         font-weight: 700;
         margin-bottom: 0.35rem;
     }
@@ -37,13 +58,39 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        border: 1px solid #d4deea;
+        border: 1px solid var(--dash-border);
         border-radius: 999px;
         padding: 6px 12px;
         font-size: 0.76rem;
-        color: #3f566e;
+        color: var(--dash-text);
         background: #ffffff;
         font-weight: 700;
+    }
+
+    .jobseeker-dashboard .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .jobseeker-dashboard .quick-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid var(--dash-border);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--dash-text);
+        text-decoration: none;
+        padding: 8px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .jobseeker-dashboard .quick-action-btn:hover {
+        border-color: #b5c6da;
+        background: #f8fbff;
     }
 
     .jobseeker-dashboard .completion-meter {
@@ -61,15 +108,25 @@
     }
 
     .jobseeker-dashboard .dashboard-stat-card {
+        background: var(--dash-card);
+        border: 1px solid var(--dash-border);
+        border-radius: 14px;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .jobseeker-dashboard .dashboard-stat-card:hover {
-        border-color: #c7d6e7;
-        box-shadow: 0 6px 16px rgba(24, 43, 66, 0.06);
+        border-color: #b8c9de;
+        box-shadow: 0 10px 24px rgba(24, 43, 66, 0.08);
     }
 
     .jobseeker-dashboard .dashboard-stat-icon {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        background: #eaf2fc;
+        color: var(--dash-accent);
+        font-size: 1.08rem;
         border-radius: 10px;
     }
 
@@ -83,8 +140,14 @@
         color: #a06d19;
     }
 
+    .jobseeker-dashboard .dashboard-stat-trend {
+        font-size: 0.74rem;
+        color: var(--dash-muted);
+        margin-top: 2px;
+    }
+
     .jobseeker-dashboard .section-head {
-        border-bottom: 1px solid #e2e9f2;
+        border-bottom: 1px solid var(--dash-border);
         padding-bottom: 12px;
         margin-bottom: 14px;
     }
@@ -129,6 +192,24 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
     }
+
+    .jobseeker-dashboard .status-progress {
+        display: flex;
+        height: 8px;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        background: #e7edf5;
+    }
+
+    .jobseeker-dashboard .status-segment {
+        height: 100%;
+    }
+
+    .jobseeker-dashboard .status-segment.pending { background: #c69123; }
+    .jobseeker-dashboard .status-segment.interview { background: #2f8f5e; }
+    .jobseeker-dashboard .status-segment.hired { background: #2d65b1; }
+    .jobseeker-dashboard .status-segment.recommended { background: #7f67c7; }
 
     .jobseeker-dashboard .status-item {
         border: 1px solid #dbe5f1;
@@ -221,10 +302,14 @@
         border: 1px dashed #cfdbe8;
         border-radius: 12px;
         background: #fbfdff;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 12px;
     }
 
     .jobseeker-dashboard .recommended-job-card {
-        border: 1px solid #dbe5f1;
+        border: 1px solid var(--dash-border);
         border-radius: 12px;
         background: #fbfdff;
         padding: 14px;
@@ -241,16 +326,47 @@
         color: #6c8098;
     }
 
+    .jobseeker-dashboard .match-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--dash-success);
+        border: 1px solid #c8e9d9;
+        border-radius: 999px;
+        background: #f0fbf5;
+        padding: 4px 8px;
+        margin-bottom: 8px;
+        width: fit-content;
+    }
+
+    .jobseeker-dashboard .match-reason {
+        font-size: 0.73rem;
+        color: var(--dash-muted);
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
     .jobseeker-dashboard .notifications-list {
         display: grid;
         gap: 10px;
+    }
+
+    .jobseeker-dashboard .notification-group-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--dash-muted);
+        margin: 8px 0;
     }
 
     .jobseeker-dashboard .notification-item {
         display: flex;
         align-items: flex-start;
         gap: 10px;
-        border: 1px solid #dbe5f1;
+        border: 1px solid var(--dash-border);
         border-radius: 10px;
         background: #fbfdff;
         padding: 10px 12px;
@@ -286,8 +402,20 @@
         color: #60758e;
     }
 
+    .jobseeker-dashboard .notification-priority {
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-left: 8px;
+    }
+
+    .jobseeker-dashboard .prio-high { color: #b54708; }
+    .jobseeker-dashboard .prio-medium { color: #0f5ba7; }
+    .jobseeker-dashboard .prio-low { color: #2f8f5e; }
+
     .jobseeker-dashboard .recently-viewed-item {
-        border: 1px solid #dbe5f1;
+        border: 1px solid var(--dash-border);
         border-radius: 10px;
         background: #fbfdff;
         padding: 10px 12px;
@@ -321,9 +449,17 @@
         .jobseeker-dashboard .status-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .jobseeker-dashboard .quick-actions-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     @media (max-width: 575.98px) {
+        .jobseeker-dashboard {
+            padding: 10px;
+        }
+
         .jobseeker-dashboard .status-grid {
             grid-template-columns: 1fr;
         }
@@ -389,8 +525,8 @@
     </div>
 
     <div class="dashboard-section-card dashboard-hero p-3 p-lg-4 mb-4">
-        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
-            <div>
+        <div class="row g-3 align-items-center">
+            <div class="col-12 col-lg-8">
                 <div class="dashboard-hero-meta">Overview</div>
                 <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'Jobseeker' }}!</h2>
                 <p class="mb-0 text-muted">
@@ -398,17 +534,22 @@
                     Keep it updated to receive relevant job recommendations.
                 </p>
             </div>
-            <div class="d-flex flex-column align-items-lg-end gap-2 completion-meter">
-                <span class="dashboard-pill">
-                    <i class="bi bi-patch-check"></i>
-                    {{ $profileCompletionLabel ?? 'Getting Started' }} ({{ $profileCompletionPercent ?? 0 }}%)
-                </span>
-                <div class="progress w-100" role="progressbar" aria-label="Profile completion" aria-valuenow="{{ $profileCompletionPercent ?? 0 }}" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%;"></div>
+            <div class="col-12 col-lg-4">
+                <div class="d-flex flex-column gap-2 completion-meter ms-lg-auto">
+                    <span class="dashboard-pill">
+                        <i class="bi bi-patch-check"></i>
+                        {{ $profileCompletionLabel ?? 'Getting Started' }} ({{ $profileCompletionPercent ?? 0 }}%)
+                    </span>
+                    <div class="progress w-100" role="progressbar" aria-label="Profile completion" aria-valuenow="{{ $profileCompletionPercent ?? 0 }}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%;"></div>
+                    </div>
+                    <div class="quick-actions-grid">
+                        <a href="{{ route('jobseeker.vacancies') }}" class="quick-action-btn"><i class="bi bi-search"></i>Browse Jobs</a>
+                        <a href="{{ route('jobseeker.profile') }}" class="quick-action-btn"><i class="bi bi-person"></i>Update Profile</a>
+                        <a href="{{ route('jobseeker.resume-builder') }}" class="quick-action-btn"><i class="bi bi-file-earmark-text"></i>Resume Builder</a>
+                        <a href="{{ route('jobseeker.applications') }}" class="quick-action-btn"><i class="bi bi-send"></i>My Applications</a>
+                    </div>
                 </div>
-                <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-primary px-3 shadow-sm">
-                    <i class="bi bi-search me-2"></i>Browse Jobs
-                </a>
             </div>
         </div>
     </div>
@@ -420,6 +561,7 @@
                 <div>
                     <div class="dashboard-stat-number" data-counter-target="{{ $availableJobsCount ?? 0 }}">{{ $availableJobsCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Available Jobs</div>
+                    <div class="dashboard-stat-trend">+{{ $kpiTrends['jobsThisWeek'] ?? 0 }} this week</div>
                 </div>
             </div>
         </div>
@@ -429,6 +571,7 @@
                 <div>
                     <div class="dashboard-stat-number" data-counter-target="{{ $applicationStatusCounts['total'] ?? 0 }}">{{ $applicationStatusCounts['total'] ?? 0 }}</div>
                     <div class="dashboard-stat-label">Applications Sent</div>
+                    <div class="dashboard-stat-trend">+{{ $kpiTrends['applicationsThisWeek'] ?? 0 }} in 7 days</div>
                 </div>
             </div>
         </div>
@@ -438,6 +581,7 @@
                 <div>
                     <div class="dashboard-stat-number" data-counter-target="{{ $recentlyViewedCount ?? 0 }}">{{ $recentlyViewedCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Recently Viewed</div>
+                    <div class="dashboard-stat-trend">{{ $kpiTrends['interviewsThisWeek'] ?? 0 }} interview updates</div>
                 </div>
             </div>
         </div>
@@ -455,16 +599,43 @@
         </div>
 
         @if (($dashboardNotifications ?? collect())->isNotEmpty())
+            @php
+                $todayNotifications = collect($dashboardNotifications)->filter(fn($notification) => \Illuminate\Support\Carbon::parse($notification['created_at'])->isToday())->values();
+                $earlierNotifications = collect($dashboardNotifications)->filter(fn($notification) => !\Illuminate\Support\Carbon::parse($notification['created_at'])->isToday())->values();
+            @endphp
+
             <div class="notifications-list">
-                @foreach ($dashboardNotifications as $notification)
-                    <a href="{{ $notification['url'] }}" class="notification-item">
-                        <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
-                        <div>
-                            <div class="notification-title">{{ $notification['title'] }}</div>
-                            <div class="notification-message">{{ $notification['message'] }}</div>
-                        </div>
-                    </a>
-                @endforeach
+                @if ($todayNotifications->isNotEmpty())
+                    <div class="notification-group-title">Today</div>
+                    @foreach ($todayNotifications as $notification)
+                        <a href="{{ $notification['url'] }}" class="notification-item">
+                            <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
+                            <div>
+                                <div class="notification-title">
+                                    {{ $notification['title'] }}
+                                    <span class="notification-priority prio-{{ $notification['priority'] ?? 'low' }}">{{ $notification['priority'] ?? 'low' }}</span>
+                                </div>
+                                <div class="notification-message">{{ $notification['message'] }}</div>
+                            </div>
+                        </a>
+                    @endforeach
+                @endif
+
+                @if ($earlierNotifications->isNotEmpty())
+                    <div class="notification-group-title">Earlier</div>
+                    @foreach ($earlierNotifications as $notification)
+                        <a href="{{ $notification['url'] }}" class="notification-item">
+                            <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
+                            <div>
+                                <div class="notification-title">
+                                    {{ $notification['title'] }}
+                                    <span class="notification-priority prio-{{ $notification['priority'] ?? 'low' }}">{{ $notification['priority'] ?? 'low' }}</span>
+                                </div>
+                                <div class="notification-message">{{ $notification['message'] }}</div>
+                            </div>
+                        </a>
+                    @endforeach
+                @endif
             </div>
         @else
             <div class="dashboard-empty-state">
@@ -489,6 +660,27 @@
             <span class="status-legend-item status-legend-interview"><span class="dot" aria-hidden="true"></span><i class="bi bi-mic"></i>Interview</span>
             <span class="status-legend-item status-legend-hired"><span class="dot" aria-hidden="true"></span><i class="bi bi-person-check"></i>Hired</span>
             <span class="status-legend-item status-legend-recommended"><span class="dot" aria-hidden="true"></span><i class="bi bi-stars"></i>Recommended</span>
+        </div>
+
+        @php
+            $pipelineTotal = max(1,
+                (int) ($applicationStatusCounts['pending'] ?? 0)
+                + (int) ($applicationStatusCounts['interview'] ?? 0)
+                + (int) ($applicationStatusCounts['hired'] ?? 0)
+                + (int) ($applicationStatusCounts['recommended'] ?? 0)
+            );
+
+            $pendingWidth = (($applicationStatusCounts['pending'] ?? 0) / $pipelineTotal) * 100;
+            $interviewWidth = (($applicationStatusCounts['interview'] ?? 0) / $pipelineTotal) * 100;
+            $hiredWidth = (($applicationStatusCounts['hired'] ?? 0) / $pipelineTotal) * 100;
+            $recommendedWidth = (($applicationStatusCounts['recommended'] ?? 0) / $pipelineTotal) * 100;
+        @endphp
+
+        <div class="status-progress" aria-label="Application status distribution">
+            <div class="status-segment pending" style="width: {{ $pendingWidth }}%"></div>
+            <div class="status-segment interview" style="width: {{ $interviewWidth }}%"></div>
+            <div class="status-segment hired" style="width: {{ $hiredWidth }}%"></div>
+            <div class="status-segment recommended" style="width: {{ $recommendedWidth }}%"></div>
         </div>
 
         <div class="status-grid">
@@ -567,8 +759,16 @@
                 @foreach ($recommendedJobs as $job)
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="recommended-job-card d-flex flex-column">
+                            @if (! empty($job['match_score']))
+                                <span class="match-badge"><i class="bi bi-check2-circle"></i>{{ $job['match_score'] }} Match Score</span>
+                            @endif
+
                             <div class="recommended-job-title mb-1">{{ $job['title'] }}</div>
                             <div class="recommended-job-meta mb-2">{{ $job['location'] }} • {{ $job['employer_name'] }}</div>
+
+                            @if (! empty($job['match_reasons']))
+                                <div class="match-reason">Why this matches you: {{ implode(', ', array_slice($job['match_reasons'], 0, 2)) }}</div>
+                            @endif
 
                             @if (! empty($job['salary_range']))
                                 <div class="small mb-2"><strong>Salary:</strong> {{ $job['salary_range'] }}</div>
