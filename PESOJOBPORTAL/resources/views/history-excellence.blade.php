@@ -3,16 +3,16 @@
 @section('title', 'History of Excellence | Link Job Resource Portal')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/history-timeline.css') }}">
+<link rel="stylesheet" href="{{ asset('css/history-timeline.css') . '?v=' . filemtime(public_path('css/history-timeline.css')) }}">
 @endpush
 
 @section('content')
-<section id="history" class="py-20 bg-white relative overflow-hidden">
+<section id="history" class="history-excellence-section bg-white relative overflow-hidden">
     <div class="nav-container relative z-10">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">The History of Excellence</h2>
-            <div class="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
-            <p class="text-gray-600 max-w-3xl mx-auto text-lg">
+        <div class="history-excellence-header text-center mb-16">
+            <h2 class="history-excellence-title">The History of Excellence</h2>
+            <div class="history-excellence-divider" aria-hidden="true"></div>
+            <p class="history-excellence-lead">
                 The journey of Link Job Resource Portal at PESO Manolo Fortich, dedicated to bridging the gap between jobseekers and employers in our community since 2005.
             </p>
         </div>
