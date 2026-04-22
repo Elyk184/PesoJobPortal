@@ -5,7 +5,7 @@
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
       <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" title="PESO Logo" class="logo-img me-2" style="width: 95px; height: auto; border-radius: 4px; object-fit: contain;">
-      <span class="d-none d-sm-inline navbar-brand-text">PUBLIC EMPLOYMENT SERVICES OFFICE</span>
+      <span class="d-none d-sm-inline navbar-brand-text">LINK JOB RESOURCE PORTAL</span>
       <span class="d-sm-none navbar-brand-text-sm">Manolo Fortich</span>
     </a>
 

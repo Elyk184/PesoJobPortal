@@ -14,14 +14,14 @@
     <section class="peso-hero hero-section" aria-label="Welcome section">
         <div class="hero-static">
             <div class="hero-copy">
-                <p class="hero-kicker">Welcome</p>
+                <p class="hero-kicker">PESO Manolo Fortich</p>
                 <h1 class="hero-main">
                     Connecting People <span>with Opportunities</span>
                 </h1>
                 <div class="underline" aria-hidden="true"></div>
 
                 <p class="hero-description">
-                    Connecting Filipino jobseekers with verified employers. Access thousands of local and overseas job opportunities through PESO.
+                    Bridging job seekers and employers in the municipality of Manolo Fortich through efficient, accessible and free employment services.
                 </p>
 
                 <div class="hero-cta">
