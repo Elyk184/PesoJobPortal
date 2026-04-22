@@ -16,7 +16,12 @@ class JobseekerController extends Controller
 {
     public function dashboard(): View
     {
-        return view('dashboard.jobseeker.dashboard');
+        $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
+        $sampleJobsCount = count($this->sampleVacancies());
+
+        return view('dashboard.jobseeker.dashboard', [
+            'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
+        ]);
     }
 
     public function vacancies(Request $request): View
@@ -105,6 +110,7 @@ class JobseekerController extends Controller
         return view('dashboard.jobseeker.vacancies', [
             'jobs' => $jobs,
             'locations' => collect($manoloFortichBarangays),
+            'sampleJobs' => collect($this->sampleVacancies()),
             'filters' => [
                 'keyword' => $keyword,
                 'location' => $location,
@@ -779,5 +785,59 @@ class JobseekerController extends Controller
             ->filter()
             ->values()
             ->all();
+    }
+
+    private function sampleVacancies(): array
+    {
+        return [
+            [
+                'title' => 'Office Staff / Admin Assistant',
+                'location' => 'Tankulan (Poblacion)',
+                'employer_name' => 'PESO Partner Office',
+                'salary_range' => 'Php 12,000 - Php 15,000',
+                'description' => 'Handles office documents, data encoding, filing, and front desk support.',
+                'requirements_list' => ['MS Office', 'Filing', 'Encoding'],
+            ],
+            [
+                'title' => 'Construction Laborer',
+                'location' => 'Damilag',
+                'employer_name' => 'Local Construction Contractor',
+                'salary_range' => 'Php 450/day',
+                'description' => 'Assists in basic construction tasks and follows workplace safety procedures.',
+                'requirements_list' => ['Basic tools', 'Safety awareness'],
+            ],
+            [
+                'title' => 'Cashier',
+                'location' => 'Alae',
+                'employer_name' => 'Community Retail Store',
+                'salary_range' => 'Php 11,500 - Php 13,000',
+                'description' => 'Handles customer payments, POS transactions, and end-of-day cash balancing.',
+                'requirements_list' => ['Customer service', 'POS'],
+            ],
+            [
+                'title' => 'Delivery Driver',
+                'location' => 'San Miguel',
+                'employer_name' => 'Local Logistics Partner',
+                'salary_range' => 'Php 13,000 - Php 16,000',
+                'description' => 'Delivers goods within Manolo Fortich and nearby routes with proper documentation.',
+                'requirements_list' => ['Driver license', 'Route familiarity'],
+            ],
+            [
+                'title' => 'Sales Associate',
+                'location' => 'Santo Nino',
+                'employer_name' => 'Neighborhood Mart',
+                'salary_range' => 'Php 10,500 - Php 12,500',
+                'description' => 'Supports product display, customer assistance, and sales transactions.',
+                'requirements_list' => ['Selling skills', 'Communication'],
+            ],
+            [
+                'title' => 'Warehouse Helper',
+                'location' => 'Agusan Canyon',
+                'employer_name' => 'Agri Supply Distributor',
+                'salary_range' => 'Php 430/day',
+                'description' => 'Assists in loading, unloading, inventory checks, and stock arrangement.',
+                'requirements_list' => ['Inventory handling', 'Physical fitness'],
+            ],
+        ];
     }
 }

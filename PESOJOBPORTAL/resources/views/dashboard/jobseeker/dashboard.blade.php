@@ -231,7 +231,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">4</div>
+                    <div class="dashboard-stat-number">{{ $availableJobsCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Available Jobs</div>
                 </div>
             </div>

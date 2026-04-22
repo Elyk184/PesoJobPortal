@@ -77,9 +77,15 @@
         </div>
     </div>
 
+    @php
+        $hasActiveFilters = collect($filters)->except('sort')->filter(fn ($value) => trim((string) $value) !== '')->isNotEmpty();
+        $showSampleJobs = $jobs->count() === 0 && ! $hasActiveFilters;
+    @endphp
+
     <div class="d-flex align-items-center justify-content-between mb-3">
         <div class="text-muted small">
-            Showing <strong>{{ $jobs->total() }}</strong> active vacancies
+            Showing <strong>{{ $showSampleJobs ? $sampleJobs->count() : $jobs->total() }}</strong>
+            {{ $showSampleJobs ? 'sample vacancies' : 'active vacancies' }}
         </div>
     </div>
 
@@ -123,6 +129,8 @@
         <div class="mt-4 d-flex justify-content-center">
             {{ $jobs->links() }}
         </div>
+    @elseif ($showSampleJobs)
+        @include('dashboard.jobseeker.partials.sample-vacancies', ['sampleJobs' => $sampleJobs])
     @else
         <div class="card shadow-sm">
             <div class="card-body text-center py-5">
