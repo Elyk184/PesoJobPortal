@@ -89,6 +89,41 @@
         margin-bottom: 14px;
     }
 
+    .jobseeker-dashboard .dashboard-skeleton {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    :root:not(.dashboard-ready) .jobseeker-dashboard .dashboard-skeleton {
+        min-height: var(--skeleton-height, 180px);
+    }
+
+    :root:not(.dashboard-ready) .jobseeker-dashboard .dashboard-skeleton > * {
+        opacity: 0;
+    }
+
+    :root:not(.dashboard-ready) .jobseeker-dashboard .dashboard-skeleton::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #edf3fa 0%, #f7fbff 48%, #edf3fa 100%);
+        background-size: 220% 100%;
+        animation: dashboardSkeletonShimmer 1.2s linear infinite;
+        border: 1px solid #dbe5f1;
+    }
+
+    @keyframes dashboardSkeletonShimmer {
+        from {
+            background-position: 200% 0;
+        }
+
+        to {
+            background-position: -20% 0;
+        }
+    }
+
     .jobseeker-dashboard .status-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -299,6 +334,10 @@
 @push('scripts')
 <script>
     (function () {
+        requestAnimationFrame(function () {
+            document.documentElement.classList.add('dashboard-ready');
+        });
+
         const counters = document.querySelectorAll('[data-counter-target]');
 
         if (!counters.length) {
@@ -379,7 +418,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">{{ $availableJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $availableJobsCount ?? 0 }}">{{ $availableJobsCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Available Jobs</div>
                 </div>
             </div>
@@ -388,7 +427,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-apps"><i class="bi bi-send"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['total'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $applicationStatusCounts['total'] ?? 0 }}">{{ $applicationStatusCounts['total'] ?? 0 }}</div>
                     <div class="dashboard-stat-label">Applications Sent</div>
                 </div>
             </div>
@@ -397,14 +436,14 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number">{{ $recentlyViewedCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $recentlyViewedCount ?? 0 }}">{{ $recentlyViewedCount ?? 0 }}</div>
                     <div class="dashboard-stat-label">Recently Viewed</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 180px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-bell me-2"></i>Notifications</h3>
             <div class="d-flex align-items-center gap-2">
@@ -433,12 +472,13 @@
                     <div class="empty-icon"><i class="bi bi-bell"></i></div>
                     <div class="fw-semibold text-secondary">All caught up.</div>
                     <div class="small">No new notifications right now.</div>
+                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Browse New Jobs</a>
                 </div>
             </div>
         @endif
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 190px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Application Status</h3>
             <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
@@ -454,24 +494,24 @@
         <div class="status-grid">
             <a href="{{ route('jobseeker.applications', ['status' => 'pending']) }}" class="status-item status-pending">
                 <div class="status-item-label">Pending Review</div>
-                <div class="status-item-value">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['pending'] ?? 0 }}">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
             </a>
             <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="status-item status-interview">
                 <div class="status-item-label">Interview</div>
-                <div class="status-item-value">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
+                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['interview'] ?? 0 }}">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
             </a>
             <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="status-item status-hired">
                 <div class="status-item-label">Hired</div>
-                <div class="status-item-value">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
+                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['hired'] ?? 0 }}">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
             </a>
             <a href="{{ route('jobseeker.applications', ['status' => 'recommended']) }}" class="status-item status-recommended">
                 <div class="status-item-label">Recommended</div>
-                <div class="status-item-value">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
+                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['recommended'] ?? 0 }}">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
             </a>
         </div>
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 180px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Recently Viewed Jobs</h3>
             <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">Browse More</a>
@@ -498,12 +538,13 @@
                     <div class="empty-icon"><i class="bi bi-clock-history"></i></div>
                     <div class="fw-semibold text-secondary">No recently viewed jobs yet.</div>
                     <div class="small">Open the vacancies page to build your recent list.</div>
+                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Go to Vacancies</a>
                 </div>
             </div>
         @endif
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4">
+    <div class="dashboard-section-card p-3 p-lg-4 dashboard-skeleton" style="--skeleton-height: 220px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-stars me-2"></i>Recommended Jobs</h3>
             <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
@@ -552,6 +593,7 @@
                     <div class="empty-icon"><i class="bi bi-briefcase"></i></div>
                     <div class="fw-semibold text-secondary">No job recommendations yet.</div>
                     <div class="small">Complete your profile to get personalized job suggestions.</div>
+                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Browse Vacancies</a>
                 </div>
             </div>
         @endif
