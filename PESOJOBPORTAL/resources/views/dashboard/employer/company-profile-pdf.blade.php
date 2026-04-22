@@ -183,6 +183,19 @@
                 <td class="label">TIN</td>
                 <td class="value">{{ $companyProfile?->tin ?? 'N/A' }}</td>
             </tr>
+            <tr>
+                <td class="label">Address</td>
+                <td class="value">
+                    <p class="address">
+                        {{ trim(implode(', ', array_filter([
+                            $companyProfile?->street_village ?? null,
+                            $companyProfile?->barangay ?? null,
+                            $companyProfile?->city_municipality ?? null,
+                            $companyProfile?->province ?? null,
+                        ]))) ?: 'N/A' }}
+                    </p>
+                </td>
+            </tr>
         </table>
     </div>
 
@@ -205,6 +218,10 @@
             <tr>
                 <td class="label">Name of Owner / President</td>
                 <td class="value">{{ $companyProfile?->establishment_contact_person ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Contact Person</td>
+                <td class="value">{{ $companyProfile?->contact_person_name ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="label">Position</td>
