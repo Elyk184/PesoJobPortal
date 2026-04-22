@@ -29,4 +29,9 @@ class RecruitmentActivityRequest extends Model
     {
         return $this->belongsTo(User::class, 'employer_id');
     }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
 }
