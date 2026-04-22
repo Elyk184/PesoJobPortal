@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobApplication;
-use App\Models\PesoJob;
 use App\Models\UserProfile;
 use App\Models\User;
+use App\Models\PesoJob;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -17,31 +16,103 @@ class JobseekerController extends Controller
 {
     public function dashboard(): View
     {
-        $availableJobsCount = PesoJob::query()
-            ->where('status', 'active')
-            ->count();
-
-        if ($availableJobsCount === 0) {
-            $availableJobsCount = PesoJob::query()->count();
-        }
-
-        $applicationsSentCount = JobApplication::query()
-            ->where('user_id', Auth::id())
-            ->count();
-
-        // Saved jobs are not yet modeled in the database; keep zero until implemented.
-        $savedJobsCount = 0;
-
-        return view('dashboard.jobseeker.dashboard', compact(
-            'availableJobsCount',
-            'applicationsSentCount',
-            'savedJobsCount'
-        ));
+        return view('dashboard.jobseeker.dashboard');
     }
 
-    public function vacancies(): View
+    public function vacancies(Request $request): View
     {
-        return view('dashboard.jobseeker.vacancies');
+        $manoloFortichBarangays = [
+            'Agusan Canyon',
+            'Alae',
+            'Dahilayan',
+            'Dalirig',
+            'Damilag',
+            'Dicklum',
+            'Guilang-guilang',
+            'Kalugmanan',
+            'Lindaban',
+            'Lingion',
+            'Lunocan',
+            'Maluko',
+            'Mambatangan',
+            'Mampayag',
+            'Mantibugao',
+            'Minsuro',
+            'San Miguel',
+            'Sankanan',
+            'Santiago',
+            'Santo Nino',
+            'Tankulan (Poblacion)',
+            'Ticala',
+        ];
+
+        $keyword = trim((string) $request->query('keyword', ''));
+        $location = trim((string) $request->query('location', ''));
+        $skills = trim((string) $request->query('skills', ''));
+        $employer = trim((string) $request->query('employer', ''));
+        $sort = (string) $request->query('sort', 'newest');
+
+        if (! in_array($location, $manoloFortichBarangays, true)) {
+            $location = '';
+        }
+
+        $jobsQuery = PesoJob::query()->where('status', 'active');
+
+        if ($keyword !== '') {
+            $jobsQuery->where(function ($query) use ($keyword) {
+                $query->where('title', 'like', '%' . $keyword . '%')
+                    ->orWhere('description', 'like', '%' . $keyword . '%')
+                    ->orWhere('employer_name', 'like', '%' . $keyword . '%')
+                    ->orWhere('location', 'like', '%' . $keyword . '%')
+                    ->orWhere('requirements', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if ($location !== '') {
+            $jobsQuery->where('location', 'like', '%' . $location . '%');
+        }
+
+        if ($skills !== '') {
+            $jobsQuery->where(function ($query) use ($skills) {
+                $query->where('requirements', 'like', '%' . $skills . '%')
+                    ->orWhere('description', 'like', '%' . $skills . '%')
+                    ->orWhere('title', 'like', '%' . $skills . '%');
+            });
+        }
+
+        if ($employer !== '') {
+            $jobsQuery->where('employer_name', 'like', '%' . $employer . '%');
+        }
+
+        if ($sort === 'oldest') {
+            $jobsQuery->oldest();
+        } elseif ($sort === 'title_asc') {
+            $jobsQuery->orderBy('title');
+        } elseif ($sort === 'location_asc') {
+            $jobsQuery->orderBy('location')->orderByDesc('created_at');
+        } else {
+            $jobsQuery->latest();
+        }
+
+        $jobs = $jobsQuery->paginate(9)->withQueryString();
+
+        $jobs->getCollection()->transform(function (PesoJob $job) {
+            $job->setAttribute('requirements_list', $this->extractJobRequirements($job));
+
+            return $job;
+        });
+
+        return view('dashboard.jobseeker.vacancies', [
+            'jobs' => $jobs,
+            'locations' => collect($manoloFortichBarangays),
+            'filters' => [
+                'keyword' => $keyword,
+                'location' => $location,
+                'skills' => $skills,
+                'employer' => $employer,
+                'sort' => $sort,
+            ],
+        ]);
     }
 
     public function applications(): View
@@ -683,5 +754,30 @@ class JobseekerController extends Controller
             'municipality' => $segments[2] ?? '',
             'province' => $segments[3] ?? '',
         ];
+    }
+
+    private function extractJobRequirements(PesoJob $job): array
+    {
+        $requirements = $job->requirements;
+
+        if (is_array($requirements) && ! empty($requirements)) {
+            return collect($requirements)
+                ->map(fn ($item) => trim((string) $item))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $rawRequirements = trim((string) $job->getRawOriginal('requirements'));
+
+        if ($rawRequirements === '') {
+            return [];
+        }
+
+        return collect(preg_split('/[\r\n,]+/', $rawRequirements) ?: [])
+            ->map(fn ($item) => trim((string) $item))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

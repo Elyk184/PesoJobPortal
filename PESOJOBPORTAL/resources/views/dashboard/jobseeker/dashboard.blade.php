@@ -231,7 +231,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $availableJobsCount ?? 0 }}">{{ $availableJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number">4</div>
                     <div class="dashboard-stat-label">Available Jobs</div>
                 </div>
             </div>
@@ -240,7 +240,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-apps"><i class="bi bi-send"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $applicationsSentCount ?? 0 }}">{{ $applicationsSentCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number">4</div>
                     <div class="dashboard-stat-label">Applications Sent</div>
                 </div>
             </div>
@@ -249,7 +249,7 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $savedJobsCount ?? 0 }}">{{ $savedJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number">3</div>
                     <div class="dashboard-stat-label">Saved Jobs</div>
                 </div>
             </div>
