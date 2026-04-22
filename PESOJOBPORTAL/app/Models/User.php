@@ -7,6 +7,7 @@ use App\Models\EmployerNotification;
 use App\Models\PesoJob;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
+use App\Models\CompanyProfile;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -74,6 +75,11 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    public function companyProfile()
+    {
+        return $this->hasOne(CompanyProfile::class);
     }
 
     public function applications()

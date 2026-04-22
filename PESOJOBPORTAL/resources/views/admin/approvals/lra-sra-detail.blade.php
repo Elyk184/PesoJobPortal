@@ -104,118 +104,125 @@
                 </div>
             </div>
 
-            <!-- Employer Details / Company Profile -->
+            <!-- Employer Details / Company Profile Table -->
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light border-0 py-3">
+                <div class="card-header bg-light border-0 py-3" style="border-bottom: 2px solid #e5e7eb;">
                     <h5 class="mb-0"><i class="bi bi-building me-2"></i>Company Profile</h5>
                 </div>
-                <div class="card-body">
-                    <!-- Company Logo & Basic Info -->
-                    <div class="row mb-4">
-                        <div class="col-md-3 text-center">
-                            @if($activityRequest->employer?->profile?->logo_path)
-                                <img src="{{ asset('storage/' . $activityRequest->employer->profile->logo_path) }}" 
-                                     alt="Company Logo" class="img-fluid rounded" style="max-width: 150px; max-height: 150px;">
-                            @else
-                                <div class="border-2 border-dashed rounded p-4" style="background-color: #f3f4f6;">
-                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                                    <p class="text-muted small mt-2">No logo</p>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">Company / Business Name</small>
-                                    <strong>{{ $activityRequest->employer->profile?->company_name ?? $activityRequest->employer->profile?->business_name ?? $activityRequest->employer?->name ?? 'N/A' }}</strong>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">Trade Name</small>
-                                    <strong>{{ $activityRequest->employer->profile?->trade_name ?? 'N/A' }}</strong>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">TIN (Tax ID)</small>
-                                    <strong>{{ $activityRequest->employer->profile?->tin ?? 'N/A' }}</strong>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">Workforce Size</small>
-                                    <strong>{{ $activityRequest->employer->profile?->workforce_size ?? 'N/A' }}</strong>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">Line of Business</small>
-                                    <strong>{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</strong>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <small class="text-muted d-block">Office Type</small>
-                                    <strong>{{ $activityRequest->employer->profile?->office_type ?? 'N/A' }}</strong>
+                <div class="card-body p-0">
+                    <!-- Company Logo Section -->
+                    <div class="p-4 border-bottom" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                @if($activityRequest->employer?->profile?->logo_path)
+                                    <img src="{{ asset('storage/' . $activityRequest->employer->profile->logo_path) }}" 
+                                         alt="Company Logo" class="img-fluid rounded-lg shadow-sm" style="max-width: 120px; max-height: 120px; object-fit: cover;">
+                                @else
+                                    <div class="border-2 border-dashed rounded-lg p-4" style="background-color: #e5e7eb; aspect-ratio: 1;">
+                                        <i class="bi bi-image" style="font-size: 2.5rem; color: #9ca3af;"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="col-md-10">
+                                <div class="ps-3">
+                                    <h6 style="color: #0f4c8a; margin-bottom: 0.5rem;">{{ $activityRequest->employer->profile?->company_name ?? $activityRequest->employer->profile?->business_name ?? $activityRequest->employer?->name ?? 'N/A' }}</h6>
+                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">{{ $activityRequest->employer->profile?->trade_name ? '(' . $activityRequest->employer->profile->trade_name . ')' : '' }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <hr class="my-3">
+                    <!-- Business Information Table -->
+                    <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
+                        <tbody>
+                            <tr style="background-color: #f9fafb;">
+                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; width: 30%; border-top: 1px solid #e5e7eb;"><i class="bi bi-briefcase me-2" style="color: #0f4c8a;"></i>Business Name</td>
+                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->business_name ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-tag me-2" style="color: #0f4c8a;"></i>Tax ID (TIN)</td>
+                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->tin ?? 'N/A' }}</td>
+                            </tr>
+                            <tr style="background-color: #f9fafb;">
+                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-people me-2" style="color: #0f4c8a;"></i>Workforce Size</td>
+                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">
+                                    <span class="badge" style="background-color: #dbeafe; color: #0c4a6e; padding: 0.4rem 0.8rem;">{{ ucfirst($activityRequest->employer->profile?->workforce_size ?? 'N/A') }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-diagram-3 me-2" style="color: #0f4c8a;"></i>Line of Business</td>
+                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</td>
+                            </tr>
+                            <tr style="background-color: #f9fafb;">
+                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-building me-2" style="color: #0f4c8a;"></i>Office Type</td>
+                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">
+                                    <span class="badge" style="background-color: #f0fdf4; color: #15803d; padding: 0.4rem 0.8rem;">{{ ucfirst(str_replace('_', ' ', $activityRequest->employer->profile?->office_type ?? 'N/A')) }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                    <!-- Contact Information -->
-                    <div class="mb-4">
-                        <h6 class="mb-3"><i class="bi bi-telephone me-2"></i>Contact Information</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Contact Person</small>
-                                <strong>{{ $activityRequest->employer->profile?->contact_person_name ?? $activityRequest->employer->profile?->establishment_contact_person ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Position</small>
-                                <strong>{{ $activityRequest->employer->profile?->establishment_contact_position ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Email</small>
-                                <strong>{{ $activityRequest->employer->profile?->establishment_email ?? $activityRequest->employer?->email ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Phone</small>
-                                <strong>{{ $activityRequest->employer->profile?->establishment_phone ?? $activityRequest->employer->profile?->contact_person_phone ?? 'N/A' }}</strong>
-                            </div>
-                        </div>
+                    <!-- Contact Information Section -->
+                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f0fdf4;">
+                        <h6 style="color: #0f4c8a; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-telephone me-2"></i>Contact Information</h6>
+                        <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280; width: 30%;"><i class="bi bi-person me-2" style="color: #059669;"></i>Contact Person</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->contact_person_name ?? $activityRequest->employer->profile?->establishment_contact_person ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-briefcase me-2" style="color: #059669;"></i>Position</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->establishment_contact_position ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-envelope me-2" style="color: #059669;"></i>Email</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;"><a href="mailto:{{ $activityRequest->employer->profile?->establishment_email ?? $activityRequest->employer?->email ?? '#' }}">{{ $activityRequest->employer->profile?->establishment_email ?? $activityRequest->employer?->email ?? 'N/A' }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-phone me-2" style="color: #059669;"></i>Phone</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->establishment_phone ?? $activityRequest->employer->profile?->contact_person_phone ?? 'N/A' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <hr class="my-3">
-
-                    <!-- Address Information -->
-                    <div class="mb-4">
-                        <h6 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Business Address</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Street / Village</small>
-                                <strong>{{ $activityRequest->employer->profile?->street_village ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Barangay</small>
-                                <strong>{{ $activityRequest->employer->profile?->barangay ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">City / Municipality</small>
-                                <strong>{{ $activityRequest->employer->profile?->city_municipality ?? 'N/A' }}</strong>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <small class="text-muted d-block">Province</small>
-                                <strong>{{ $activityRequest->employer->profile?->province ?? 'N/A' }}</strong>
-                            </div>
-                        </div>
+                    <!-- Business Address Section -->
+                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #eff6ff;">
+                        <h6 style="color: #0f4c8a; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-geo-alt me-2"></i>Business Address</h6>
+                        <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280; width: 30%;"><i class="bi bi-house me-2" style="color: #2563eb;"></i>Street / Village</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->street_village ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-map me-2" style="color: #2563eb;"></i>Barangay</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->barangay ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-building me-2" style="color: #2563eb;"></i>City / Municipality</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->city_municipality ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-signpost me-2" style="color: #2563eb;"></i>Province</td>
+                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->province ?? 'N/A' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <hr class="my-3">
-
-                    <!-- Business Documents -->
-                    <div>
-                        <h6 class="mb-3"><i class="bi bi-file-check me-2"></i>Business Documents</h6>
+                    <!-- Business Documents Section -->
+                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #fef3c7;">
+                        <h6 style="color: #92400e; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-file-check me-2"></i>Business Documents</h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="border rounded p-3" style="background-color: #f9fafb;">
-                                    <i class="bi bi-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                                <div class="border rounded p-3" style="background-color: #fffbeb; border-color: #fde68a;">
+                                    <i class="bi bi-file-pdf" style="font-size: 1.5rem; color: #dc2626;"></i>
                                     <p class="mt-2 mb-1 small"><strong>Business Permit</strong></p>
                                     @if($activityRequest->employer->profile?->business_permit_path)
                                         <a href="{{ asset('storage/' . $activityRequest->employer->profile->business_permit_path) }}" 
-                                           class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                           class="btn btn-sm btn-outline-warning mt-2" target="_blank">
                                             <i class="bi bi-download me-1"></i>Download
                                         </a>
                                     @else
@@ -224,12 +231,12 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="border rounded p-3" style="background-color: #f9fafb;">
-                                    <i class="bi bi-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                                <div class="border rounded p-3" style="background-color: #fffbeb; border-color: #fde68a;">
+                                    <i class="bi bi-file-earmark-ruled" style="font-size: 1.5rem; color: #f59e0b;"></i>
                                     <p class="mt-2 mb-1 small"><strong>DTI/SEC Registration</strong></p>
                                     @if($activityRequest->employer->profile?->dti_sec_registration_path)
                                         <a href="{{ asset('storage/' . $activityRequest->employer->profile->dti_sec_registration_path) }}" 
-                                           class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                           class="btn btn-sm btn-outline-warning mt-2" target="_blank">
                                             <i class="bi bi-download me-1"></i>Download
                                         </a>
                                     @else
