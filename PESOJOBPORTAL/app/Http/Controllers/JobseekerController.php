@@ -16,11 +16,16 @@ class JobseekerController extends Controller
 {
     public function dashboard(): View
     {
+        $user = Auth::user();
+        $profile = $user?->profile;
         $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
         $sampleJobsCount = count($this->sampleVacancies());
+        $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
 
         return view('dashboard.jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
+            'profileCompletionPercent' => $profileCompletionPercent,
+            'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
         ]);
     }
 
@@ -839,5 +844,103 @@ class JobseekerController extends Controller
                 'requirements_list' => ['Inventory handling', 'Physical fitness'],
             ],
         ];
+    }
+
+    private function calculateProfileCompletionPercent(?User $user, ?UserProfile $profile): int
+    {
+        $checks = [
+            $this->hasBasicIdentity($user, $profile),
+            $this->hasContactDetails($user, $profile),
+            $this->hasAddressDetails($profile),
+            $this->hasEducationDetails($profile),
+            $this->hasExperienceDetails($profile),
+            $this->hasSkillsDetails($profile),
+        ];
+
+        $completedChecks = collect($checks)->filter()->count();
+
+        return (int) round(($completedChecks / count($checks)) * 100);
+    }
+
+    private function profileCompletionLabel(int $percent): string
+    {
+        if ($percent >= 100) {
+            return 'Profile Complete';
+        }
+
+        if ($percent >= 67) {
+            return 'Almost Complete';
+        }
+
+        if ($percent >= 34) {
+            return 'In Progress';
+        }
+
+        return 'Getting Started';
+    }
+
+    private function hasBasicIdentity(?User $user, ?UserProfile $profile): bool
+    {
+        $name = trim((string) ($profile?->resume_name ?: $user?->name));
+        $personal = $profile?->personal_information ?? [];
+
+        if (
+            trim((string) data_get($personal, 'first_name', '')) !== ''
+            && trim((string) data_get($personal, 'surname', '')) !== ''
+        ) {
+            return true;
+        }
+
+        return $name !== '';
+    }
+
+    private function hasContactDetails(?User $user, ?UserProfile $profile): bool
+    {
+        $personal = $profile?->personal_information ?? [];
+        $email = trim((string) ($profile?->resume_email ?: data_get($personal, 'email_address', $user?->email ?? '')));
+        $phone = trim((string) ($profile?->phone ?: data_get($personal, 'contact_number', '')));
+
+        return $email !== '' && $phone !== '';
+    }
+
+    private function hasAddressDetails(?UserProfile $profile): bool
+    {
+        $present = $profile?->present_address ?? [];
+        $formattedAddress = trim((string) ($profile?->address ?? ''));
+
+        if (
+            trim((string) data_get($present, 'barangay', '')) !== ''
+            && trim((string) data_get($present, 'municipality', '')) !== ''
+            && trim((string) data_get($present, 'province', '')) !== ''
+        ) {
+            return true;
+        }
+
+        return $formattedAddress !== '';
+    }
+
+    private function hasEducationDetails(?UserProfile $profile): bool
+    {
+        return ! empty($profile?->education ?? []);
+    }
+
+    private function hasExperienceDetails(?UserProfile $profile): bool
+    {
+        return ! empty($profile?->experience ?? []);
+    }
+
+    private function hasSkillsDetails(?UserProfile $profile): bool
+    {
+        $skills = $profile?->skills ?? [];
+        $otherSkills = $profile?->other_skills ?? [];
+
+        if (! empty($skills)) {
+            return true;
+        }
+
+        return ! empty($otherSkills['trade_manual'])
+            || ! empty($otherSkills['it_technical'])
+            || ! empty($otherSkills['soft_skills'])
+            || trim((string) ($otherSkills['other_text'] ?? '')) !== '';
     }
 }

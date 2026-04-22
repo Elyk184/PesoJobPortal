@@ -46,6 +46,20 @@
         font-weight: 700;
     }
 
+    .jobseeker-dashboard .completion-meter {
+        min-width: 220px;
+    }
+
+    .jobseeker-dashboard .completion-meter .progress {
+        height: 8px;
+        border-radius: 999px;
+        background: #e8eef6;
+    }
+
+    .jobseeker-dashboard .completion-meter .progress-bar {
+        background: linear-gradient(90deg, #3f8efc 0%, #2f8f5e 100%);
+    }
+
     .jobseeker-dashboard .dashboard-stat-card {
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
@@ -215,10 +229,19 @@
             <div>
                 <div class="dashboard-hero-meta">Overview</div>
                 <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'Jobseeker' }}!</h2>
-                <p class="mb-0 text-muted">Your profile is complete. Keep it updated to receive relevant job recommendations.</p>
+                <p class="mb-0 text-muted">
+                    Your profile is {{ $profileCompletionPercent ?? 0 }}% complete.
+                    Keep it updated to receive relevant job recommendations.
+                </p>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="dashboard-pill"><i class="bi bi-patch-check"></i>Profile Complete</span>
+            <div class="d-flex flex-column align-items-lg-end gap-2 completion-meter">
+                <span class="dashboard-pill">
+                    <i class="bi bi-patch-check"></i>
+                    {{ $profileCompletionLabel ?? 'Getting Started' }} ({{ $profileCompletionPercent ?? 0 }}%)
+                </span>
+                <div class="progress w-100" role="progressbar" aria-label="Profile completion" aria-valuenow="{{ $profileCompletionPercent ?? 0 }}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%;"></div>
+                </div>
                 <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-primary px-3 shadow-sm">
                     <i class="bi bi-search me-2"></i>Browse Jobs
                 </a>
