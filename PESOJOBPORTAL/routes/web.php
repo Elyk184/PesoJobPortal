@@ -79,6 +79,10 @@ Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
+    // Profile
+    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+    Route::post('/profile/update', [AdminController::class, 'updateProfile'])->name('profile.update');
+    
     // Jobseeker Approvals
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');

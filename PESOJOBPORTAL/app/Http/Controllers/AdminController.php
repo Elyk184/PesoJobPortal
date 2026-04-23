@@ -191,4 +191,42 @@ class AdminController extends Controller
 
         return back()->with('success', 'Document has been rejected.');
     }
+
+    // Admin Profile
+    public function profile(): View
+    {
+        $admin = auth()->user();
+        return view('admin.profile', compact('admin'));
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $admin = auth()->user();
+
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo if exists
+            if ($admin->profile_photo && \Storage::disk('public')->exists($admin->profile_photo)) {
+                \Storage::disk('public')->delete($admin->profile_photo);
+            }
+
+            // Store new photo
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $admin->profile_photo = $path;
+        }
+
+        $admin->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'profile_photo' => $admin->profile_photo,
+        ]);
+
+        return back()->with('success', 'Profile updated successfully!');
+    }
 }
