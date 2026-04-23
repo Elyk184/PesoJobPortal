@@ -399,7 +399,7 @@
     /* Top Bar with Title */
     .admin-topbar {
         background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
-        padding: 1.5rem 0 2rem 0;
+        padding: 2rem 2rem;
         margin-bottom: 2.5rem;
         border-bottom: 3px solid #d72638;
         display: flex;
@@ -407,13 +407,13 @@
         align-items: center;
         gap: 2rem;
         border-radius: 0 0 12px 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     }
 
     .admin-topbar-left {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 2rem;
         flex: 1;
     }
 
@@ -422,14 +422,15 @@
         align-items: center;
         justify-content: center;
         background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(215, 38, 56, 0.3);
+        width: 80px;
+        height: 80px;
+        border-radius: 14px;
+        box-shadow: 0 8px 20px rgba(215, 38, 56, 0.4);
+        flex-shrink: 0;
     }
 
     .topbar-logo img {
-        height: 40px;
+        height: 50px;
         width: auto;
     }
 
@@ -443,12 +444,12 @@
         margin: 0;
         color: #0d1f3c;
         font-weight: 800;
-        font-size: 32px;
+        font-size: 36px;
         letter-spacing: -0.5px;
     }
 
     .topbar-subtitle {
-        font-size: 13px;
+        font-size: 14px;
         color: #6b7280;
         font-weight: 600;
         letter-spacing: 0.3px;
@@ -463,12 +464,12 @@
     .topbar-datetime {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 0.75rem 1.5rem;
+        gap: 1.25rem;
+        padding: 1rem 1.75rem;
         background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
-        border-radius: 10px;
-        border: 1px solid rgba(215, 38, 56, 0.2);
-        box-shadow: 0 4px 12px rgba(13, 31, 60, 0.2);
+        border-radius: 12px;
+        border: 2px solid rgba(215, 38, 56, 0.3);
+        box-shadow: 0 8px 20px rgba(13, 31, 60, 0.25);
     }
 
     .topbar-time {
@@ -476,21 +477,22 @@
     }
 
     .topbar-time-display {
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 800;
         color: white;
-        line-height: 1;
+        line-height: 1.1;
+        letter-spacing: -0.3px;
     }
 
     .topbar-date-display {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.75);
         font-weight: 600;
         letter-spacing: 0.3px;
     }
 
     .topbar-datetime-icon {
-        font-size: 24px;
+        font-size: 28px;
         color: #d72638;
     }
 
@@ -535,23 +537,26 @@
 
         .admin-topbar {
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
+            padding: 1.5rem 1rem;
         }
 
         .admin-topbar-left {
             width: 100%;
             flex-direction: row;
             justify-content: center;
+            gap: 1.5rem;
         }
 
         .topbar-logo {
-            height: 48px;
-            width: 48px;
+            height: 64px;
+            width: 64px;
+            flex-shrink: 0;
         }
 
         .topbar-logo img {
-            height: 32px;
+            height: 40px;
         }
 
         .topbar-title {
@@ -559,21 +564,22 @@
         }
 
         .admin-topbar h2 {
-            font-size: 24px;
+            font-size: 28px;
         }
 
         .topbar-subtitle {
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .admin-topbar-right {
             width: 100%;
             gap: 1rem;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .topbar-datetime {
-            flex: 1;
+            width: 100%;
+            justify-content: center;
         }
 
         .toggle-sidebar-btn {
@@ -1067,22 +1073,28 @@
         const timeString = `${hours}:${minutes}`;
         
         // Format date as MMM DD, YYYY
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const dateString = now.toLocaleDateString('en-US', options);
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const year = now.getFullYear();
+        const dateString = `${month}/${day}/${year}`;
         
         // Update the display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
         
-        if (timeElement) timeElement.textContent = timeString;
-        if (dateElement) dateElement.textContent = dateString;
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+        if (dateElement) {
+            dateElement.textContent = dateString;
+        }
     }
 
-    // Update on page load
+    // Update on page load immediately
     updateDateTime();
     
-    // Update every minute
-    setInterval(updateDateTime, 60000);
+    // Update every second for live clock
+    setInterval(updateDateTime, 1000);
 });
 </script>
 
