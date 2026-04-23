@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\RecruitmentActivityRequest;
+use App\Models\CompanyProfile;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -38,14 +39,47 @@ class AdminController extends Controller
     // Employer Verification
     public function employerVerification(): View
     {
-        $unverifiedEmployers = User::where('role', 'employer')
-            ->where('is_employer_verified', false)
-            ->with('profile')
+        $companyProfiles = CompanyProfile::whereIn('verification_status', ['pending', 'under_review'])
+            ->with('employer')
+            ->orderBy('created_at', 'desc')
             ->paginate(15);
-        return view('admin.employer-verification', compact('unverifiedEmployers'));
+        return view('admin.employer-verification', compact('companyProfiles'));
     }
 
-    // Job Approvals
+    public function viewCompanyProfile(CompanyProfile $companyProfile): View
+    {
+        $companyProfile->load('employer');
+        return view('admin.employer-verification-detail', compact('companyProfile'));
+    }
+
+    public function approveCompanyProfile(Request $request, CompanyProfile $companyProfile): RedirectResponse
+    {
+        $companyProfile->update([
+            'verification_status' => 'verified',
+            'verified_at' => now(),
+            'verified_by' => auth()->id(),
+        ]);
+
+        if ($companyProfile->employer) {
+            $companyProfile->employer->update(['is_employer_verified' => true]);
+        }
+
+        return back()->with('success', "Company profile '{$companyProfile->company_name}' has been verified and approved.");
+    }
+
+    public function rejectCompanyProfile(Request $request, CompanyProfile $companyProfile): RedirectResponse
+    {
+        $request->validate(['verification_notes' => 'required|string|max:500']);
+
+        $companyProfile->update([
+            'verification_status' => 'rejected',
+            'verification_notes' => $request->verification_notes,
+            'verified_by' => auth()->id(),
+        ]);
+
+        return back()->with('warning', "Company profile '{$companyProfile->company_name}' has been rejected.");
+    }
+    
     public function jobApprovals(): View
     {
         $pendingJobs = PesoJob::where('status', 'pending')->with('employer')->paginate(15);

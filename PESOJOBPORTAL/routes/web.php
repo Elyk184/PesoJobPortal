@@ -89,6 +89,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // Approvals & Verification Section
     Route::get('/employer-verification', [AdminController::class, 'employerVerification'])->name('employer-verification');
+    Route::get('/employer-verification/{companyProfile}/detail', [AdminController::class, 'viewCompanyProfile'])->name('employer-verification.detail');
+    Route::post('/employer-verification/{companyProfile}/approve', [AdminController::class, 'approveCompanyProfile'])->name('employer-verification.approve');
+    Route::post('/employer-verification/{companyProfile}/reject', [AdminController::class, 'rejectCompanyProfile'])->name('employer-verification.reject');
     
     Route::get('/job-approvals', [AdminController::class, 'jobApprovals'])->name('job-approvals');
     Route::get('/jobs/{job}/review', [AdminController::class, 'viewJob'])->name('jobs.review');
