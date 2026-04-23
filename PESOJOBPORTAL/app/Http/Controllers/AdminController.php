@@ -160,7 +160,7 @@ class AdminController extends Controller
     {
         $pendingDocuments = \DB::table('employer_documents')
             ->where('status', 'pending')
-            ->with('user')
+            ->orderBy('created_at', 'desc')
             ->paginate(15);
         return view('admin.approvals.documents', compact('pendingDocuments'));
     }
