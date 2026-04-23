@@ -35,6 +35,13 @@ class PesoJob extends Model
         'source_job_id',
         'requirements',
         'status',
+        'approved_at',
+        'approved_by',
+        'rejection_reason',
+    ];
+    
+    protected $attributes = [
+        'status' => 'pending', // Default status for admin approval
     ];
 
     protected $casts = [
@@ -55,9 +62,22 @@ class PesoJob extends Model
         return $this->belongsTo(User::class, 'employer_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
     public function sourceJob()
     {
         return $this->belongsTo(self::class, 'source_job_id');
+    }
+
+    /**
+     * Get the company profile for this job's employer
+     */
+    public function companyProfile()
+    {
+        return $this->employer()?->first()?->companyProfile();
     }
 }
 ?>

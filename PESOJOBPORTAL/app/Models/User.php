@@ -29,6 +29,7 @@ class User extends Authenticatable
         'username',
         'password',
         'role',
+        'profile_photo',
         'is_approved',
         'approved_at',
         'approved_by',
@@ -75,6 +76,11 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    public function companyProfile()
+    {
+        return $this->hasOne(CompanyProfile::class);
     }
 
     public function applications()

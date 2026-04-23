@@ -17,10 +17,21 @@ class RecruitmentActivityRequest extends Model
         'job_advertisement_path',
         'status',
         'notes',
+        'approved_at',
+        'approved_by',
+    ];
+    
+    protected $attributes = [
+        'status' => 'pending', // Default status for admin approval
     ];
 
     public function employer()
     {
         return $this->belongsTo(User::class, 'employer_id');
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

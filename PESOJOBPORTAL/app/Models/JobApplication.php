@@ -18,10 +18,15 @@ class JobApplication extends Model
         'final_decision',
         'notes',
         'employer_feedback',
+        'admin_status',
+        'admin_approved_at',
+        'admin_approved_by',
+        'admin_notes',
     ];
 
     protected $casts = [
         'applied_at' => 'datetime',
+        'admin_approved_at' => 'datetime',
         'is_referred' => 'boolean',
     ];
 
@@ -33,6 +38,11 @@ class JobApplication extends Model
     public function job()
     {
         return $this->belongsTo(PesoJob::class, 'peso_job_id');
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'admin_approved_by');
     }
 }
 ?>

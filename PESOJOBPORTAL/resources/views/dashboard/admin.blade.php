@@ -26,8 +26,9 @@
     }
 
     body {
-        background: #f7f9fc;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         color: #1f2937;
+        min-height: 100vh;
     }
     
     .peso-main {
@@ -51,12 +52,12 @@
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         z-index: 100;
     }
 
     .admin-sidebar::-webkit-scrollbar {
-        width: 6px;
+        width: 8px;
     }
 
     .admin-sidebar::-webkit-scrollbar-track {
@@ -64,19 +65,25 @@
     }
 
     .admin-sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 4px;
     }
 
     .admin-sidebar::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.4);
     }
 
     .sidebar-header {
-        padding: 1.25rem 1.5rem;
+        padding: 1.5rem 1.5rem;
         margin-bottom: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 2px solid rgba(215, 38, 56, 0.3);
         padding-bottom: 1.5rem;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    }
+
+    .sidebar-header a:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px;
     }
 
     .sidebar-user {
@@ -86,17 +93,17 @@
     }
 
     .sidebar-user-avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 18px;
+        font-size: 20px;
         color: white;
-        box-shadow: 0 2px 8px rgba(215, 38, 56, 0.3);
+        box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4);
     }
 
     .sidebar-user-name {
@@ -106,7 +113,7 @@
     .sidebar-user-name h6 {
         margin: 0;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: 700;
         color: white;
         letter-spacing: 0.2px;
     }
@@ -114,8 +121,9 @@
     .sidebar-user-name p {
         margin: 4px 0 0 0;
         font-size: 12px;
-        opacity: 0.75;
+        opacity: 0.8;
         font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
     }
 
     .sidebar-menu {
@@ -133,33 +141,34 @@
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 11px 1.5rem;
-        color: rgba(255, 255, 255, 0.68);
+        padding: 12px 1.5rem;
+        color: rgba(255, 255, 255, 0.7);
         text-decoration: none;
-        transition: all 0.25s ease;
+        transition: all 0.3s ease;
         font-size: 14px;
         font-weight: 500;
         letter-spacing: 0.3px;
+        border-left: 3px solid transparent;
     }
 
     .sidebar-menu-link:hover {
         color: white;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.1);
         padding-left: 1.8rem;
+        border-left-color: #d72638;
     }
 
     .sidebar-menu-link.active {
         color: #fff;
-        background: rgba(215, 38, 56, 0.25);
-        border-right: 3px solid #d72638;
-        padding-right: calc(1.5rem - 3px);
+        background: linear-gradient(90deg, rgba(215, 38, 56, 0.3) 0%, rgba(215, 38, 56, 0.1) 100%);
+        border-left-color: #d72638;
         font-weight: 600;
     }
 
     .sidebar-menu-link i {
         font-size: 20px;
         min-width: 20px;
-        opacity: 0.9;
+        opacity: 0.85;
     }
 
     .sidebar-menu-link.active i {
@@ -168,7 +177,7 @@
 
     .sidebar-menu-divider {
         height: 1px;
-        background: rgba(255, 255, 255, 0.12);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
         margin: 1rem 0;
     }
 
@@ -176,6 +185,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
     .admin-dashboard {
@@ -184,25 +194,38 @@
     }
 
     .stat-card {
-        background: white;
-        border-left: 4px solid #0d1f3c;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-left: 5px solid #0d1f3c;
+        border-radius: 12px;
         padding: 1.75rem;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
 
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, rgba(215, 38, 56, 0.08) 0%, rgba(215, 38, 56, 0) 100%);
+        border-radius: 50%;
+        transform: translate(30%, -30%);
+    }
+
     .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        border-left-color: #d72638;
     }
 
     .stat-value {
-        font-size: 36px;
-        font-weight: 700;
+        font-size: 40px;
+        font-weight: 800;
         color: #0d1f3c;
         margin: 12px 0 8px 0;
         letter-spacing: -0.5px;
@@ -211,14 +234,14 @@
     .stat-label {
         font-size: 12px;
         color: #6b7280;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
     }
 
     .stat-icon {
         font-size: 2.5rem;
-        opacity: 0.12;
+        opacity: 0.15;
         position: absolute;
         right: 15px;
         top: 15px;
@@ -226,20 +249,25 @@
 
     .dashboard-card {
         background: white;
-        border-radius: 10px;
-        padding: 1.75rem;
+        border-radius: 12px;
+        padding: 2rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     }
 
     .dashboard-card h5 {
         color: #0d1f3c;
-        font-weight: 700;
-        margin-bottom: 1.25rem;
-        border-bottom: 2px solid #d72638;
-        padding-bottom: 0.75rem;
-        font-size: 16px;
-        letter-spacing: 0.3px;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid #d72638;
+        padding-bottom: 1rem;
+        font-size: 17px;
+        letter-spacing: -0.3px;
     }
 
     .data-table {
@@ -247,61 +275,70 @@
     }
 
     .data-table th {
-        background: #f3f4f6;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         color: #0d1f3c;
-        font-weight: 700;
-        border-bottom: 2px solid #e5e7eb;
-        font-size: 12px;
+        font-weight: 800;
+        border-bottom: 2px solid #d72638;
+        font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
+        padding: 1rem;
     }
 
     .data-table td {
-        padding: 13px 10px;
+        padding: 1rem;
         vertical-align: middle;
         font-weight: 500;
     }
 
     .data-table tbody tr:hover {
-        background: #f9fafb;
+        background: linear-gradient(90deg, #f9fafb 0%, #f0f1f3 100%);
     }
 
     .badge-role {
         font-size: 11px;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 700;
         display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .badge-admin {
-        background: #fecaca;
-        color: #991b1b;
+        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+        color: #7c2d12;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
     }
 
     .badge-employer {
-        background: #bfdbfe;
-        color: #1e40af;
+        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+        color: #1e3a8a;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
     }
 
     .badge-jobseeker {
-        background: #bbf7d0;
-        color: #065f46;
+        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+        color: #15803d;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
     }
 
     .badge-active {
-        background: #d1fae5;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
         color: #065f46;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
     }
 
     .badge-pending {
-        background: #fed7aa;
+        background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
         color: #92400e;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
     }
 
     .badge-closed {
-        background: #e5e7eb;
+        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
         color: #374151;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .header-section {
@@ -316,7 +353,7 @@
     }
 
     .list-item {
-        padding: 12px 0;
+        padding: 14px 0;
         border-bottom: 1px solid #f0f0f0;
         display: flex;
         justify-content: space-between;
@@ -331,38 +368,57 @@
         flex: 1;
         font-size: 13px;
         color: #6b7280;
-        font-weight: 500;
+        font-weight: 600;
     }
 
     .list-item-value {
-        font-weight: 700;
+        font-weight: 800;
         color: #0d1f3c;
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .empty-state {
         text-align: center;
-        padding: 2rem;
+        padding: 3rem 2rem;
         color: #9ca3af;
         font-size: 14px;
     }
 
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.4;
+        color: #d1d5db;
+    }
+
+    .empty-state p {
+        margin: 1rem 0 0.5rem;
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .empty-state small {
+        color: #a1a5ab;
+    }
+
     /* Top Bar with Title */
     .admin-topbar {
-        background: transparent;
-        padding: 1rem 0 1.5rem 0;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #e5e7eb;
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        padding: 2rem 2rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 3px solid #d72638;
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     }
 
     .admin-topbar-left {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 2rem;
         flex: 1;
     }
 
@@ -370,10 +426,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+        width: 80px;
+        height: 80px;
+        border-radius: 14px;
+        box-shadow: 0 8px 20px rgba(215, 38, 56, 0.4);
+        flex-shrink: 0;
     }
 
     .topbar-logo img {
-        height: 56px;
+        height: 50px;
         width: auto;
     }
 
@@ -386,15 +448,15 @@
     .admin-topbar h2 {
         margin: 0;
         color: #0d1f3c;
-        font-weight: 700;
-        font-size: 28px;
+        font-weight: 800;
+        font-size: 36px;
         letter-spacing: -0.5px;
     }
 
     .topbar-subtitle {
-        font-size: 13px;
+        font-size: 14px;
         color: #6b7280;
-        font-weight: 500;
+        font-weight: 600;
         letter-spacing: 0.3px;
     }
 
@@ -407,11 +469,12 @@
     .topbar-datetime {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 0.75rem 1.25rem;
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
+        gap: 1.25rem;
+        padding: 1rem 1.75rem;
+        background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
+        border-radius: 12px;
+        border: 2px solid rgba(215, 38, 56, 0.3);
+        box-shadow: 0 8px 20px rgba(13, 31, 60, 0.25);
     }
 
     .topbar-time {
@@ -419,38 +482,42 @@
     }
 
     .topbar-time-display {
-        font-size: 18px;
-        font-weight: 700;
-        color: #0d1f3c;
-        line-height: 1;
+        font-size: 22px;
+        font-weight: 800;
+        color: white;
+        line-height: 1.1;
+        letter-spacing: -0.3px;
     }
 
     .topbar-date-display {
-        font-size: 12px;
-        color: #6b7280;
-        font-weight: 500;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 600;
         letter-spacing: 0.3px;
     }
 
     .topbar-datetime-icon {
-        font-size: 24px;
+        font-size: 28px;
         color: #d72638;
     }
 
     .toggle-sidebar-btn {
         display: none;
-        background: #0d1f3c;
+        background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
         color: white;
         border: none;
         padding: 10px 14px;
         border-radius: 8px;
         cursor: pointer;
         font-size: 18px;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(13, 31, 60, 0.2);
     }
 
     .toggle-sidebar-btn:hover {
-        background: #152d52;
+        background: linear-gradient(135deg, #152d52 0%, #1f5080 100%);
+        box-shadow: 0 6px 16px rgba(13, 31, 60, 0.3);
+        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
@@ -475,23 +542,26 @@
 
         .admin-topbar {
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
+            padding: 1.5rem 1rem;
         }
 
         .admin-topbar-left {
             width: 100%;
             flex-direction: row;
             justify-content: center;
+            gap: 1.5rem;
         }
 
         .topbar-logo {
-            height: 48px;
-            width: auto;
+            height: 64px;
+            width: 64px;
+            flex-shrink: 0;
         }
 
         .topbar-logo img {
-            height: 48px;
+            height: 40px;
         }
 
         .topbar-title {
@@ -499,21 +569,22 @@
         }
 
         .admin-topbar h2 {
-            font-size: 20px;
+            font-size: 28px;
         }
 
         .topbar-subtitle {
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .admin-topbar-right {
             width: 100%;
             gap: 1rem;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .topbar-datetime {
-            flex: 1;
+            width: 100%;
+            justify-content: center;
         }
 
         .toggle-sidebar-btn {
@@ -530,7 +601,7 @@
         }
 
         .stat-value {
-            font-size: 28px;
+            font-size: 32px;
         }
     }
 </style>
@@ -539,13 +610,15 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-            <div class="sidebar-user">
-                <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <div class="sidebar-user-name">
-                    <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
-                    <p>Administrator</p>
+            <a href="{{ route('admin.profile') }}" style="text-decoration: none; color: inherit; display: block; transition: all 0.3s ease; border-radius: 8px; padding: 0.5rem; margin: -0.5rem;">
+                <div class="sidebar-user" style="cursor: pointer;">
+                    <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                    <div class="sidebar-user-name">
+                        <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
+                        <p>Administrator</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <ul class="sidebar-menu">
@@ -665,6 +738,8 @@
                 </a>
             </li>
 
+
+
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
             <!-- Tools & Settings Section -->
@@ -733,34 +808,55 @@
         <div class="admin-dashboard">
             <!-- Quick Stats -->
             <div class="quick-stats">
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 5px solid #10b981;">
                     <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
                     <div class="stat-label">Total Users</div>
                     <div class="stat-value">{{ $stats['total_users'] }}</div>
-                    <small style="color: #999;">
-                        {{ $stats['total_employers'] }} employers &bull; {{ $stats['total_jobseekers'] }} jobseekers
+                    <small style="color: #6b7280; font-weight: 600;">
+                        <span style="color: #1e40af;">{{ $stats['total_employers'] }}</span> employers • <span style="color: #065f46;">{{ $stats['total_jobseekers'] }}</span> jobseekers
                     </small>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 5px solid #3b82f6;">
                     <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
                     <div class="stat-label">Job Postings</div>
                     <div class="stat-value">{{ $stats['total_jobs'] }}</div>
-                    <small style="color: #10b981;">✓ {{ $stats['active_jobs'] }} active</small>
+                    <small style="color: #10b981; font-weight: 600;">✓ {{ $stats['active_jobs'] }} active</small>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
                     <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
                     <div class="stat-label">Applications</div>
                     <div class="stat-value">{{ $stats['total_applications'] }}</div>
-                    <small style="color: #f59e0b;">⚠ {{ $stats['pending_applications'] }} pending</small>
+                    <small style="color: #f59e0b; font-weight: 600;">⚠ {{ $stats['pending_applications'] }} pending</small>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" style="border-left: 5px solid #06b6d4;">
                     <div class="stat-icon"><i class="bi bi-cloud-check-fill"></i></div>
                     <div class="stat-label">System Status</div>
-                    <div class="stat-value" style="color: #10b981;">Online</div>
-                    <small style="color: #999;">All systems operational</small>
+                    <div class="stat-value" style="color: #10b981; font-size: 24px;">●</div>
+                    <small style="color: #10b981; font-weight: 600;">All systems operational</small>
+                </div>
+
+                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
+                    <div class="stat-icon" style="color: #f59e0b;"><i class="bi bi-hourglass-split"></i></div>
+                    <div class="stat-label">Pending Job Approvals</div>
+                    <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
+                    <a href="{{ route('admin.job-approvals') }}" style="color: #f59e0b; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                </div>
+
+                <div class="stat-card" style="border-left: 5px solid #f97316;">
+                    <div class="stat-icon" style="color: #f97316;"><i class="bi bi-file-earmark-check"></i></div>
+                    <div class="stat-label">Pending LRA/SRA Requests</div>
+                    <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
+                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: #f97316; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                </div>
+
+                <div class="stat-card" style="border-left: 5px solid #ec4899;">
+                    <div class="stat-icon" style="color: #ec4899;"><i class="bi bi-shield-check"></i></div>
+                    <div class="stat-label">Pending Document Approvals</div>
+                    <div class="stat-value">{{ $stats['pending_documents'] }}</div>
+                    <a href="{{ route('admin.document-verification') }}" style="color: #ec4899; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
                 </div>
             </div>
 
@@ -802,7 +898,11 @@
                                 </tbody>
                             </table>
                         @else
-                            <div class="empty-state">No users yet</div>
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No Recent Users</p>
+                                <small>Users will appear here as they register</small>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -823,7 +923,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($recentJobs as $job)
-                                        <tr>
+                                        <tr style="cursor: pointer;" onclick="window.location.href='{{ route('admin.jobs.review', $job) }}';" title="Click to review">
                                             <td><strong>{{ Str::limit($job->title, 15) }}</strong></td>
                                             <td>{{ Str::limit($job->employer_name, 12) }}</td>
                                             <td>
@@ -841,7 +941,11 @@
                                 </tbody>
                             </table>
                         @else
-                            <div class="empty-state">No jobs posted yet</div>
+                            <div class="empty-state">
+                                <i class="bi bi-briefcase"></i>
+                                <p>No Recent Job Postings</p>
+                                <small>New job listings will appear here</small>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -882,7 +986,11 @@
                                 </tbody>
                             </table>
                         @else
-                            <div class="empty-state">No applications yet</div>
+                            <div class="empty-state">
+                                <i class="bi bi-file-earmark-check"></i>
+                                <p>No Recent Applications</p>
+                                <small>Job applications will be displayed here</small>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -972,23 +1080,53 @@
         const timeString = `${hours}:${minutes}`;
         
         // Format date as MMM DD, YYYY
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        const dateString = now.toLocaleDateString('en-US', options);
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const year = now.getFullYear();
+        const dateString = `${month}/${day}/${year}`;
         
         // Update the display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
         
-        if (timeElement) timeElement.textContent = timeString;
-        if (dateElement) dateElement.textContent = dateString;
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+        if (dateElement) {
+            dateElement.textContent = dateString;
+        }
     }
 
-    // Update on page load
+    // Update on page load immediately
     updateDateTime();
     
-    // Update every minute
-    setInterval(updateDateTime, 60000);
+    // Update every second for live clock
+    setInterval(updateDateTime, 1000);
 </script>
+
+<style>
+    /* Clickable table rows styling */
+    .data-table tbody tr[onclick] {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .data-table tbody tr[onclick]:hover {
+        background: linear-gradient(90deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%) !important;
+        box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.2);
+        transform: scale(1.01);
+    }
+
+    .data-table tbody strong {
+        color: #0d1f3c;
+        font-weight: 700;
+    }
+
+    small {
+        color: #6b7280;
+        font-weight: 500;
+    }
+</style>
 
 @endsection
 

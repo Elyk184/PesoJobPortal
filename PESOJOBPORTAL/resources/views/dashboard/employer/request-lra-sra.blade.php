@@ -175,7 +175,28 @@
             font-weight: 800;
             letter-spacing: 0.03em;
             color: #fff;
-            background: #2f6ec8;
+        }
+
+        .request-status.pending {
+            background: #f59e0b;
+        }
+
+        .request-status.approved {
+            background: #10b981;
+        }
+
+        .request-status.rejected {
+            background: #ef4444;
+        }
+
+        .request-approval-info {
+            font-size: 0.85rem;
+            color: #5f6f86;
+            margin-top: 0.4rem;
+        }
+
+        .request-approval-info strong {
+            color: #12243f;
         }
 
         .request-meta {
@@ -235,9 +256,27 @@
                         <article class="request-item">
                             <div class="request-item-top">
                                 <span class="request-type">{{ strtoupper($request->activity_type) }}</span>
-                                <span class="request-status">{{ strtoupper($request->status) }}</span>
+                                <span class="request-status {{ $request->status }}">{{ strtoupper($request->status) }}</span>
                             </div>
                             <p class="request-meta">Submitted: {{ optional($request->created_at)->format('M d, Y h:i A') }}</p>
+                            
+                            @if($request->status === 'approved')
+                                <div class="request-approval-info">
+                                    <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                                    <strong>Approved on:</strong> {{ optional($request->approved_at)->format('M d, Y h:i A') }}
+                                    @if($request->approvedBy)
+                                        <br><strong>By:</strong> {{ $request->approvedBy->name }}
+                                    @endif
+                                </div>
+                            @elseif($request->status === 'rejected')
+                                <div class="request-approval-info">
+                                    <i class="bi bi-x-circle-fill" style="color: #ef4444;"></i>
+                                    <strong>Rejected on:</strong> {{ optional($request->created_at)->format('M d, Y h:i A') }}
+                                    @if($request->notes)
+                                        <br><strong>Reason:</strong> {{ $request->notes }}
+                                    @endif
+                                </div>
+                            @endif
                         </article>
                     @empty
                         <p class="mb-0">No LRA/SRA requests submitted yet.</p>

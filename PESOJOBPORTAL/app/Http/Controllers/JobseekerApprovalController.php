@@ -14,14 +14,14 @@ class JobseekerApprovalController extends Controller
      */
     public function index(): View
     {
-        $pendingJobseekers = User::where('role', 'jobseeker')
+        $jobseekers = User::where('role', 'jobseeker')
             ->whereNull('is_approved')
             ->with(['profile', 'applications'])
             ->latest()
             ->paginate(15);
 
         return view('admin.jobseekers.approvals', [
-            'pendingJobseekers' => $pendingJobseekers,
+            'jobseekers' => $jobseekers,
         ]);
     }
 
