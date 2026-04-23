@@ -106,6 +106,30 @@
             filter: brightness(1.05);
         }
 
+        .home-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--peso-blue-700);
+            border: 2px solid var(--peso-blue-700);
+            background: transparent;
+            font-size: 0.97rem;
+            margin: 1rem 0;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .home-button:hover {
+            background: var(--peso-blue-700);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(45, 101, 177, 0.3);
+            transform: translateY(-1px);
+        }
+
         .link-muted {
             color: #3186cc;
             text-decoration: none;
@@ -120,6 +144,37 @@
         .divider {
             margin: 16px 0;
             border-top: 1px solid #e4e9ef;
+        }
+
+        .legal-links {
+            text-align: center;
+            font-size: 0.84rem;
+            color: #7b8794;
+            margin-bottom: 8px;
+        }
+
+        .legal-links a {
+            font-weight: 600;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 1.2em;
+            padding: 0 8px;
+            border-left: 1px solid #e5e7eb;
+            background: transparent;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--peso-blue-700);
+        }
+
+        @media (max-width: 480px) {
+            .password-toggle {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
@@ -143,33 +198,86 @@
 
 <form action="{{ route('login') }}" method="POST">
             @csrf
+
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+@if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-start gap-2" role="alert">
+                <i class="bi bi-check-circle-fill mt-1"></i>
+                <div>{{ session('success') }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" required>
             </div>
 
-            <div class="mb-3">
+<div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    <span class="input-group-text password-toggle" id="toggle-password-icon" onclick="togglePasswordVisibility('password', 'toggle-password-icon')">
+                        <i class="bi bi-eye"></i>
+                    </span>
+                </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
-                    <label class="form-check-label" for="remember">Remember me</label>
-                </div>
+            <div class="d-flex justify-content-end align-items-center mb-4">
                 <a href="#" class="link-muted">Forgot your password?</a>
             </div>
 
             <button type="submit" class="login-button">
                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
             </button>
+
+            <a href="/" class="home-button mb-3">
+                <i class="bi bi-house-door me-2"></i>Back to Home
+            </a>
         </form>
 
         <div class="divider"></div>
+        <p class="legal-links mb-1">
+            <a href="{{ route('privacy-policy') }}" class="link-muted">Privacy Policy</a>
+            <span class="mx-2">|</span>
+            <a href="{{ route('terms-of-service') }}" class="link-muted">Terms of Service</a>
+        </p>
         <p class="text-center mb-0" style="color: #5f6c7a;">
             Don't have an account? <a href="{{ route('register') }}" class="link-muted">Register</a>
         </p>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId).querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>

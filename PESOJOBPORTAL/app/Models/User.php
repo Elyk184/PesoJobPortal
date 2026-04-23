@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\JobApplication;
-use App\Models\PortalNotification;
+use App\Models\EmployerNotification;
+use App\Models\PesoJob;
+use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
 use App\Models\UserNotification;
 use Database\Factories\UserFactory;
@@ -24,8 +26,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
         'role',
+        'is_approved',
+        'approved_at',
+        'approved_by',
+        'rejection_reason',
+        'rejected_at',
+        'rejected_by',
     ];
 
     public function redirectToDashboard(): string
@@ -57,6 +66,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_approved' => 'boolean',
+            'approved_at' => 'datetime',
+            'rejected_at' => 'datetime',
         ];
     }
 
@@ -70,14 +82,14 @@ class User extends Authenticatable
         return $this->hasMany(JobApplication::class);
     }
 
-    public function sentPortalNotifications()
+    public function approvedBy()
     {
-        return $this->hasMany(PortalNotification::class, 'created_by');
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function userNotifications()
+    public function rejectedBy()
     {
-        return $this->hasMany(UserNotification::class);
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 }
 ?>

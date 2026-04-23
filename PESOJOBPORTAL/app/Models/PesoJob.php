@@ -11,22 +11,53 @@ class PesoJob extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'description',
+        'employer_id',
         'employer_name',
+        'title',
+        'position',
+        'description',
+        'qualifications',
+        'key_responsibilities',
+        'preferred_skills',
+        'experience',
+        'education',
+        'benefits',
         'location',
         'salary_range',
+        'salary',
+        'job_type',
+        'vacancies',
+        'application_start_date',
+        'application_end_date',
+        'archived_at',
+        'is_filled',
+        'filled_at',
+        'source_job_id',
         'requirements',
         'status',
     ];
 
     protected $casts = [
-        'requirements' => 'array',
+        'application_start_date' => 'date',
+        'application_end_date' => 'date',
+        'archived_at' => 'datetime',
+        'filled_at' => 'datetime',
+        'is_filled' => 'boolean',
     ];
 
     public function applications()
     {
         return $this->hasMany(JobApplication::class, 'peso_job_id');
+    }
+
+    public function employer()
+    {
+        return $this->belongsTo(User::class, 'employer_id');
+    }
+
+    public function sourceJob()
+    {
+        return $this->belongsTo(self::class, 'source_job_id');
     }
 }
 ?>

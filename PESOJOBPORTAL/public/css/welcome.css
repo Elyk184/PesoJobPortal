@@ -14,26 +14,29 @@ body.peso-body {
     --home-border: rgba(15, 45, 82, 0.14);
 }
 
+
 .peso-hero {
     min-height: calc(100vh - 76px);
     position: relative;
     display: flex;
     align-items: center;
     padding: clamp(22px, 3vw, 36px) 0;
+    background-image: url('/images/background.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    width: 100%;
 }
 
 .hero-static {
     width: min(1360px, 100%);
     min-height: 700px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 420px);
-    align-items: center;
-    column-gap: clamp(24px, 4vw, 56px);
-    box-sizing: border-box;;
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-size: 100% 420px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+    box-sizing: border-box;
     position: relative;
     overflow: hidden;
     padding: 150px 24px 84px;
@@ -500,13 +503,5 @@ body.peso-body {
 
     .news-header {
         font-size: 1.4rem;
-    }
-
-    .portal-features-subtitle {
-        font-size: 0.95rem;
-    }
-
-    .news-card-img {
-        height: 170px;
     }
 }
