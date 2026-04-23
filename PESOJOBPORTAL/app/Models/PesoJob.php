@@ -71,6 +71,14 @@ class PesoJob extends Model
     {
         return $this->belongsTo(self::class, 'source_job_id');
     }
+
+    /**
+     * Get the company profile for this job's employer
+     */
+    public function companyProfile()
+    {
+        return $this->employer()?->first()?->companyProfile();
+    }
 }
 ?>
 

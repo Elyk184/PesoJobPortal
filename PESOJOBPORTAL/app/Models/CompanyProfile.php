@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyProfile extends Model
@@ -13,6 +14,7 @@ class CompanyProfile extends Model
 
     protected $fillable = [
         // Company Basic Information
+        'user_id',
         'company_name',
         'business_name',
         'trade_name',
@@ -79,6 +81,22 @@ class CompanyProfile extends Model
     }
 
     /**
+     * Get all job postings for this company
+     */
+    public function jobs(): HasMany
+    {
+        return $this->hasMany(PesoJob::class, 'employer_id', 'user_id');
+    }
+
+    /**
+     * Get all recruitment activity requests for this company
+     */
+    public function recruitmentActivities(): HasMany
+    {
+        return $this->hasMany(RecruitmentActivityRequest::class, 'employer_id', 'user_id');
+    }
+
+    /**
      * Get full address as a single string
      */
     public function getFullAddressAttribute(): string
@@ -104,5 +122,29 @@ class CompanyProfile extends Model
             $parts[] = "({$this->establishment_contact_position})";
         }
         return implode(' ', $parts) ?: 'Contact information not provided';
+    }
+
+    /**
+     * Check if company profile is verified
+     */
+    public function isVerified(): bool
+    {
+        return $this->verification_status === 'verified';
+    }
+
+    /**
+     * Check if company profile is pending verification
+     */
+    public function isPending(): bool
+    {
+        return $this->verification_status === 'pending';
+    }
+
+    /**
+     * Check if company profile is under review
+     */
+    public function isUnderReview(): bool
+    {
+        return $this->verification_status === 'under_review';
     }
 }

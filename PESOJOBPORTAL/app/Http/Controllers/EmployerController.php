@@ -8,6 +8,7 @@ use App\Models\JobApplication;
 use App\Models\PesoJob;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
+use App\Models\CompanyProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +21,8 @@ class EmployerController extends Controller
 {
     public function dashboard(Request $request): View
     {
-        $employer = $request->user()->loadMissing('profile');
-        $logoPath = $employer->profile?->logo_path;
+        $employer = $request->user()->loadMissing('companyProfile');
+        $logoPath = $employer->companyProfile?->logo_path;
         $companyLogoUrl = ($logoPath && Storage::disk('public')->exists($logoPath))
             ? asset('storage/'.$logoPath)
             : null;
@@ -35,8 +36,8 @@ class EmployerController extends Controller
 
     public function postNewJobPage(Request $request): View
     {
-        $employer = $request->user()->loadMissing('profile');
-        $companyProfile = $employer->profile;
+        $employer = $request->user()->loadMissing('companyProfile');
+        $companyProfile = $employer->companyProfile;
 
         if ($companyProfile === null) {
             $companyProfile = (object) [
@@ -125,8 +126,8 @@ class EmployerController extends Controller
             $defaultActivityType = null;
         }
 
-        $employer = $request->user()->loadMissing('profile');
-        $companyProfile = $employer->profile;
+        $employer = $request->user()->loadMissing('companyProfile');
+        $companyProfile = $employer->companyProfile;
 
         $companyProfilePreview = [
             'company_name' => $companyProfile?->company_name ?? $employer->name,
@@ -151,20 +152,20 @@ class EmployerController extends Controller
 
     public function companyProfilePage(Request $request): View
     {
-        $employer = $request->user()->loadMissing('profile');
+        $employer = $request->user()->loadMissing('companyProfile');
 
         return view('dashboard.employer.company-profile', [
             'employer' => $employer,
             'user' => $employer,
-            'companyProfile' => $employer->profile,
+            'companyProfile' => $employer->companyProfile,
             'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
         ]);
     }
 
     public function downloadCompanyProfile(Request $request)
     {
-        $employer = $request->user()->loadMissing('profile');
-        $companyProfile = $employer->profile;
+        $employer = $request->user()->loadMissing('companyProfile');
+        $companyProfile = $employer->companyProfile;
         $logoPath = $companyProfile?->logo_path;
         $logoFullPath = null;
 
@@ -194,7 +195,7 @@ class EmployerController extends Controller
                 'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
             ]);
 
-            $profile = UserProfile::firstOrCreate(['user_id' => $employer->id]);
+            $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
 
             if ($profile->logo_path && Storage::disk('public')->exists($profile->logo_path)) {
                 Storage::disk('public')->delete($profile->logo_path);
@@ -211,6 +212,7 @@ class EmployerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$employer->id],
             'password' => ['nullable', 'confirmed', 'min:8'],
+            'company_name' => ['nullable', 'string', 'max:255'],
             'business_name' => ['required', 'string', 'max:255'],
             'trade_name' => ['nullable', 'string', 'max:255'],
             'acronym_abbreviation' => ['nullable', 'string', 'max:100'],
@@ -255,10 +257,13 @@ class EmployerController extends Controller
 
         $employer->update($updateData);
 
-        $profile = UserProfile::firstOrCreate(['user_id' => $employer->id]);
+        $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
 
-        $profileColumns = Schema::getColumnListing('user_profiles');
-        $inputToColumn = [
+        $profileData = [];
+
+        // Map input fields to CompanyProfile columns
+        $fieldMapping = [
+            'company_name' => 'company_name',
             'business_name' => 'business_name',
             'trade_name' => 'trade_name',
             'acronym_abbreviation' => 'acronym_abbreviation',
@@ -279,36 +284,43 @@ class EmployerController extends Controller
             'establishment_email' => 'establishment_email',
         ];
 
-        $profileData = [];
-
-        foreach ($inputToColumn as $input => $column) {
-            if (in_array($column, $profileColumns, true) && array_key_exists($input, $validated)) {
+        foreach ($fieldMapping as $input => $column) {
+            if (array_key_exists($input, $validated) && $validated[$input] !== null) {
                 $profileData[$column] = $validated[$input];
             }
         }
 
-        if (in_array('company_name', $profileColumns, true)) {
+        // Use business_name as company_name if not explicitly provided
+        if (!isset($profileData['company_name'])) {
             $profileData['company_name'] = $validated['business_name'];
         }
 
-        if ($request->hasFile('company_logo') && in_array('logo_path', $profileColumns, true)) {
+        // Handle file uploads
+        if ($request->hasFile('company_logo')) {
+            if ($profile->logo_path && Storage::disk('public')->exists($profile->logo_path)) {
+                Storage::disk('public')->delete($profile->logo_path);
+            }
             $profileData['logo_path'] = $request->file('company_logo')->store('company-profiles', 'public');
         }
 
-        if ($request->hasFile('business_permit') && in_array('business_permit_path', $profileColumns, true)) {
+        if ($request->hasFile('business_permit')) {
+            if ($profile->business_permit_path && Storage::disk('public')->exists($profile->business_permit_path)) {
+                Storage::disk('public')->delete($profile->business_permit_path);
+            }
             $profileData['business_permit_path'] = $request->file('business_permit')->store('company-documents', 'public');
         }
 
-        if ($request->hasFile('dti_sec_registration') && in_array('dti_sec_registration_path', $profileColumns, true)) {
+        if ($request->hasFile('dti_sec_registration')) {
+            if ($profile->dti_sec_registration_path && Storage::disk('public')->exists($profile->dti_sec_registration_path)) {
+                Storage::disk('public')->delete($profile->dti_sec_registration_path);
+            }
             $profileData['dti_sec_registration_path'] = $request->file('dti_sec_registration')->store('company-documents', 'public');
         }
 
-        if (in_array('verification_status', $profileColumns, true)) {
-            $hasUploadedVerificationDoc = $request->hasFile('business_permit') || $request->hasFile('dti_sec_registration');
-
-            if ($hasUploadedVerificationDoc && $profile->verification_status !== 'verified') {
-                $profileData['verification_status'] = 'under_review';
-            }
+        // Update verification status if documents are uploaded
+        $hasUploadedVerificationDoc = $request->hasFile('business_permit') || $request->hasFile('dti_sec_registration');
+        if ($hasUploadedVerificationDoc && $profile->verification_status !== 'verified') {
+            $profileData['verification_status'] = 'under_review';
         }
 
         if (! empty($profileData)) {
@@ -358,7 +370,7 @@ class EmployerController extends Controller
         // Map form fields to model
         $jobData = [
             'employer_id' => $employer->id,
-            'employer_name' => $employer->profile?->company_name ?? $employer->name,
+            'employer_name' => $employer->companyProfile?->company_name ?? $employer->name,
             'title' => $validated['title'],
             'position' => $validated['title'], // Use title as position for legacy
             'description' => $validated['description'],
@@ -477,8 +489,8 @@ class EmployerController extends Controller
             'job_advertisement' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
         ]);
 
-        $employer = $request->user()->loadMissing('profile');
-        $companyProfile = $employer->profile;
+        $employer = $request->user()->loadMissing('companyProfile');
+        $companyProfile = $employer->companyProfile;
 
         $companyProfileSource = $validated['company_profile_source'] ?? 'upload';
         $companyProfilePath = null;
