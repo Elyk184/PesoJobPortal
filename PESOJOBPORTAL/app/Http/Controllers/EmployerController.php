@@ -291,8 +291,8 @@ class EmployerController extends Controller
         }
 
         // Use business_name as company_name if not explicitly provided
-        if (!isset($profileData['company_name'])) {
-            $profileData['company_name'] = $validated['business_name'];
+        if (!isset($profileData['company_name']) || empty($profileData['company_name'])) {
+            $profileData['company_name'] = $validated['business_name'] ?? '';
         }
 
         // Handle file uploads

@@ -10,6 +10,17 @@ use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
 use Illuminate\Support\Facades\Route;
 
+// Database fix route
+Route::get('/admin/database-fix', function () {
+    if (file_exists(base_path('fix_database.php'))) {
+        ob_start();
+        include base_path('fix_database.php');
+        $output = ob_get_clean();
+        return "<pre>" . htmlspecialchars($output) . "</pre>";
+    }
+    return "Fix script not found";
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
