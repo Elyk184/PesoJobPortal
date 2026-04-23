@@ -28,6 +28,13 @@
     position: relative;
     width: 380px;
     flex-shrink: 0;
+    background: #e5e7eb;
+    background-image: url('/images/historybg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
 }
 
 .history-image-banner {
@@ -55,8 +62,9 @@
 
 .history-image-col img {
     width: 100%;
-    height: clamp(220px, 42vw, 460px);
-    object-fit: cover;
+    height: 100%;
+    flex: 1;
+    object-fit: contain;
     object-position: center;
     display: block;
 }
@@ -96,10 +104,6 @@
         width: 100%;
     }
 
-    .history-image-col img {
-        height: 240px;
-    }
-
     .history-text-col {
         padding: 24px 20px;
     }
@@ -110,10 +114,6 @@
 }
 
 @media (max-width: 480px) {
-    .history-image-col img {
-        height: 210px;
-    }
-
     .history-text-col {
         padding: 24px 20px;
     }
