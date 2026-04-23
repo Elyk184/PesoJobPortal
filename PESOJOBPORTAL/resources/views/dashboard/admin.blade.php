@@ -1095,7 +1095,6 @@
     
     // Update every second for live clock
     setInterval(updateDateTime, 1000);
-});
 </script>
 
 <style>
