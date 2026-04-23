@@ -373,7 +373,7 @@
                             <span class="photo-upload-icon"><i class="bi bi-image"></i></span>
                             <span class="photo-upload-text">
                                 Click to upload or drag and drop
-                                <small>PNG, JPG, GIF up to 2MB</small>
+                                <small>PNG, JPG, GIF up to 10MB</small>
                             </span>
                         </label>
                     </div>

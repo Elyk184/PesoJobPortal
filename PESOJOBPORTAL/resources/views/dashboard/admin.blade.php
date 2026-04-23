@@ -81,6 +81,11 @@
         background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
     }
 
+    .sidebar-header a:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px;
+    }
+
     .sidebar-user {
         display: flex;
         align-items: center;
@@ -605,13 +610,15 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-            <div class="sidebar-user">
-                <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <div class="sidebar-user-name">
-                    <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
-                    <p>Administrator</p>
+            <a href="{{ route('admin.profile') }}" style="text-decoration: none; color: inherit; display: block; transition: all 0.3s ease; border-radius: 8px; padding: 0.5rem; margin: -0.5rem;">
+                <div class="sidebar-user" style="cursor: pointer;">
+                    <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                    <div class="sidebar-user-name">
+                        <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
+                        <p>Administrator</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <ul class="sidebar-menu">
