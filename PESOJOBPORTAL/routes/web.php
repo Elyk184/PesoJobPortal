@@ -19,6 +19,8 @@ Route::view('/history-of-excellence', 'history-excellence')->name('history-of-ex
 Route::view('/objectives', 'objective')->name('objectives');
 Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::view('/structure', 'structure')->name('structure');
+Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
+Route::view('/terms-of-service', 'terms-of-service')->name('terms-of-service');
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
@@ -35,8 +37,13 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
     Route::get('/dashboard', [JobseekerController::class, 'dashboard'])->name('dashboard');
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
+    Route::get('/recommendations', [JobseekerController::class, 'recommendations'])->name('recommendations');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
+    Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
+    Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
+    Route::post('/notifications/{userNotification}/read', [JobseekerController::class, 'markNotificationAsRead'])->name('notifications.read');
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
+    Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
@@ -78,11 +85,7 @@ Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    
-    // Profile
-    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
-    Route::post('/profile/update', [AdminController::class, 'updateProfile'])->name('profile.update');
-    
+
     // Jobseeker Approvals
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
@@ -90,40 +93,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{jobseeker}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
         Route::post('/{jobseeker}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
     });
-    
+
     // Approvals & Verification Section
-    Route::get('/employer-verification', [AdminController::class, 'employerVerification'])->name('employer-verification');
-    Route::get('/employer-verification/{companyProfile}/detail', [AdminController::class, 'viewCompanyProfile'])->name('employer-verification.detail');
-    Route::post('/employer-verification/{companyProfile}/approve', [AdminController::class, 'approveCompanyProfile'])->name('employer-verification.approve');
-    Route::post('/employer-verification/{companyProfile}/reject', [AdminController::class, 'rejectCompanyProfile'])->name('employer-verification.reject');
-    
-    Route::get('/job-approvals', [AdminController::class, 'jobApprovals'])->name('job-approvals');
-    Route::get('/jobs/{job}/review', [AdminController::class, 'viewJob'])->name('jobs.review');
-    Route::post('/jobs/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
-    Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
-    
-    Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
-    Route::get('/lra-sra/{activityRequest}/review', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
-    Route::post('/lra-sra/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
-    Route::post('/lra-sra/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
-    
-    Route::get('/document-verification', [AdminController::class, 'documentVerification'])->name('document-verification');
-    Route::post('/documents/{document}/approve', [AdminController::class, 'approveDocument'])->name('documents.approve');
-    Route::post('/documents/{document}/reject', [AdminController::class, 'rejectDocument'])->name('documents.reject');
-    
+    Route::view('/employer-verification', 'admin.employer-verification')->name('employer-verification');
+    Route::view('/job-approvals', 'admin.job-approvals')->name('job-approvals');
+    Route::view('/lra-sra-approvals', 'admin.lra-sra-approvals')->name('lra-sra-approvals');
+    Route::view('/document-verification', 'admin.document-verification')->name('document-verification');
+
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');
     Route::view('/employers-management', 'admin.employers-management')->name('employers-management');
     Route::view('/jobs-management', 'admin.jobs-management')->name('jobs-management');
     Route::view('/applications-management', 'admin.applications-management')->name('applications-management');
-    
+
     // Intelligence & Reports Section
     Route::view('/employment-stats', 'admin.employment-stats')->name('employment-stats');
     Route::view('/skills-gap-analysis', 'admin.skills-gap-analysis')->name('skills-gap-analysis');
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
     Route::view('/peso-clearances', 'admin.peso-clearances')->name('peso-clearances');
-    
+
     // Tools & Settings Section
     Route::view('/settings', 'admin.settings')->name('settings');
     Route::view('/alerts-notifications', 'admin.alerts-notifications')->name('alerts-notifications');

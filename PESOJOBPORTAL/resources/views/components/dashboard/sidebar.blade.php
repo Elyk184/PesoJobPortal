@@ -9,7 +9,7 @@
                 <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
             </div>
             <div>
-                <div class="dashboard-brand-kicker">PESO Job Portal</div>
+                <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
                 <div class="dashboard-brand-title">Jobseeker Portal</div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
         </div>
         <div>
-            <div class="dashboard-brand-kicker">PESO Job Portal</div>
+            <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
             <div class="dashboard-brand-title">Jobseeker Portal</div>
         </div>
     </div>
@@ -58,7 +58,7 @@
                 <i class="bi bi-bookmark"></i>
                 <span>Saved Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.recommendations') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.recommendations') ? 'is-active' : '' }}">
                 <i class="bi bi-stars"></i>
                 <span>Recommendations</span>
             </a>
@@ -70,7 +70,7 @@
                 <i class="bi bi-send"></i>
                 <span>Applied Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.notifications') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.notifications') ? 'is-active' : '' }}">
                 <i class="bi bi-bell"></i>
                 <span>Notifications</span>
             </a>
