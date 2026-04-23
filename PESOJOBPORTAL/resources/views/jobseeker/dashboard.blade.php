@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Jobseeker Dashboard | PESO Job Portal')
+@section('title', 'Dashboard | Jobseeker')
 
 @section('content')
 <section aria-label="Jobseeker dashboard">
@@ -94,7 +94,7 @@
     <div class="dashboard-section-card p-3 p-lg-4">
         <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-stars me-2"></i>Recommended Jobs</h3>
-            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            <a href="{{ route('jobseeker.recommendations') }}" class="btn btn-sm btn-outline-primary">View All</a>
         </div>
 
         <div class="dashboard-empty-state">

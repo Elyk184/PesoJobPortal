@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Vacancies | Jobseeker | PESO Job Portal')
+@section('title', 'Vacancies | Jobseeker')
 
 @section('content')
 <section class="container py-4" aria-label="Job vacancies">

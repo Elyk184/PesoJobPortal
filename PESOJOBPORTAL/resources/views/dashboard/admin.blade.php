@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard | PESO Job Portal')
+@section('title', 'Admin Dashboard | Link Job Resource Portal')
 
 @section('content')
 <style>

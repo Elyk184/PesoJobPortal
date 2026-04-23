@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | PESO Job Portal</title>
+    <title>Register | Link Job Resource Portal</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -25,7 +25,7 @@
             display: grid;
             place-items: center;
             background: linear-gradient(rgba(246, 248, 252, 0.9), rgba(246, 248, 252, 0.9)),
-                        url('{{ asset('images/P1so.png') }}') center center / min(88vw, 980px) auto no-repeat,
+                        url("{{ asset('images/P1so.png') }}") center center / min(88vw, 980px) auto no-repeat,
                         #f6f8fc;
             position: relative;
             padding: 24px 16px;
@@ -280,7 +280,9 @@
                 </div>
             </div>
 
-            <button type="submit" class="register-button">
+            <input type="hidden" id="privacy_consent" name="privacy_consent" value="{{ old('privacy_consent') ? 1 : 0 }}">
+
+            <button type="button" id="openConsentModal" class="register-button" onclick="openPrivacyConsent()">
                 <i class="bi bi-person-plus me-2"></i>Create Account
             </button>
 
@@ -309,5 +311,188 @@
             Already have an account? <a href="{{ route('login') }}" class="link-muted">Login</a>
         </p>
     </main>
+
+    <div class="modal fade consent-modal" id="privacyConsentModal" tabindex="-1" aria-labelledby="privacyConsentModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="privacyConsentModalLabel">Data Privacy Act Consent</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="consent-note">
+                        In accordance with the
+                        <a href="https://privacy.gov.ph/data-privacy-act/" target="_blank" rel="noopener noreferrer">Data Privacy Act of 2012 (RA 10173)</a>,
+                        PESO Manolo Fortich protects your personal information and uses it only for legitimate PESO services.
+                    </p>
+                    <p class="fw-semibold mb-2">By clicking Proceed, you agree that:</p>
+                    <ul class="consent-list">
+                        <li>Your registration data will be collected for account creation and employment service delivery.</li>
+                        <li>Your data will be securely stored and accessed only by authorized personnel.</li>
+                        <li>Your information will not be shared without consent, unless required by law.</li>
+                    </ul>
+                    <div class="privacy-consent mt-3">
+                        <div class="form-check m-0">
+                            <input class="form-check-input" type="checkbox" id="privacyConsentCheck" onchange="togglePrivacyConsentButton()">
+                            <label class="form-check-label" for="privacyConsentCheck">
+                                I have read and agree to the PESO Data Privacy Policy.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="consentCancelButton" class="btn btn-light" onclick="cancelPrivacyConsent()">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmConsent" onclick="confirmPrivacyConsent()" disabled>Proceed to Registration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        window.__privacyBackdrop = null;
+        window.__privacyConsentAccepted = false;
+
+        function getConsentElements() {
+            return {
+                form: document.getElementById('registerForm'),
+                hiddenConsent: document.getElementById('privacy_consent'),
+                consentCheck: document.getElementById('privacyConsentCheck'),
+                confirmButton: document.getElementById('confirmConsent'),
+                modalElement: document.getElementById('privacyConsentModal')
+            };
+        }
+
+        function showModalFallback(modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            modalElement.removeAttribute('aria-hidden');
+            modalElement.setAttribute('aria-modal', 'true');
+            document.body.classList.add('modal-open');
+
+            window.__privacyBackdrop = document.createElement('div');
+            window.__privacyBackdrop.className = 'modal-backdrop fade show';
+            document.body.appendChild(window.__privacyBackdrop);
+        }
+
+        function hideModalFallback(modalElement) {
+            modalElement.classList.remove('show');
+            modalElement.style.display = 'none';
+            modalElement.setAttribute('aria-hidden', 'true');
+            modalElement.removeAttribute('aria-modal');
+            document.body.classList.remove('modal-open');
+
+            if (window.__privacyBackdrop) {
+                window.__privacyBackdrop.remove();
+                window.__privacyBackdrop = null;
+            }
+        }
+
+        function openPrivacyConsent() {
+            const { hiddenConsent, consentCheck, confirmButton, modalElement } = getConsentElements();
+            if (!hiddenConsent || !consentCheck || !confirmButton || !modalElement) {
+                return;
+            }
+
+            if (!window.__privacyConsentAccepted) {
+                hiddenConsent.value = '0';
+                consentCheck.checked = false;
+            } else {
+                hiddenConsent.value = '1';
+                consentCheck.checked = true;
+            }
+
+            confirmButton.disabled = true;
+            togglePrivacyConsentButton();
+
+            if (window.bootstrap && window.bootstrap.Modal) {
+                const modal = window.bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
+                return;
+            }
+
+            showModalFallback(modalElement);
+        }
+
+        function closePrivacyConsent() {
+            const { modalElement } = getConsentElements();
+            if (!modalElement) {
+                return;
+            }
+
+            if (window.bootstrap && window.bootstrap.Modal) {
+                const modal = window.bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.hide();
+                return;
+            }
+
+            hideModalFallback(modalElement);
+        }
+
+        function togglePrivacyConsentButton() {
+            const { consentCheck, confirmButton } = getConsentElements();
+            if (!consentCheck || !confirmButton) {
+                return;
+            }
+
+            confirmButton.disabled = !consentCheck.checked;
+        }
+
+        function confirmPrivacyConsent() {
+            const { form, hiddenConsent, consentCheck } = getConsentElements();
+            if (!form || !hiddenConsent || !consentCheck) {
+                return;
+            }
+
+            if (!consentCheck.checked) {
+                return;
+            }
+
+            window.__privacyConsentAccepted = true;
+            hiddenConsent.value = '1';
+            closePrivacyConsent();
+
+            if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+                return;
+            }
+
+            if (form.reportValidity()) {
+                form.submit();
+            }
+        }
+
+        function cancelPrivacyConsent() {
+            window.location.href = "{{ url('/') }}";
+        }
+
+        window.openPrivacyConsent = openPrivacyConsent;
+        window.closePrivacyConsent = closePrivacyConsent;
+        window.togglePrivacyConsentButton = togglePrivacyConsentButton;
+        window.confirmPrivacyConsent = confirmPrivacyConsent;
+        window.cancelPrivacyConsent = cancelPrivacyConsent;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const { form, hiddenConsent } = getConsentElements();
+            if (!form || !hiddenConsent) {
+                return;
+            }
+
+            window.__privacyConsentAccepted = hiddenConsent.value === '1';
+            const shouldAutoOpenConsent = document.body.dataset.autoOpenConsent === '1';
+
+            form.addEventListener('submit', function (event) {
+                if (hiddenConsent.value === '1') {
+                    return;
+                }
+
+                event.preventDefault();
+                openPrivacyConsent();
+            });
+
+            if (shouldAutoOpenConsent && hiddenConsent.value !== '1') {
+                openPrivacyConsent();
+            }
+        });
+    </script>
 </body>
 </html>

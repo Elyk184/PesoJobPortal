@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jobseeker Dashboard | PESO Job Portal')
+@section('title', 'Jobseeker Dashboard | Link Job Resource Portal')
 
 @section('content')
     <div class="container py-4 py-lg-5">

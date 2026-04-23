@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | PESO Job Portal</title>
+    <title>Login | Link Job Resource Portal</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -25,7 +25,7 @@
             display: grid;
             place-items: center;
             background: linear-gradient(rgba(246, 248, 252, 0.9), rgba(246, 248, 252, 0.9)),
-                        url('{{ asset('images/P1so.png') }}') center center / min(88vw, 980px) auto no-repeat,
+                        url("{{ asset('images/P1so.png') }}") center center / min(88vw, 980px) auto no-repeat,
                         #f6f8fc;
             position: relative;
             padding: 24px 16px;
