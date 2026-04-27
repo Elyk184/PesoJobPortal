@@ -19,16 +19,6 @@
 @endphp
 
 <section aria-label="Resume builder">
-    <div class="dashboard-topbar mb-3">
-        <div>
-            <div class="dashboard-topbar-title">Resume Builder</div>
-            <div class="dashboard-topbar-subtitle">Harvard-style CV format</div>
-        </div>
-        <a href="{{ route('jobseeker.profile') }}" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-arrow-left me-2"></i>Back to Profile
-        </a>
-    </div>
-
     @if (session('status'))
         <div class="alert alert-success border-0 shadow-sm">{{ session('status') }}</div>
     @endif
