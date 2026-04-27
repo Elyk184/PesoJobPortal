@@ -168,7 +168,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
-        background: linear-gradient(135deg, #0f172a 0%, #1a2d45 50%, #0d1b2a 100%);
+        background: #ffffff;
     }
 
     .admin-dashboard {
