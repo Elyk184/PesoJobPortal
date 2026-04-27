@@ -60,4 +60,5 @@ Route::get('/contact', function () {
 });
 
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
+    ->middleware('throttle:chatbot')
     ->name('chatbot.chat');
