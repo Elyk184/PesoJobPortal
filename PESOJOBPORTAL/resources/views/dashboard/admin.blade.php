@@ -196,11 +196,11 @@
     .stat-card {
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         border: none;
-        border-radius: 20px;
+        border-radius: 16px;
         padding: 2rem 1.75rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
     }
@@ -211,9 +211,9 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 5px;
+        height: 0;
         background: #1a1a1a;
-        border-radius: 20px 20px 0 0;
+        border-radius: 16px 16px 0 0;
     }
 
     .stat-card::after {
@@ -223,42 +223,86 @@
         right: -50%;
         width: 200px;
         height: 200px;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0) 70%);
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 70%);
         border-radius: 50%;
     }
 
     .stat-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 24px 48px rgba(59, 130, 246, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Colored stat cards */
+    .stat-card[data-color="primary"] {
+        background: linear-gradient(135deg, #5B5DEE 0%, #3730A3 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="info"] {
+        background: linear-gradient(135deg, #1E90FF 0%, #0066FF 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="warning"] {
+        background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="danger"] {
+        background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="success"] {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="secondary"] {
+        background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+        color: white;
     }
 
     .stat-value {
-        font-size: 44px;
+        font-size: 48px;
         font-weight: 900;
-        color: #1e293b;
+        color: inherit;
         margin: 12px 0 8px 0;
         letter-spacing: -0.5px;
         position: relative;
         z-index: 1;
     }
 
+    .stat-card[data-color] .stat-value {
+        color: white;
+    }
+
     .stat-label {
         font-size: 12px;
-        color: #64748b;
-        font-weight: 600;
+        color: inherit;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.2px;
         position: relative;
         z-index: 1;
+        opacity: 0.95;
+    }
+
+    .stat-card[data-color] .stat-label {
+        color: rgba(255, 255, 255, 0.9);
     }
 
     .stat-icon {
-        font-size: 2.5rem;
-        opacity: 0.1;
+        font-size: 3.5rem;
+        opacity: 0.2;
         position: absolute;
         right: 15px;
         top: 15px;
-        color: #3b82f6;
+        color: inherit;
+    }
+
+    .stat-card[data-color] .stat-icon {
+        color: rgba(255, 255, 255, 0.25);
     }
 
     .dashboard-card {
@@ -390,9 +434,9 @@
     .quick-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 2rem;
+        gap: 2rem 2.5rem;
         margin-bottom: 3.5rem;
-        padding: 0.5rem;
+        padding: 0;
     }
 
     .list-item {
@@ -868,55 +912,55 @@
         <div class="admin-dashboard">
             <!-- Quick Stats -->
             <div class="quick-stats">
-                <div class="stat-card" style="border-left: 5px solid #10b981;">
+                <div class="stat-card" data-color="primary">
                     <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
                     <div class="stat-label">Total Users</div>
                     <div class="stat-value">{{ $stats['total_users'] }}</div>
-                    <small style="color: #6b7280; font-weight: 600;">
-                        <span style="color: #1e40af;">{{ $stats['total_employers'] }}</span> employers • <span style="color: #065f46;">{{ $stats['total_jobseekers'] }}</span> jobseekers
+                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">
+                        <span style="color: rgba(255,255,255,0.95);">{{ $stats['total_employers'] }}</span> employers • <span style="color: rgba(255,255,255,0.95);">{{ $stats['total_jobseekers'] }}</span> jobseekers
                     </small>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #3b82f6;">
+                <div class="stat-card" data-color="info">
                     <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
                     <div class="stat-label">Job Postings</div>
                     <div class="stat-value">{{ $stats['total_jobs'] }}</div>
-                    <small style="color: #10b981; font-weight: 600;">✓ {{ $stats['active_jobs'] }} active</small>
+                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">✓ {{ $stats['active_jobs'] }} active</small>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
+                <div class="stat-card" data-color="warning">
                     <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
                     <div class="stat-label">Applications</div>
                     <div class="stat-value">{{ $stats['total_applications'] }}</div>
-                    <small style="color: #f59e0b; font-weight: 600;">⚠ {{ $stats['pending_applications'] }} pending</small>
+                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">⚠ {{ $stats['pending_applications'] }} pending</small>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #06b6d4;">
+                <div class="stat-card" data-color="success">
                     <div class="stat-icon"><i class="bi bi-cloud-check-fill"></i></div>
                     <div class="stat-label">System Status</div>
-                    <div class="stat-value" style="color: #10b981; font-size: 24px;">●</div>
-                    <small style="color: #10b981; font-weight: 600;">All systems operational</small>
+                    <div class="stat-value" style="font-size: 24px;">●</div>
+                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">All systems operational</small>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
-                    <div class="stat-icon" style="color: #f59e0b;"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-card" data-color="danger">
+                    <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
                     <div class="stat-label">Pending Job Approvals</div>
                     <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
-                    <a href="{{ route('admin.job-approvals') }}" style="color: #f59e0b; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <a href="{{ route('admin.job-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #f97316;">
-                    <div class="stat-icon" style="color: #f97316;"><i class="bi bi-file-earmark-check"></i></div>
+                <div class="stat-card" data-color="secondary">
+                    <div class="stat-icon"><i class="bi bi-file-earmark-check"></i></div>
                     <div class="stat-label">Pending LRA/SRA Requests</div>
                     <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
-                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: #f97316; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #ec4899;">
-                    <div class="stat-icon" style="color: #ec4899;"><i class="bi bi-shield-check"></i></div>
+                <div class="stat-card" data-color="info">
+                    <div class="stat-icon"><i class="bi bi-shield-check"></i></div>
                     <div class="stat-label">Pending Document Approvals</div>
                     <div class="stat-value">{{ $stats['pending_documents'] }}</div>
-                    <a href="{{ route('admin.document-verification') }}" style="color: #ec4899; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <a href="{{ route('admin.document-verification') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
                 </div>
             </div>
 
