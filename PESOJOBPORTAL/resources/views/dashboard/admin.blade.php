@@ -203,6 +203,8 @@
         transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 
     .stat-card::before {
@@ -211,25 +213,27 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 0;
-        background: #1a1a1a;
-        border-radius: 16px 16px 0 0;
+        bottom: 0;
+        background: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.3) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
     }
 
     .stat-card::after {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 70%);
+        bottom: -30px;
+        right: -30px;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
         border-radius: 50%;
+        z-index: 0;
     }
 
     .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-12px);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     /* Colored stat cards */
@@ -263,6 +267,50 @@
         color: white;
     }
 
+    .stat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card-icon-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        flex-shrink: 0;
+    }
+
+    .stat-card-icon-box i {
+        font-size: 2.5rem;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .stat-card-mini-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        height: 50px;
+        opacity: 0.8;
+    }
+
+    .stat-card-mini-bar {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 3px;
+        transition: background 0.3s ease;
+    }
+
+    .stat-card-mini-bar.high {
+        background: rgba(255, 255, 255, 0.7);
+    }
+
     .stat-value {
         font-size: 48px;
         font-weight: 900;
@@ -278,7 +326,7 @@
     }
 
     .stat-label {
-        font-size: 12px;
+        font-size: 13px;
         color: inherit;
         font-weight: 700;
         text-transform: uppercase;
@@ -290,6 +338,30 @@
 
     .stat-card[data-color] .stat-label {
         color: rgba(255, 255, 255, 0.9);
+    }
+
+    .stat-card-subtitle {
+        font-size: 12px;
+        margin-top: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card[data-color] .stat-card-subtitle {
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .stat-icon {
+        font-size: 3.5rem;
+        opacity: 0.2;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: inherit;
+    }
+
+    .stat-card[data-color] .stat-icon {
+        color: rgba(255, 255, 255, 0.25);
     }
 
     .stat-icon {
@@ -913,54 +985,143 @@
             <!-- Quick Stats -->
             <div class="quick-stats">
                 <div class="stat-card" data-color="primary">
-                    <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
-                    <div class="stat-label">Total Users</div>
-                    <div class="stat-value">{{ $stats['total_users'] }}</div>
-                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">
-                        <span style="color: rgba(255,255,255,0.95);">{{ $stats['total_employers'] }}</span> employers • <span style="color: rgba(255,255,255,0.95);">{{ $stats['total_jobseekers'] }}</span> jobseekers
-                    </small>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value">{{ $stats['total_users'] }}</div>
+                            <div class="stat-card-subtitle">{{ $stats['total_employers'] }} employers • {{ $stats['total_jobseekers'] }} jobseekers</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar high" style="height: 75%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 50%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 85%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 40%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 70%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="info">
-                    <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
-                    <div class="stat-label">Job Postings</div>
-                    <div class="stat-value">{{ $stats['total_jobs'] }}</div>
-                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">✓ {{ $stats['active_jobs'] }} active</small>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Job Postings</div>
+                            <div class="stat-value">{{ $stats['total_jobs'] }}</div>
+                            <div class="stat-card-subtitle">✓ {{ $stats['active_jobs'] }} active</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 45%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 65%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 80%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 55%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 75%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="warning">
-                    <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
-                    <div class="stat-label">Applications</div>
-                    <div class="stat-value">{{ $stats['total_applications'] }}</div>
-                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">⚠ {{ $stats['pending_applications'] }} pending</small>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Applications</div>
+                            <div class="stat-value">{{ $stats['total_applications'] }}</div>
+                            <div class="stat-card-subtitle">⚠ {{ $stats['pending_applications'] }} pending</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar high" style="height: 60%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 35%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 90%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 50%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 70%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="success">
-                    <div class="stat-icon"><i class="bi bi-cloud-check-fill"></i></div>
-                    <div class="stat-label">System Status</div>
-                    <div class="stat-value" style="font-size: 24px;">●</div>
-                    <small style="color: rgba(255,255,255,0.85); font-weight: 600;">All systems operational</small>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">System Status</div>
+                            <div class="stat-value" style="font-size: 24px;">●</div>
+                            <div class="stat-card-subtitle">All systems operational</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-cloud-check-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 95%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 98%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="danger">
-                    <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
-                    <div class="stat-label">Pending Job Approvals</div>
-                    <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
-                    <a href="{{ route('admin.job-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending Job Approvals</div>
+                            <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
+                            <a href="{{ route('admin.job-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 20%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 15%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 25%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 10%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 30%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="secondary">
-                    <div class="stat-icon"><i class="bi bi-file-earmark-check"></i></div>
-                    <div class="stat-label">Pending LRA/SRA Requests</div>
-                    <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
-                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending LRA/SRA Requests</div>
+                            <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
+                            <a href="{{ route('admin.lra-sra-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-file-earmark-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 18%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 22%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 12%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 28%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 15%;"></div>
+                    </div>
                 </div>
 
                 <div class="stat-card" data-color="info">
-                    <div class="stat-icon"><i class="bi bi-shield-check"></i></div>
-                    <div class="stat-label">Pending Document Approvals</div>
-                    <div class="stat-value">{{ $stats['pending_documents'] }}</div>
-                    <a href="{{ route('admin.document-verification') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending Document Approvals</div>
+                            <div class="stat-value">{{ $stats['pending_documents'] }}</div>
+                            <a href="{{ route('admin.document-verification') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 25%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 35%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 20%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 40%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 30%;"></div>
+                    </div>
                 </div>
             </div>
 
