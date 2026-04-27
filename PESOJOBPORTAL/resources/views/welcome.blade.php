@@ -338,10 +338,7 @@
             }
 
             .news-card-icon-section {
-                padding: 1.5rem 1.5rem 0.5rem;
-                display: flex;
-                align-items: flex-start;
-                justify-content: space-between;
+                display: none;
             }
 
             .news-card-icon {
@@ -388,10 +385,10 @@
             }
 
             .news-card-title {
-                font-size: 1.35rem;
-                font-weight: 800;
+                font-size: 1.3rem;
+                font-weight: 600;
                 color: #0a3764;
-                letter-spacing: -0.5px;
+                letter-spacing: -0.3px;
                 margin: 0;
             }
 
@@ -652,7 +649,7 @@
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
                         <div class="news-card-icon-section">
-                            <div class="news-card-icon events">📅</div>
+                            <div class="news-card-icon events"></div>
                         </div>
                         <div class="news-card-body">
                             <h5 class="news-card-title">Events</h5>
@@ -679,7 +676,7 @@
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
                         <div class="news-card-icon-section">
-                            <div class="news-card-icon announcements">🛡️</div>
+                            <div class="news-card-icon announcements"></div>
                             <div class="news-card-badge">CORE</div>
                         </div>
                         <div class="news-card-body">
@@ -688,18 +685,6 @@
                                 <li class="news-card-feature">
                                     <span class="news-card-feature-dot announcements">✓</span>
                                     <span>Employer Verification (DTI, POEA)</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot announcements">✓</span>
-                                    <span>Review & Refer Applications</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot announcements">✓</span>
-                                    <span>PESO Clearance Issuance</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot announcements">✓</span>
-                                    <span>LRA / SRA Approvals</span>
                                 </li>
                                 <li class="news-card-feature">
                                     <span class="news-card-feature-dot announcements">✓</span>
@@ -719,7 +704,7 @@
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
                         <div class="news-card-icon-section">
-                            <div class="news-card-icon community">🏢</div>
+                            <div class="news-card-icon community"></div>
                         </div>
                         <div class="news-card-body">
                             <h5 class="news-card-title">Employer Portal</h5>
@@ -731,18 +716,6 @@
                                 <li class="news-card-feature">
                                     <span class="news-card-feature-dot community">✓</span>
                                     <span>Review Applicants</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot community">✓</span>
-                                    <span>Decide: Interview / Hire</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot community">✓</span>
-                                    <span>Request LRA</span>
-                                </li>
-                                <li class="news-card-feature">
-                                    <span class="news-card-feature-dot community">✓</span>
-                                    <span>Receive Notifications & Alerts</span>
                                 </li>
                             </ul>
                         </div>
