@@ -58,6 +58,7 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/skill-gap', [JobseekerController::class, 'skillGap'])->name('skill-gap');
     Route::get('/saved-jobs', [JobseekerController::class, 'savedJobs'])->name('saved-jobs');
     Route::post('/saved-jobs/{job}', [JobseekerController::class, 'toggleSaveJob'])->name('saved-jobs.toggle');
+    Route::get('/peso-clearance', [JobseekerController::class, 'pesoClearance'])->name('peso-clearance');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');

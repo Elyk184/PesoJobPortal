@@ -8,6 +8,7 @@ use App\Models\UserNotification;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\SavedJob;
+use App\Models\PesoClearance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -612,6 +613,31 @@ class JobseekerController extends Controller
         return response()->json([
             'saved' => $saved,
             'saved_count' => $savedCount,
+        ]);
+    }
+
+    public function pesoClearance(): View
+    {
+        $userId = (int) Auth::id();
+
+        $clearance = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->latest('id')
+            ->first();
+
+        $hasClearance = $clearance !== null;
+        $isActive = $hasClearance && $clearance->status === 'active';
+        $isExpired = $hasClearance && $clearance->expiry_date && $clearance->expiry_date->isPast();
+
+        if ($isExpired && $isActive) {
+            $isActive = false;
+        }
+
+        return view('jobseeker.peso-clearance', [
+            'clearance' => $clearance,
+            'hasClearance' => $hasClearance,
+            'isActive' => $isActive,
+            'isExpired' => $isExpired,
         ]);
     }
 

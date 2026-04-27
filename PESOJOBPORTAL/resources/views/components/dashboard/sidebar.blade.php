@@ -90,7 +90,7 @@
                 <i class="bi bi-graph-up"></i>
                 <span>Skill Gap</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.peso-clearance') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.peso-clearance') ? 'is-active' : '' }}">
                 <i class="bi bi-shield-check"></i>
                 <span>PESO Clearance</span>
             </a>
