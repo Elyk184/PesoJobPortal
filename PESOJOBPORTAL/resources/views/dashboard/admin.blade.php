@@ -26,8 +26,8 @@
     }
 
     body {
-        background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
-        color: #e0e7ff;
+        background: #f8fafc;
+        color: #0f172a;
         min-height: 100vh;
     }
     
@@ -44,7 +44,7 @@
 
     .admin-sidebar {
         width: 260px;
-        background: linear-gradient(180deg, #0a1428 0%, #0f1f35 50%, #08141f 100%);
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #0f172a 100%);
         color: white;
         padding: 1.5rem 0;
         position: fixed;
@@ -52,7 +52,7 @@
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         z-index: 100;
     }
 
@@ -96,14 +96,14 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
         font-size: 20px;
         color: white;
-        box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .sidebar-user-name {
@@ -153,15 +153,15 @@
 
     .sidebar-menu-link:hover {
         color: white;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(59, 130, 246, 0.15);
         padding-left: 1.8rem;
-        border-left-color: #d72638;
+        border-left-color: #3b82f6;
     }
 
     .sidebar-menu-link.active {
         color: #fff;
-        background: linear-gradient(90deg, rgba(215, 38, 56, 0.3) 0%, rgba(215, 38, 56, 0.1) 100%);
-        border-left-color: #d72638;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border-left-color: #3b82f6;
         font-weight: 600;
     }
 
@@ -185,7 +185,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
-        background: #ffffff;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
     }
 
     .admin-dashboard {
@@ -194,12 +194,12 @@
     }
 
     .stat-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-        border: 2px solid #d1d5db;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: none;
+        border-radius: 20px;
         padding: 2rem 1.75rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
@@ -208,63 +208,67 @@
     .stat-card::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
-        border-radius: 50%;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        border-radius: 20px 20px 0 0;
     }
 
     .stat-card::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
-        border-radius: 16px 16px 0 0;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0) 70%);
+        border-radius: 50%;
     }
 
     .stat-card:hover {
         transform: translateY(-12px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 24px 48px rgba(59, 130, 246, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     .stat-value {
-        font-size: 40px;
-        font-weight: 800;
-        color: #0d1f3c;
+        font-size: 44px;
+        font-weight: 900;
+        color: #1e293b;
         margin: 12px 0 8px 0;
         letter-spacing: -0.5px;
+        position: relative;
+        z-index: 1;
     }
 
     .stat-label {
         font-size: 12px;
-        color: #6b7280;
-        font-weight: 700;
+        color: #64748b;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 1.2px;
+        position: relative;
+        z-index: 1;
     }
 
     .stat-icon {
         font-size: 2.5rem;
-        opacity: 0.15;
+        opacity: 0.1;
         position: absolute;
         right: 15px;
         top: 15px;
+        color: #3b82f6;
     }
 
     .dashboard-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-        border-radius: 16px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 20px;
         padding: 2.25rem;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 2px solid #d1d5db;
+        border: none;
         position: relative;
         overflow: hidden;
     }
@@ -275,30 +279,30 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
-        border-radius: 16px 16px 0 0;
+        height: 5px;
+        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        border-radius: 20px 20px 0 0;
     }
 
     .dashboard-card:hover {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 24px 48px rgba(59, 130, 246, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
         transform: translateY(-8px);
     }
 
     .dashboard-card h5 {
-        color: #1f2937;
+        color: #1e293b;
         font-weight: 800;
         margin-bottom: 1.75rem;
         margin-top: 0;
         padding-bottom: 1.25rem;
-        border-bottom: 2px solid #d1d5db;
+        border-bottom: 2px solid #e2e8f0;
         font-size: 18px;
         letter-spacing: -0.3px;
     }
     
     .dashboard-card h5 i {
-        color: #374151;
+        color: #3b82f6;
+        margin-right: 0.5rem;
     }
 
     .data-table {
@@ -307,10 +311,10 @@
     }
 
     .data-table th {
-        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        color: #1f2937;
-        font-weight: 800;
-        border-bottom: 2px solid #d1d5db;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        color: #1e293b;
+        font-weight: 700;
+        border-bottom: 2px solid #cbd5e1;
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
@@ -321,8 +325,8 @@
         padding: 1.25rem 1rem;
         vertical-align: middle;
         font-weight: 500;
-        color: #1f2937;
-        border-bottom: 1px solid #e5e7eb;
+        color: #0f172a;
+        border-bottom: 1px solid #e2e8f0;
     }
 
     .data-table tbody tr:last-child td {
@@ -330,13 +334,13 @@
     }
 
     .data-table tbody tr:hover {
-        background: linear-gradient(90deg, #fafbfc 0%, #f3f4f6 100%);
+        background: linear-gradient(90deg, #f8fafc 0%, #eef2f5 100%);
     }
 
     .badge-role {
         font-size: 11px;
-        padding: 6px 12px;
-        border-radius: 6px;
+        padding: 8px 12px;
+        border-radius: 8px;
         font-weight: 700;
         display: inline-block;
         text-transform: uppercase;
@@ -344,37 +348,37 @@
     }
 
     .badge-admin {
-        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-        color: #7c2d12;
-        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
     }
 
     .badge-employer {
-        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-        color: #1e3a8a;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        color: #3730a3;
+        box-shadow: 0 2px 8px rgba(55, 48, 163, 0.15);
     }
 
     .badge-jobseeker {
-        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
-        color: #15803d;
-        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+        background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+        color: #0d9488;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
     }
 
     .badge-active {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        color: #166534;
+        box-shadow: 0 2px 8px rgba(22, 101, 52, 0.15);
     }
 
     .badge-pending {
-        background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         color: #92400e;
-        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        box-shadow: 0 2px 8px rgba(146, 64, 14, 0.15);
     }
 
     .badge-closed {
-        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         color: #374151;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
@@ -442,18 +446,18 @@
 
     /* Top Bar with Title */
     .admin-topbar {
-        background: linear-gradient(135deg, rgba(26, 45, 69, 0.8) 0%, rgba(20, 35, 60, 0.8) 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         padding: 2rem 2rem;
         margin-bottom: 2.5rem;
-        border-bottom: 3px solid #d72638;
+        border-bottom: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 2rem;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(215, 38, 56, 0.2);
-        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: none;
+        backdrop-filter: none;
     }
 
     .admin-topbar-left {
@@ -467,11 +471,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         width: 80px;
         height: 80px;
-        border-radius: 14px;
-        box-shadow: 0 8px 20px rgba(215, 38, 56, 0.4);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
         flex-shrink: 0;
     }
 
@@ -488,7 +492,7 @@
 
     .admin-topbar h2 {
         margin: 0;
-        color: #ffffff;
+        color: #1e293b;
         font-weight: 800;
         font-size: 36px;
         letter-spacing: -0.5px;
@@ -496,7 +500,7 @@
 
     .topbar-subtitle {
         font-size: 14px;
-        color: #b0b8d4;
+        color: #64748b;
         font-weight: 600;
         letter-spacing: 0.3px;
     }
@@ -512,10 +516,10 @@
         align-items: center;
         gap: 1.25rem;
         padding: 1rem 1.75rem;
-        background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
-        border-radius: 12px;
-        border: 2px solid rgba(215, 38, 56, 0.3);
-        box-shadow: 0 8px 20px rgba(13, 31, 60, 0.25);
+        background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+        border-radius: 16px;
+        border: 2px solid #bfdbfe;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
     .topbar-time {
@@ -525,21 +529,21 @@
     .topbar-time-display {
         font-size: 22px;
         font-weight: 800;
-        color: white;
+        color: #1e293b;
         line-height: 1.1;
         letter-spacing: -0.3px;
     }
 
     .topbar-date-display {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.75);
+        color: #64748b;
         font-weight: 600;
         letter-spacing: 0.3px;
     }
 
     .topbar-datetime-icon {
         font-size: 28px;
-        color: #d72638;
+        color: #3b82f6;
     }
 
     .toggle-sidebar-btn {
