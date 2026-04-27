@@ -10,16 +10,16 @@
     html, body {
         margin: 0;
         padding: 0;
-        background: #f7f9fc;
-        color: #1f2937;
+        background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
+        color: #e0e7ff;
         font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 400;
         letter-spacing: 0.3px;
     }
 
     body {
-        background: #f7f9fc;
-        color: #1f2937;
+        background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
+        color: #e0e7ff;
     }
     
     .peso-main {
@@ -35,7 +35,7 @@
 
     .admin-sidebar {
         width: 260px;
-        background: linear-gradient(180deg, #0d1f3c 0%, #1a3a5c 100%);
+        background: linear-gradient(180deg, #0a1428 0%, #0f1f35 50%, #08141f 100%);
         color: white;
         padding: 1.5rem 0;
         position: fixed;
@@ -43,7 +43,7 @@
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         z-index: 100;
     }
 
@@ -168,6 +168,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
+        background: linear-gradient(135deg, #0f172a 0%, #1a2d45 50%, #0d1b2a 100%);
     }
 
     .admin-dashboard {
@@ -178,7 +179,8 @@
         background: white;
         border-radius: 10px;
         padding: 2rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e5e7eb;
     }
 
     .dashboard-card h5 {
@@ -193,7 +195,8 @@
         display: flex;
         justify-content: space-between;
         padding: 1rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
     }
 
     .list-item:last-child {

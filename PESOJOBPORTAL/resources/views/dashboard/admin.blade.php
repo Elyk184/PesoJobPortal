@@ -26,8 +26,8 @@
     }
 
     body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        color: #1f2937;
+        background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
+        color: #e0e7ff;
         min-height: 100vh;
     }
     
@@ -44,7 +44,7 @@
 
     .admin-sidebar {
         width: 260px;
-        background: linear-gradient(180deg, #0d1f3c 0%, #1a3a5c 100%);
+        background: linear-gradient(180deg, #0a1428 0%, #0f1f35 50%, #08141f 100%);
         color: white;
         padding: 1.5rem 0;
         position: fixed;
@@ -52,7 +52,7 @@
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         z-index: 100;
     }
 
@@ -185,7 +185,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1a2d45 50%, #0d1b2a 100%);
     }
 
     .admin-dashboard {
@@ -194,15 +194,16 @@
     }
 
     .stat-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border-left: 5px solid #0d1f3c;
+        background: white;
+        border-left: 5px solid #d72638;
         border-radius: 12px;
         padding: 1.75rem;
         margin-bottom: 1rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        border: 1px solid #e5e7eb;
     }
 
     .stat-card::before {
@@ -212,15 +213,15 @@
         right: 0;
         width: 100px;
         height: 100px;
-        background: linear-gradient(135deg, rgba(215, 38, 56, 0.08) 0%, rgba(215, 38, 56, 0) 100%);
+        background: linear-gradient(135deg, rgba(215, 38, 56, 0.15) 0%, rgba(215, 38, 56, 0) 100%);
         border-radius: 50%;
         transform: translate(30%, -30%);
     }
 
     .stat-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        border-left-color: #d72638;
+        box-shadow: 0 16px 40px rgba(215, 38, 56, 0.2);
+        border-left-color: #ff6b7a;
     }
 
     .stat-value {
@@ -252,12 +253,15 @@
         border-radius: 12px;
         padding: 2rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
     }
 
     .dashboard-card:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 12px 40px rgba(215, 38, 56, 0.15);
+        border-color: rgba(215, 38, 56, 0.2);
+        transform: translateY(-4px);
     }
 
     .dashboard-card h5 {
@@ -289,6 +293,8 @@
         padding: 1rem;
         vertical-align: middle;
         font-weight: 500;
+        color: #1f2937;
+        border-bottom: 1px solid #e5e7eb;
     }
 
     .data-table tbody tr:hover {
@@ -403,7 +409,7 @@
 
     /* Top Bar with Title */
     .admin-topbar {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        background: linear-gradient(135deg, rgba(26, 45, 69, 0.8) 0%, rgba(20, 35, 60, 0.8) 100%);
         padding: 2rem 2rem;
         margin-bottom: 2.5rem;
         border-bottom: 3px solid #d72638;
@@ -412,7 +418,9 @@
         align-items: center;
         gap: 2rem;
         border-radius: 0 0 12px 12px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(215, 38, 56, 0.2);
+        backdrop-filter: blur(10px);
     }
 
     .admin-topbar-left {
@@ -447,7 +455,7 @@
 
     .admin-topbar h2 {
         margin: 0;
-        color: #0d1f3c;
+        color: #ffffff;
         font-weight: 800;
         font-size: 36px;
         letter-spacing: -0.5px;
@@ -455,7 +463,7 @@
 
     .topbar-subtitle {
         font-size: 14px;
-        color: #6b7280;
+        color: #b0b8d4;
         font-weight: 600;
         letter-spacing: 0.3px;
     }
