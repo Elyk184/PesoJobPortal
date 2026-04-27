@@ -78,6 +78,40 @@
     ];
 
     $jobPreferenceOccupations = data_get($jobPreferences, 'occupation_text', '');
+
+    $selectedSex = old('personal_information.sex', $personalInformation['sex'] ?? '');
+    $selectedReligion = old('personal_information.religion', $personalInformation['religion'] ?? '');
+    $selectedCivilStatus = old('personal_information.civil_status', $personalInformation['civil_status'] ?? '');
+
+    $sexOptions = [
+        'Male',
+        'Female',
+        'Prefer not to say',
+    ];
+
+    $religionOptions = [
+        'Roman Catholic',
+        'Iglesia ni Cristo',
+        'Islam',
+        'Born Again Christian',
+        'Seventh-day Adventist',
+        'Jehovah\'s Witnesses',
+        'Baptist',
+        'Methodist',
+        'Aglipayan',
+        'Other',
+        'Prefer not to say',
+    ];
+
+    $civilStatusOptions = [
+        'Single',
+        'Married',
+        'Widowed',
+        'Separated',
+        'Divorced',
+        'Annulled',
+        'Prefer not to say',
+    ];
 @endphp
 
 <section class="container py-4" aria-label="Jobseeker profile">
@@ -145,18 +179,36 @@
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold d-block">Sex</label>
-                        <div class="profile-radio-stack">
-                            <label class="profile-radio-item"><input type="radio" name="personal_information[sex]" value="Male" @checked(old('personal_information.sex', $personalInformation['sex'] ?? '') === 'Male')> Male</label>
-                            <label class="profile-radio-item"><input type="radio" name="personal_information[sex]" value="Female" @checked(old('personal_information.sex', $personalInformation['sex'] ?? '') === 'Female')> Female</label>
-                        </div>
+                        <select class="form-select profile-input" name="personal_information[sex]">
+                            @foreach ($sexOptions as $sexOption)
+                                <option value="{{ $sexOption }}" @selected($selectedSex === $sexOption)>{{ $sexOption }}</option>
+                            @endforeach
+                            @if ($selectedSex && !in_array($selectedSex, $sexOptions, true))
+                                <option value="{{ $selectedSex }}" selected>{{ $selectedSex }}</option>
+                            @endif
+                        </select>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Religion</label>
-                        <input class="form-control profile-input" name="personal_information[religion]" value="{{ old('personal_information.religion', $personalInformation['religion'] ?? '') }}">
+                        <select class="form-select profile-input" name="personal_information[religion]">
+                            @foreach ($religionOptions as $religionOption)
+                                <option value="{{ $religionOption }}" @selected($selectedReligion === $religionOption)>{{ $religionOption }}</option>
+                            @endforeach
+                            @if ($selectedReligion && !in_array($selectedReligion, $religionOptions, true))
+                                <option value="{{ $selectedReligion }}" selected>{{ $selectedReligion }}</option>
+                            @endif
+                        </select>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Civil Status</label>
-                        <input class="form-control profile-input" name="personal_information[civil_status]" value="{{ old('personal_information.civil_status', $personalInformation['civil_status'] ?? '') }}">
+                        <select class="form-select profile-input" name="personal_information[civil_status]">
+                            @foreach ($civilStatusOptions as $civilStatusOption)
+                                <option value="{{ $civilStatusOption }}" @selected($selectedCivilStatus === $civilStatusOption)>{{ $civilStatusOption }}</option>
+                            @endforeach
+                            @if ($selectedCivilStatus && !in_array($selectedCivilStatus, $civilStatusOptions, true))
+                                <option value="{{ $selectedCivilStatus }}" selected>{{ $selectedCivilStatus }}</option>
+                            @endif
+                        </select>
                     </div>
 
                     <div class="col-12 col-md-6 col-xl-3">

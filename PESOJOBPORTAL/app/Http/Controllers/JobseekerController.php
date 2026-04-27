@@ -395,7 +395,7 @@ class JobseekerController extends Controller
             'personal_information.middle_initial' => ['nullable', 'string', 'max:10'],
             'personal_information.suffix' => ['nullable', 'string', 'max:50'],
             'personal_information.date_of_birth' => ['nullable', 'date'],
-            'personal_information.sex' => ['nullable', 'in:Male,Female'],
+            'personal_information.sex' => ['nullable', 'in:Male,Female,Prefer not to say'],
             'personal_information.religion' => ['nullable', 'string', 'max:255'],
             'personal_information.civil_status' => ['nullable', 'string', 'max:255'],
             'personal_information.height' => ['nullable', 'string', 'max:20'],
