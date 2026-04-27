@@ -1244,7 +1244,7 @@
     .job-feed {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 0.75rem;
     }
 
     .job-post {
@@ -1264,7 +1264,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1.25rem 1.5rem;
+        padding: 0.875rem 1rem;
         border-bottom: 1px solid #f0f0f0;
     }
 
@@ -1275,15 +1275,15 @@
     }
 
     .job-company-avatar {
-        width: 50px;
-        height: 50px;
+        width: 42px;
+        height: 42px;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        border-radius: 10px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
 
     .job-company-info {
@@ -1294,13 +1294,13 @@
     .job-company-name {
         font-weight: 700;
         color: #1e293b;
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .job-post-date {
-        font-size: 12px;
+        font-size: 11px;
         color: #64748b;
-        margin-top: 2px;
+        margin-top: 1px;
     }
 
     .job-post-status {
@@ -1309,34 +1309,34 @@
     }
 
     .job-post-content {
-        padding: 1.5rem;
+        padding: 0.875rem 1rem;
     }
 
     .job-title {
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 800;
         color: #1e293b;
-        margin: 0 0 0.75rem 0;
+        margin: 0 0 0.4rem 0;
     }
 
     .job-description {
-        font-size: 13px;
+        font-size: 11px;
         color: #475569;
-        line-height: 1.5;
-        margin: 0 0 1rem 0;
+        line-height: 1.4;
+        margin: 0 0 0.6rem 0;
     }
 
     .job-meta {
         display: flex;
-        gap: 1.5rem;
+        gap: 1rem;
         flex-wrap: wrap;
     }
 
     .job-meta-item {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        font-size: 12px;
+        gap: 0.3rem;
+        font-size: 10px;
         color: #64748b;
         font-weight: 600;
     }
@@ -1347,18 +1347,18 @@
     }
 
     .job-post-footer {
-        padding: 0.75rem 1.5rem 1.25rem;
+        padding: 0.5rem 1rem 0.875rem;
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
 
     .job-view-btn {
-        padding: 0.625rem 1.25rem;
+        padding: 0.4rem 0.875rem;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         text-decoration: none;
-        border-radius: 8px;
-        font-size: 12px;
+        border-radius: 6px;
+        font-size: 10px;
         font-weight: 700;
         transition: all 0.2s ease;
         border: none;
