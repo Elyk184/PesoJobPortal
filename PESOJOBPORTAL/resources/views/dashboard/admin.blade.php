@@ -1300,14 +1300,14 @@
     .job-company-name {
         font-weight: 700;
         color: #1e293b;
-        font-size: 10px;
+        font-size: 11px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .job-post-date {
-        font-size: 8px;
+        font-size: 9px;
         color: #64748b;
         margin-top: 0px;
         white-space: nowrap;
@@ -1325,19 +1325,20 @@
     }
 
     .job-title {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 800;
         color: #1e293b;
-        margin: 0 0 0.2rem 0;
+        margin: 0 0 0.3rem 0;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-height: 1.3;
     }
 
     .job-description {
-        font-size: 9px;
+        font-size: 10px;
         color: #475569;
         line-height: 1.3;
         margin: 0 0 0.4rem 0;
@@ -1357,8 +1358,8 @@
     .job-meta-item {
         display: flex;
         align-items: center;
-        gap: 0.15rem;
-        font-size: 7px;
+        gap: 0.2rem;
+        font-size: 9px;
         color: #64748b;
         font-weight: 600;
         white-space: nowrap;
@@ -1366,7 +1367,7 @@
 
     .job-meta-item i {
         color: #3b82f6;
-        font-size: 10px;
+        font-size: 11px;
     }
 
     .job-post-footer {
@@ -1381,7 +1382,7 @@
         color: white;
         text-decoration: none;
         border-radius: 3px;
-        font-size: 7px;
+        font-size: 9px;
         font-weight: 700;
         transition: all 0.2s ease;
         border: none;
