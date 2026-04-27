@@ -1221,7 +1221,7 @@
                                             </div>
                                         </div>
                                         <div class="job-post-footer">
-                                            <a href="{{ route('admin.jobs.review', $job) }}" class="job-view-btn">View Details</a>
+                                            <button type="button" class="job-view-btn" onclick="openJobDetailModal({{ $job->id }})" data-job-id="{{ $job->id }}">View Details</button>
                                         </div>
                                     </div>
                                 @endforeach
@@ -1398,6 +1398,117 @@
         transform: translateY(-1px);
     }
 
+    /* Job Detail Modal Styles */
+    .job-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .job-modal.show {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .job-modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .job-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .job-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #64748b;
+        transition: color 0.2s ease;
+    }
+
+    .job-modal-close:hover {
+        color: #1e293b;
+    }
+
+    .job-modal-body {
+        padding: 1.5rem;
+    }
+
+    .job-detail-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-detail-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-detail-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .job-modal-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1.5rem;
+    }
+
+    .spinner {
+        border: 3px solid #f0f0f0;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
     .job-view-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
@@ -1468,6 +1579,148 @@
     
     // Update every second for live clock
     setInterval(updateDateTime, 1000);
+
+    // Job Detail Modal Functions
+    function openJobDetailModal(jobId) {
+        const modal = document.getElementById('jobDetailModal');
+        const modalContent = document.getElementById('jobDetailContent');
+        
+        // Show loader
+        modalContent.innerHTML = '<div class="job-modal-loader"><div class="spinner"></div></div>';
+        modal.classList.add('show');
+        
+        // Fetch job details via AJAX
+        fetch(`/api/jobs/${jobId}/detail`)
+            .then(response => response.json())
+            .then(data => {
+                renderJobDetailModal(data);
+            })
+            .catch(error => {
+                modalContent.innerHTML = '<div class="job-modal-body"><p class="text-danger">Error loading job details</p></div>';
+            });
+    }
+
+    function closeJobDetailModal() {
+        const modal = document.getElementById('jobDetailModal');
+        modal.classList.remove('show');
+    }
+
+    function renderJobDetailModal(job) {
+        const modalContent = document.getElementById('jobDetailContent');
+        
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        };
+
+        let html = `
+            <div class="job-modal-header">
+                <h4 class="mb-0">${escapeHtml(job.title)}</h4>
+                <button type="button" class="job-modal-close" onclick="closeJobDetailModal()">×</button>
+            </div>
+            <div class="job-modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Company</div>
+                            <div class="job-detail-value">${escapeHtml(job.employer_name)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Status</div>
+                            <div class="job-detail-value">
+                                <span class="badge badge-active">${job.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Location</div>
+                            <div class="job-detail-value">${escapeHtml(job.location)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Employment Type</div>
+                            <div class="job-detail-value">${escapeHtml(job.job_type.replace('_', ' ').toUpperCase())}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Salary Range</div>
+                            <div class="job-detail-value">${escapeHtml(job.salary_range || job.salary || 'Competitive')}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Vacancies</div>
+                            <div class="job-detail-value">${job.vacancies}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="job-detail-section">
+                    <div class="job-detail-label">Description</div>
+                    <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.description)}</div>
+                </div>
+
+                ${job.key_responsibilities ? `
+                    <hr>
+                    <div class="job-detail-section">
+                        <div class="job-detail-label">Key Responsibilities</div>
+                        <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.key_responsibilities)}</div>
+                    </div>
+                ` : ''}
+
+                ${job.qualifications ? `
+                    <hr>
+                    <div class="job-detail-section">
+                        <div class="job-detail-label">Qualifications</div>
+                        <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.qualifications)}</div>
+                    </div>
+                ` : ''}
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="job-detail-label">Posted Date</div>
+                        <div class="job-detail-value">${formatDate(job.created_at)}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">${formatDate(job.application_end_date)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        modalContent.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('jobDetailModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeJobDetailModal();
+        }
+    });
 </script>
 
 <style>
@@ -1493,6 +1746,13 @@
         font-weight: 500;
     }
 </style>
+
+<!-- Job Detail Modal -->
+<div id="jobDetailModal" class="job-modal">
+    <div class="job-modal-content" id="jobDetailContent">
+        <!-- Modal content will be loaded here -->
+    </div>
+</div>
 
 @endsection
 

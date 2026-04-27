@@ -130,6 +130,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/qr-verification', 'admin.qr-verification')->name('qr-verification');
 });
 
+// API routes for AJAX requests
+Route::middleware('auth')->group(function () {
+    Route::get('/api/jobs/{job}/detail', function ($job) {
+        $job = \App\Models\PesoJob::findOrFail($job);
+        return response()->json($job);
+    });
+});
+
 Route::get('/contact', function () {
     return view('contact');
 });
