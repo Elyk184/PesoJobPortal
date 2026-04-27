@@ -47,6 +47,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 // Jobseeker routes (protected)
 Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
     Route::get('/dashboard', [JobseekerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/browse-jobs', [JobseekerController::class, 'browseJobs'])->name('browse-jobs');
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
     Route::get('/recommendations', [JobseekerController::class, 'recommendations'])->name('recommendations');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');

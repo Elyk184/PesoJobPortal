@@ -50,7 +50,7 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Job Search</div>
-            <a href="{{ route('jobseeker.vacancies') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
+            <a href="{{ route('jobseeker.browse-jobs') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.browse-jobs') || request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
                 <i class="bi bi-briefcase"></i>
                 <span>Browse Jobs</span>
             </a>

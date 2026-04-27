@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Vacancies | Jobseeker')
+@section('title', 'Browse Jobs | Jobseeker')
 
 @section('content')
-<section class="container py-4" aria-label="Job vacancies">
+<section class="container py-4" aria-label="Browse jobs">
     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
         <div>
-            <h1 class="mb-1 fw-bold dashboard-section-title">Active Job Vacancies</h1>
-            <p class="mb-0 text-muted">Filter and sort available job posts (static demo).</p>
+            <h1 class="mb-1 fw-bold dashboard-section-title">Browse Jobs</h1>
+            <p class="mb-0 text-muted">This page now renders from browse-jobs.blade.php.</p>
         </div>
         <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger">
             <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
@@ -119,3 +119,4 @@
     </div>
 </section>
 @endsection
+

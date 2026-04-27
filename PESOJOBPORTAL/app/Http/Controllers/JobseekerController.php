@@ -337,6 +337,11 @@ class JobseekerController extends Controller
         ]);
     }
 
+    public function browseJobs(): View
+    {
+        return view('jobseeker.browse-jobs');
+    }
+
     public function applications(Request $request): View
     {
         $statusMap = [

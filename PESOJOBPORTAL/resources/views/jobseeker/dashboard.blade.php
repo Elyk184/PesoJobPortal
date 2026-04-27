@@ -619,7 +619,6 @@
                         <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%;"></div>
                     </div>
                     <div class="quick-actions-grid">
-                        <a href="{{ route('jobseeker.vacancies') }}" class="quick-action-btn"><i class="bi bi-search"></i>Browse Jobs</a>
                         <a href="{{ route('jobseeker.profile') }}" class="quick-action-btn"><i class="bi bi-person"></i>Update Profile</a>
                         <a href="{{ route('jobseeker.resume-builder') }}" class="quick-action-btn"><i class="bi bi-file-earmark-text"></i>Resume Builder</a>
                         <a href="{{ route('jobseeker.applications') }}" class="quick-action-btn"><i class="bi bi-send"></i>My Applications</a>
@@ -821,106 +820,5 @@
         @endif
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 180px;">
-        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
-            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Recently Viewed Jobs</h3>
-            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">Browse More</a>
-        </div>
-
-        @if (($recentlyViewedJobs ?? collect())->isNotEmpty())
-            <div class="row g-3">
-                @foreach ($recentlyViewedJobs as $job)
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="recently-viewed-item">
-                            <div class="recently-viewed-title">{{ $job['title'] }}</div>
-                            <div class="recently-viewed-meta mb-1">{{ $job['location'] }} • {{ $job['employer_name'] }}</div>
-                            @if (! empty($job['salary_range']))
-                                <div class="small mb-1"><strong>Salary:</strong> {{ $job['salary_range'] }}</div>
-                            @endif
-                            <div class="small text-muted">{{ \Illuminate\Support\Str::limit($job['description'], 80) }}</div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div class="dashboard-empty-state">
-                <div>
-                    <div class="empty-icon"><i class="bi bi-clock-history"></i></div>
-                    <div class="fw-semibold text-secondary">No recently viewed jobs yet.</div>
-                    <div class="small">Open the vacancies page to build your recent list.</div>
-                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Go to Vacancies</a>
-                </div>
-            </div>
-        @endif
-    </div>
-
-    <div class="dashboard-section-card p-3 p-lg-4 dashboard-skeleton" style="--skeleton-height: 220px;">
-        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
-            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-stars me-2"></i>Recommended Jobs</h3>
-            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">View All</a>
-        </div>
-
-        @if (($isProfileMatchedRecommendations ?? false) && ! ($isUsingSampleRecommendations ?? false))
-            <div class="alert alert-success py-2 px-3 small mb-3" role="alert">
-                These recommendations are based on your profile details.
-            </div>
-        @endif
-
-        @if (($recommendedJobs ?? collect())->isNotEmpty())
-            @if ($isUsingSampleRecommendations ?? false)
-                <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
-                    Showing sample recommendations while waiting for active job posts.
-                </div>
-            @endif
-
-            <div class="row g-3">
-                @foreach ($recommendedJobs as $job)
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="recommended-job-card d-flex flex-column">
-                            @if (! empty($job['match_score']))
-                                <span class="match-badge"><i class="bi bi-check2-circle"></i>{{ $job['match_score'] }} Match Score</span>
-                            @endif
-
-                            <div class="recommended-job-title mb-1">{{ $job['title'] }}</div>
-                            <div class="recommended-job-meta mb-2">{{ $job['location'] }} • {{ $job['employer_name'] }}</div>
-
-                            @if (! empty($job['match_reasons']))
-                                <div class="match-reason">Why this matches you: {{ implode(', ', array_slice($job['match_reasons'], 0, 2)) }}</div>
-                            @endif
-
-                            @if (! empty($job['salary_range']))
-                                <div class="small mb-2"><strong>Salary:</strong> {{ $job['salary_range'] }}</div>
-                            @endif
-
-                            <p class="small text-muted mb-3">{{ \Illuminate\Support\Str::limit($job['description'], 100) }}</p>
-
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                @forelse (collect($job['requirements_list'])->take(3) as $requirement)
-                                    <span class="badge rounded-pill text-bg-light">{{ $requirement }}</span>
-                                @empty
-                                    <span class="badge rounded-pill text-bg-light">No listed requirements</span>
-                                @endforelse
-                            </div>
-
-                            <div class="mt-auto">
-                                <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary w-100">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div class="dashboard-empty-state">
-                <div>
-                    <div class="empty-icon"><i class="bi bi-briefcase"></i></div>
-                    <div class="fw-semibold text-secondary">No job recommendations yet.</div>
-                    <div class="small">Complete your profile to get personalized job suggestions.</div>
-                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Browse Vacancies</a>
-                </div>
-            </div>
-        @endif
-    </div>
 </section>
 @endsection
