@@ -984,26 +984,6 @@
         <div class="admin-dashboard">
             <!-- Quick Stats -->
             <div class="quick-stats">
-                <div class="stat-card" data-color="primary">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-label">Total Users</div>
-                            <div class="stat-value">{{ $stats['total_users'] }}</div>
-                            <div class="stat-card-subtitle">{{ $stats['total_employers'] }} employers • {{ $stats['total_jobseekers'] }} jobseekers</div>
-                        </div>
-                        <div class="stat-card-icon-box">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                    </div>
-                    <div class="stat-card-mini-chart">
-                        <div class="stat-card-mini-bar high" style="height: 75%;"></div>
-                        <div class="stat-card-mini-bar" style="height: 50%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 85%;"></div>
-                        <div class="stat-card-mini-bar" style="height: 40%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 70%;"></div>
-                    </div>
-                </div>
-
                 <div class="stat-card" data-color="info">
                     <div class="stat-card-header">
                         <div>
@@ -1041,26 +1021,6 @@
                         <div class="stat-card-mini-bar high" style="height: 90%;"></div>
                         <div class="stat-card-mini-bar" style="height: 50%;"></div>
                         <div class="stat-card-mini-bar high" style="height: 70%;"></div>
-                    </div>
-                </div>
-
-                <div class="stat-card" data-color="success">
-                    <div class="stat-card-header">
-                        <div>
-                            <div class="stat-label">System Status</div>
-                            <div class="stat-value" style="font-size: 24px;">●</div>
-                            <div class="stat-card-subtitle">All systems operational</div>
-                        </div>
-                        <div class="stat-card-icon-box">
-                            <i class="bi bi-cloud-check-fill"></i>
-                        </div>
-                    </div>
-                    <div class="stat-card-mini-chart">
-                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 95%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 98%;"></div>
-                        <div class="stat-card-mini-bar high" style="height: 100%;"></div>
                     </div>
                 </div>
 
