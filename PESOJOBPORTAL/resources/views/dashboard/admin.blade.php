@@ -1180,88 +1180,196 @@
             <div class="row">
                 <div class="col-12 mb-4">
                     <div class="dashboard-card">
-                        <h5><i class="bi bi-file-earmark-check me-2"></i>Recent Job Applications</h5>
-                        @if($recentApplications->count() > 0)
-                            <table class="data-table w-100">
-                                <thead>
-                                    <tr>
-                                        <th>Applicant</th>
-                                        <th>Job Title</th>
-                                        <th>Status</th>
-                                        <th>Applied</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($recentApplications as $app)
-                                        <tr>
-                                            <td><strong>{{ Str::limit($app->user->name, 18) }}</strong></td>
-                                            <td>{{ Str::limit($app->job->title ?? 'N/A', 20) }}</td>
-                                            <td>
-                                                @if($app->status === 'accepted')
-                                                    <span class="badge badge-role badge-active">Accepted</span>
-                                                @elseif($app->status === 'rejected')
-                                                    <span class="badge badge-role" style="background: #dc2626; color: white;">Rejected</span>
+                        <h5><i class="bi bi-briefcase me-2"></i>All Posted Jobs</h5>
+                        @if($recentJobs->count() > 0)
+                            <div class="job-feed">
+                                @foreach($recentJobs as $job)
+                                    <div class="job-post">
+                                        <div class="job-post-header">
+                                            <div class="job-post-company">
+                                                <div class="job-company-avatar">
+                                                    <i class="bi bi-building"></i>
+                                                </div>
+                                                <div class="job-company-info">
+                                                    <div class="job-company-name">{{ Str::limit($job->employer_name, 25) }}</div>
+                                                    <div class="job-post-date">Posted {{ $job->created_at->diffForHumans() }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="job-post-status">
+                                                @if($job->status === 'active')
+                                                    <span class="badge badge-role badge-active">Active</span>
+                                                @elseif($job->status === 'closed')
+                                                    <span class="badge badge-role badge-closed">Closed</span>
                                                 @else
                                                     <span class="badge badge-role badge-pending">Pending</span>
                                                 @endif
-                                            </td>
-                                            <td><small>{{ $app->created_at->format('d M') }}</small></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                            </div>
+                                        </div>
+                                        <div class="job-post-content">
+                                            <h6 class="job-title">{{ Str::limit($job->title, 50) }}</h6>
+                                            <p class="job-description">{{ Str::limit($job->description, 120) }}</p>
+                                            <div class="job-meta">
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-geo-alt"></i> {{ Str::limit($job->location ?? 'Remote', 20) }}
+                                                </span>
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-cash-coin"></i> {{ $job->salary_range ?? 'Competitive' }}
+                                                </span>
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-file-text"></i> {{ $job->employment_type ?? 'Full-time' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="job-post-footer">
+                                            <a href="{{ route('admin.jobs.review', $job) }}" class="job-view-btn">View Details</a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         @else
                             <div class="empty-state">
-                                <i class="bi bi-file-earmark-check"></i>
-                                <p>No Recent Applications</p>
-                                <small>Job applications will be displayed here</small>
+                                <i class="bi bi-briefcase"></i>
+                                <p>No Jobs Posted Yet</p>
+                                <small>All job postings will be displayed here</small>
                             </div>
                         @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Role Breakdown & System Info -->
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5><i class="bi bi-pie-chart me-2"></i>User Role Distribution</h5>
-                        <div class="list-item">
-                            <span class="list-item-label">👔 Employers</span>
-                            <span class="list-item-value">{{ $stats['total_employers'] }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">👤 Jobseekers</span>
-                            <span class="list-item-value">{{ $stats['total_jobseekers'] }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">🔐 Admins</span>
-                            <span class="list-item-value">{{ $stats['total_admins'] }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5><i class="bi bi-info-circle me-2"></i>System Information</h5>
-                        <div class="list-item">
-                            <span class="list-item-label">Current Time</span>
-                            <span class="list-item-value">{{ now()->format('H:i') }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">Today's Date</span>
-                            <span class="list-item-value">{{ now()->format('d M, Y') }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">Status</span>
-                            <span class="list-item-value" style="color: #10b981;">✓ Online</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 </div>
+
+<style>
+    .job-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .job-post {
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .job-post:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .job-post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .job-post-company {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+    }
+
+    .job-company-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.75rem;
+    }
+
+    .job-company-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .job-company-name {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 14px;
+    }
+
+    .job-post-date {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+
+    .job-post-status {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .job-post-content {
+        padding: 1.5rem;
+    }
+
+    .job-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 0.75rem 0;
+    }
+
+    .job-description {
+        font-size: 13px;
+        color: #475569;
+        line-height: 1.5;
+        margin: 0 0 1rem 0;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .job-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .job-meta-item i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
+
+    .job-post-footer {
+        padding: 0.75rem 1.5rem 1.25rem;
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .job-view-btn {
+        padding: 0.625rem 1.25rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .job-view-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    }
+</style>
 
 <script>
     // Sidebar toggle for mobile
