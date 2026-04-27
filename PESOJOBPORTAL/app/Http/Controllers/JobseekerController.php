@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserProfile;
 use App\Models\User;
+use App\Models\CompanyProfile;
 use App\Models\UserNotification;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
@@ -339,7 +340,41 @@ class JobseekerController extends Controller
 
     public function browseJobs(): View
     {
-        return view('jobseeker.browse-jobs');
+        $jobsQuery = PesoJob::query()
+            ->where('status', 'active')
+            ->with(['employer.companyProfile']);
+
+        $locations = PesoJob::query()
+            ->where('status', 'active')
+            ->whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->orderBy('location')
+            ->pluck('location')
+            ->values();
+
+        $industries = CompanyProfile::query()
+            ->whereNotNull('industry')
+            ->where('industry', '!=', '')
+            ->distinct()
+            ->orderBy('industry')
+            ->pluck('industry')
+            ->values();
+
+        $barangays = CompanyProfile::query()
+            ->whereNotNull('barangay')
+            ->where('barangay', '!=', '')
+            ->distinct()
+            ->orderBy('barangay')
+            ->pluck('barangay')
+            ->values();
+
+        return view('jobseeker.browse-jobs', [
+            'jobs' => $jobsQuery->latest()->paginate(10)->withQueryString(),
+            'locations' => $locations,
+            'industries' => $industries,
+            'barangays' => $barangays,
+        ]);
     }
 
     public function applications(Request $request): View

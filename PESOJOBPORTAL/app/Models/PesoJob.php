@@ -39,7 +39,7 @@ class PesoJob extends Model
         'approved_by',
         'rejection_reason',
     ];
-    
+
     protected $attributes = [
         'status' => 'pending', // Default status for admin approval
     ];
@@ -51,6 +51,16 @@ class PesoJob extends Model
         'filled_at' => 'datetime',
         'is_filled' => 'boolean',
     ];
+
+    public function getEmploymentTypeAttribute(): ?string
+    {
+        return $this->attributes['job_type'] ?? null;
+    }
+
+    public function getApplicationDeadlineAttribute()
+    {
+        return $this->application_end_date;
+    }
 
     public function applications()
     {

@@ -1,122 +1,348 @@
-@extends('layouts.dashboard')
+@extends('dashboard.layouts.jobseeker')
 
-@section('title', 'Browse Jobs | Jobseeker')
+@section('title', 'Browse Jobs - PESO')
+@section('page-title', 'Browse Jobs')
+@section('page-subtitle', 'Find your dream job')
 
 @section('content')
-<section class="container py-4" aria-label="Browse jobs">
-    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
-        <div>
-            <h1 class="mb-1 fw-bold dashboard-section-title">Browse Jobs</h1>
-            <p class="mb-0 text-muted">This page now renders from browse-jobs.blade.php.</p>
-        </div>
-        <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger">
-            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-        </a>
-    </div>
-
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h5 class="card-title fw-semibold mb-3">Filters</h5>
-            <form class="row g-3" action="#" method="GET">
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label class="form-label">Location</label>
-                    <select class="form-select" disabled>
-                        <option selected>All locations</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label class="form-label">Industry</label>
-                    <select class="form-select" disabled>
-                        <option selected>All industries</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label class="form-label">Skills</label>
-                    <input class="form-control" placeholder="e.g., cashier, driving" disabled />
-                </div>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <label class="form-label">Barangay</label>
-                    <select class="form-select" disabled>
-                        <option selected>All barangays</option>
-                    </select>
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label">Sort</label>
-                    <select class="form-select" disabled>
-                        <option selected>Newest</option>
-                        <option>Expiring soon</option>
-                    </select>
-                </div>
-
-                <div class="col-12 col-lg-6 d-flex align-items-end justify-content-lg-end">
-                    <button class="btn btn-danger" type="button" disabled>
-                        <i class="bi bi-funnel me-2"></i>Apply Filters
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="row g-3">
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <h5 class="card-title fw-semibold mb-1">Office Staff / Admin Assistant</h5>
-                        <span class="badge text-bg-success">Open</span>
+<div class="row">
+    <!-- Job Listings - Full Width with Horizontal Filters -->
+    <div class="col-12">
+        <!-- Horizontal Filters Section -->
+        <div class="jobseeker-card mb-4">
+            <div class="jobseeker-card-body p-3">
+                <form action="{{ route('jobseeker.browse-jobs') }}" method="GET" id="filterForm">
+                    <!-- Filter Header with Toggle -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">
+                            <i class="bi bi-funnel me-2"></i>Filters
+                            @if(request()->has('search') || request()->has('location') || request()->has('industry') || request()->has('barangay') || request()->has('employment_type'))
+                                <span class="badge bg-primary ms-2">Active</span>
+                            @endif
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Clear All
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-primary d-lg-none" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                                <i class="bi bi-sliders"></i> More
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-muted small mb-3">Manolo Fortich • Admin/Clerical</p>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge rounded-pill text-bg-light">MS Office</span>
-                        <span class="badge rounded-pill text-bg-light">Filing</span>
-                        <span class="badge rounded-pill text-bg-light">Encoding</span>
+
+                    <!-- Horizontal Filter Row -->
+                    <div class="filter-row">
+                        <div class="row g-2">
+                            <!-- Search -->
+                            <div class="col-12 col-lg-3">
+                                <label class="form-label small fw-semibold">Search</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" name="search" class="form-control" placeholder="Job title, keywords..." value="{{ request('search') }}">
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="col-6 col-lg-2">
+                                <label class="form-label small fw-semibold">Location</label>
+                                <select name="location" class="form-select form-select-sm">
+                                    <option value="">All Locations</option>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>
+                                            {{ $location }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Industry -->
+                            <div class="col-6 col-lg-2">
+                                <label class="form-label small fw-semibold">Industry</label>
+                                <select name="industry" class="form-select form-select-sm">
+                                    <option value="">All Industries</option>
+                                    @foreach($industries as $industry)
+                                        <option value="{{ $industry }}" {{ request('industry') == $industry ? 'selected' : '' }}>
+                                            {{ $industry }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Employment Type -->
+                            <div class="col-6 col-lg-2">
+                                <label class="form-label small fw-semibold">Employment Type</label>
+                                <select name="employment_type" class="form-select form-select-sm">
+                                    <option value="">All Types</option>
+                                    <option value="full-time" {{ request('employment_type') == 'full-time' ? 'selected' : '' }}>Full Time</option>
+                                    <option value="part-time" {{ request('employment_type') == 'part-time' ? 'selected' : '' }}>Part Time</option>
+                                    <option value="contract" {{ request('employment_type') == 'contract' ? 'selected' : '' }}>Contract</option>
+                                    <option value="internship" {{ request('employment_type') == 'internship' ? 'selected' : '' }}>Internship</option>
+                                </select>
+                            </div>
+
+                            <!-- Sort -->
+                            <div class="col-6 col-lg-2">
+                                <label class="form-label small fw-semibold">Sort By</label>
+                                <select name="sort" class="form-select form-select-sm">
+                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                    <option value="expiring" {{ request('sort') == 'expiring' ? 'selected' : '' }}>Expiring Soon</option>
+                                    <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Highest Salary</option>
+                                    <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Lowest Salary</option>
+                                </select>
+                            </div>
+
+                            <!-- Apply Button -->
+                            <div class="col-12 col-lg-1 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="bi bi-funnel me-1"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Additional Filters -->
+                        <div class="collapse mt-3" id="filterCollapse">
+                            <div class="row g-2 pt-2 border-top">
+                                <!-- Barangay -->
+                                <div class="col-6 col-lg-3">
+                                    <label class="form-label small fw-semibold">Barangay</label>
+                                    <select name="barangay" class="form-select form-select-sm">
+                                        <option value="">All Barangays</option>
+                                        @foreach($barangays as $barangay)
+                                            <option value="{{ $barangay }}" {{ request('barangay') == $barangay ? 'selected' : '' }}>
+                                                {{ $barangay }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-outline-danger w-100" type="button" disabled>
-                        <i class="bi bi-send me-2"></i>Apply (coming soon)
-                    </button>
-                </div>
+
+                    <!-- Active Filter Tags -->
+                    @if(request()->has('search') || request()->has('location') || request()->has('industry') || request()->has('barangay') || request()->has('employment_type'))
+                        <div class="mt-3 pt-2 border-top">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <small class="text-muted me-2">Active Filters:</small>
+                                @if(request('search'))
+                                    <span class="badge bg-light text-dark border">
+                                        Search: {{ request('search') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="text-decoration-none ms-1">&times;</a>
+                                    </span>
+                                @endif
+                                @if(request('location'))
+                                    <span class="badge bg-light text-dark border">
+                                        Location: {{ request('location') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['location' => null]) }}" class="text-decoration-none ms-1">&times;</a>
+                                    </span>
+                                @endif
+                                @if(request('industry'))
+                                    <span class="badge bg-light text-dark border">
+                                        Industry: {{ request('industry') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['industry' => null]) }}" class="text-decoration-none ms-1">&times;</a>
+                                    </span>
+                                @endif
+                                @if(request('barangay'))
+                                    <span class="badge bg-light text-dark border">
+                                        Barangay: {{ request('barangay') }}
+                                        <a href="{{ request()->fullUrlWithQuery(['barangay' => null]) }}" class="text-decoration-none ms-1">&times;</a>
+                                    </span>
+                                @endif
+                                @if(request('employment_type'))
+                                    <span class="badge bg-light text-dark border">
+                                        Type: {{ ucfirst(request('employment_type')) }}
+                                        <a href="{{ request()->fullUrlWithQuery(['employment_type' => null]) }}" class="text-decoration-none ms-1">&times;</a>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </form>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <h5 class="card-title fw-semibold mb-1">Construction Laborer</h5>
-                        <span class="badge text-bg-success">Open</span>
-                    </div>
-                    <p class="text-muted small mb-3">Barangay Damilag • Construction</p>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge rounded-pill text-bg-light">Basic tools</span>
-                        <span class="badge rounded-pill text-bg-light">Safety</span>
-                    </div>
-                    <button class="btn btn-outline-danger w-100" type="button" disabled>
-                        <i class="bi bi-send me-2"></i>Apply (coming soon)
-                    </button>
-                </div>
+        <!-- Job Listings -->
+        <div class="jobseeker-card">
+            <div class="jobseeker-card-header">
+                <h5 class="jobseeker-card-title">
+                    <i class="bi bi-briefcase me-2"></i>Available Jobs
+                    <span class="badge bg-primary ms-2">{{ $jobs->total() }}</span>
+                </h5>
+                <small class="text-muted">Page {{ $jobs->currentPage() }} of {{ $jobs->lastPage() }}</small>
             </div>
-        </div>
+            <div class="jobseeker-card-body p-0">
+                @if($jobs->count() > 0)
+                    <div class="job-list">
+                        @foreach($jobs as $job)
+                            <div class="job-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h5 class="job-title mb-1">
+                                            <a href="{{ route('jobs.index') }}">{{ $job->title }}</a>
+                                        </h5>
+                                        <p class="text-muted mb-1">
+                                            <i class="bi bi-building me-1"></i>{{ $job->company_name ?? 'Company' }}
+                                            <span class="mx-2">|</span>
+                                            <i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
+                                        </p>
+                                        <div class="job-tags">
+                                            <span class="job-tag">
+                                                <i class="bi bi-clock me-1"></i>{{ ucfirst($job->employment_type) }}
+                                            </span>
+                                            @if($job->salary_min || $job->salary_max)
+                                                <span class="job-tag">
+                                                    <i class="bi bi-currency-dollar me-1"></i>
+                                                    @if($job->salary_min && $job->salary_max)
+                                                        ₱{{ number_format($job->salary_min) }} - ₱{{ number_format($job->salary_max) }}
+                                                    @elseif($job->salary_min)
+                                                        From ₱{{ number_format($job->salary_min) }}
+                                                    @else
+                                                        Up to ₱{{ number_format($job->salary_max) }}
+                                                    @endif
+                                                </span>
+                                            @endif
+                                            @if($job->application_deadline)
+                                                <span class="job-tag job-tag-{{ $job->application_deadline->isPast() ? 'danger' : ($job->application_deadline->diffInDays() <= 7 ? 'warning' : 'success') }}">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    @if($job->application_deadline->isPast())
+                                                        Expired
+                                                    @else
+                                                        Expires {{ $job->application_deadline->format('M d, Y') }}
+                                                    @endif
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <div class="job-actions">
+                                            <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                            @auth
+                                                @php
+                                                    $isSaved = \App\Models\SavedJob::where('job_post_id', $job->id)->where('user_id', auth()->id())->exists();
+                                                @endphp
+                                                @if($isSaved)
+                                                    <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-warning" title="Unsave">
+                                                            <i class="bi bi-bookmark-dash"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Save">
+                                                            <i class="bi bi-bookmark"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            @endauth
+                                        </div>
+                                        <small class="text-muted d-block mt-2">
+                                            Posted {{ $job->created_at->diffForHumans() }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
 
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <h5 class="card-title fw-semibold mb-1">Cashier</h5>
-                        <span class="badge text-bg-warning">Expiring soon</span>
+                    <!-- Pagination -->
+                    <div class="p-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                Showing {{ $jobs->firstItem() }} to {{ $jobs->lastItem() }} of {{ $jobs->total() }} jobs
+                            </small>
+                            {{ $jobs->appends(request()->query())->links() }}
+                        </div>
                     </div>
-                    <p class="text-muted small mb-3">Barangay Tankulan • Retail</p>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge rounded-pill text-bg-light">Customer service</span>
-                        <span class="badge rounded-pill text-bg-light">POS</span>
+                @else
+                    <div class="text-center py-5">
+                        <i class="bi bi-briefcase display-1 text-muted"></i>
+                        <h5 class="mt-3">No jobs found</h5>
+                        <p class="text-muted">Try adjusting your filters or check back later for new opportunities.</p>
+                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-primary">
+                            Clear Filters
+                        </a>
                     </div>
-                    <button class="btn btn-outline-danger w-100" type="button" disabled>
-                        <i class="bi bi-send me-2"></i>Apply (coming soon)
-                    </button>
-                </div>
+                @endif
             </div>
         </div>
     </div>
-</section>
+</div>
+
+<style>
+    .filter-row {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .job-list {
+        display: flex;
+        flex-direction: column;
+    }
+    .job-item {
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+    }
+    .job-item:last-child {
+        border-bottom: none;
+    }
+    .job-item:hover {
+        background: #f8f9fa;
+    }
+    .job-title a {
+        color: #2c3e50;
+        text-decoration: none;
+    }
+    .job-title a:hover {
+        color: #3498db;
+    }
+    .job-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .job-tag {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #f0f0f0;
+        color: #666;
+    }
+    .job-tag-success { background: rgba(25, 135, 84, 0.1); color: #198754; }
+    .job-tag-warning { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .job-tag-danger { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .job-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991px) {
+        .job-actions {
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
+    }
+
+    /* Form controls styling */
+    .form-select-sm, .form-control-sm {
+        border-radius: 6px;
+    }
+
+    .input-group-text {
+        background: #fff;
+        border-radius: 6px 0 0 6px;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 6px 6px 0;
+    }
+</style>
 @endsection
 
