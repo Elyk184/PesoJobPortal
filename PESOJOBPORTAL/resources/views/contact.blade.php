@@ -229,6 +229,49 @@
 
 @push('scripts')
     <script>
+        let chatCooldownUntil = 0;
+        let chatCooldownTimer = null;
+
+        function setChatSendEnabled(isEnabled, cooldownSeconds = null) {
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send-btn');
+
+            input.disabled = !isEnabled;
+            sendBtn.disabled = !isEnabled;
+
+            if (isEnabled) {
+                sendBtn.textContent = 'Send';
+                return;
+            }
+
+            if (typeof cooldownSeconds === 'number') {
+                sendBtn.textContent = `Wait ${cooldownSeconds}s`;
+            }
+        }
+
+        function startChatCooldown(seconds) {
+            const safeSeconds = Number.isFinite(seconds) ? Math.max(1, Math.floor(seconds)) : 60;
+            chatCooldownUntil = Date.now() + (safeSeconds * 1000);
+            setChatSendEnabled(false, safeSeconds);
+
+            if (chatCooldownTimer) {
+                clearInterval(chatCooldownTimer);
+            }
+
+            chatCooldownTimer = setInterval(() => {
+                const remaining = Math.max(0, Math.ceil((chatCooldownUntil - Date.now()) / 1000));
+                if (remaining <= 0) {
+                    clearInterval(chatCooldownTimer);
+                    chatCooldownTimer = null;
+                    chatCooldownUntil = 0;
+                    setChatSendEnabled(true);
+                    return;
+                }
+
+                setChatSendEnabled(false, remaining);
+            }, 1000);
+        }
+
         function toggleChat() {
             const win = document.getElementById('chat-window');
             win.classList.toggle('hidden');
@@ -248,11 +291,14 @@
 
         async function sendMessage() {
             const input = document.getElementById('chat-input');
+            if (Date.now() < chatCooldownUntil) return;
+
             const message = input.value.trim();
             if (!message) return;
 
             appendMessage('user', message);
             input.value = '';
+            setChatSendEnabled(false);
 
             appendMessage('bot', '...');
             const dots = document.getElementById('chat-messages').lastChild;
@@ -267,9 +313,18 @@
                     body: JSON.stringify({ message })
                 });
                 const data = await res.json();
+                if (res.status === 429) {
+                    const cooldownSeconds = Number(data.cooldown_seconds ?? res.headers.get('Retry-After') ?? 60);
+                    dots.textContent = data.reply ?? 'Rate limit reached. Please wait and try again.';
+                    startChatCooldown(cooldownSeconds);
+                    return;
+                }
+
                 dots.textContent = data.reply ?? 'Sorry, I couldn\'t get a response.';
+                setChatSendEnabled(true);
             } catch {
                 dots.textContent = 'Something went wrong. Please try again.';
+                setChatSendEnabled(true);
             }
         }
 
