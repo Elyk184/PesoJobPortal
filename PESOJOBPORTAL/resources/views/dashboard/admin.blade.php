@@ -1177,7 +1177,7 @@
             </div>
 
             <!-- Recent Applications -->
-            <div class="row">
+            <div class="row jobs-container">
                 <div class="col-12 mb-4">
                     <div class="dashboard-card">
                         <h5><i class="bi bi-briefcase me-2"></i>All Posted Jobs</h5>
@@ -1242,11 +1242,66 @@
 </div>
 
 <style>
+    .jobs-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 280px);
+        overflow: hidden;
+    }
+
+    .jobs-container .col-12 {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .jobs-container .dashboard-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .jobs-container .dashboard-card > h5 {
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+    }
+
     .job-feed {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 1rem;
         max-width: 100%;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .job-feed::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .job-feed::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .job-feed::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .job-feed::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .job-post {
