@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', strtoupper($activityRequest->activity_type) . ' Request - Review')
 
