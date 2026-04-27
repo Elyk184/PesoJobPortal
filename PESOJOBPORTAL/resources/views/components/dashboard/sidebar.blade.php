@@ -54,7 +54,7 @@
                 <i class="bi bi-briefcase"></i>
                 <span>Browse Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.saved-jobs') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.saved-jobs') ? 'is-active' : '' }}">
                 <i class="bi bi-bookmark"></i>
                 <span>Saved Jobs</span>
             </a>

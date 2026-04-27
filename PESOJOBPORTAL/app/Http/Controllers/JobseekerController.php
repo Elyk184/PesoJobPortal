@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
+use App\Models\SavedJob;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -544,6 +545,73 @@ class JobseekerController extends Controller
 
         return view('jobseeker.skill-gap', [
             'skillGapAnalysis' => $skillGapAnalysis,
+        ]);
+    }
+
+    public function savedJobs(): View
+    {
+        $userId = (int) Auth::id();
+
+        $savedJobIds = SavedJob::query()
+            ->where('user_id', $userId)
+            ->pluck('job_id')
+            ->all();
+
+        $savedJobs = collect();
+
+        if (! empty($savedJobIds)) {
+            $savedJobs = PesoJob::query()
+                ->whereIn('id', $savedJobIds)
+                ->where('status', 'active')
+                ->latest()
+                ->get()
+                ->map(function (PesoJob $job) {
+                    return [
+                        'id' => $job->id,
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                        'requirements_list' => $this->extractJobRequirements($job),
+                        'created_at' => $job->created_at,
+                    ];
+                });
+        }
+
+        return view('jobseeker.saved-jobs', [
+            'savedJobs' => $savedJobs,
+            'savedCount' => $savedJobs->count(),
+        ]);
+    }
+
+    public function toggleSaveJob(PesoJob $job): JsonResponse
+    {
+        $userId = (int) Auth::id();
+
+        $existing = SavedJob::query()
+            ->where('user_id', $userId)
+            ->where('job_id', $job->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $saved = false;
+        } else {
+            SavedJob::create([
+                'user_id' => $userId,
+                'job_id' => $job->id,
+            ]);
+            $saved = true;
+        }
+
+        $savedCount = SavedJob::query()
+            ->where('user_id', $userId)
+            ->count();
+
+        return response()->json([
+            'saved' => $saved,
+            'saved_count' => $savedCount,
         ]);
     }
 
