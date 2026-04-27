@@ -86,7 +86,7 @@
                 <i class="bi bi-file-earmark-text"></i>
                 <span>Resume Builder</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.skill-gap') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.skill-gap') ? 'is-active' : '' }}">
                 <i class="bi bi-graph-up"></i>
                 <span>Skill Gap</span>
             </a>

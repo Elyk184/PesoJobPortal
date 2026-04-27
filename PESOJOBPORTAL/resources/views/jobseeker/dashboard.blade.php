@@ -419,6 +419,106 @@
         color: #60758e;
     }
 
+    .jobseeker-dashboard .skill-gap-card {
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        background: #fbfdff;
+        padding: 14px;
+        height: 100%;
+    }
+
+    .jobseeker-dashboard .skill-gap-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .jobseeker-dashboard .skill-gap-score {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #2f4561;
+    }
+
+    .jobseeker-dashboard .skill-gap-score-label {
+        font-size: 0.72rem;
+        color: #60758e;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .jobseeker-dashboard .skill-gap-progress {
+        height: 10px;
+        border-radius: 999px;
+        background: #e7edf5;
+        overflow: hidden;
+        margin-bottom: 14px;
+    }
+
+    .jobseeker-dashboard .skill-gap-progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #3f8efc 0%, #2f8f5e 100%);
+        transition: width 0.6s ease;
+    }
+
+    .jobseeker-dashboard .skill-gap-progress-fill.low {
+        background: linear-gradient(90deg, #ef4444 0%, #f59e0b 100%);
+    }
+
+    .jobseeker-dashboard .skill-gap-progress-fill.medium {
+        background: linear-gradient(90deg, #f59e0b 0%, #3f8efc 100%);
+    }
+
+    .jobseeker-dashboard .skill-tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .jobseeker-dashboard .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        border: 1px solid #dbe5f1;
+        background: #f7faff;
+        color: #3b536e;
+    }
+
+    .jobseeker-dashboard .skill-tag.matched {
+        background: #f0fbf5;
+        color: #277b49;
+        border-color: #c8e9d9;
+    }
+
+    .jobseeker-dashboard .skill-tag.missing {
+        background: #fff5f5;
+        color: #b54708;
+        border-color: #fcd5d5;
+    }
+
+    .jobseeker-dashboard .skill-tag.user-skill {
+        background: #eef4ff;
+        color: #2d65b1;
+        border-color: #c7d8f5;
+    }
+
+    .jobseeker-dashboard .skill-section-title {
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #647a92;
+        margin-bottom: 6px;
+        margin-top: 12px;
+    }
+
     .jobseeker-dashboard .empty-icon {
         width: 54px;
         height: 54px;
@@ -676,6 +776,49 @@
                 <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['recommended'] ?? 0 }}">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
             </a>
         </div>
+    </div>
+
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 120px;">
+        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-diagram-3 me-2"></i>Skill Gap Analysis</h3>
+            <a href="{{ route('jobseeker.skill-gap') }}" class="btn btn-sm btn-outline-primary">View Full Analysis</a>
+        </div>
+
+        @if (($skillGapAnalysis['hasData'] ?? false) && ($skillGapAnalysis['totalMarketSkills'] ?? 0) > 0)
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="min-width: 80px;">
+                        <div class="skill-gap-score">{{ $skillGapAnalysis['coveragePercent'] }}%</div>
+                        <div class="skill-gap-score-label">Coverage</div>
+                    </div>
+                    <div class="skill-gap-progress flex-grow-1" style="min-width: 200px; margin-bottom: 0;">
+                        @php
+                            $progressClass = ($skillGapAnalysis['coveragePercent'] ?? 0) >= 70 ? '' : (($skillGapAnalysis['coveragePercent'] ?? 0) >= 40 ? 'medium' : 'low');
+                        @endphp
+                        <div class="skill-gap-progress-fill {{ $progressClass }}" style="width: {{ $skillGapAnalysis['coveragePercent'] }}%;"></div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="text-center">
+                        <div class="fw-bold" style="color: #277b49; font-size: 1.1rem;">{{ count($skillGapAnalysis['matchedSkills'] ?? []) }}</div>
+                        <div class="small text-muted">Matched</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold" style="color: #b54708; font-size: 1.1rem;">{{ count($skillGapAnalysis['missingSkills'] ?? []) }}</div>
+                        <div class="small text-muted">Missing</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold" style="font-size: 1.1rem;">{{ $skillGapAnalysis['totalMarketSkills'] }}</div>
+                        <div class="small text-muted">Market Skills</div>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="d-flex align-items-center justify-content-between gap-3">
+                <div class="text-muted small">Complete your profile to see how your skills compare with market demand.</div>
+                <a href="{{ route('jobseeker.profile') }}" class="btn btn-sm btn-outline-secondary">Go to Profile</a>
+            </div>
+        @endif
     </div>
 
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 180px;">

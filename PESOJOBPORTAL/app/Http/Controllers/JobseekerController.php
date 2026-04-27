@@ -194,6 +194,8 @@ class JobseekerController extends Controller
             ? $notifications->filter(fn ($item) => Carbon::parse($item['created_at'])->gt($notificationsReadAt))->count()
             : $notifications->count();
 
+        $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
+
         return view('jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
             'profileCompletionPercent' => $profileCompletionPercent,
@@ -211,6 +213,7 @@ class JobseekerController extends Controller
                 'applicationsThisWeek' => $applicationsThisWeek,
                 'interviewsThisWeek' => $interviewsThisWeek,
             ],
+            'skillGapAnalysis' => $skillGapAnalysis,
         ]);
     }
 
@@ -530,6 +533,17 @@ class JobseekerController extends Controller
         return response()->json([
             'ok' => true,
             'unread_count' => (int) $unreadCount,
+        ]);
+    }
+
+    public function skillGap(): View
+    {
+        $user = Auth::user();
+        $profile = $user?->profile;
+        $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
+
+        return view('jobseeker.skill-gap', [
+            'skillGapAnalysis' => $skillGapAnalysis,
         ]);
     }
 
@@ -1372,6 +1386,181 @@ class JobseekerController extends Controller
         return collect($terms)
             ->filter(fn ($term) => $term !== '' && str_contains($haystack, mb_strtolower((string) $term)))
             ->count();
+    }
+
+    private function buildSkillGapAnalysis(?UserProfile $profile): array
+    {
+        if (! $profile) {
+            return [
+                'hasData' => false,
+                'userSkills' => [],
+                'marketSkills' => [],
+                'matchedSkills' => [],
+                'missingSkills' => [],
+                'coveragePercent' => 0,
+                'totalMarketSkills' => 0,
+            ];
+        }
+
+        // Extract user skills from profile
+        $userSkills = collect();
+
+        // Primary skills array
+        $userSkills = $userSkills->merge($profile->skills ?? []);
+
+        // Other skills categories
+        $otherSkills = $profile->other_skills ?? [];
+        $userSkills = $userSkills
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''));
+
+        // Training skills
+        $trainingSkills = collect($profile->training ?? [])
+            ->pluck('skills')
+            ->filter()
+            ->flatMap(function ($skillsText) {
+                return collect(preg_split('/[\r\n,]+/', (string) $skillsText) ?: [])
+                    ->map(fn ($s) => trim($s))
+                    ->filter();
+            });
+        $userSkills = $userSkills->merge($trainingSkills);
+
+        // Experience titles
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->filter()
+            ->map(fn ($t) => trim((string) $t));
+        $userSkills = $userSkills->merge($experienceTitles);
+
+        // Job preference occupation
+        $occupationPref = trim((string) data_get($profile, 'job_preferences.occupation_text', ''));
+        if ($occupationPref !== '') {
+            $userSkills->push($occupationPref);
+        }
+
+        $normalizedUserSkills = $userSkills
+            ->map(fn ($s) => mb_strtolower(trim((string) $s)))
+            ->filter(fn ($s) => mb_strlen($s) >= 2)
+            ->unique()
+            ->values()
+            ->all();
+
+        // Extract market skills from active job postings
+        $activeJobs = PesoJob::query()
+            ->where('status', 'active')
+            ->get(['title', 'description', 'requirements', 'preferred_skills']);
+
+        $marketSkillFrequency = [];
+
+        foreach ($activeJobs as $job) {
+            $jobText = implode(' ', [
+                (string) $job->title,
+                (string) $job->description,
+                (string) $job->getRawOriginal('requirements'),
+                (string) $job->preferred_skills,
+            ]);
+
+            // Extract skill-like terms (words/phrases that appear to be skills)
+            $skillCandidates = $this->extractSkillCandidatesFromText($jobText);
+
+            foreach ($skillCandidates as $candidate) {
+                $normalized = mb_strtolower(trim($candidate));
+                if (mb_strlen($normalized) < 3) {
+                    continue;
+                }
+                $marketSkillFrequency[$normalized] = ($marketSkillFrequency[$normalized] ?? 0) + 1;
+            }
+        }
+
+        // Sort by frequency and take top market skills
+        arsort($marketSkillFrequency);
+        $topMarketSkills = collect($marketSkillFrequency)
+            ->take(20)
+            ->keys()
+            ->values()
+            ->all();
+
+        // Find matches and gaps
+        $matchedSkills = [];
+        $missingSkills = [];
+
+        foreach ($topMarketSkills as $marketSkill) {
+            $isMatched = false;
+            foreach ($normalizedUserSkills as $userSkill) {
+                if (str_contains($marketSkill, $userSkill) || str_contains($userSkill, $marketSkill)) {
+                    $isMatched = true;
+                    break;
+                }
+            }
+            if ($isMatched) {
+                $matchedSkills[] = $marketSkill;
+            } else {
+                $missingSkills[] = $marketSkill;
+            }
+        }
+
+        $totalMarketSkills = count($topMarketSkills);
+        $coveragePercent = $totalMarketSkills > 0
+            ? (int) round((count($matchedSkills) / $totalMarketSkills) * 100)
+            : 0;
+
+        return [
+            'hasData' => true,
+            'userSkills' => array_slice($normalizedUserSkills, 0, 15),
+            'marketSkills' => array_slice($topMarketSkills, 0, 10),
+            'matchedSkills' => array_slice($matchedSkills, 0, 10),
+            'missingSkills' => array_slice($missingSkills, 0, 10),
+            'coveragePercent' => $coveragePercent,
+            'totalMarketSkills' => $totalMarketSkills,
+        ];
+    }
+
+    private function extractSkillCandidatesFromText(string $text): array
+    {
+        $text = mb_strtolower($text);
+
+        // Common skill separators and delimiters
+        $delimiters = '/[\r\n,;·•|\\\/]+/';
+        $parts = preg_split($delimiters, $text) ?: [$text];
+
+        $candidates = [];
+        $stopWords = ['and', 'the', 'for', 'with', 'from', 'that', 'this', 'are', 'your', 'you', 'job', 'work', 'must', 'should', 'will', 'can', 'able', 'years', 'year', 'experience', 'required', 'preferred', 'qualifications', 'responsibilities', 'duties'];
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+
+            // Try the whole part first as a skill phrase
+            $cleanPart = trim(preg_replace('/^[-\s•·]+/', '', $part));
+            if (mb_strlen($cleanPart) >= 3 && mb_strlen($cleanPart) <= 60) {
+                $words = preg_split('/\s+/', $cleanPart) ?: [];
+                $hasOnlyStopWords = true;
+                foreach ($words as $w) {
+                    if (! in_array($w, $stopWords, true)) {
+                        $hasOnlyStopWords = false;
+                        break;
+                    }
+                }
+                if (! $hasOnlyStopWords) {
+                    $candidates[] = $cleanPart;
+                }
+            }
+        }
+
+        // Also extract individual meaningful words as potential skills
+        $words = preg_split('/[\s,;·•()]+/', $text) ?: [];
+        foreach ($words as $word) {
+            $word = trim($word, " \t\n\r\0\x0B.-_()");
+            if (mb_strlen($word) >= 4 && mb_strlen($word) <= 25 && ! in_array($word, $stopWords, true)) {
+                $candidates[] = $word;
+            }
+        }
+
+        return $candidates;
     }
 
     private function sampleVacancies(): array
