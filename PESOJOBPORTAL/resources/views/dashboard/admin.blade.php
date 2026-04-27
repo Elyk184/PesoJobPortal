@@ -1244,13 +1244,13 @@
     .job-feed {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
 
     .job-post {
         background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
+        border-radius: 8px;
         overflow: hidden;
         transition: all 0.3s ease;
     }
@@ -1264,26 +1264,26 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.875rem 1rem;
+        padding: 0.5rem 0.75rem;
         border-bottom: 1px solid #f0f0f0;
     }
 
     .job-post-company {
         display: flex;
         align-items: center;
-        gap: 0.875rem;
+        gap: 0.6rem;
     }
 
     .job-company-avatar {
-        width: 42px;
-        height: 42px;
+        width: 32px;
+        height: 32px;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        border-radius: 8px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 
     .job-company-info {
@@ -1294,13 +1294,13 @@
     .job-company-name {
         font-weight: 700;
         color: #1e293b;
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .job-post-date {
-        font-size: 11px;
+        font-size: 9px;
         color: #64748b;
-        margin-top: 1px;
+        margin-top: 0px;
     }
 
     .job-post-status {
@@ -1309,56 +1309,61 @@
     }
 
     .job-post-content {
-        padding: 0.875rem 1rem;
+        padding: 0.5rem 0.75rem;
     }
 
     .job-title {
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 800;
         color: #1e293b;
-        margin: 0 0 0.4rem 0;
+        margin: 0 0 0.25rem 0;
     }
 
     .job-description {
-        font-size: 11px;
+        font-size: 9px;
         color: #475569;
-        line-height: 1.4;
-        margin: 0 0 0.6rem 0;
+        line-height: 1.3;
+        margin: 0 0 0.4rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .job-meta {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
     }
 
     .job-meta-item {
         display: flex;
         align-items: center;
-        gap: 0.3rem;
-        font-size: 10px;
+        gap: 0.2rem;
+        font-size: 8px;
         color: #64748b;
         font-weight: 600;
     }
 
     .job-meta-item i {
         color: #3b82f6;
-        font-size: 14px;
+        font-size: 10px;
     }
 
     .job-post-footer {
-        padding: 0.5rem 1rem 0.875rem;
+        padding: 0.4rem 0.75rem;
         display: flex;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .job-view-btn {
-        padding: 0.4rem 0.875rem;
+        padding: 0.3rem 0.6rem;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         text-decoration: none;
-        border-radius: 6px;
-        font-size: 10px;
+        border-radius: 4px;
+        font-size: 8px;
         font-weight: 700;
         transition: all 0.2s ease;
         border: none;
