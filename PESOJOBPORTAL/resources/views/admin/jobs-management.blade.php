@@ -2,7 +2,7 @@
 
 @section('title', 'Jobs Management | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Jobs Management', 'subtitle' => 'Manage all job postings', 'icon' => 'bi-briefcase'])
 
 <div class="admin-dashboard">

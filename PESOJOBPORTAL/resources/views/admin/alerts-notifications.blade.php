@@ -2,7 +2,7 @@
 
 @section('title', 'Alerts & Notifications | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Alerts & Notifications', 'subtitle' => 'Manage system alerts and notifications', 'icon' => 'bi-bell'])
 
 <div class="admin-dashboard">

@@ -2,7 +2,7 @@
 
 @section('title', 'Document Verification | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Document Verification', 'subtitle' => 'Review and verify employer-submitted documents', 'icon' => 'bi-file-earmark'])
 
 <div class="admin-dashboard">

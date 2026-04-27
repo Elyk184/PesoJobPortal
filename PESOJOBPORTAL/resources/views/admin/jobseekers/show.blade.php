@@ -2,7 +2,7 @@
 
 @section('title', 'Review Jobseeker | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Jobseeker Review', 'subtitle' => 'Review pending jobseeker registration', 'icon' => 'bi-person-check'])
 
 <div class="admin-dashboard">

@@ -2,7 +2,7 @@
 
 @section('title', 'LRA/SRA Approvals | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'LRA/SRA Approvals', 'subtitle' => 'Review and approve local recruitment and special recruitment agreement requests', 'icon' => 'bi-clipboard-check'])
 
 <div class="admin-dashboard">

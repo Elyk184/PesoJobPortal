@@ -2,7 +2,7 @@
 
 @section('title', 'PESO Clearances | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'PESO Clearances', 'subtitle' => 'Manage PESO clearances', 'icon' => 'bi-clipboard'])
 
 <div class="admin-dashboard">

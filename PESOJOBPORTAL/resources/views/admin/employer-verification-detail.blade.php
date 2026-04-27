@@ -2,7 +2,7 @@
 
 @section('title', 'Company Profile Verification | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Company Profile Review', 'subtitle' => 'Review company profile details', 'icon' => 'bi-building'])
 
 <div class="admin-dashboard">

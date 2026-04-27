@@ -2,7 +2,7 @@
 
 @section('title', 'Job Approvals | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Job Approvals', 'subtitle' => 'Review and approve pending job postings', 'icon' => 'bi-file-check'])
 
 <div class="admin-dashboard">

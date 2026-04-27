@@ -2,7 +2,7 @@
 
 @section('title', 'Barangay Intelligence | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Barangay Intelligence', 'subtitle' => 'Barangay-level employment insights', 'icon' => 'bi-map'])
 
 <div class="admin-dashboard">

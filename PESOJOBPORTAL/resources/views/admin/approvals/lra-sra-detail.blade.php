@@ -2,7 +2,7 @@
 
 @section('title', strtoupper($activityRequest->activity_type) . ' Request - Review')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', [
     'title' => strtoupper($activityRequest->activity_type) . ' Request Review',
     'subtitle' => 'Review and ' . ($activityRequest->status === 'pending' ? 'approve or reject' : 'view') . ' the LRA/SRA request documents',

@@ -2,7 +2,7 @@
 
 @section('title', 'Dynamic Report Builder | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Dynamic Report Builder', 'subtitle' => 'Create custom reports', 'icon' => 'bi-file-earmark-pdf'])
 
 <div class="admin-dashboard">

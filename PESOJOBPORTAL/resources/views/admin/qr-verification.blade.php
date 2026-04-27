@@ -2,7 +2,7 @@
 
 @section('title', 'QR Verification | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'QR Verification', 'subtitle' => 'Verify documents via QR codes', 'icon' => 'bi-qr-code'])
 
 <div class="admin-dashboard">

@@ -2,7 +2,7 @@
 
 @section('title', 'Admin Profile | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Profile', 'subtitle' => 'Manage your admin account settings', 'icon' => 'bi-person-circle'])
 
 <div class="admin-dashboard">

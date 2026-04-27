@@ -2,7 +2,7 @@
 
 @section('title', 'Employment Statistics | PESO Admin')
 
-@section('admin-content')
+@section('content')
 @include('admin.layouts.topbar', ['title' => 'Employment Statistics', 'subtitle' => 'View employment trends and analytics', 'icon' => 'bi-graph-up'])
 
 <div class="admin-dashboard">
