@@ -53,7 +53,7 @@
 }
 
 .history-image-banner p {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 400;
     color: #cbd5e1;
     margin: 0;
@@ -85,10 +85,11 @@
 }
 
 .history-text-col p {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.75;
     color: #4b5563;
     margin: 0 0 14px 0;
+    text-align: justify;
 }
 
 .history-text-col p:last-child {
