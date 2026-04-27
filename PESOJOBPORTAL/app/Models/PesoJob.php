@@ -45,11 +45,14 @@ class PesoJob extends Model
     ];
 
     protected $casts = [
-        'application_start_date' => 'date',
-        'application_end_date' => 'date',
+        'application_start_date' => 'datetime',
+        'application_end_date' => 'datetime',
         'archived_at' => 'datetime',
         'filled_at' => 'datetime',
+        'approved_at' => 'datetime',
         'is_filled' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function applications()
