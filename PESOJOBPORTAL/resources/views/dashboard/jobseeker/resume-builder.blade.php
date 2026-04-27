@@ -325,27 +325,29 @@
             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
             padding: 36px 42px;
             color: #111827;
-            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
         }
 
         .resume-name {
-            font-size: clamp(1.7rem, 3vw, 2.4rem);
+            font-size: 24pt;
             margin: 0;
-            letter-spacing: 0.02em;
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .resume-contact {
-            font-size: 0.95rem;
+            font-size: 11pt;
             color: #374151;
             margin-top: 8px;
         }
 
         .resume-section h2 {
-            font-size: 1.02rem;
+            font-size: 12pt;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.04em;
             margin-bottom: 10px;
             padding-bottom: 4px;
             border-bottom: 1px solid #111827;
@@ -353,13 +355,13 @@
 
         .resume-section p,
         .resume-section li {
-            font-size: 0.98rem;
-            line-height: 1.55;
+            font-size: 12pt;
+            line-height: 1.5;
             color: #111827;
         }
 
         .resume-item {
-            font-size: 0.98rem;
+            font-size: 12pt;
         }
 
         @media (max-width: 575.98px) {
