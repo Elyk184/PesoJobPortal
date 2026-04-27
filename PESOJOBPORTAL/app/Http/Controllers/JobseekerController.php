@@ -622,12 +622,21 @@ class JobseekerController extends Controller
 
         $clearance = PesoClearance::query()
             ->where('user_id', $userId)
+            ->whereIn('status', ['active', 'expired'])
+            ->latest('id')
+            ->first();
+
+        $pendingRequest = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->where('status', 'pending')
             ->latest('id')
             ->first();
 
         $hasClearance = $clearance !== null;
         $isActive = $hasClearance && $clearance->status === 'active';
         $isExpired = $hasClearance && $clearance->expiry_date && $clearance->expiry_date->isPast();
+        $hasPendingRequest = $pendingRequest !== null;
+        $canRequestClearance = ! $hasPendingRequest;
 
         if ($isExpired && $isActive) {
             $isActive = false;
@@ -635,10 +644,47 @@ class JobseekerController extends Controller
 
         return view('jobseeker.peso-clearance', [
             'clearance' => $clearance,
+            'pendingRequest' => $pendingRequest,
             'hasClearance' => $hasClearance,
+            'hasPendingRequest' => $hasPendingRequest,
             'isActive' => $isActive,
             'isExpired' => $isExpired,
+            'canRequestClearance' => $canRequestClearance,
         ]);
+    }
+
+    public function requestPesoClearance(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'remarks' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $hasPendingRequest = PesoClearance::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($hasPendingRequest) {
+            return back()->with('warning', 'You already have a pending PESO clearance request.');
+        }
+
+        $clearanceCount = PesoClearance::query()
+            ->where('user_id', $user->id)
+            ->count();
+
+        PesoClearance::create([
+            'user_id' => $user->id,
+            'request_date' => now(),
+            'clearance_number' => 'REQ-' . now()->format('YmdHis') . '-' . str_pad((string) ($clearanceCount + 1), 3, '0', STR_PAD_LEFT),
+            'issue_date' => null,
+            'expiry_date' => null,
+            'status' => 'pending',
+            'remarks' => trim((string) $request->input('remarks', '')) ?: 'PESO clearance request submitted by jobseeker.',
+        ]);
+
+        return back()->with('status', 'Your PESO clearance request has been sent to the admin for review.');
     }
 
     public function profile(): View

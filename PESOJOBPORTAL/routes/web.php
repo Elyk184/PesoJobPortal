@@ -59,6 +59,7 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/saved-jobs', [JobseekerController::class, 'savedJobs'])->name('saved-jobs');
     Route::post('/saved-jobs/{job}', [JobseekerController::class, 'toggleSaveJob'])->name('saved-jobs.toggle');
     Route::get('/peso-clearance', [JobseekerController::class, 'pesoClearance'])->name('peso-clearance');
+    Route::post('/peso-clearance/request', [JobseekerController::class, 'requestPesoClearance'])->name('peso-clearance.request');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
@@ -126,7 +127,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/skills-gap-analysis', 'admin.skills-gap-analysis')->name('skills-gap-analysis');
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
-    Route::view('/peso-clearances', 'admin.peso-clearances')->name('peso-clearances');
+    Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
+    Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
 
     // Tools & Settings Section
     Route::view('/settings', 'admin.settings')->name('settings');

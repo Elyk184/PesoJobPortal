@@ -11,6 +11,7 @@ class PesoClearance extends Model
 
     protected $fillable = [
         'user_id',
+        'request_date',
         'clearance_number',
         'issue_date',
         'expiry_date',
@@ -19,6 +20,7 @@ class PesoClearance extends Model
     ];
 
     protected $casts = [
+        'request_date' => 'datetime',
         'issue_date' => 'datetime',
         'expiry_date' => 'datetime',
     ];

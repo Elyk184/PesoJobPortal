@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
+use App\Models\PesoClearance;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use Illuminate\View\View;
@@ -79,7 +80,7 @@ class AdminController extends Controller
 
         return back()->with('warning', "Company profile '{$companyProfile->company_name}' has been rejected.");
     }
-    
+
     public function jobApprovals(): View
     {
         $pendingJobs = PesoJob::where('status', 'pending')->with('employer')->paginate(15);
@@ -163,6 +164,34 @@ class AdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         return view('admin.approvals.documents', compact('pendingDocuments'));
+    }
+
+    public function pesoClearances(): View
+    {
+        $clearances = PesoClearance::query()
+            ->with('user')
+            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 WHEN status = 'active' THEN 1 ELSE 2 END")
+            ->orderByDesc('created_at')
+            ->paginate(15);
+
+        return view('admin.peso-clearances', compact('clearances'));
+    }
+
+    public function issuePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
+    {
+        if ($clearance->status !== 'pending') {
+            return back()->with('warning', 'Only pending clearance requests can be issued.');
+        }
+
+        $clearance->update([
+            'status' => 'active',
+            'clearance_number' => 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id,
+            'issue_date' => now(),
+            'expiry_date' => now()->addYear(),
+            'remarks' => $clearance->remarks,
+        ]);
+
+        return back()->with('success', 'PESO clearance has been issued successfully.');
     }
 
     public function approveDocument(Request $request, $documentId): RedirectResponse

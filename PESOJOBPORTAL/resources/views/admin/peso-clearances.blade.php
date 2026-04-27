@@ -15,6 +15,8 @@
         .clearance-table tbody tr:hover { background: #f9fafb; }
         .status-badge { display: inline-block; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 12px; font-weight: 600; }
         .status-issued { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-expired { background: #fee2e2; color: #991b1b; }
         .btn-small { padding: 0.5rem 1rem; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-decoration: none; display: inline-block; }
         .btn-view { background: #3b82f6; color: white; }
         .btn-view:hover { background: #2563eb; }
@@ -26,36 +28,54 @@
                 <tr>
                     <th>Clearance #</th>
                     <th>Name</th>
-                    <th>Issued Date</th>
+                    <th>Requested / Issued</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><strong>CLR-2026-001</strong></td>
-                    <td>Carlo Rodriguez</td>
-                    <td>10 Apr 2026</td>
-                    <td><span class="status-badge status-issued"><i class="bi bi-check-circle me-1"></i>Issued</span></td>
-                    <td><button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button></td>
-                </tr>
-                <tr>
-                    <td><strong>CLR-2026-002</strong></td>
-                    <td>Maria Dela Cruz</td>
-                    <td>12 Apr 2026</td>
-                    <td><span class="status-badge status-issued"><i class="bi bi-check-circle me-1"></i>Issued</span></td>
-                    <td><button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button></td>
-                </tr>
-                <tr>
-                    <td><strong>CLR-2026-003</strong></td>
-                    <td>Juan Santos</td>
-                    <td>15 Apr 2026</td>
-                    <td><span class="status-badge status-issued"><i class="bi bi-check-circle me-1"></i>Issued</span></td>
-                    <td><button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button></td>
-                </tr>
+                @forelse ($clearances as $clearance)
+                    @php
+                        $status = $clearance->status ?? 'pending';
+                        $statusClass = $status === 'pending' ? 'status-pending' : ($status === 'expired' ? 'status-expired' : 'status-issued');
+                        $statusLabel = ucfirst($status);
+                    @endphp
+                    <tr>
+                        <td><strong>{{ $clearance->clearance_number }}</strong></td>
+                        <td>{{ $clearance->user?->name ?? 'Unknown' }}</td>
+                        <td>
+                            @if ($clearance->status === 'pending')
+                                {{ $clearance->request_date ? $clearance->request_date->format('d M Y') : 'N/A' }}
+                            @else
+                                {{ $clearance->issue_date ? $clearance->issue_date->format('d M Y') : 'N/A' }}
+                            @endif
+                        </td>
+                        <td><span class="status-badge {{ $statusClass }}"><i class="bi bi-check-circle me-1"></i>{{ $statusLabel }}</span></td>
+                        <td>
+                            @if ($clearance->status === 'pending')
+                                <form method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn-small btn-view"><i class="bi bi-check2-circle me-1"></i>Issue</button>
+                                </form>
+                            @else
+                                <button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">No PESO clearances found.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
+
+    @if (method_exists($clearances, 'links'))
+        <div class="mt-3">
+            {{ $clearances->links() }}
+        </div>
+    @endif
 </div>
 
 @endsection
