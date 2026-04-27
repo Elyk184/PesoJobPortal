@@ -18,6 +18,11 @@
     $eligibilityRows = old('eligibility', $eligibilityRows ?? ($profile->eligibility ?? []));
 
     $skillsPreview = collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values();
+    $educationPreviewRows = collect($educationRows)->filter(fn ($item) => collect($item)->filter()->isNotEmpty())->values();
+    $trainingPreviewRows = collect($trainingRows)->filter(fn ($item) => collect($item)->filter()->isNotEmpty())->values();
+    $experiencePreviewRows = collect($experienceRows)->filter(fn ($item) => collect($item)->filter()->isNotEmpty())->values();
+    $eligibilityPreviewRows = collect($eligibilityRows)->filter(fn ($item) => collect($item)->filter()->isNotEmpty())->values();
+    $hasObjective = trim((string) $resumeObjective) !== '';
 @endphp
 
 <section aria-label="Resume builder">
@@ -195,15 +200,17 @@
                         <div class="resume-contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
                     </div>
 
-                    <section class="resume-section mb-4">
-                        <h2>Objective</h2>
-                        <p>{{ $resumeObjective }}</p>
-                    </section>
+                    @if ($hasObjective)
+                        <section class="resume-section mb-4">
+                            <h2>Objective</h2>
+                            <p>{{ $resumeObjective }}</p>
+                        </section>
+                    @endif
 
-                    <section class="resume-section mb-4">
-                        <h2>Education</h2>
-                        @forelse ($educationRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
+                    @if ($educationPreviewRows->isNotEmpty())
+                        <section class="resume-section mb-4">
+                            <h2>Education</h2>
+                            @foreach ($educationPreviewRows as $item)
                                 <div class="resume-item mb-3">
                                     <div class="d-flex justify-content-between gap-3">
                                         <div class="fw-semibold">{{ $item['school'] ?? '' }}</div>
@@ -211,15 +218,14 @@
                                     </div>
                                     <div class="fst-italic text-muted">{{ $item['course'] ?? '' }}</div>
                                 </div>
-                            @endif
-                        @empty
-                        @endforelse
-                    </section>
+                            @endforeach
+                        </section>
+                    @endif
 
-                    <section class="resume-section mb-4">
-                        <h2>Training</h2>
-                        @forelse ($trainingRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
+                    @if ($trainingPreviewRows->isNotEmpty())
+                        <section class="resume-section mb-4">
+                            <h2>Training</h2>
+                            @foreach ($trainingPreviewRows as $item)
                                 <div class="resume-item mb-3">
                                     <div class="d-flex justify-content-between gap-3">
                                         <div class="fw-semibold">{{ $item['course'] ?? '' }}</div>
@@ -228,15 +234,14 @@
                                     <div class="fst-italic text-muted">{{ $item['institution'] ?? '' }}</div>
                                     <p class="mb-0">{{ collect([$item['hours'] ?? '', $item['skills'] ?? '', $item['certificates'] ?? ''])->filter()->join(' | ') }}</p>
                                 </div>
-                            @endif
-                        @empty
-                        @endforelse
-                    </section>
+                            @endforeach
+                        </section>
+                    @endif
 
-                    <section class="resume-section mb-4">
-                        <h2>Experience</h2>
-                        @forelse ($experienceRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
+                    @if ($experiencePreviewRows->isNotEmpty())
+                        <section class="resume-section mb-4">
+                            <h2>Experience</h2>
+                            @foreach ($experiencePreviewRows as $item)
                                 <div class="resume-item mb-3">
                                     <div class="d-flex justify-content-between gap-3">
                                         <div class="fw-semibold">{{ $item['title'] ?? '' }}</div>
@@ -245,15 +250,14 @@
                                     <div class="fst-italic text-muted">{{ $item['company'] ?? '' }}</div>
                                     <p class="mb-0">{{ $item['details'] ?? '' }}</p>
                                 </div>
-                            @endif
-                        @empty
-                        @endforelse
-                    </section>
+                            @endforeach
+                        </section>
+                    @endif
 
-                    <section class="resume-section mb-4">
-                        <h2>Eligibility</h2>
-                        @forelse ($eligibilityRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
+                    @if ($eligibilityPreviewRows->isNotEmpty())
+                        <section class="resume-section mb-4">
+                            <h2>Eligibility</h2>
+                            @foreach ($eligibilityPreviewRows as $item)
                                 <div class="resume-item mb-3">
                                     <div class="d-flex justify-content-between gap-3">
                                         <div class="fw-semibold">{{ $item['eligibility'] ?? '' }}</div>
@@ -262,15 +266,16 @@
                                     <div class="fst-italic text-muted">{{ $item['license'] ?? '' }}</div>
                                     <p class="mb-0">{{ $item['date_taken'] ?? '' }}</p>
                                 </div>
-                            @endif
-                        @empty
-                        @endforelse
-                    </section>
+                            @endforeach
+                        </section>
+                    @endif
 
-                    <section class="resume-section mb-0">
-                        <h2>Skills</h2>
-                        <p class="mb-0">{{ $skillsPreview->count() ? $skillsPreview->join(', ') : ' ' }}</p>
-                    </section>
+                    @if ($skillsPreview->isNotEmpty())
+                        <section class="resume-section mb-0">
+                            <h2>Skills</h2>
+                            <p class="mb-0">{{ $skillsPreview->join(', ') }}</p>
+                        </section>
+                    @endif
                 </div>
             </div>
         </div>
