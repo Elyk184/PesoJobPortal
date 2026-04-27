@@ -212,7 +212,7 @@
         left: 0;
         right: 0;
         height: 5px;
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        background: #1a1a1a;
         border-radius: 20px 20px 0 0;
     }
 
@@ -280,7 +280,7 @@
         left: 0;
         right: 0;
         height: 5px;
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        background: #1a1a1a;
         border-radius: 20px 20px 0 0;
     }
 
@@ -301,7 +301,7 @@
     }
     
     .dashboard-card h5 i {
-        color: #3b82f6;
+        color: #1a1a1a;
         margin-right: 0.5rem;
     }
 
