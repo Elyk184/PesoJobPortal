@@ -169,7 +169,7 @@
     .topbar-datetime {
         display: flex;
         align-items: center;
-        gap: 1.25rem;
+        gap: 1.5rem;
         padding: 1rem 1.75rem;
         background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
         border-radius: 16px;
@@ -181,6 +181,70 @@
     .topbar-time-display { font-size: 22px; font-weight: 800; color: #1e293b; line-height: 1.1; letter-spacing: -0.3px; }
     .topbar-date-display { font-size: 13px; color: #64748b; font-weight: 600; letter-spacing: 0.3px; }
     .topbar-datetime-icon { font-size: 28px; color: #3b82f6; }
+    
+    .analog-clock {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        position: relative;
+        border: 3px solid #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .clock-center {
+        width: 12px;
+        height: 12px;
+        background: #3b82f6;
+        border-radius: 50%;
+        position: absolute;
+        z-index: 10;
+    }
+    
+    .hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        transform-origin: bottom center;
+        background: #1e293b;
+        border-radius: 10px;
+    }
+    
+    .hour-hand {
+        width: 4px;
+        height: 32px;
+        margin-left: -2px;
+    }
+    
+    .minute-hand {
+        width: 3px;
+        height: 42px;
+        margin-left: -1.5px;
+    }
+    
+    .second-hand {
+        width: 2px;
+        height: 45px;
+        margin-left: -1px;
+        background: #ef4444;
+    }
+    
+    .clock-marker {
+        position: absolute;
+        width: 2px;
+        height: 8px;
+        background: #3b82f6;
+        left: 50%;
+        margin-left: -1px;
+    }
+    
+    .clock-marker-12 { top: 6px; }
+    .clock-marker-3 { top: 50%; right: 6px; left: auto; width: 8px; height: 2px; margin-left: 0; margin-top: -1px; }
+    .clock-marker-6 { bottom: 6px; top: auto; }
+    .clock-marker-9 { top: 50%; left: 6px; right: auto; width: 8px; height: 2px; margin-left: 0; margin-top: -1px; }
 </style>
 
 <div class="admin-wrapper">
@@ -295,7 +359,16 @@
             </div>
             <div class="admin-topbar-right">
                 <div class="topbar-datetime">
-                    <i class="bi bi-clock-history topbar-datetime-icon"></i>
+                    <div class="analog-clock" id="analogClock">
+                        <div class="clock-marker clock-marker-12"></div>
+                        <div class="clock-marker clock-marker-3"></div>
+                        <div class="clock-marker clock-marker-6"></div>
+                        <div class="clock-marker clock-marker-9"></div>
+                        <div class="hand hour-hand" id="hourHand"></div>
+                        <div class="hand minute-hand" id="minuteHand"></div>
+                        <div class="hand second-hand" id="secondHand"></div>
+                        <div class="clock-center"></div>
+                    </div>
                     <div class="topbar-time">
                         <div class="topbar-time-display" id="currentTime">--:--</div>
                         <div class="topbar-date-display" id="currentDate">--/--/----</div>
@@ -313,6 +386,9 @@
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = now.getSeconds();
+        const milliseconds = now.getMilliseconds();
+        
         const timeString = `${hours}:${minutes}`;
         const dateString = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
         
@@ -325,8 +401,42 @@
         if (dateElement) {
             dateElement.textContent = dateString;
         }
+        
+        // Update analog clock
+        updateAnalogClock(now);
+    }
+    
+    function updateAnalogClock(now) {
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+        const milliseconds = now.getMilliseconds();
+        
+        // Calculate smooth rotations (including milliseconds for smooth motion)
+        const totalSeconds = seconds + milliseconds / 1000;
+        const secondDegrees = (totalSeconds / 60) * 360;
+        
+        const totalMinutes = minutes + totalSeconds / 60;
+        const minuteDegrees = (totalMinutes / 60) * 360;
+        
+        const totalHours = hours % 12 + totalMinutes / 60;
+        const hourDegrees = (totalHours / 12) * 360;
+        
+        const secondHand = document.getElementById('secondHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const hourHand = document.getElementById('hourHand');
+        
+        if (secondHand) {
+            secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+        }
+        if (minuteHand) {
+            minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+        }
+        if (hourHand) {
+            hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        }
     }
 
     updateDateTime();
-    setInterval(updateDateTime, 1000);
+    setInterval(updateDateTime, 100); // Update 10 times per second for smooth animation
 </script>
