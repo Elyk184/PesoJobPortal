@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Skills Gap Analysis | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Skills Gap Analysis', 'subtitle' => 'Identify skills gaps in the locality', 'icon' => 'bi-diagram-3'])
+<?php
+    $pageTitle = 'Skills Gap Analysis';
+    $pageSubtitle = 'Identify skills gaps in the locality';
+    $pageIcon = 'bi-diagram-3';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .skill-item { background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }

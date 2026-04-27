@@ -1,10 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Jobseeker Approvals | PESO Admin')
 
-@section('content')
-@include('admin.layouts.topbar', ['title' => 'Jobseeker Approvals', 'subtitle' => 'Review and approve pending jobseeker registrations', 'icon' => 'bi-person-check'])
+<?php
+    $pageTitle = 'Jobseeker Approvals';
+    $pageSubtitle = 'Review and approve pending jobseeker registrations';
+    $pageIcon = 'bi-person-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .approval-header {
@@ -479,5 +483,4 @@
         @endif
     </div>
 </div>
-
 @endsection

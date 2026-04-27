@@ -1,10 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Employment Statistics | PESO Admin')
 
-@section('content')
-@include('admin.layouts.topbar', ['title' => 'Employment Statistics', 'subtitle' => 'View employment trends and analytics', 'icon' => 'bi-graph-up'])
+<?php
+    $pageTitle = 'Employment Statistics';
+    $pageSubtitle = 'View employment trends and statistics';
+    $pageIcon = 'bi-bar-chart-line';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }

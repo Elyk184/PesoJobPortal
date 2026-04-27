@@ -1,14 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', strtoupper($activityRequest->activity_type) . ' Request - Review')
 
-@section('content')
-@include('admin.layouts.topbar', [
-    'title' => strtoupper($activityRequest->activity_type) . ' Request Review',
-    'subtitle' => 'Review and ' . ($activityRequest->status === 'pending' ? 'approve or reject' : 'view') . ' the LRA/SRA request documents',
-    'icon' => 'bi-clipboard-check'
-])
+<?php
+    $pageTitle = strtoupper($activityRequest->activity_type) . ' Request Review';
+    $pageSubtitle = 'Review and ' . ($activityRequest->status === 'pending' ? 'approve or reject' : 'view') . ' the LRA/SRA request documents';
+    $pageIcon = 'bi-clipboard-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <div class="dashboard-card">
         <div class="mb-4">

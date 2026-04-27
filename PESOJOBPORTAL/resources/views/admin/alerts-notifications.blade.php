@@ -1,10 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Alerts & Notifications | PESO Admin')
 
-@section('content')
-@include('admin.layouts.topbar', ['title' => 'Alerts & Notifications', 'subtitle' => 'Manage system alerts and notifications', 'icon' => 'bi-bell'])
+<?php
+    $pageTitle = 'Alerts & Notifications';
+    $pageSubtitle = 'Manage system alerts and notifications';
+    $pageIcon = 'bi-bell';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .alert-item { background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; gap: 1.5rem; align-items: start; }

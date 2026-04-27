@@ -1,10 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Document Verification | PESO Admin')
 
-@section('content')
-@include('admin.layouts.topbar', ['title' => 'Document Verification', 'subtitle' => 'Verify submitted documents', 'icon' => 'bi-file-earmark'])
+<?php
+    $pageTitle = 'Document Verification';
+    $pageSubtitle = 'Review and verify employer-submitted documents';
+    $pageIcon = 'bi-file-earmark';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .document-table { width: 100%; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }

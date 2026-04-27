@@ -1,10 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'PESO Clearances | PESO Admin')
 
-@section('content')
-@include('admin.layouts.topbar', ['title' => 'PESO Clearances', 'subtitle' => 'Manage PESO clearances', 'icon' => 'bi-clipboard'])
+<?php
+    $pageTitle = 'PESO Clearances';
+    $pageSubtitle = 'Generate and manage PESO clearance documents';
+    $pageIcon = 'bi-file-pdf';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .clearance-table { width: 100%; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }
