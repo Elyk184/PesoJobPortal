@@ -11,7 +11,7 @@
         margin: 0;
         padding: 0;
         background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
-        color: #e0e7ff;
+        color: #1f2937;
         font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 400;
         letter-spacing: 0.3px;
@@ -19,7 +19,7 @@
 
     body {
         background: linear-gradient(135deg, #0d1625 0%, #1a2d45 50%, #0a1220 100%);
-        color: #e0e7ff;
+        color: #1f2937;
     }
     
     .peso-main {
