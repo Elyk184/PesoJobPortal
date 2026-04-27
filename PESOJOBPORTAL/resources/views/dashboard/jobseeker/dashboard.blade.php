@@ -24,20 +24,6 @@
         padding: 16px;
     }
 
-    .jobseeker-dashboard .dashboard-topbar {
-        border-radius: 16px;
-        border: 1px solid var(--dash-border);
-        background: var(--dash-card);
-        padding: 12px 14px;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 24px rgba(16, 30, 52, 0.06);
-    }
-
-    .jobseeker-dashboard .dashboard-topbar-title {
-        font-size: 1.12rem;
-        font-weight: 800;
-    }
-
     .jobseeker-dashboard .dashboard-hero {
         border-radius: 16px;
         border: 1px solid var(--dash-border);
@@ -513,17 +499,6 @@
 
 @section('content')
 <section class="jobseeker-dashboard" aria-label="Jobseeker dashboard">
-    <div class="dashboard-topbar">
-        <div>
-            <div class="dashboard-topbar-title">Dashboard</div>
-            <div class="dashboard-topbar-subtitle">Find your dream job</div>
-        </div>
-        <div class="d-none d-md-block text-end">
-            <div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'Jobseeker' }}</div>
-            <div class="dashboard-topbar-subtitle">Jobseeker Portal</div>
-        </div>
-    </div>
-
     <div class="dashboard-section-card dashboard-hero p-3 p-lg-4 mb-4">
         <div class="row g-3 align-items-center">
             <div class="col-12 col-lg-8">
