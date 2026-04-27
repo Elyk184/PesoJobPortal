@@ -197,8 +197,8 @@
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         border: none;
         border-radius: 16px;
-        padding: 2rem 1.75rem;
-        margin-bottom: 1.5rem;
+        padding: 1.25rem 1rem;
+        margin-bottom: 0;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -271,7 +271,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.75rem;
         position: relative;
         z-index: 1;
     }
@@ -280,23 +280,23 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 70px;
-        height: 70px;
+        width: 50px;
+        height: 50px;
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 14px;
+        border-radius: 10px;
         flex-shrink: 0;
     }
 
     .stat-card-icon-box i {
-        font-size: 2.5rem;
+        font-size: 1.75rem;
         color: rgba(255, 255, 255, 0.95);
     }
 
     .stat-card-mini-chart {
         display: flex;
         align-items: flex-end;
-        gap: 3px;
-        height: 50px;
+        gap: 2px;
+        height: 35px;
         opacity: 0.8;
     }
 
@@ -312,10 +312,10 @@
     }
 
     .stat-value {
-        font-size: 48px;
+        font-size: 32px;
         font-weight: 900;
         color: inherit;
-        margin: 12px 0 8px 0;
+        margin: 8px 0 4px 0;
         letter-spacing: -0.5px;
         position: relative;
         z-index: 1;
@@ -326,11 +326,11 @@
     }
 
     .stat-label {
-        font-size: 13px;
+        font-size: 11px;
         color: inherit;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
+        letter-spacing: 0.8px;
         position: relative;
         z-index: 1;
         opacity: 0.95;
@@ -341,8 +341,8 @@
     }
 
     .stat-card-subtitle {
-        font-size: 12px;
-        margin-top: 0.75rem;
+        font-size: 10px;
+        margin-top: 0.4rem;
         position: relative;
         z-index: 1;
     }
@@ -505,8 +505,8 @@
 
     .quick-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 2rem 2.5rem;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1.5rem;
         margin-bottom: 3.5rem;
         padding: 0;
     }
@@ -1064,7 +1064,7 @@
                     </div>
                 </div>
 
-                <div class="stat-card" data-color="info">
+                <div class="stat-card" data-color="success">
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Pending Document Approvals</div>
