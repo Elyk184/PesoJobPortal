@@ -38,6 +38,7 @@ class PesoJob extends Model
         'approved_at',
         'approved_by',
         'rejection_reason',
+        'deletion_reason',
     ];
     
     protected $attributes = [
@@ -81,6 +82,22 @@ class PesoJob extends Model
     public function companyProfile()
     {
         return $this->employer()?->first()?->companyProfile();
+    }
+
+    /**
+     * Scope to exclude archived jobs
+     */
+    public function scopeNotArchived($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    /**
+     * Scope to only get archived jobs
+     */
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('archived_at');
     }
 }
 ?>

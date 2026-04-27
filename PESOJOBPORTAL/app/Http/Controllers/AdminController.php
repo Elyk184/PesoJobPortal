@@ -17,20 +17,20 @@ class AdminController extends Controller
     {
         $stats = [
             'total_users' => User::count(),
-            'total_jobs' => PesoJob::count(),
+            'total_jobs' => PesoJob::notArchived()->count(),
             'total_applications' => JobApplication::count(),
-            'active_jobs' => PesoJob::where('status', 'active')->count(),
+            'active_jobs' => PesoJob::where('status', 'active')->notArchived()->count(),
             'total_employers' => User::where('role', 'employer')->count(),
             'total_jobseekers' => User::where('role', 'jobseeker')->count(),
             'total_admins' => User::where('role', 'admin')->count(),
             'pending_applications' => JobApplication::where('status', 'pending')->count(),
-            'pending_job_approvals' => PesoJob::where('status', 'pending')->count(),
+            'pending_job_approvals' => PesoJob::where('status', 'pending')->notArchived()->count(),
             'pending_lra_sra' => RecruitmentActivityRequest::where('status', 'pending')->count(),
             'pending_documents' => \DB::table('employer_documents')->where('status', 'pending')->count(),
         ];
 
         $recentUsers = User::latest()->limit(5)->get();
-        $recentJobs = PesoJob::latest()->limit(5)->get();
+        $recentJobs = PesoJob::notArchived()->latest()->limit(5)->get();
         $recentApplications = JobApplication::with(['user', 'job'])->latest()->limit(5)->get();
 
         return view('dashboard.admin', compact('stats', 'recentUsers', 'recentJobs', 'recentApplications'));

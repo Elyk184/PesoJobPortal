@@ -136,6 +136,25 @@ Route::middleware('auth')->group(function () {
         $job = \App\Models\PesoJob::findOrFail($job);
         return response()->json($job);
     });
+    
+    Route::post('/api/jobs/{job}/delete', function ($job) {
+        $job = \App\Models\PesoJob::findOrFail($job);
+        
+        $validated = request()->validate([
+            'reason' => 'required|string|min:10'
+        ]);
+        
+        // Archive the job
+        $job->update([
+            'archived_at' => now(),
+            'deletion_reason' => $validated['reason']
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Job archived successfully'
+        ]);
+    });
 });
 
 Route::get('/contact', function () {

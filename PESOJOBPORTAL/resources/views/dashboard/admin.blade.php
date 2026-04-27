@@ -1222,6 +1222,7 @@
                                         </div>
                                         <div class="job-post-footer">
                                             <button type="button" class="job-view-btn" onclick="openJobDetailModal({{ $job->id }})" data-job-id="{{ $job->id }}">View Details</button>
+                                            <button type="button" class="job-trash-btn" onclick="openJobDeleteModal({{ $job->id }})" title="Delete this job"><i class="bi bi-trash3"></i></button>
                                         </div>
                                     </div>
                                 @endforeach
@@ -1377,7 +1378,8 @@
     .job-post-footer {
         padding: 0;
         display: flex;
-        gap: 0.3rem;
+        gap: 0.5rem;
+        align-items: center;
     }
 
     .job-view-btn {
@@ -1396,6 +1398,26 @@
     .job-view-btn:hover {
         box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
         transform: translateY(-1px);
+    }
+
+    .job-trash-btn {
+        padding: 0.35rem 0.5rem;
+        background: #f3f4f6;
+        color: #ef4444;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .job-trash-btn:hover {
+        background: #ef4444;
+        color: white;
+        transform: scale(1.05);
     }
 
     /* Job Detail Modal Styles */
@@ -1509,9 +1531,109 @@
         100% { transform: rotate(360deg); }
     }
 
-    .job-view-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    /* Delete Modal Styles */
+    .delete-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .delete-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delete-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+
+    .delete-modal-header {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ef4444;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .delete-modal-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .delete-reason-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .delete-reason-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .delete-reason-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .delete-modal-footer {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .delete-cancel-btn {
+        padding: 0.6rem 1.2rem;
+        background: #f3f4f6;
+        color: #1e293b;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .delete-cancel-btn:hover {
+        background: #e5e7eb;
+    }
+
+    .delete-confirm-btn {
+        padding: 0.6rem 1.2rem;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .delete-confirm-btn:hover {
+        background: #dc2626;
     }
 </style>
 
@@ -1721,6 +1843,65 @@
             closeJobDetailModal();
         }
     });
+
+    // Job Delete Modal Functions
+    function openJobDeleteModal(jobId) {
+        const modal = document.getElementById('jobDeleteModal');
+        document.getElementById('deleteJobId').value = jobId;
+        document.getElementById('deleteReason').value = '';
+        modal.classList.add('show');
+    }
+
+    function closeJobDeleteModal() {
+        const modal = document.getElementById('jobDeleteModal');
+        modal.classList.remove('show');
+    }
+
+    function submitJobDelete() {
+        const jobId = document.getElementById('deleteJobId').value;
+        const reason = document.getElementById('deleteReason').value.trim();
+
+        if (!reason) {
+            alert('Please provide a reason for deletion');
+            return;
+        }
+
+        if (reason.length < 10) {
+            alert('Reason must be at least 10 characters long');
+            return;
+        }
+
+        // Send delete request
+        fetch(`/api/jobs/${jobId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Job post has been archived successfully');
+                closeJobDeleteModal();
+                location.reload();
+            } else {
+                alert(data.message || 'Error deleting job');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting job post');
+        });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('jobDeleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeJobDeleteModal();
+        }
+    });
 </script>
 
 <style>
@@ -1751,6 +1932,27 @@
 <div id="jobDetailModal" class="job-modal">
     <div class="job-modal-content" id="jobDetailContent">
         <!-- Modal content will be loaded here -->
+    </div>
+</div>
+
+<!-- Job Delete Modal -->
+<div id="jobDeleteModal" class="delete-modal">
+    <div class="delete-modal-content">
+        <div class="delete-modal-header">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Archive Job Post
+        </div>
+        <div class="delete-modal-body">
+            <p style="color: #64748b; margin-bottom: 1rem;">This job will be moved to archives and can be restored later if needed.</p>
+            
+            <label class="delete-reason-label">Reason for Archiving (Required)</label>
+            <textarea id="deleteReason" class="delete-reason-input" placeholder="Please provide a detailed reason for archiving this job posting..."></textarea>
+        </div>
+        <div class="delete-modal-footer">
+            <button type="button" class="delete-cancel-btn" onclick="closeJobDeleteModal()">Cancel</button>
+            <button type="button" class="delete-confirm-btn" onclick="submitJobDelete()">Archive Job</button>
+        </div>
+        <input type="hidden" id="deleteJobId" value="">
     </div>
 </div>
 
