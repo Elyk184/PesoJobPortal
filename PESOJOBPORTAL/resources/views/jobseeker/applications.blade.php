@@ -7,7 +7,7 @@
     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-3">
         <div>
             <h1 class="mb-1 fw-bold dashboard-section-title">My Applications</h1>
-            <p class="mb-0 text-muted">Track your application status (static demo).</p>
+            <p class="mb-0 text-muted">Track your application status for {{ $applications->total() }} submitted application(s).</p>
         </div>
         <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger">
             <i class="bi bi-arrow-left me-2"></i>Back to Dashboard

@@ -97,9 +97,9 @@
                         </p>
                         
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-danger flex-grow-1" type="button" disabled>
+                            <a href="{{ route('jobseeker.apply-job', $job->id) }}" class="btn btn-danger flex-grow-1">
                                 <i class="bi bi-send me-2"></i>Apply
-                            </button>
+                            </a>
                             <button class="btn btn-outline-secondary" type="button" title="Save for later">
                                 <i class="bi bi-bookmark"></i>
                             </button>

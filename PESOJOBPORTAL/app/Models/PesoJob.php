@@ -105,7 +105,7 @@ class PesoJob extends Model
      */
     public function scopeApproved($query)
     {
-        return $query->where('status', 'approved')
+        return $query->where('status', 'active')
             ->whereNotNull('approved_at');
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PesoJob;
 use App\Models\UserProfile;
+use App\Models\JobApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +33,14 @@ class JobseekerController extends Controller
 
     public function applications(): View
     {
-        return view('jobseeker.applications');
+        $applications = JobApplication::where('user_id', Auth::id())
+            ->with('job', 'job.employer')
+            ->latest('created_at')
+            ->paginate(10);
+
+        return view('jobseeker.applications', [
+            'applications' => $applications,
+        ]);
     }
 
     public function profile(): View
@@ -172,5 +180,44 @@ class JobseekerController extends Controller
             'experienceRows' => $experienceRows,
             'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
         ];
+    }
+
+    public function applyJob(PesoJob $job): View
+    {
+        return view('jobseeker.apply-job', [
+            'job' => $job->load('employer', 'employer.companyProfile'),
+        ]);
+    }
+
+    public function submitApplication(Request $request, PesoJob $job): RedirectResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'letter' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        // Check if already applied
+        $existingApplication = JobApplication::where('user_id', $user->id)
+            ->where('peso_job_id', $job->id)
+            ->first();
+
+        if ($existingApplication) {
+            return redirect()
+                ->route('jobseeker.applications')
+                ->with('error', 'You have already applied for this job.');
+        }
+
+        // Create new application
+        JobApplication::create([
+            'user_id' => $user->id,
+            'peso_job_id' => $job->id,
+            'status' => 'pending',
+            'notes' => $validated['letter'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('jobseeker.applications')
+            ->with('status', 'Application submitted successfully!');
     }
 }
