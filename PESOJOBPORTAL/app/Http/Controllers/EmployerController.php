@@ -192,7 +192,7 @@ class EmployerController extends Controller
 
         if ($request->boolean('logo_only')) {
             $validated = $request->validate([
-                'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+                'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
             ]);
 
             $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
@@ -231,7 +231,7 @@ class EmployerController extends Controller
             'establishment_phone' => ['nullable', 'string', 'max:50'],
             'contact_person_phone' => ['required', 'string', 'max:50'],
             'establishment_email' => ['required', 'email', 'max:255'],
-            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
             'business_permit' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'dti_sec_registration' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ];

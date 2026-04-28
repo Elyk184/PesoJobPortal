@@ -124,7 +124,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/skills-gap-analysis', 'admin.skills-gap-analysis')->name('skills-gap-analysis');
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
-    Route::view('/peso-clearances', 'admin.peso-clearances')->name('peso-clearances');
+    Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
+    Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
+
+    // Admin Profile
+    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+    Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
     
     // Tools & Settings Section
     Route::view('/settings', 'admin.settings')->name('settings');
