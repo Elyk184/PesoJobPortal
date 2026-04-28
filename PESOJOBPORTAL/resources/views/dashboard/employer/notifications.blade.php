@@ -12,15 +12,15 @@
                 radial-gradient(circle at left bottom, rgba(43, 103, 177, 0.08), transparent 42%),
                 #f3f7fd;
             border-radius: 16px;
-            padding: 1rem;
+            padding: 1.15rem;
         }
 
         .gmail-shell {
             border: 1px solid #d9e3f1;
-            border-radius: 14px;
+            border-radius: 18px;
             overflow: hidden;
             background: #ffffff;
-            box-shadow: 0 12px 24px rgba(17, 39, 76, 0.06);
+            box-shadow: 0 16px 32px rgba(17, 39, 76, 0.08);
         }
 
         .gmail-toolbar {
@@ -28,7 +28,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            padding: 1rem 1.1rem;
+            padding: 1.05rem 1.25rem;
             background: linear-gradient(135deg, #075cb2 0%, #3498db 100%);
             border-bottom: 1px solid rgba(7, 92, 178, 0.35);
         }
@@ -37,11 +37,12 @@
             display: inline-flex;
             align-items: center;
             gap: 0.65rem;
+            min-width: 0;
         }
 
         .gmail-title {
             margin: 0;
-            font-size: 1.12rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #ffffff;
             display: inline-flex;
@@ -60,15 +61,16 @@
         .gmail-meta {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
             border-radius: 999px;
             border: 1px solid rgba(255, 255, 255, 0.46);
             background: rgba(255, 255, 255, 0.14);
             color: #ffffff;
             font-size: 0.78rem;
             font-weight: 700;
-            padding: 0.35rem 0.7rem;
+            padding: 0.38rem 0.8rem;
             white-space: nowrap;
+            box-shadow: 0 6px 14px rgba(6, 42, 92, 0.12);
         }
 
         .gmail-meta.all {
@@ -77,12 +79,24 @@
             color: #ffffff;
         }
 
+        .gmail-meta.job {
+            background: rgba(14, 165, 233, 0.18);
+            border-color: rgba(14, 165, 233, 0.55);
+            color: #ffffff;
+        }
+
+        .gmail-meta.verification {
+            background: rgba(34, 197, 94, 0.18);
+            border-color: rgba(34, 197, 94, 0.55);
+            color: #ffffff;
+        }
+
         .gmail-list-head {
             display: grid;
-            grid-template-columns: auto auto minmax(160px, 1fr) minmax(240px, 1.8fr) auto auto auto;
-            gap: 0.8rem;
+            grid-template-columns: 20px 32px minmax(160px, 1.1fr) minmax(240px, 1.9fr) 112px 120px 92px;
+            gap: 0.85rem;
             align-items: center;
-            padding: 0.55rem 1rem;
+            padding: 0.65rem 1.15rem;
             background: #fbfdff;
             border-bottom: 1px solid #e8eff8;
             font-size: 0.72rem;
@@ -98,10 +112,10 @@
 
         .gmail-row {
             display: grid;
-            grid-template-columns: auto auto minmax(160px, 1fr) minmax(240px, 1.8fr) auto auto auto;
+            grid-template-columns: 20px 32px minmax(160px, 1.1fr) minmax(240px, 1.9fr) 112px 120px 92px;
             align-items: center;
-            gap: 0.8rem;
-            padding: 0.8rem 1rem;
+            gap: 0.85rem;
+            padding: 0.95rem 1.15rem;
             border-bottom: 1px solid #ecf1f8;
             transition: background-color 0.16s ease, box-shadow 0.16s ease;
         }
@@ -155,6 +169,7 @@
             min-width: 0;
             color: #1a3356;
             font-size: 0.93rem;
+            font-weight: 700;
             line-height: 1.35;
             white-space: nowrap;
             overflow: hidden;
@@ -165,6 +180,7 @@
             min-width: 0;
             font-size: 0.9rem;
             color: #53657d;
+            line-height: 1.4;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -182,8 +198,8 @@
             align-items: center;
             justify-content: center;
             border-radius: 999px;
-            padding: 0.28rem 0.58rem;
-            font-size: 0.72rem;
+            padding: 0.34rem 0.7rem;
+            font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -191,6 +207,7 @@
             background: #e9f2ff;
             border: 1px solid #cfe1fb;
             white-space: nowrap;
+            justify-self: start;
         }
 
         .gmail-read-tag {
@@ -224,6 +241,24 @@
 
         .gmail-action {
             justify-self: end;
+        }
+
+        .gmail-row .unread-dot,
+        .gmail-row .read-dot {
+            justify-self: center;
+        }
+
+        .gmail-row .gmail-type-icon {
+            justify-self: center;
+        }
+
+        .gmail-row .gmail-time {
+            justify-self: start;
+        }
+
+        .gmail-row .gmail-action .mark-read-btn {
+            min-height: 34px;
+            padding-inline: 0.75rem;
         }
 
         .empty-mail {
@@ -295,7 +330,7 @@
             }
 
             .gmail-toolbar {
-                padding: 0.85rem 0.8rem;
+                padding: 0.9rem 0.9rem;
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -317,7 +352,6 @@
                     <h2 class="gmail-title"><i class="bi bi-envelope"></i>Inbox</h2>
                 </div>
                 <div class="gmail-toolbar-counts">
-                    <span class="gmail-meta all"><i class="bi bi-inboxes"></i>{{ $notifications->count() }} total</span>
                     <span class="gmail-meta"><i class="bi bi-circle-fill"></i>{{ $unreadCount }} unread</span>
                 </div>
             </div>
@@ -337,6 +371,7 @@
                     'job_fair_invite' => 'bi-calendar-event',
                     'referral_update' => 'bi-arrow-repeat',
                     'job_update' => 'bi-briefcase',
+                    'verification_update' => 'bi-shield-check',
                 ];
             @endphp
 
@@ -344,7 +379,24 @@
                 @forelse ($notifications as $notification)
                     @php
                         $typeKey = strtolower((string) $notification->type);
-                        $typeIcon = $notificationTypeIcons[$typeKey] ?? 'bi-bell';
+                        $title = strtolower((string) $notification->title);
+                        $message = strtolower((string) $notification->message);
+
+                        if ($typeKey === 'job_update' || str_contains($title, 'job') || str_contains($message, 'job post')) {
+                            $typeIcon = $notificationTypeIcons['job_update'];
+                        } elseif ($typeKey === 'verification_update' || str_contains($title, 'verification') || str_contains($message, 'verification')) {
+                            $typeIcon = $notificationTypeIcons['verification_update'];
+                        } else {
+                            $typeIcon = $notificationTypeIcons[$typeKey] ?? 'bi-bell';
+                        }
+
+                        if ($typeKey === 'job_update' || str_contains($title, 'job') || str_contains($message, 'job post')) {
+                            $badgeLabel = 'JOB UPDATE';
+                        } elseif ($typeKey === 'verification_update' || str_contains($title, 'verification') || str_contains($message, 'verification')) {
+                            $badgeLabel = 'VERIFICATION UPDATE';
+                        } else {
+                            $badgeLabel = strtoupper(str_replace('_', ' ', $notification->type));
+                        }
                     @endphp
                     <div class="gmail-row {{ $notification->is_read ? 'read' : 'unread' }}">
                         @if ($notification->is_read)
@@ -357,7 +409,7 @@
                         <div class="gmail-subject">{{ $notification->title }}</div>
                         <div class="gmail-message">{{ $notification->message }}</div>
                         <span class="gmail-time">{{ optional($notification->created_at)->diffForHumans() ?? 'Now' }}</span>
-                        <span class="gmail-badge">{{ strtoupper(str_replace('_', ' ', $notification->type)) }}</span>
+                        <span class="gmail-badge">{{ $badgeLabel }}</span>
 
                         @if (! $notification->is_read)
                             <form class="gmail-action" method="POST" action="{{ route('employer.notifications.read', $notification) }}">

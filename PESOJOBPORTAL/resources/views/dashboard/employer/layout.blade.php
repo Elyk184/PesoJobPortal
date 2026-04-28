@@ -408,6 +408,13 @@
 
                     <p class="sidebar-group-title">Account</p>
                     <ul class="sidebar-nav">
+                        @php
+                            $currentEmployerUser = auth()->check() ? auth()->user() : null;
+                            $sidebarNotifications = $currentEmployerUser
+                                ? $currentEmployerUser->employerNotifications()->get()
+                                : collect();
+                            $sidebarUnreadTotalCount = $sidebarNotifications->where('is_read', false)->count();
+                        @endphp
                         <li>
                             <a class="{{ request()->routeIs('employer.company-profile') ? 'active' : '' }}" href="{{ route('employer.company-profile') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 10h6"></path><path d="M9 14h6"></path></svg></span><span>Company Profile</span></a>
                         </li>
@@ -415,13 +422,10 @@
                             <a class="{{ request()->routeIs('employer.notifications.index') ? 'active' : '' }}" href="{{ route('employer.notifications.index') }}">
                                 <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
                                 <span>Notifications</span>
-                                @php
-                                    $unreadEmployerNotificationCount = auth()->check() && auth()->user()
-                                        ? auth()->user()->employerNotifications()->whereNull('read_at')->count()
-                                        : 0;
-                                @endphp
-                                @if($unreadEmployerNotificationCount > 0)
-                                    <span style="margin-left:auto; min-width:22px; height:22px; padding:0 6px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $unreadEmployerNotificationCount }}</span>
+                                @if($sidebarUnreadTotalCount > 0)
+                                    <span style="margin-left:auto; display:inline-flex; align-items:center; gap:6px;">
+                                        <span style="min-width:22px; height:22px; padding:0 6px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $sidebarUnreadTotalCount }}</span>
+                                    </span>
                                 @endif
                             </a>
                         </li>

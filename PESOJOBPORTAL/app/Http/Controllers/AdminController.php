@@ -139,13 +139,12 @@ class AdminController extends Controller
             $companyProfile->employer->update(['is_employer_verified' => true]);
 
             if (! $wasVerified) {
-                EmployerNotification::query()->create([
-                    'employer_id' => $companyProfile->employer->id,
-                    'type' => 'general',
-                    'title' => 'Company Verification Approved',
-                    'message' => 'Your company verification was approved by PESO admin. Your employer account is now verified.',
-                    'is_read' => false,
-                ]);
+                $this->notifyEmployer(
+                    $companyProfile->employer,
+                    'verification_update',
+                    'Company Verification Approved',
+                    'Your company verification was approved by PESO admin. Your employer account is now verified.'
+                );
             }
         }
 
@@ -167,16 +166,15 @@ class AdminController extends Controller
         if ($companyProfile->employer) {
             $companyProfile->employer->update(['is_employer_verified' => false]);
 
-            EmployerNotification::query()->create([
-                'employer_id' => $companyProfile->employer->id,
-                'type' => 'general',
-                'title' => 'Company Verification Rejected',
-                'message' => sprintf(
+            $this->notifyEmployer(
+                $companyProfile->employer,
+                'verification_update',
+                'Company Verification Rejected',
+                sprintf(
                     "Your company verification was rejected by PESO admin. Reason: %s",
                     $rejectionReason
-                ),
-                'is_read' => false,
-            ]);
+                )
+            );
         }
 
         return back()->with('warning', "Company profile '{$companyProfile->company_name}' has been rejected.");
@@ -196,11 +194,25 @@ class AdminController extends Controller
 
     public function approveJob(Request $request, PesoJob $job): RedirectResponse
     {
+        $wasActive = $job->status === 'active';
+
         $job->update([
             'status' => 'active',
             'approved_at' => now(),
             'approved_by' => Auth::id(),
         ]);
+
+        if (! $wasActive && $job->employer) {
+            $this->notifyEmployer(
+                $job->employer,
+                'job_update',
+                'Job Post Approved',
+                sprintf(
+                    "Your job post '%s' has been approved by PESO admin and is now active.",
+                    $job->title
+                )
+            );
+        }
 
         return back()->with('success', "Job '{$job->title}' has been approved and is now active.");
     }
@@ -209,10 +221,25 @@ class AdminController extends Controller
     {
         $request->validate(['rejection_reason' => 'required|string|max:500']);
 
+        $rejectionReason = (string) $request->rejection_reason;
+
         $job->update([
             'status' => 'draft',
-            'rejection_reason' => $request->rejection_reason,
+            'rejection_reason' => $rejectionReason,
         ]);
+
+        if ($job->employer) {
+            $this->notifyEmployer(
+                $job->employer,
+                'job_update',
+                'Job Post Rejected',
+                sprintf(
+                    "Your job post '%s' was rejected by PESO admin. Reason: %s",
+                    $job->title,
+                    $rejectionReason
+                )
+            );
+        }
 
         return back()->with('success', "Job '{$job->title}' has been rejected.");
     }
@@ -255,6 +282,32 @@ class AdminController extends Controller
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
         return back()->with('success', "{$type} request has been rejected.");
+    }
+
+    private function notifyEmployer(User $employer, string $preferredType, string $title, string $message): void
+    {
+        $payload = [
+            'employer_id' => $employer->id,
+            'type' => $preferredType,
+            'title' => $title,
+            'message' => $message,
+            'is_read' => false,
+        ];
+
+        try {
+            EmployerNotification::query()->create($payload);
+            return;
+        } catch (\Throwable) {
+            // Fall back to a schema-safe type below.
+        }
+
+        $payload['type'] = 'general';
+
+        try {
+            EmployerNotification::query()->create($payload);
+        } catch (\Throwable) {
+            // Swallow the error so admin approval does not fail just because notifications cannot be recorded.
+        }
     }
 
     // Document Verification

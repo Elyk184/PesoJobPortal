@@ -414,10 +414,28 @@ class EmployerController extends Controller
     public function notificationsPage(Request $request): View
     {
         $notifications = $this->getNotifications($request->user()->id, 50);
+        $jobUnreadCount = $notifications->filter(function ($notification) {
+            $type = strtolower((string) $notification->type);
+            $title = strtolower((string) $notification->title);
+            $message = strtolower((string) $notification->message);
+
+            return ($type === 'job_update' || str_contains($title, 'job') || str_contains($message, 'job post'))
+                && ! $notification->is_read;
+        })->count();
+        $verificationUnreadCount = $notifications->filter(function ($notification) {
+            $type = strtolower((string) $notification->type);
+            $title = strtolower((string) $notification->title);
+            $message = strtolower((string) $notification->message);
+
+            return ($type === 'verification_update' || str_contains($title, 'verification') || str_contains($message, 'verification'))
+                && ! $notification->is_read;
+        })->count();
 
         return view('dashboard.employer.notifications', [
             'notifications' => $notifications,
             'unreadCount' => $notifications->where('is_read', false)->count(),
+            'jobUnreadCount' => $jobUnreadCount,
+            'verificationUnreadCount' => $verificationUnreadCount,
         ]);
     }
 

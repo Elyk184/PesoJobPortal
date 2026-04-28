@@ -8,11 +8,11 @@
     .peso-header {
         display: none !important;
     }
-    
+
     nav {
         display: none !important;
     }
-    
+
     .navbar {
         display: none !important;
     }
@@ -30,7 +30,7 @@
         color: #0f172a;
         min-height: 100vh;
     }
-    
+
     .peso-main {
         margin: 0;
         padding: 0;
@@ -415,7 +415,7 @@
         font-size: 18px;
         letter-spacing: -0.3px;
     }
-    
+
     .dashboard-card h5 i {
         color: #1a1a1a;
         margin-right: 0.5rem;
@@ -823,12 +823,18 @@
                 <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-building"></i>
                     <span>Employer Verification</span>
+                    @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
+                        <span class="badge badge-pending">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-check"></i>
                     <span>Job Approvals</span>
+                    @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
+                        <span class="badge badge-pending" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -1727,22 +1733,22 @@
     // Update date and time
     function updateDateTime() {
         const now = new Date();
-        
+
         // Format time as HH:MM
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const timeString = `${hours}:${minutes}`;
-        
+
         // Format date as MMM DD, YYYY
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const year = now.getFullYear();
         const dateString = `${month}/${day}/${year}`;
-        
+
         // Update the display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
-        
+
         if (timeElement) {
             timeElement.textContent = timeString;
         }
@@ -1753,7 +1759,7 @@
 
     // Update on page load immediately
     updateDateTime();
-    
+
     // Update every second for live clock
     setInterval(updateDateTime, 1000);
 
@@ -1761,11 +1767,11 @@
     function openJobDetailModal(jobId) {
         const modal = document.getElementById('jobDetailModal');
         const modalContent = document.getElementById('jobDetailContent');
-        
+
         // Show loader
         modalContent.innerHTML = '<div class="job-modal-loader"><div class="spinner"></div></div>';
         modal.classList.add('show');
-        
+
         // Fetch job details via AJAX
         fetch(`/api/jobs/${jobId}/detail`)
             .then(response => response.json())
@@ -1784,7 +1790,7 @@
 
     function renderJobDetailModal(job) {
         const modalContent = document.getElementById('jobDetailContent');
-        
+
         const formatDate = (dateString) => {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
@@ -1881,7 +1887,7 @@
                 </div>
             </div>
         `;
-        
+
         modalContent.innerHTML = html;
     }
 
@@ -1965,7 +1971,7 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .data-table tbody tr[onclick]:hover {
         background: linear-gradient(90deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%) !important;
         box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.2);
@@ -1999,7 +2005,7 @@
         </div>
         <div class="delete-modal-body">
             <p style="color: #64748b; margin-bottom: 1rem;">This job will be moved to archives and can be restored later if needed.</p>
-            
+
             <label class="delete-reason-label">Reason for Archiving (Required)</label>
             <textarea id="deleteReason" class="delete-reason-input" placeholder="Please provide a detailed reason for archiving this job posting..."></textarea>
         </div>
