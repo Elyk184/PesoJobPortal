@@ -135,7 +135,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');
-    Route::view('/employers-management', 'admin.employers-management')->name('employers-management');
+    Route::get('/employers-management', [AdminController::class, 'employersManagement'])->name('employers-management');
     Route::get('/jobs-management', [AdminController::class, 'jobsManagement'])->name('jobs-management');
     Route::view('/applications-management', 'admin.applications-management')->name('applications-management');
 

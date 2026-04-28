@@ -197,6 +197,20 @@ class AdminController extends Controller
         return view('admin.jobs-management', compact('jobs'));
     }
 
+    public function employersManagement(): View
+    {
+        $employers = User::where('role', 'employer')
+            ->with('companyProfile')
+            ->whereHas('companyProfile', function ($query) {
+                $query->where('verification_status', 'verified');
+            })
+            ->orderByDesc('is_employer_verified')
+            ->orderByDesc('created_at')
+            ->paginate(15);
+
+        return view('admin.employers-management', compact('employers'));
+    }
+
     public function viewJob(PesoJob $job): View
     {
         $job->load(['employer', 'approver', 'applications']);
