@@ -1890,7 +1890,7 @@ class JobseekerController extends Controller
     public function applyJob(PesoJob $job): View
     {
         return view('jobseeker.apply-job', [
-            'job' => $job->load('employer', 'employer.companyProfile'),
+            'job' => $job->load(['employer', 'employer.companyProfile']),
         ]);
     }
 

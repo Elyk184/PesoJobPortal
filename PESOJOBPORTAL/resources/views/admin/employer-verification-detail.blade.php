@@ -39,6 +39,19 @@
         .form-group label { display: block; font-weight: 700; color: #334155; margin-bottom: 0.5rem; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #cdd9e5; border-radius: 8px; font-size: 14px; font-family: inherit; }
         .form-group textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14); }
+        .doc-preview { display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; margin-bottom: 1rem; }
+        .doc-preview:last-child { margin-bottom: 0; }
+        .doc-icon { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; flex-shrink: 0; }
+        .doc-icon.pdf { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+        .doc-icon.img { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+        .doc-info { flex: 1; }
+        .doc-name { font-weight: 600; color: #0d1f3c; font-size: 14px; margin-bottom: 2px; }
+        .doc-meta { font-size: 12px; color: #6b7280; }
+        .doc-actions { display: flex; gap: 0.5rem; }
+        .doc-btn { padding: 0.5rem 1rem; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .doc-btn-view { background: #3b82f6; color: white; }
+        .doc-btn-view:hover { background: #2563eb; color: white; }
+        .doc-missing { padding: 1.5rem; text-align: center; color: #6b7280; background: #f9fafb; border-radius: 8px; border: 1px dashed #d1d5db; }
     </style>
 
     <div class="detail-container">
@@ -95,6 +108,66 @@
                     @endif
                 </div>
             </div>
+        </div>
+
+        <!-- Verification Documents Card -->
+        <div class="detail-card">
+            <div class="card-header">
+                <h3>Verification Documents</h3>
+            </div>
+
+            @php
+                $hasBusinessPermit = $companyProfile->business_permit_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($companyProfile->business_permit_path);
+                $hasDtiSec = $companyProfile->dti_sec_registration_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($companyProfile->dti_sec_registration_path);
+            @endphp
+
+            @if($hasBusinessPermit)
+                @php
+                    $permitExt = pathinfo($companyProfile->business_permit_path, PATHINFO_EXTENSION);
+                    $permitIsPdf = strtolower($permitExt) === 'pdf';
+                @endphp
+                <div class="doc-preview">
+                    <div class="doc-icon {{ $permitIsPdf ? 'pdf' : 'img' }}">
+                        <i class="bi {{ $permitIsPdf ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image' }}"></i>
+                    </div>
+                    <div class="doc-info">
+                        <div class="doc-name">Business Permit</div>
+                        <div class="doc-meta">{{ strtoupper($permitExt) }} file &bull; {{ \Illuminate\Support\Facades\Storage::disk('public')->size($companyProfile->business_permit_path) > 0 ? round(\Illuminate\Support\Facades\Storage::disk('public')->size($companyProfile->business_permit_path) / 1024, 1) . ' KB' : 'Size unknown' }}</div>
+                    </div>
+                    <div class="doc-actions">
+                        <a href="{{ asset('storage/' . $companyProfile->business_permit_path) }}" target="_blank" class="doc-btn doc-btn-view"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            @else
+                <div class="doc-missing">
+                    <i class="bi bi-file-earmark-x" style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.6;"></i>
+                    Business Permit not uploaded
+                </div>
+            @endif
+
+            @if($hasDtiSec)
+                @php
+                    $dtiExt = pathinfo($companyProfile->dti_sec_registration_path, PATHINFO_EXTENSION);
+                    $dtiIsPdf = strtolower($dtiExt) === 'pdf';
+                @endphp
+                <div class="doc-preview">
+                    <div class="doc-icon {{ $dtiIsPdf ? 'pdf' : 'img' }}">
+                        <i class="bi {{ $dtiIsPdf ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image' }}"></i>
+                    </div>
+                    <div class="doc-info">
+                        <div class="doc-name">DTI/SEC Registration</div>
+                        <div class="doc-meta">{{ strtoupper($dtiExt) }} file &bull; {{ \Illuminate\Support\Facades\Storage::disk('public')->size($companyProfile->dti_sec_registration_path) > 0 ? round(\Illuminate\Support\Facades\Storage::disk('public')->size($companyProfile->dti_sec_registration_path) / 1024, 1) . ' KB' : 'Size unknown' }}</div>
+                    </div>
+                    <div class="doc-actions">
+                        <a href="{{ asset('storage/' . $companyProfile->dti_sec_registration_path) }}" target="_blank" class="doc-btn doc-btn-view"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            @else
+                <div class="doc-missing">
+                    <i class="bi bi-file-earmark-x" style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.6;"></i>
+                    DTI/SEC Registration not uploaded
+                </div>
+            @endif
         </div>
 
         <!-- Business Details Card -->
@@ -227,7 +300,7 @@
             <div class="detail-card">
                 <div class="action-buttons">
                     <a href="{{ route('admin.employer-verification') }}" class="btn btn-back"><i class="bi bi-arrow-left me-1"></i>Back</a>
-                    
+
                     <form method="POST" action="{{ route('admin.employer-verification.approve', $companyProfile->id) }}" style="display: inline;">
                         @csrf
                         <button type="submit" class="btn btn-approve" onclick="return confirm('Are you sure you want to approve this company profile?')"><i class="bi bi-check-lg me-1"></i>Approve</button>
