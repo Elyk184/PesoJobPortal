@@ -32,22 +32,22 @@
             <aside aria-label="Quick statistics" class="hero-tabulation">
                 <div class="hero-tabulation-grid">
                     <div class="hero-stat">
-                        <strong class="stat-counter" data-count="500" data-suffix="+">0</strong>
+                        <strong class="stat-counter" data-count="{{ $jobSeekers ?? 0 }}" data-suffix="+">0</strong>
                         <div class="objective-divider" aria-hidden="true"></div>
                         <span>Job Seekers</span>
                     </div>
                     <div class="hero-stat">
-                        <strong class="stat-counter" data-count="50" data-suffix="+">0</strong>
+                        <strong class="stat-counter" data-count="{{ $employers ?? 0 }}" data-suffix="+">0</strong>
                         <div class="objective-divider" aria-hidden="true"></div>
                         <span>Employers</span>
                     </div>
                     <div class="hero-stat">
-                        <strong class="stat-counter" data-count="300" data-suffix="+">0</strong>
+                        <strong class="stat-counter" data-count="{{ $jobsPosted ?? 0 }}" data-suffix="+">0</strong>
                         <div class="objective-divider" aria-hidden="true"></div>
                         <span>Jobs Posted</span>
                     </div>
                     <div class="hero-stat">
-                        <strong class="stat-counter" data-count="85" data-suffix="+">0</strong>
+                        <strong class="stat-counter" data-count="{{ $placementRate ?? 0 }}" data-suffix="%">0</strong>
                         <div class="objective-divider" aria-hidden="true"></div>
                         <span>Placement Rate</span>
                     </div>

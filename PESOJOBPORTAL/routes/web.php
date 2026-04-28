@@ -7,11 +7,10 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index']);
 
 Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');
