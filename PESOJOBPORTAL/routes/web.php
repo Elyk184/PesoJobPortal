@@ -114,10 +114,24 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     });
 
     // Approvals & Verification Section
-    Route::view('/employer-verification', 'admin.employer-verification')->name('employer-verification');
-    Route::view('/job-approvals', 'admin.job-approvals')->name('job-approvals');
-    Route::view('/lra-sra-approvals', 'admin.lra-sra-approvals')->name('lra-sra-approvals');
-    Route::view('/document-verification', 'admin.document-verification')->name('document-verification');
+    Route::get('/employer-verification', [AdminController::class, 'employerVerification'])->name('employer-verification');
+    Route::get('/employer-verification/{companyProfile}', [AdminController::class, 'viewCompanyProfile'])->name('employer-verification.detail');
+    Route::post('/employer-verification/{companyProfile}/approve', [AdminController::class, 'approveCompanyProfile'])->name('employer-verification.approve');
+    Route::post('/employer-verification/{companyProfile}/reject', [AdminController::class, 'rejectCompanyProfile'])->name('employer-verification.reject');
+
+    Route::get('/job-approvals', [AdminController::class, 'jobApprovals'])->name('job-approvals');
+    Route::get('/job-approvals/{job}', [AdminController::class, 'viewJob'])->name('jobs.review');
+    Route::post('/job-approvals/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
+    Route::post('/job-approvals/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
+
+    Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
+    Route::get('/lra-sra-approvals/{activityRequest}', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
+    Route::post('/lra-sra-approvals/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
+    Route::post('/lra-sra-approvals/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
+
+    Route::get('/document-verification', [AdminController::class, 'documentVerification'])->name('document-verification');
+    Route::post('/document-verification/{documentId}/approve', [AdminController::class, 'approveDocument'])->name('documents.approve');
+    Route::post('/document-verification/{documentId}/reject', [AdminController::class, 'rejectDocument'])->name('documents.reject');
 
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');
@@ -132,6 +146,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
     Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
     Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
+
+    // Admin Profile
+    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+    Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
 
     // Tools & Settings Section
     Route::view('/settings', 'admin.settings')->name('settings');

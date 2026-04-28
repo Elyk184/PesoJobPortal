@@ -409,7 +409,7 @@
                         <i class="bi bi-upload me-2"></i><span id="logo-label">{{ $hasCompanyLogo ? 'Change Logo' : 'Upload Logo' }}</span>
                     </label>
                     <input type="file" id="company_logo" name="company_logo" accept=".jpg,.jpeg,.png,.gif" style="display: none;" onchange="handleCompanyLogoChange(this)">
-                    <small class="d-block text-muted mt-2">JPG, PNG, GIF (max 2MB). Logo uploads right after file selection.</small>
+                    <small class="d-block text-muted mt-2">JPG, PNG, GIF (max 10MB). Logo uploads right after file selection.</small>
                 </div>
             </div>
 
