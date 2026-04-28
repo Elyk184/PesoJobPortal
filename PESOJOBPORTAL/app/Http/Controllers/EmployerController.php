@@ -240,7 +240,7 @@ class EmployerController extends Controller
         ];
 
         if (Schema::hasColumn('users', 'username')) {
-            $rules['username'] = ['required', 'string', 'max:100', 'alpha_dash', 'unique:users,username,'.$employer->id];
+            $rules['username'] = ['nullable', 'string', 'max:100', 'alpha_dash', 'unique:users,username,'.$employer->id];
         }
 
         $validated = $request->validate($rules);
@@ -254,7 +254,7 @@ class EmployerController extends Controller
             $updateData['password'] = $validated['password'];
         }
 
-        if (Schema::hasColumn('users', 'username') && isset($validated['username'])) {
+        if (Schema::hasColumn('users', 'username') && ! empty($validated['username'])) {
             $updateData['username'] = $validated['username'];
         }
 

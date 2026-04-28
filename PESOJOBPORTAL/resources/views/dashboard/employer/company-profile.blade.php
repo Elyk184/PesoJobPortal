@@ -352,7 +352,7 @@
                     ['key' => 'establishment_contact_position', 'label' => 'Position', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_contact_position', $companyProfile->establishment_contact_position ?? null))],
                     ['key' => 'contact_person_phone', 'label' => 'Mobile Number', 'section' => 'contact-details-section', 'filled' => filled(old('contact_person_phone', $companyProfile->contact_person_phone ?? null))],
                     ['key' => 'establishment_email', 'label' => 'E-mail Address', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_email', $companyProfile->establishment_email ?? null))],
-                    ['key' => 'username', 'label' => 'Username', 'section' => 'security-section', 'filled' => filled(old('username', $user->username ?? null))],
+                    // Username is optional and not included in required profile fields
                 ];
 
                 $requiredCount = count($requiredProfileFields);
@@ -820,46 +820,6 @@
                 </div>
             </div>
 
-            <!-- Security Section -->
-            <div id="security-section" class="form-section">
-                <h5 class="section-heading"><i class="fas fa-lock"></i> Security</h5>
-                <div class="mb-4">
-                    <label for="username" class="form-label-custom">Username <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-custom @error('username') is-invalid @enderror"
-                           id="username" name="username" value="{{ old('username', $user->username ?? '') }}" required
-                           placeholder="Choose a unique username">
-                    @error('username')
-                        <div class="form-error-custom">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <label for="password" class="form-label-custom">New Password</label>
-                            <input type="password" class="form-control form-control-custom @error('password') is-invalid @enderror"
-                                   id="password" name="password"
-                                   placeholder="Enter new password">
-                            @error('password')
-                                <div class="form-error-custom">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="form-label-custom">Confirm New Password</label>
-                            <input type="password" class="form-control form-control-custom"
-                                   id="password_confirmation" name="password_confirmation"
-                                   placeholder="Confirm new password">
-                        </div>
-                    </div>
-                </div>
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Leave password fields blank if you don't want to change your password.
-                </div>
-            </div>
-
             <!-- Action Buttons -->
             <div class="profile-actions">
                 <a href="{{ route('employer.company-profile.download') }}" class="btn btn-outline-primary">
@@ -899,8 +859,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'contact_person_name', label: 'Contact Person', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_name' },
         { key: 'establishment_contact_position', label: 'Position', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_position' },
         { key: 'contact_person_phone', label: 'Mobile Number', sectionId: 'contact-details-section', type: 'input', selector: '#contact_person_phone' },
-        { key: 'establishment_email', label: 'E-mail Address', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_email' },
-        { key: 'username', label: 'Username', sectionId: 'security-section', type: 'input', selector: '#username' },
+        { key: 'establishment_email', label: 'E-mail Address', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_email' }
     ];
 
     const completionPercentText = document.getElementById('completionPercentText');
