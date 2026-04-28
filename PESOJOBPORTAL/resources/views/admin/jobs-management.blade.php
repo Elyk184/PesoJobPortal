@@ -175,38 +175,26 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="job-title">Senior Software Engineer</td>
-                    <td class="job-company">Tech Solutions Inc.</td>
-                    <td class="job-applications">12</td>
-                    <td class="job-date">05 Apr 2026</td>
-                    <td><span class="status-badge status-active"><i class="bi bi-check-circle me-1"></i>Active</span></td>
-                    <td class="actions-cell">
-                        <button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button>
-                        <button class="btn-small btn-close"><i class="bi bi-x-lg me-1"></i>Close</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="job-title">Marketing Manager</td>
-                    <td class="job-company">Global Retail Co.</td>
-                    <td class="job-applications">8</td>
-                    <td class="job-date">08 Apr 2026</td>
-                    <td><span class="status-badge status-active"><i class="bi bi-check-circle me-1"></i>Active</span></td>
-                    <td class="actions-cell">
-                        <button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button>
-                        <button class="btn-small btn-close"><i class="bi bi-x-lg me-1"></i>Close</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="job-title">Registered Nurse</td>
-                    <td class="job-company">Healthcare Services Ltd.</td>
-                    <td class="job-applications">15</td>
-                    <td class="job-date">10 Apr 2026</td>
-                    <td><span class="status-badge status-closed"><i class="bi bi-x-circle me-1"></i>Closed</span></td>
-                    <td class="actions-cell">
-                        <button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button>
-                    </td>
-                </tr>
+                @forelse($jobs as $job)
+                    <tr>
+                        <td class="job-title">{{ $job->title }}</td>
+                        <td class="job-company">{{ $job->employer?->companyProfile?->company_name ?? $job->employer_name ?? 'N/A' }}</td>
+                        <td class="job-applications">{{ $job->applications?->count() ?? 0 }}</td>
+                        <td class="job-date">{{ $job->created_at?->format('d M Y') ?? 'N/A' }}</td>
+                        <td><span class="status-badge status-active"><i class="bi bi-check-circle me-1"></i>Active</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-small btn-view"><i class="bi bi-eye me-1"></i>View</button>
+                            <button class="btn-small btn-close"><i class="bi bi-x-lg me-1"></i>Close</button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">
+                            <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                            No active jobs at the moment.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
