@@ -220,7 +220,7 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function vacancies(Request $request): View
+    public function vacancies(Request $request): RedirectResponse
     {
         $manoloFortichBarangays = [
             'Agusan Canyon',
