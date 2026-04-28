@@ -16,57 +16,8 @@ class ChatbotController extends Controller
 
         $userMessage = $request->input('message');
 
-        // Restrict topics: registration, employer portal, admin, jobseeker features
-        $allowedTopics = [
-            // Authentication
-            'login', 'log in', 'logout', 'log out',
-            // Registration
-            'registration', 'register', 'sign up', 'create account',
-            // Password
-            'forgot password', 'reset password', 'change password',
-            // Verification
-            'account verification', 'email verification',
-            // Profile
-            'profile', 'profile update', 'edit profile',
-            // Resume
-            'resume', 'CV', 'upload resume',
-            // Skills & Experience
-            'skills', 'experience', 'personal information',
-            // Job Listings
-            'job listing', 'job listings', 'job vacancies',
-            // Job Search
-            'job search', 'find jobs', 'search jobs',
-            // Job Details
-            'job details', 'job description',
-            // Latest/Available Jobs
-            'latest jobs', 'available jobs',
-            // Applications
-            'apply', 'job application', 'apply for job',
-            'application status', 'application update',
-            'submitted applications', 'my applications',
-            'withdraw application',
-            // Employer Portal
-            'employer portal', 'employer login',
-            // Company
-            'company profile', 'company info',
-            // Job Posting
-            'job posting', 'post a job',
-            // Applicants
-            'manage applicants',
-            // Admin
-            'admin', 'administrator',
-            'admin portal', 'admin login',
-            // Admin Actions
-            'approve jobs', 'verify employer',
-            'manage users', 'reports',
-            // News & Events
-            'news', 'updates', 'announcements',
-            'events', 'job fairs', 'hiring events',
-            // PESO
-            'PESO programs', 'PESO services',
-            // Guidance & Training
-            'career guidance', 'livelihood programs', 'training and seminars',
-        ];
+        // Restrict topics to PESO Job Portal features (config-driven)
+        $allowedTopics = (array) config('chatbot.allowed_topics', []);
         $matched = false;
         foreach ($allowedTopics as $topic) {
             if (stripos($userMessage, $topic) !== false) {
@@ -77,7 +28,7 @@ class ChatbotController extends Controller
 
         if (!$matched) {
             return response()->json([
-                'reply' => 'Sorry, I can only assist with registration, employer portal, admin questions, job applications, job listings, job details, application status, or profile updates.',
+                'reply' => (string) config('chatbot.fallback_reply', 'Sorry, I can only assist with PESO Job Portal features.'),
             ]);
         }
 
