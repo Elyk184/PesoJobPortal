@@ -638,6 +638,74 @@
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
+    .topbar-clock-container {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .topbar-analog-clock {
+        width: 100px;
+        height: 100px;
+        border: 3px solid #3b82f6;
+        border-radius: 50%;
+        background: white;
+        position: relative;
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.2), inset 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .clock-center {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: #3b82f6;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+
+    .clock-hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        transform-origin: bottom center;
+        background: #1e293b;
+        border-radius: 10px;
+    }
+
+    .clock-hand.hour {
+        width: 5px;
+        height: 25px;
+        margin-left: -2.5px;
+        background: #1e293b;
+    }
+
+    .clock-hand.minute {
+        width: 4px;
+        height: 33px;
+        margin-left: -2px;
+        background: #3b82f6;
+    }
+
+    .clock-hand.second {
+        width: 2px;
+        height: 35px;
+        margin-left: -1px;
+        background: #ef4444;
+    }
+
+    .clock-tick {
+        position: absolute;
+        width: 1px;
+        height: 6px;
+        background: #64748b;
+        left: 50%;
+        transform-origin: left 50px;
+        margin-left: -0.5px;
+    }
+
     .topbar-time {
         text-align: right;
     }
@@ -969,10 +1037,29 @@
             </div>
             <div class="admin-topbar-right">
                 <div class="topbar-datetime">
-                    <i class="bi bi-clock-history topbar-datetime-icon"></i>
-                    <div class="topbar-time">
-                        <div class="topbar-time-display" id="currentTime">--:--</div>
-                        <div class="topbar-date-display" id="currentDate">--/--/----</div>
+                    <div class="topbar-clock-container">
+                        <div class="topbar-analog-clock" id="analogClock">
+                            <div class="clock-tick" style="transform: rotate(0deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(30deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(60deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(90deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(120deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(150deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(180deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(210deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(240deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(270deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(300deg);"></div>
+                            <div class="clock-tick" style="transform: rotate(330deg);"></div>
+                            <div class="clock-hand hour" id="hourHand"></div>
+                            <div class="clock-hand minute" id="minuteHand"></div>
+                            <div class="clock-hand second" id="secondHand"></div>
+                            <div class="clock-center"></div>
+                        </div>
+                        <div class="topbar-time">
+                            <div class="topbar-time-display" id="currentTime">--:--</div>
+                            <div class="topbar-date-display" id="currentDate">--/--/----</div>
+                        </div>
                     </div>
                 </div>
                 <button class="toggle-sidebar-btn" id="toggleSidebar">
@@ -2016,28 +2103,52 @@
     function updateClock() {
         const now = new Date();
         
+        // Get time components
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const milliseconds = now.getMilliseconds();
+        
         // Format time (HH:MM)
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeString = `${hours}:${minutes}`;
+        const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         
-        // Format date (MM/DD/YYYY)
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
+        // Format date (MMM DD, YYYY)
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = monthNames[now.getMonth()];
+        const day = now.getDate();
         const year = now.getFullYear();
-        const dateString = `${month}/${day}/${year}`;
+        const dateString = `${month} ${day}, ${year}`;
         
-        // Update DOM
+        // Update digital display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
         
         if (timeElement) timeElement.textContent = timeString;
         if (dateElement) dateElement.textContent = dateString;
+        
+        // Calculate analog clock hand angles
+        // Hour hand: 360 / 12 hours = 30 degrees per hour + 0.5 degrees per minute
+        const hourDegrees = (hours % 12) * 30 + minutes * 0.5 + seconds * 0.5 / 60;
+        
+        // Minute hand: 360 / 60 minutes = 6 degrees per minute
+        const minuteDegrees = minutes * 6 + seconds * 0.1;
+        
+        // Second hand: 360 / 60 seconds = 6 degrees per second (smooth with milliseconds)
+        const secondDegrees = seconds * 6 + (milliseconds / 1000) * 6;
+        
+        // Update analog clock hands
+        const hourHand = document.getElementById('hourHand');
+        const minuteHand = document.getElementById('minuteHand');
+        const secondHand = document.getElementById('secondHand');
+        
+        if (hourHand) hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+        if (minuteHand) minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
+        if (secondHand) secondHand.style.transform = `rotate(${secondDegrees}deg)`;
     }
     
-    // Update clock immediately and then every second
+    // Update clock immediately and then frequently for smooth second hand
     updateClock();
-    setInterval(updateClock, 1000);
+    setInterval(updateClock, 50); // Update every 50ms for smooth motion
 </script>
 
 @endsection
