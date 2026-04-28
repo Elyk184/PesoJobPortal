@@ -99,6 +99,28 @@ class PesoJob extends Model
     {
         return $query->whereNotNull('archived_at');
     }
+
+    /**
+     * Scope to only get approved jobs
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved')
+            ->whereNotNull('approved_at');
+    }
+
+    /**
+     * Scope to get active approved jobs (not archived, not filled)
+     */
+    public function scopeActiveApproved($query)
+    {
+        return $query->approved()
+            ->notArchived()
+            ->where(function ($q) {
+                $q->whereNull('is_filled')
+                  ->orWhere('is_filled', false);
+            });
+    }
 }
 ?>
 

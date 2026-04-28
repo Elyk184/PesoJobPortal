@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PesoJob;
 use App\Models\UserProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,14 @@ class JobseekerController extends Controller
 
     public function vacancies(): View
     {
-        return view('jobseeker.vacancies');
+        $jobs = PesoJob::activeApproved()
+            ->with('employer', 'employer.companyProfile')
+            ->latest('created_at')
+            ->paginate(12);
+
+        return view('jobseeker.vacancies', [
+            'jobs' => $jobs,
+        ]);
     }
 
     public function applications(): View
