@@ -1,4 +1,4 @@
-@extends('dashboard.layouts.jobseeker')
+@extends('layouts.dashboard')
 
 @section('title', 'Browse Jobs - PESO')
 @section('page-title', 'Browse Jobs')

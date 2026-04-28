@@ -338,11 +338,59 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function browseJobs(): View
+    public function browseJobs(Request $request): View
     {
         $jobsQuery = PesoJob::query()
             ->where('status', 'active')
             ->with(['employer.companyProfile']);
+
+        $search = trim((string) $request->query('search', ''));
+        $location = trim((string) $request->query('location', ''));
+        $industry = trim((string) $request->query('industry', ''));
+        $barangay = trim((string) $request->query('barangay', ''));
+        $employmentType = trim((string) $request->query('employment_type', ''));
+        $sort = (string) $request->query('sort', 'newest');
+
+        if ($search !== '') {
+            $jobsQuery->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('employer_name', 'like', '%' . $search . '%')
+                    ->orWhere('location', 'like', '%' . $search . '%')
+                    ->orWhere('requirements', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($location !== '') {
+            $jobsQuery->where('location', 'like', '%' . $location . '%');
+        }
+
+        if ($employmentType !== '') {
+            $jobsQuery->where('job_type', $employmentType);
+        }
+
+        if ($industry !== '') {
+            $jobsQuery->whereHas('employer.companyProfile', function ($q) use ($industry) {
+                $q->where('industry', $industry);
+            });
+        }
+
+        if ($barangay !== '') {
+            $jobsQuery->whereHas('employer.companyProfile', function ($q) use ($barangay) {
+                $q->where('barangay', $barangay);
+            });
+        }
+
+        // Sorting
+        if ($sort === 'expiring') {
+            $jobsQuery->orderBy('application_end_date', 'asc');
+        } elseif ($sort === 'salary_high') {
+            $jobsQuery->orderByDesc('salary');
+        } elseif ($sort === 'salary_low') {
+            $jobsQuery->orderBy('salary');
+        } else {
+            $jobsQuery->latest();
+        }
 
         $locations = PesoJob::query()
             ->where('status', 'active')
@@ -369,8 +417,15 @@ class JobseekerController extends Controller
             ->pluck('barangay')
             ->values();
 
+        $jobs = $jobsQuery->paginate(10)->withQueryString();
+
+        $jobs->getCollection()->transform(function (PesoJob $job) {
+            $job->setAttribute('requirements_list', $this->extractJobRequirements($job));
+            return $job;
+        });
+
         return view('jobseeker.browse-jobs', [
-            'jobs' => $jobsQuery->latest()->paginate(10)->withQueryString(),
+            'jobs' => $jobs,
             'locations' => $locations,
             'industries' => $industries,
             'barangays' => $barangays,
