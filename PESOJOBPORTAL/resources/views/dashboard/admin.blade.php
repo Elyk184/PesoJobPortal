@@ -2011,5 +2011,34 @@
     </div>
 </div>
 
+<script>
+    // Update clock every second
+    function updateClock() {
+        const now = new Date();
+        
+        // Format time (HH:MM)
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+        
+        // Format date (MM/DD/YYYY)
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const year = now.getFullYear();
+        const dateString = `${month}/${day}/${year}`;
+        
+        // Update DOM
+        const timeElement = document.getElementById('currentTime');
+        const dateElement = document.getElementById('currentDate');
+        
+        if (timeElement) timeElement.textContent = timeString;
+        if (dateElement) dateElement.textContent = dateString;
+    }
+    
+    // Update clock immediately and then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+</script>
+
 @endsection
 
