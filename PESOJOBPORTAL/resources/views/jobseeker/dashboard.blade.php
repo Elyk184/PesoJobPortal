@@ -5,39 +5,72 @@
 @push('styles')
 <style>
     .jobseeker-dashboard {
-        --dash-bg: #eef2f7;
+        --land-blue-900: #1e3a8a;
+        --land-blue-800: #1e40af;
+        --land-red-600: #dc2626;
+        --land-yellow-300: #fcd34d;
+        --land-white: #ffffff;
+        --dash-bg: #f4f7fb;
         --dash-card: #ffffff;
-        --dash-border: #d8e1ec;
-        --dash-text: #1f2f43;
+        --dash-border: #dbe5f1;
+        --dash-text: #1e2b3a;
         --dash-muted: #60758e;
-        --dash-accent: #0f5ba7;
-        --dash-success: #23865a;
-        --dash-warning: #b98520;
-        --dash-violet: #7356bf;
+        --dash-accent: var(--land-blue-900);
+        --dash-success: var(--land-blue-800);
+        --dash-warning: var(--land-yellow-300);
+        --dash-violet: var(--land-red-600);
         color: var(--dash-text);
         font-family: "Manrope", "Segoe UI", sans-serif;
         background:
-            radial-gradient(90rem 50rem at 92% -10%, #dbe8f7 0%, rgba(219, 232, 247, 0) 62%),
-            radial-gradient(85rem 45rem at -12% 0%, #e7f1fc 0%, rgba(231, 241, 252, 0) 57%),
+            radial-gradient(90rem 50rem at 92% -10%, #dfe8f8 0%, rgba(223, 232, 248, 0) 62%),
+            radial-gradient(85rem 45rem at -12% 0%, #eaf1fb 0%, rgba(234, 241, 251, 0) 57%),
             var(--dash-bg);
         border-radius: 18px;
         padding: 16px;
     }
 
     .jobseeker-dashboard .dashboard-hero {
+        position: relative;
+        overflow: hidden;
         border-radius: 16px;
         border: 1px solid var(--dash-border);
-        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 44%, #f3f8ff 100%);
+        background: linear-gradient(135deg, var(--land-white) 0%, #f6f9ff 44%, #edf3ff 100%);
         box-shadow: 0 12px 30px rgba(17, 30, 52, 0.08);
+    }
+
+    .jobseeker-dashboard .dashboard-hero::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-yellow-300) 100%);
+    }
+
+    .jobseeker-dashboard .dashboard-hero::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        right: -60px;
+        top: -60px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(30, 64, 175, 0.16) 0%, rgba(30, 64, 175, 0) 72%);
+        pointer-events: none;
     }
 
     .jobseeker-dashboard .dashboard-hero-meta {
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: var(--dash-muted);
+        color: #3d5c83;
         font-weight: 700;
         margin-bottom: 0.35rem;
+    }
+
+    .jobseeker-dashboard .dashboard-hero .h4 {
+        color: #1f3555;
     }
 
     .jobseeker-dashboard .dashboard-pill {
@@ -48,9 +81,10 @@
         border-radius: 999px;
         padding: 6px 12px;
         font-size: 0.76rem;
-        color: var(--dash-text);
+        color: var(--land-blue-900);
         background: #ffffff;
         font-weight: 700;
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.08);
     }
 
     .jobseeker-dashboard .quick-actions-grid {
@@ -59,28 +93,37 @@
         gap: 8px;
     }
 
+    .jobseeker-dashboard .quick-actions-grid .quick-action-btn:last-child {
+        grid-column: span 2;
+    }
+
     .jobseeker-dashboard .quick-action-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
-        border: 1px solid var(--dash-border);
+        border: 1px solid #c5d3e9;
         border-radius: 10px;
         background: #fff;
-        color: var(--dash-text);
+        color: #1f3555;
         text-decoration: none;
         padding: 8px 10px;
         font-size: 0.78rem;
         font-weight: 700;
+        transition: all 0.2s ease;
     }
 
     .jobseeker-dashboard .quick-action-btn:hover {
-        border-color: #b5c6da;
-        background: #f8fbff;
+        border-color: var(--land-red-600);
+        background: rgba(220, 38, 38, 0.08);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(10, 35, 80, 0.14);
     }
 
     .jobseeker-dashboard .completion-meter {
         min-width: 220px;
+        width: 100%;
+        max-width: 460px;
     }
 
     .jobseeker-dashboard .completion-meter .progress {
@@ -90,14 +133,27 @@
     }
 
     .jobseeker-dashboard .completion-meter .progress-bar {
-        background: linear-gradient(90deg, #3f8efc 0%, #2f8f5e 100%);
+        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-yellow-300) 100%);
     }
 
     .jobseeker-dashboard .dashboard-stat-card {
         background: var(--dash-card);
         border: 1px solid var(--dash-border);
         border-radius: 14px;
+        position: relative;
+        overflow: hidden;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .jobseeker-dashboard .dashboard-stat-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--land-blue-900), var(--land-red-600));
+        opacity: 0.9;
     }
 
     .jobseeker-dashboard .dashboard-stat-card:hover {
@@ -117,13 +173,13 @@
     }
 
     .jobseeker-dashboard .stat-apps {
-        background: rgba(39, 123, 73, 0.12);
-        color: #277b49;
+        background: rgba(30, 64, 175, 0.12);
+        color: #1e40af;
     }
 
     .jobseeker-dashboard .stat-saved {
-        background: rgba(204, 141, 36, 0.14);
-        color: #a06d19;
+        background: rgba(252, 211, 77, 0.22);
+        color: #8a6512;
     }
 
     .jobseeker-dashboard .dashboard-stat-trend {
@@ -132,10 +188,57 @@
         margin-top: 2px;
     }
 
+    .jobseeker-dashboard .dashboard-stat-number {
+        font-size: 1.45rem;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: #1b2e4a;
+        font-weight: 800;
+    }
+
+    .jobseeker-dashboard .dashboard-stat-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #4f6480;
+        margin-top: 3px;
+    }
+
     .jobseeker-dashboard .section-head {
         border-bottom: 1px solid var(--dash-border);
         padding-bottom: 12px;
         margin-bottom: 14px;
+    }
+
+    .jobseeker-dashboard .section-head .h5 {
+        color: #1f3555;
+    }
+
+    .jobseeker-dashboard .dashboard-section-card {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .jobseeker-dashboard .dashboard-section-card:not(.dashboard-hero):hover {
+        transform: translateY(-2px);
+        border-color: #c9d8ea;
+        box-shadow: 0 12px 26px rgba(18, 36, 58, 0.08);
+    }
+
+    .jobseeker-dashboard .dashboard-section-action,
+    .jobseeker-dashboard .mark-read-btn,
+    .jobseeker-dashboard .empty-action-btn {
+        border-radius: 999px;
+        font-weight: 700;
+        border-color: #c5d3e5;
+        transition: all 0.2s ease;
+    }
+
+    .jobseeker-dashboard .dashboard-section-action:hover,
+    .jobseeker-dashboard .mark-read-btn:hover,
+    .jobseeker-dashboard .empty-action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(30, 58, 138, 0.1);
     }
 
     .jobseeker-dashboard .dashboard-skeleton {
@@ -192,10 +295,10 @@
         height: 100%;
     }
 
-    .jobseeker-dashboard .status-segment.pending { background: #c69123; }
-    .jobseeker-dashboard .status-segment.interview { background: #2f8f5e; }
-    .jobseeker-dashboard .status-segment.hired { background: #2d65b1; }
-    .jobseeker-dashboard .status-segment.recommended { background: #7f67c7; }
+    .jobseeker-dashboard .status-segment.pending { background: #f59e0b; }
+    .jobseeker-dashboard .status-segment.interview { background: #1e40af; }
+    .jobseeker-dashboard .status-segment.hired { background: #dc2626; }
+    .jobseeker-dashboard .status-segment.recommended { background: #1e3a8a; }
 
     .jobseeker-dashboard .status-item {
         border: 1px solid #dbe5f1;
@@ -211,12 +314,13 @@
     .jobseeker-dashboard a.status-item {
         color: inherit;
         text-decoration: none;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
 
     .jobseeker-dashboard a.status-item:hover {
         border-color: #c7d6e7;
         box-shadow: 0 6px 16px rgba(24, 43, 66, 0.06);
+        transform: translateY(-1px);
     }
 
     .jobseeker-dashboard .status-item-label {
@@ -262,25 +366,25 @@
         display: inline-block;
     }
 
-    .jobseeker-dashboard .status-legend-pending .dot { background: #c69123; }
-    .jobseeker-dashboard .status-legend-interview .dot { background: #2f8f5e; }
-    .jobseeker-dashboard .status-legend-hired .dot { background: #2d65b1; }
-    .jobseeker-dashboard .status-legend-recommended .dot { background: #7f67c7; }
+    .jobseeker-dashboard .status-legend-pending .dot { background: #f59e0b; }
+    .jobseeker-dashboard .status-legend-interview .dot { background: #1e40af; }
+    .jobseeker-dashboard .status-legend-hired .dot { background: #dc2626; }
+    .jobseeker-dashboard .status-legend-recommended .dot { background: #1e3a8a; }
 
     .jobseeker-dashboard .status-pending {
-        border-left: 4px solid #c69123;
+        border-left: 4px solid #f59e0b;
     }
 
     .jobseeker-dashboard .status-interview {
-        border-left: 4px solid #2f8f5e;
+        border-left: 4px solid #1e40af;
     }
 
     .jobseeker-dashboard .status-hired {
-        border-left: 4px solid #2d65b1;
+        border-left: 4px solid #dc2626;
     }
 
     .jobseeker-dashboard .status-recommended {
-        border-left: 4px solid #7f67c7;
+        border-left: 4px solid #1e3a8a;
     }
 
     .jobseeker-dashboard .dashboard-empty-state {
@@ -318,10 +422,10 @@
         gap: 5px;
         font-size: 0.68rem;
         font-weight: 800;
-        color: var(--dash-success);
-        border: 1px solid #c8e9d9;
+        color: #1e40af;
+        border: 1px solid #c7d8f5;
         border-radius: 999px;
-        background: #f0fbf5;
+        background: #eef4ff;
         padding: 4px 8px;
         margin-bottom: 8px;
         width: fit-content;
@@ -358,11 +462,13 @@
         padding: 10px 12px;
         text-decoration: none;
         color: inherit;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
 
     .jobseeker-dashboard .notification-item:hover {
         border-color: #c7d6e7;
         box-shadow: 0 4px 12px rgba(24, 43, 66, 0.06);
+        transform: translateY(-1px);
     }
 
     .jobseeker-dashboard .notification-icon {
@@ -459,7 +565,7 @@
     .jobseeker-dashboard .skill-gap-progress-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, #3f8efc 0%, #2f8f5e 100%);
+        background: linear-gradient(90deg, #1e40af 0%, #fcd34d 100%);
         transition: width 0.6s ease;
     }
 
@@ -538,6 +644,10 @@
 
         .jobseeker-dashboard .quick-actions-grid {
             grid-template-columns: 1fr;
+        }
+
+        .jobseeker-dashboard .quick-actions-grid .quick-action-btn:last-child {
+            grid-column: span 1;
         }
     }
 
@@ -667,7 +777,7 @@
             <div class="d-flex align-items-center gap-2">
                 <span class="badge text-bg-danger">{{ $unreadNotificationsCount ?? 0 }} unread</span>
                 @if (($unreadNotificationsCount ?? 0) > 0)
-                    <a href="{{ route('jobseeker.dashboard', ['notifications' => 'read']) }}" class="btn btn-sm btn-outline-secondary">Mark all as read</a>
+                    <a href="{{ route('jobseeker.dashboard', ['notifications' => 'read']) }}" class="btn btn-sm btn-outline-secondary mark-read-btn">Mark all as read</a>
                 @endif
             </div>
         </div>
@@ -717,7 +827,7 @@
                     <div class="empty-icon"><i class="bi bi-bell"></i></div>
                     <div class="fw-semibold text-secondary">All caught up.</div>
                     <div class="small">No new notifications right now.</div>
-                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary mt-2">Browse New Jobs</a>
+                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary mt-2 empty-action-btn">Browse New Jobs</a>
                 </div>
             </div>
         @endif
@@ -726,7 +836,7 @@
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 190px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Application Status</h3>
-            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View All</a>
         </div>
 
         <div class="status-legend" aria-label="Application status legend">
@@ -780,7 +890,7 @@
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 120px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-diagram-3 me-2"></i>Skill Gap Analysis</h3>
-            <a href="{{ route('jobseeker.skill-gap') }}" class="btn btn-sm btn-outline-primary">View Full Analysis</a>
+            <a href="{{ route('jobseeker.skill-gap') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Full Analysis</a>
         </div>
 
         @if (($skillGapAnalysis['hasData'] ?? false) && ($skillGapAnalysis['totalMarketSkills'] ?? 0) > 0)
