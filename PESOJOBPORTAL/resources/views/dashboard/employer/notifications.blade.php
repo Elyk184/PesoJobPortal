@@ -239,6 +239,181 @@
             color: #17457d;
         }
 
+        .gmail-view-btn {
+            border: 1px solid #cfe0f9;
+            background: #3b82f6;
+            color: white;
+            border-radius: 8px;
+            padding: 0.32rem 0.58rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.16s ease;
+            white-space: nowrap;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .gmail-view-btn:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Notification Detail Modal */
+        .notification-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 95%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .notification-modal-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #075cb2 0%, #3498db 100%);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .notification-modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .notification-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .notification-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notification-modal-body {
+            padding: 2rem;
+        }
+
+        .notification-detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .notification-detail-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #6d7f98;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-detail-value {
+            font-size: 1rem;
+            color: #1a3356;
+            line-height: 1.6;
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            background: #e9f2ff;
+            color: #315d95;
+            border: 1px solid #cfe1fb;
+            margin-top: 1rem;
+        }
+
+        .notification-modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            background: #fbfdff;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .modal-btn {
+            padding: 0.55rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-close {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .modal-btn-close:hover {
+            background: #d1d5db;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         .gmail-action {
             justify-self: end;
         }
@@ -412,11 +587,16 @@
                         <span class="gmail-badge">{{ $badgeLabel }}</span>
 
                         @if (! $notification->is_read)
-                            <form class="gmail-action" method="POST" action="{{ route('employer.notifications.read', $notification) }}">
-                                @csrf
-                                @method('PATCH')
-                                <button class="mark-read-btn" type="submit">Mark Read</button>
-                            </form>
+                            <div class="gmail-action">
+                                <button type="button" class="gmail-view-btn" onclick="viewNotification({{ $notification->id }}, '{{ $notification->title }}', '{{ addslashes($notification->message) }}', '{{ $typeIcon }}', '{{ $badgeLabel }}')">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                                <form style="display: inline;" method="POST" action="{{ route('employer.notifications.read', $notification) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="mark-read-btn" type="submit">Mark Read</button>
+                                </form>
+                            </div>
                         @else
                             <span class="gmail-read-tag"><i class="bi bi-check2-circle"></i>Read</span>
                         @endif
@@ -430,4 +610,80 @@
             </div>
         </div>
     </div>
+
+    <!-- Notification Detail Modal -->
+    <div id="notificationModal" class="notification-modal">
+        <div class="notification-modal-content">
+            <div class="notification-modal-header">
+                <h3>Notification Details</h3>
+                <button class="notification-modal-close" onclick="closeNotificationModal()">&times;</button>
+            </div>
+            <div class="notification-modal-body">
+                <div class="notification-detail-section">
+                    <div class="notification-detail-label">Subject</div>
+                    <div class="notification-detail-value" id="modal-title"></div>
+                </div>
+
+                <div class="notification-detail-section">
+                    <div class="notification-detail-label">Message</div>
+                    <div class="notification-detail-value" id="modal-message"></div>
+                </div>
+
+                <div class="notification-detail-section">
+                    <div class="notification-detail-label">Type</div>
+                    <div id="modal-type" class="notification-badge"></div>
+                </div>
+            </div>
+            <div class="notification-modal-footer">
+                <button class="modal-btn modal-btn-close" onclick="closeNotificationModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewNotification(id, title, message, icon, badgeLabel) {
+            // Populate modal
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal-type').innerHTML = '<i class="bi ' + icon + ' me-2"></i>' + badgeLabel;
+
+            // Show modal
+            document.getElementById('notificationModal').classList.add('show');
+
+            // Mark as read via fetch
+            fetch('{{ url("/employer/notifications") }}/' + id + '/read', {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Reload page to update UI
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('show');
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('notificationModal');
+            if (event.target === modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeNotificationModal();
+            }
+        });
+    </script>
 @endsection
