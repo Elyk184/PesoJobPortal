@@ -1,8 +1,15 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', $job->title . ' - Job Review')
 
+<?php
+    $pageTitle = 'Job Review';
+    $pageSubtitle = 'Review and approve job posting';
+    $pageIcon = 'bi-briefcase';
+?>
+
 @section('content')
+<div class="admin-dashboard">
 <div class="container-lg py-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-start mb-4">
@@ -246,8 +253,8 @@
     </div>
 </div>
 
-<!-- Rejection Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1">
+    <!-- Rejection Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header border-0">

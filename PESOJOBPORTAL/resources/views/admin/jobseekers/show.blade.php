@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Review Jobseeker | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Jobseeker Review', 'subtitle' => 'Review pending jobseeker registration', 'icon' => 'bi-person-check'])
+<?php
+    $pageTitle = 'Jobseeker Review';
+    $pageSubtitle = 'Review pending jobseeker registration';
+    $pageIcon = 'bi-person-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .info-card { background: white; border-radius: 10px; padding: 1.75rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }

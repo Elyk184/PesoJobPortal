@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserProfile;
 use App\Models\User;
 use App\Models\CompanyProfile;
 use App\Models\UserNotification;
@@ -10,6 +9,7 @@ use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
+use App\Models\UserProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -426,7 +426,8 @@ class JobseekerController extends Controller
         $statusMap = [
             'all' => ['pending', 'reviewed', 'interviewed', 'hired', 'rejected'],
             'pending' => ['pending'],
-            'recommended' => ['reviewed'],
+            'reviewing' => ['reviewed'],
+            'shortlisted' => ['reviewed'],
             'interview' => ['interviewed'],
             'hired' => ['hired'],
             'rejected' => ['rejected'],
@@ -455,10 +456,11 @@ class JobseekerController extends Controller
             ->groupBy('status')
             ->pluck('aggregate', 'status');
 
-        $statusSummary = [
+        $statusCounts = [
             'all' => (int) $rawStatusCounts->sum(),
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
-            'recommended' => (int) ($rawStatusCounts['reviewed'] ?? 0),
+            'reviewing' => (int) ($rawStatusCounts['reviewed'] ?? 0),
+            'shortlisted' => (int) ($rawStatusCounts['reviewed'] ?? 0),
             'interview' => (int) ($rawStatusCounts['interviewed'] ?? 0),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
             'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
@@ -466,75 +468,21 @@ class JobseekerController extends Controller
 
         return view('jobseeker.applications', [
             'applications' => $applications,
+            'statusCounts' => $statusCounts,
             'statusFilter' => $statusFilter,
-            'statusSummary' => $statusSummary,
         ]);
     }
 
-    public function recommendations(): View
+    public function recommendations(Request $request): View
     {
-        $user = Auth::user();
+        $user = $request->user();
         $profile = $user?->profile;
-        $userId = (int) ($user?->id ?? 0);
-
-        $signals = $this->buildRecommendationSignalsFromProfile($profile);
-        $profileHasSkills = collect([
-            $signals['skills'] ?? [],
-            $signals['occupations'] ?? [],
-            $signals['experience'] ?? [],
-        ])->flatten()->isNotEmpty();
-
-        $activeJobs = PesoJob::query()
-            ->where('status', 'active')
-            ->latest()
-            ->limit(60)
-            ->get();
-
-        $recommendations = $activeJobs
-            ->map(function (PesoJob $job) use ($signals) {
-                $matchDetails = $this->buildJobMatchDetails($job, $signals);
-
-                $requirementsText = implode(' ', $this->extractJobRequirements($job));
-                $haystack = mb_strtolower(implode(' ', [
-                    (string) $job->title,
-                    (string) $job->description,
-                    (string) $job->employer_name,
-                    (string) $job->location,
-                    $requirementsText,
-                ]));
-
-                $matchedSkills = collect($signals['skills'] ?? [])
-                    ->filter(fn ($term) => $term !== '' && str_contains($haystack, mb_strtolower((string) $term)))
-                    ->take(6)
-                    ->values()
-                    ->all();
-
-                return [
-                    'job' => $job,
-                    'score' => (int) ($matchDetails['score'] ?? 0),
-                    'matched_skills' => $matchedSkills,
-                    'reasons' => $matchDetails['reasons'] ?? [],
-                    'created_at' => $job->created_at?->getTimestamp() ?? 0,
-                ];
-            })
-            ->filter(fn ($item) => $item['score'] > 0)
-            ->sort(function ($left, $right) {
-                if ($left['score'] === $right['score']) {
-                    return $right['created_at'] <=> $left['created_at'];
-                }
-
-                return $right['score'] <=> $left['score'];
-            })
-            ->take(12)
-            ->values();
-
+        $recommendations = $this->buildProfileBasedRecommendations($profile);
+        $profileHasSkills = $this->hasSkillsDetails($profile);
         $activeJobsCount = PesoJob::query()
             ->where('status', 'active')
             ->count();
-
-        $appliedJobsCount = $userId > 0
-            ? JobApplication::query()->where('user_id', $userId)->count()
-            : 0;
+        $appliedJobsCount = $user ? JobApplication::query()->where('user_id', $user->id)->count() : 0;
 
         return view('jobseeker.recommendations', [
             'recommendations' => $recommendations,
@@ -1937,5 +1885,44 @@ class JobseekerController extends Controller
             || ! empty($otherSkills['it_technical'])
             || ! empty($otherSkills['soft_skills'])
             || trim((string) ($otherSkills['other_text'] ?? '')) !== '';
+    }
+
+    public function applyJob(PesoJob $job): View
+    {
+        return view('jobseeker.apply-job', [
+            'job' => $job->load('employer', 'employer.companyProfile'),
+        ]);
+    }
+
+    public function submitApplication(Request $request, PesoJob $job): RedirectResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'letter' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        // Check if already applied
+        $existingApplication = JobApplication::where('user_id', $user->id)
+            ->where('peso_job_id', $job->id)
+            ->first();
+
+        if ($existingApplication) {
+            return redirect()
+                ->route('jobseeker.applications')
+                ->with('error', 'You have already applied for this job.');
+        }
+
+        // Create new application
+        JobApplication::create([
+            'user_id' => $user->id,
+            'peso_job_id' => $job->id,
+            'status' => 'pending',
+            'notes' => $validated['letter'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('jobseeker.applications')
+            ->with('status', 'Application submitted successfully!');
     }
 }

@@ -38,6 +38,7 @@ class PesoJob extends Model
         'approved_at',
         'approved_by',
         'rejection_reason',
+        'deletion_reason',
     ];
 
     protected $attributes = [
@@ -45,11 +46,14 @@ class PesoJob extends Model
     ];
 
     protected $casts = [
-        'application_start_date' => 'date',
-        'application_end_date' => 'date',
+        'application_start_date' => 'datetime',
+        'application_end_date' => 'datetime',
         'archived_at' => 'datetime',
         'filled_at' => 'datetime',
+        'approved_at' => 'datetime',
         'is_filled' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function getEmploymentTypeAttribute(): ?string
@@ -88,6 +92,44 @@ class PesoJob extends Model
     public function companyProfile()
     {
         return $this->employer()?->first()?->companyProfile();
+    }
+
+    /**
+     * Scope to exclude archived jobs
+     */
+    public function scopeNotArchived($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    /**
+     * Scope to only get archived jobs
+     */
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('archived_at');
+    }
+
+    /**
+     * Scope to only get approved jobs
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'active')
+            ->whereNotNull('approved_at');
+    }
+
+    /**
+     * Scope to get active approved jobs (not archived, not filled)
+     */
+    public function scopeActiveApproved($query)
+    {
+        return $query->approved()
+            ->notArchived()
+            ->where(function ($q) {
+                $q->whereNull('is_filled')
+                  ->orWhere('is_filled', false);
+            });
     }
 }
 ?>

@@ -26,8 +26,8 @@
     }
 
     body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        color: #1f2937;
+        background: #f8fafc;
+        color: #0f172a;
         min-height: 100vh;
     }
     
@@ -44,7 +44,7 @@
 
     .admin-sidebar {
         width: 260px;
-        background: linear-gradient(180deg, #0d1f3c 0%, #1a3a5c 100%);
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #0f172a 100%);
         color: white;
         padding: 1.5rem 0;
         position: fixed;
@@ -52,7 +52,7 @@
         left: 0;
         height: 100vh;
         overflow-y: auto;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         z-index: 100;
     }
 
@@ -96,14 +96,14 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
         font-size: 20px;
         color: white;
-        box-shadow: 0 4px 12px rgba(215, 38, 56, 0.4);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .sidebar-user-name {
@@ -153,15 +153,15 @@
 
     .sidebar-menu-link:hover {
         color: white;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(59, 130, 246, 0.15);
         padding-left: 1.8rem;
-        border-left-color: #d72638;
+        border-left-color: #3b82f6;
     }
 
     .sidebar-menu-link.active {
         color: #fff;
-        background: linear-gradient(90deg, rgba(215, 38, 56, 0.3) 0%, rgba(215, 38, 56, 0.1) 100%);
-        border-left-color: #d72638;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.05) 100%);
+        border-left-color: #3b82f6;
         font-weight: 600;
     }
 
@@ -185,7 +185,7 @@
         margin-left: 260px;
         flex: 1;
         padding: 2.5rem;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
     }
 
     .admin-dashboard {
@@ -195,110 +195,268 @@
 
     .stat-card {
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border-left: 5px solid #0d1f3c;
-        border-radius: 12px;
-        padding: 1.75rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+        border: none;
+        border-radius: 16px;
+        padding: 1.25rem 1rem;
+        margin-bottom: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
     }
 
     .stat-card::before {
         content: '';
         position: absolute;
         top: 0;
+        left: 0;
         right: 0;
-        width: 100px;
-        height: 100px;
-        background: linear-gradient(135deg, rgba(215, 38, 56, 0.08) 0%, rgba(215, 38, 56, 0) 100%);
+        bottom: 0;
+        background: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.3) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
         border-radius: 50%;
-        transform: translate(30%, -30%);
+        z-index: 0;
     }
 
     .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        border-left-color: #d72638;
+        transform: translateY(-12px);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Colored stat cards */
+    .stat-card[data-color="primary"] {
+        background: linear-gradient(135deg, #5B5DEE 0%, #3730A3 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="info"] {
+        background: linear-gradient(135deg, #1E90FF 0%, #0066FF 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="warning"] {
+        background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="danger"] {
+        background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="success"] {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+    }
+
+    .stat-card[data-color="secondary"] {
+        background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+        color: white;
+    }
+
+    .stat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card-icon-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        flex-shrink: 0;
+    }
+
+    .stat-card-icon-box i {
+        font-size: 1.75rem;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .stat-card-mini-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 35px;
+        opacity: 0.8;
+    }
+
+    .stat-card-mini-bar {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 3px;
+        transition: background 0.3s ease;
+    }
+
+    .stat-card-mini-bar.high {
+        background: rgba(255, 255, 255, 0.7);
     }
 
     .stat-value {
-        font-size: 40px;
-        font-weight: 800;
-        color: #0d1f3c;
-        margin: 12px 0 8px 0;
+        font-size: 32px;
+        font-weight: 900;
+        color: inherit;
+        margin: 8px 0 4px 0;
         letter-spacing: -0.5px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card[data-color] .stat-value {
+        color: white;
     }
 
     .stat-label {
-        font-size: 12px;
-        color: #6b7280;
+        font-size: 11px;
+        color: inherit;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
+        letter-spacing: 0.8px;
+        position: relative;
+        z-index: 1;
+        opacity: 0.95;
+    }
+
+    .stat-card[data-color] .stat-label {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .stat-card-subtitle {
+        font-size: 10px;
+        margin-top: 0.4rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card[data-color] .stat-card-subtitle {
+        color: rgba(255, 255, 255, 0.85);
     }
 
     .stat-icon {
-        font-size: 2.5rem;
-        opacity: 0.15;
+        font-size: 3.5rem;
+        opacity: 0.2;
         position: absolute;
         right: 15px;
         top: 15px;
+        color: inherit;
+    }
+
+    .stat-card[data-color] .stat-icon {
+        color: rgba(255, 255, 255, 0.25);
+    }
+
+    .stat-icon {
+        font-size: 3.5rem;
+        opacity: 0.2;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: inherit;
+    }
+
+    .stat-card[data-color] .stat-icon {
+        color: rgba(255, 255, 255, 0.25);
     }
 
     .dashboard-card {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 20px;
+        padding: 2.25rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: #1a1a1a;
+        border-radius: 20px 20px 0 0;
     }
 
     .dashboard-card:hover {
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 24px 48px rgba(59, 130, 246, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-8px);
     }
 
     .dashboard-card h5 {
-        color: #0d1f3c;
+        color: #1e293b;
         font-weight: 800;
-        margin-bottom: 1.5rem;
-        border-bottom: 3px solid #d72638;
-        padding-bottom: 1rem;
-        font-size: 17px;
+        margin-bottom: 1.75rem;
+        margin-top: 0;
+        padding-bottom: 1.25rem;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 18px;
         letter-spacing: -0.3px;
+    }
+    
+    .dashboard-card h5 i {
+        color: #1a1a1a;
+        margin-right: 0.5rem;
     }
 
     .data-table {
         font-size: 13px;
+        width: 100%;
     }
 
     .data-table th {
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        color: #0d1f3c;
-        font-weight: 800;
-        border-bottom: 2px solid #d72638;
-        font-size: 11px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        color: #1e293b;
+        font-weight: 700;
+        border-bottom: 2px solid #cbd5e1;
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        padding: 1rem;
+        padding: 1.25rem 1rem;
     }
 
     .data-table td {
-        padding: 1rem;
+        padding: 1.25rem 1rem;
         vertical-align: middle;
         font-weight: 500;
+        color: #0f172a;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .data-table tbody tr:last-child td {
+        border-bottom: none;
     }
 
     .data-table tbody tr:hover {
-        background: linear-gradient(90deg, #f9fafb 0%, #f0f1f3 100%);
+        background: linear-gradient(90deg, #f8fafc 0%, #eef2f5 100%);
     }
 
     .badge-role {
         font-size: 11px;
-        padding: 6px 12px;
-        border-radius: 6px;
+        padding: 8px 12px;
+        border-radius: 8px;
         font-weight: 700;
         display: inline-block;
         text-transform: uppercase;
@@ -306,37 +464,37 @@
     }
 
     .badge-admin {
-        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-        color: #7c2d12;
-        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
     }
 
     .badge-employer {
-        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-        color: #1e3a8a;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        color: #3730a3;
+        box-shadow: 0 2px 8px rgba(55, 48, 163, 0.15);
     }
 
     .badge-jobseeker {
-        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
-        color: #15803d;
-        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+        background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+        color: #0d9488;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
     }
 
     .badge-active {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        color: #166534;
+        box-shadow: 0 2px 8px rgba(22, 101, 52, 0.15);
     }
 
     .badge-pending {
-        background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         color: #92400e;
-        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+        box-shadow: 0 2px 8px rgba(146, 64, 14, 0.15);
     }
 
     .badge-closed {
-        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         color: #374151;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
@@ -347,9 +505,10 @@
 
     .quick-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(5, 1fr);
         gap: 1.5rem;
-        margin-bottom: 2.5rem;
+        margin-bottom: 3.5rem;
+        padding: 0;
     }
 
     .list-item {
@@ -403,16 +562,18 @@
 
     /* Top Bar with Title */
     .admin-topbar {
-        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         padding: 2rem 2rem;
         margin-bottom: 2.5rem;
-        border-bottom: 3px solid #d72638;
+        border-bottom: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 2rem;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: none;
+        backdrop-filter: none;
     }
 
     .admin-topbar-left {
@@ -426,11 +587,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         width: 80px;
         height: 80px;
-        border-radius: 14px;
-        box-shadow: 0 8px 20px rgba(215, 38, 56, 0.4);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
         flex-shrink: 0;
     }
 
@@ -447,7 +608,7 @@
 
     .admin-topbar h2 {
         margin: 0;
-        color: #0d1f3c;
+        color: #1e293b;
         font-weight: 800;
         font-size: 36px;
         letter-spacing: -0.5px;
@@ -455,7 +616,7 @@
 
     .topbar-subtitle {
         font-size: 14px;
-        color: #6b7280;
+        color: #64748b;
         font-weight: 600;
         letter-spacing: 0.3px;
     }
@@ -471,10 +632,10 @@
         align-items: center;
         gap: 1.25rem;
         padding: 1rem 1.75rem;
-        background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
-        border-radius: 12px;
-        border: 2px solid rgba(215, 38, 56, 0.3);
-        box-shadow: 0 8px 20px rgba(13, 31, 60, 0.25);
+        background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+        border-radius: 16px;
+        border: 2px solid #bfdbfe;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
     .topbar-time {
@@ -484,21 +645,21 @@
     .topbar-time-display {
         font-size: 22px;
         font-weight: 800;
-        color: white;
+        color: #1e293b;
         line-height: 1.1;
         letter-spacing: -0.3px;
     }
 
     .topbar-date-display {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.75);
+        color: #64748b;
         font-weight: 600;
         letter-spacing: 0.3px;
     }
 
     .topbar-datetime-icon {
         font-size: 28px;
-        color: #d72638;
+        color: #3b82f6;
     }
 
     .toggle-sidebar-btn {
@@ -518,6 +679,21 @@
         background: linear-gradient(135deg, #152d52 0%, #1f5080 100%);
         box-shadow: 0 6px 16px rgba(13, 31, 60, 0.3);
         transform: translateY(-2px);
+    }
+
+    /* Layout Improvements */
+    .row {
+        --bs-gutter-x: 2rem;
+        --bs-gutter-y: 2rem;
+    }
+
+    .col-lg-6 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .mb-4 {
+        margin-bottom: 2rem !important;
     }
 
     @media (max-width: 768px) {
@@ -808,55 +984,104 @@
         <div class="admin-dashboard">
             <!-- Quick Stats -->
             <div class="quick-stats">
-                <div class="stat-card" style="border-left: 5px solid #10b981;">
-                    <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
-                    <div class="stat-label">Total Users</div>
-                    <div class="stat-value">{{ $stats['total_users'] }}</div>
-                    <small style="color: #6b7280; font-weight: 600;">
-                        <span style="color: #1e40af;">{{ $stats['total_employers'] }}</span> employers • <span style="color: #065f46;">{{ $stats['total_jobseekers'] }}</span> jobseekers
-                    </small>
+                <div class="stat-card" data-color="info">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Job Postings</div>
+                            <div class="stat-value">{{ $stats['total_jobs'] }}</div>
+                            <div class="stat-card-subtitle">✓ {{ $stats['active_jobs'] }} active</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 45%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 65%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 80%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 55%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 75%;"></div>
+                    </div>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #3b82f6;">
-                    <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
-                    <div class="stat-label">Job Postings</div>
-                    <div class="stat-value">{{ $stats['total_jobs'] }}</div>
-                    <small style="color: #10b981; font-weight: 600;">✓ {{ $stats['active_jobs'] }} active</small>
+                <div class="stat-card" data-color="warning">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Applications</div>
+                            <div class="stat-value">{{ $stats['total_applications'] }}</div>
+                            <div class="stat-card-subtitle">⚠ {{ $stats['pending_applications'] }} pending</div>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar high" style="height: 60%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 35%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 90%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 50%;"></div>
+                        <div class="stat-card-mini-bar high" style="height: 70%;"></div>
+                    </div>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
-                    <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
-                    <div class="stat-label">Applications</div>
-                    <div class="stat-value">{{ $stats['total_applications'] }}</div>
-                    <small style="color: #f59e0b; font-weight: 600;">⚠ {{ $stats['pending_applications'] }} pending</small>
+                <div class="stat-card" data-color="danger">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending Job Approvals</div>
+                            <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
+                            <a href="{{ route('admin.job-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 20%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 15%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 25%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 10%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 30%;"></div>
+                    </div>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #06b6d4;">
-                    <div class="stat-icon"><i class="bi bi-cloud-check-fill"></i></div>
-                    <div class="stat-label">System Status</div>
-                    <div class="stat-value" style="color: #10b981; font-size: 24px;">●</div>
-                    <small style="color: #10b981; font-weight: 600;">All systems operational</small>
+                <div class="stat-card" data-color="secondary">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending LRA/SRA Requests</div>
+                            <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
+                            <a href="{{ route('admin.lra-sra-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-file-earmark-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 18%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 22%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 12%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 28%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 15%;"></div>
+                    </div>
                 </div>
 
-                <div class="stat-card" style="border-left: 5px solid #f59e0b;">
-                    <div class="stat-icon" style="color: #f59e0b;"><i class="bi bi-hourglass-split"></i></div>
-                    <div class="stat-label">Pending Job Approvals</div>
-                    <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
-                    <a href="{{ route('admin.job-approvals') }}" style="color: #f59e0b; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
-                </div>
-
-                <div class="stat-card" style="border-left: 5px solid #f97316;">
-                    <div class="stat-icon" style="color: #f97316;"><i class="bi bi-file-earmark-check"></i></div>
-                    <div class="stat-label">Pending LRA/SRA Requests</div>
-                    <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
-                    <a href="{{ route('admin.lra-sra-approvals') }}" style="color: #f97316; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
-                </div>
-
-                <div class="stat-card" style="border-left: 5px solid #ec4899;">
-                    <div class="stat-icon" style="color: #ec4899;"><i class="bi bi-shield-check"></i></div>
-                    <div class="stat-label">Pending Document Approvals</div>
-                    <div class="stat-value">{{ $stats['pending_documents'] }}</div>
-                    <a href="{{ route('admin.document-verification') }}" style="color: #ec4899; text-decoration: none; font-weight: 700; font-size: 12px;">Review →</a>
+                <div class="stat-card" data-color="success">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending Document Approvals</div>
+                            <div class="stat-value">{{ $stats['pending_documents'] }}</div>
+                            <a href="{{ route('admin.document-verification') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                        </div>
+                        <div class="stat-card-icon-box">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card-mini-chart">
+                        <div class="stat-card-mini-bar" style="height: 25%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 35%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 20%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 40%;"></div>
+                        <div class="stat-card-mini-bar" style="height: 30%;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -952,91 +1177,520 @@
             </div>
 
             <!-- Recent Applications -->
-            <div class="row">
+            <div class="row jobs-container">
                 <div class="col-12 mb-4">
                     <div class="dashboard-card">
-                        <h5><i class="bi bi-file-earmark-check me-2"></i>Recent Job Applications</h5>
-                        @if($recentApplications->count() > 0)
-                            <table class="data-table w-100">
-                                <thead>
-                                    <tr>
-                                        <th>Applicant</th>
-                                        <th>Job Title</th>
-                                        <th>Status</th>
-                                        <th>Applied</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($recentApplications as $app)
-                                        <tr>
-                                            <td><strong>{{ Str::limit($app->user->name, 18) }}</strong></td>
-                                            <td>{{ Str::limit($app->job->title ?? 'N/A', 20) }}</td>
-                                            <td>
-                                                @if($app->status === 'accepted')
-                                                    <span class="badge badge-role badge-active">Accepted</span>
-                                                @elseif($app->status === 'rejected')
-                                                    <span class="badge badge-role" style="background: #dc2626; color: white;">Rejected</span>
+                        <h5><i class="bi bi-briefcase me-2"></i>All Posted Jobs</h5>
+                        @if($recentJobs->count() > 0)
+                            <div class="job-feed">
+                                @foreach($recentJobs as $job)
+                                    <div class="job-post">
+                                        <div class="job-post-header">
+                                            <div class="job-post-company">
+                                                <div class="job-company-avatar">
+                                                    <i class="bi bi-building"></i>
+                                                </div>
+                                                <div class="job-company-info">
+                                                    <div class="job-company-name">{{ Str::limit($job->employer_name, 25) }}</div>
+                                                    <div class="job-post-date">Posted {{ $job->created_at->diffForHumans() }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="job-post-status">
+                                                @if($job->status === 'active')
+                                                    <span class="badge badge-role badge-active">Active</span>
+                                                @elseif($job->status === 'closed')
+                                                    <span class="badge badge-role badge-closed">Closed</span>
                                                 @else
                                                     <span class="badge badge-role badge-pending">Pending</span>
                                                 @endif
-                                            </td>
-                                            <td><small>{{ $app->created_at->format('d M') }}</small></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                            </div>
+                                        </div>
+                                        <div class="job-post-content">
+                                            <h6 class="job-title">{{ Str::limit($job->title, 50) }}</h6>
+                                            <p class="job-description">{{ Str::limit($job->description, 120) }}</p>
+                                            <div class="job-meta">
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-geo-alt"></i> {{ Str::limit($job->location ?? 'Remote', 20) }}
+                                                </span>
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-cash-coin"></i> {{ $job->salary_range ?? 'Competitive' }}
+                                                </span>
+                                                <span class="job-meta-item">
+                                                    <i class="bi bi-file-text"></i> {{ $job->employment_type ?? 'Full-time' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="job-post-footer">
+                                            <button type="button" class="job-view-btn" onclick="openJobDetailModal({{ $job->id }})" data-job-id="{{ $job->id }}">View Details</button>
+                                            <button type="button" class="job-trash-btn" onclick="openJobDeleteModal({{ $job->id }})" title="Delete this job"><i class="bi bi-trash3"></i></button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         @else
                             <div class="empty-state">
-                                <i class="bi bi-file-earmark-check"></i>
-                                <p>No Recent Applications</p>
-                                <small>Job applications will be displayed here</small>
+                                <i class="bi bi-briefcase"></i>
+                                <p>No Jobs Posted Yet</p>
+                                <small>All job postings will be displayed here</small>
                             </div>
                         @endif
-                    </div>
-                </div>
-            </div>
-
-            <!-- Role Breakdown & System Info -->
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5><i class="bi bi-pie-chart me-2"></i>User Role Distribution</h5>
-                        <div class="list-item">
-                            <span class="list-item-label">👔 Employers</span>
-                            <span class="list-item-value">{{ $stats['total_employers'] }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">👤 Jobseekers</span>
-                            <span class="list-item-value">{{ $stats['total_jobseekers'] }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">🔐 Admins</span>
-                            <span class="list-item-value">{{ $stats['total_admins'] }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5><i class="bi bi-info-circle me-2"></i>System Information</h5>
-                        <div class="list-item">
-                            <span class="list-item-label">Current Time</span>
-                            <span class="list-item-value">{{ now()->format('H:i') }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">Today's Date</span>
-                            <span class="list-item-value">{{ now()->format('d M, Y') }}</span>
-                        </div>
-                        <div class="list-item">
-                            <span class="list-item-label">Status</span>
-                            <span class="list-item-value" style="color: #10b981;">✓ Online</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 </div>
+
+<style>
+    .jobs-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 280px);
+        overflow: hidden;
+    }
+
+    .jobs-container .col-12 {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .jobs-container .dashboard-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .jobs-container .dashboard-card > h5 {
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+    }
+
+    .job-feed {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        max-width: 100%;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .job-feed::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .job-feed::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .job-feed::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .job-feed::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .job-post {
+        background: white;
+        border: 1.5px solid #d1d5db;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+        padding: 0.6rem;
+    }
+
+    .job-post:hover {
+        box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+        transform: translateY(-4px);
+        border-color: #3b82f6;
+    }
+
+    .job-post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 0.4rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .job-post-company {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.4rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .job-company-avatar {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .job-company-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .job-company-name {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .job-post-date {
+        font-size: 10px;
+        color: #64748b;
+        margin-top: 0px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .job-post-status {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .job-post-content {
+        padding: 0;
+    }
+
+    .job-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 0.35rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.35;
+    }
+
+    .job-description {
+        font-size: 11px;
+        color: #475569;
+        line-height: 1.35;
+        margin: 0 0 0.45rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .job-meta {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .job-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 10px;
+        color: #475569;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .job-meta-item i {
+        color: #3b82f6;
+        font-size: 12px;
+    }
+
+    .job-post-footer {
+        padding: 0;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .job-view-btn {
+        padding: 0.35rem 0.65rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    .job-view-btn:hover {
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        transform: translateY(-1px);
+    }
+
+    .job-trash-btn {
+        padding: 0.35rem 0.5rem;
+        background: #f3f4f6;
+        color: #ef4444;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .job-trash-btn:hover {
+        background: #ef4444;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* Job Detail Modal Styles */
+    .job-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .job-modal.show {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .job-modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .job-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .job-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #64748b;
+        transition: color 0.2s ease;
+    }
+
+    .job-modal-close:hover {
+        color: #1e293b;
+    }
+
+    .job-modal-body {
+        padding: 1.5rem;
+    }
+
+    .job-detail-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-detail-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .job-detail-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .job-modal-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1.5rem;
+    }
+
+    .spinner {
+        border: 3px solid #f0f0f0;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Delete Modal Styles */
+    .delete-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .delete-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delete-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+
+    .delete-modal-header {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ef4444;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .delete-modal-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .delete-reason-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .delete-reason-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .delete-reason-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .delete-modal-footer {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .delete-cancel-btn {
+        padding: 0.6rem 1.2rem;
+        background: #f3f4f6;
+        color: #1e293b;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .delete-cancel-btn:hover {
+        background: #e5e7eb;
+    }
+
+    .delete-confirm-btn {
+        padding: 0.6rem 1.2rem;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .delete-confirm-btn:hover {
+        background: #dc2626;
+    }
+</style>
 
 <script>
     // Sidebar toggle for mobile
@@ -1102,6 +1756,207 @@
     
     // Update every second for live clock
     setInterval(updateDateTime, 1000);
+
+    // Job Detail Modal Functions
+    function openJobDetailModal(jobId) {
+        const modal = document.getElementById('jobDetailModal');
+        const modalContent = document.getElementById('jobDetailContent');
+        
+        // Show loader
+        modalContent.innerHTML = '<div class="job-modal-loader"><div class="spinner"></div></div>';
+        modal.classList.add('show');
+        
+        // Fetch job details via AJAX
+        fetch(`/api/jobs/${jobId}/detail`)
+            .then(response => response.json())
+            .then(data => {
+                renderJobDetailModal(data);
+            })
+            .catch(error => {
+                modalContent.innerHTML = '<div class="job-modal-body"><p class="text-danger">Error loading job details</p></div>';
+            });
+    }
+
+    function closeJobDetailModal() {
+        const modal = document.getElementById('jobDetailModal');
+        modal.classList.remove('show');
+    }
+
+    function renderJobDetailModal(job) {
+        const modalContent = document.getElementById('jobDetailContent');
+        
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        };
+
+        let html = `
+            <div class="job-modal-header">
+                <h4 class="mb-0">${escapeHtml(job.title)}</h4>
+                <button type="button" class="job-modal-close" onclick="closeJobDetailModal()">×</button>
+            </div>
+            <div class="job-modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Company</div>
+                            <div class="job-detail-value">${escapeHtml(job.employer_name)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Status</div>
+                            <div class="job-detail-value">
+                                <span class="badge badge-active">${job.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Location</div>
+                            <div class="job-detail-value">${escapeHtml(job.location)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Employment Type</div>
+                            <div class="job-detail-value">${escapeHtml(job.job_type.replace('_', ' ').toUpperCase())}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Salary Range</div>
+                            <div class="job-detail-value">${escapeHtml(job.salary_range || job.salary || 'Competitive')}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-section">
+                            <div class="job-detail-label">Vacancies</div>
+                            <div class="job-detail-value">${job.vacancies}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="job-detail-section">
+                    <div class="job-detail-label">Description</div>
+                    <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.description)}</div>
+                </div>
+
+                ${job.key_responsibilities ? `
+                    <hr>
+                    <div class="job-detail-section">
+                        <div class="job-detail-label">Key Responsibilities</div>
+                        <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.key_responsibilities)}</div>
+                    </div>
+                ` : ''}
+
+                ${job.qualifications ? `
+                    <hr>
+                    <div class="job-detail-section">
+                        <div class="job-detail-label">Qualifications</div>
+                        <div class="job-detail-value" style="font-weight: 400; white-space: pre-wrap;">${escapeHtml(job.qualifications)}</div>
+                    </div>
+                ` : ''}
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="job-detail-label">Posted Date</div>
+                        <div class="job-detail-value">${formatDate(job.created_at)}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">${formatDate(job.application_end_date)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        modalContent.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('jobDetailModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeJobDetailModal();
+        }
+    });
+
+    // Job Delete Modal Functions
+    function openJobDeleteModal(jobId) {
+        const modal = document.getElementById('jobDeleteModal');
+        document.getElementById('deleteJobId').value = jobId;
+        document.getElementById('deleteReason').value = '';
+        modal.classList.add('show');
+    }
+
+    function closeJobDeleteModal() {
+        const modal = document.getElementById('jobDeleteModal');
+        modal.classList.remove('show');
+    }
+
+    function submitJobDelete() {
+        const jobId = document.getElementById('deleteJobId').value;
+        const reason = document.getElementById('deleteReason').value.trim();
+
+        if (!reason) {
+            alert('Please provide a reason for deletion');
+            return;
+        }
+
+        if (reason.length < 10) {
+            alert('Reason must be at least 10 characters long');
+            return;
+        }
+
+        // Send delete request
+        fetch(`/api/jobs/${jobId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Job post has been archived successfully');
+                closeJobDeleteModal();
+                location.reload();
+            } else {
+                alert(data.message || 'Error deleting job');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting job post');
+        });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('jobDeleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeJobDeleteModal();
+        }
+    });
 </script>
 
 <style>
@@ -1127,6 +1982,34 @@
         font-weight: 500;
     }
 </style>
+
+<!-- Job Detail Modal -->
+<div id="jobDetailModal" class="job-modal">
+    <div class="job-modal-content" id="jobDetailContent">
+        <!-- Modal content will be loaded here -->
+    </div>
+</div>
+
+<!-- Job Delete Modal -->
+<div id="jobDeleteModal" class="delete-modal">
+    <div class="delete-modal-content">
+        <div class="delete-modal-header">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Archive Job Post
+        </div>
+        <div class="delete-modal-body">
+            <p style="color: #64748b; margin-bottom: 1rem;">This job will be moved to archives and can be restored later if needed.</p>
+            
+            <label class="delete-reason-label">Reason for Archiving (Required)</label>
+            <textarea id="deleteReason" class="delete-reason-input" placeholder="Please provide a detailed reason for archiving this job posting..."></textarea>
+        </div>
+        <div class="delete-modal-footer">
+            <button type="button" class="delete-cancel-btn" onclick="closeJobDeleteModal()">Cancel</button>
+            <button type="button" class="delete-confirm-btn" onclick="submitJobDelete()">Archive Job</button>
+        </div>
+        <input type="hidden" id="deleteJobId" value="">
+    </div>
+</div>
 
 @endsection
 

@@ -116,12 +116,34 @@
                 z-index: -1;
             }
 
+            /* PESO Logo Watermark Background */
+            .peso-hero::after {
+                content: '';
+                position: absolute;
+                bottom: -10%;
+                right: -5%;
+                width: 500px;
+                height: 500px;
+                background-image: url('/images/P1so.png');
+                background-size: contain;
+                background-repeat: no-repeat;
+                opacity: 0.08;
+                z-index: 0;
+                pointer-events: none;
+            }
+
             /* Tablet background */
             @media (max-width: 1024px) and (min-width: 801px) {
                 .peso-hero::before {
                     background-image: url('/images/background-tablet.png'), url('/images/background.png');
                     background-size: cover;
                     background-position: center center;
+                }
+                
+                .peso-hero::after {
+                    width: 350px;
+                    height: 350px;
+                    opacity: 0.06;
                 }
             }
 
@@ -131,6 +153,14 @@
                     background-image: url('/images/background-mobile.png'), url('/images/background.png');
                     background-size: cover;
                     background-position: center center;
+                }
+                
+                .peso-hero::after {
+                    width: 250px;
+                    height: 250px;
+                    bottom: -5%;
+                    right: 0;
+                    opacity: 0.05;
                 }
             }
 
@@ -323,6 +353,8 @@
                 transition: transform 0.2s ease;
                 height: 100%;
                 background: white;
+                display: flex;
+                flex-direction: column;
             }
 
             .news-card:hover {
@@ -335,24 +367,148 @@
                 object-fit: cover;
             }
 
+            .news-card-icon-section {
+                display: none;
+            }
+
+            .news-card-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+            }
+
+            .news-card-icon.events {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+
+            .news-card-icon.announcements {
+                background: #fecaca;
+                color: #dc2626;
+            }
+
+            .news-card-icon.community {
+                background: #fef08a;
+                color: #ca8a04;
+            }
+
+            .news-card-badge {
+                background: #fecaca;
+                color: #dc2626;
+                font-size: 0.65rem;
+                font-weight: 700;
+                padding: 0.35rem 0.75rem;
+                border-radius: 8px;
+                letter-spacing: 0.5px;
+            }
+
             .news-card-body {
-                padding: 1.5rem;
+                padding: 1rem 1.5rem;
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
-            }
-
-            .news-card-title {
-                font-size: 1.2rem;
-                font-weight: 700;
-            }
-
-            .news-card-text {
+                gap: 12px;
                 flex-grow: 1;
             }
 
-            .news-card .btn {
-                align-self: flex-start;
+            .news-card-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: #0a3764;
+                letter-spacing: -0.3px;
+                margin: 0;
+            }
+
+            .news-card-features {
+                list-style: none;
+                padding: 0;
+                margin: 0.5rem 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .news-card-feature {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-size: 0.95rem;
+                color: #333;
+            }
+
+            .news-card-feature-dot {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+            }
+
+            .news-card-feature-dot.events {
+                background: #1e40af;
+            }
+
+            .news-card-feature-dot.announcements {
+                background: #dc2626;
+            }
+
+            .news-card-feature-dot.community {
+                background: #ca8a04;
+            }
+
+            .news-card-divider {
+                height: 1px;
+                background: #e5e7eb;
+                margin: 0.5rem 0;
+            }
+
+            .news-card-button-section {
+                padding: 1rem 1.5rem 1.5rem;
+                margin-top: auto;
+            }
+
+            .news-card-btn {
+                width: 100%;
+                padding: 0.85rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.75rem;
+                transition: all 0.3s ease;
+                font-size: 0.95rem;
+                color: #333;
+            }
+
+            .news-card-btn.events {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+
+            .news-card-btn.announcements {
+                background: #fecaca;
+                color: #dc2626;
+            }
+
+            .news-card-btn.community {
+                background: #fef08a;
+                color: #ca8a04;
+            }
+
+            .news-card-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
 
             /* Responsive Design */
@@ -522,62 +678,84 @@
                 <div class="news-cards">
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/80/9a/3d/809a3de812b7389316cc4c4edb0a3c05.gif" class="news-card-img" alt="Events">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Events</h5>
-                            <p class="card-text">Upcoming PESO events and job fairs.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                        <div class="news-card-icon-section">
+                            <div class="news-card-icon events"></div>
                         </div>
-                        <div class="service-card-title">Events</div>
-                        <div class="news-card-text mb-2" style="text-align:center;">Upcoming PESO events and job fairs.</div>
-                        <ul class="service-features">
-                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Upcoming PESO events</span></li>
-                            <li class="service-feature"><span class="service-dot service-blue"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Job fairs and seminars</span></li>
-                        </ul>
-                        <div class="service-divider"></div>
-                        <a href="#" class="service-btn service-blue">
-                            <span>Learn More</span>
-                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                        </a>
+                        <div class="news-card-body">
+                            <h5 class="news-card-title">Events</h5>
+                            <ul class="news-card-features">
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot events">✓</span>
+                                    <span>Upcoming PESO events</span>
+                                </li>
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot events">✓</span>
+                                    <span>Job fairs and seminars</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-button-section">
+                            <a href="#" class="news-card-btn events">
+                                <span>See Active Job Vacancies</span>
+                                <span>→</span>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/5c/87/17/5c871720baf04c9bb0330801f0101137.gif" class="news-card-img" alt="Announcements">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Announcements</h5>
-                            <p class="card-text">Latest announcements and updates.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                        <div class="news-card-icon-section">
+                            <div class="news-card-icon announcements"></div>
+                            <div class="news-card-badge">CORE</div>
                         </div>
-                        <div class="service-card-title">Announcements</div>
-                        <div class="news-card-text mb-2" style="text-align:center;">Latest announcements and updates.</div>
-                        <ul class="service-features">
-                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Latest updates</span></li>
-                            <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Important notices</span></li>
-                        </ul>
-                        <div class="service-divider"></div>
-                        <a href="#" class="service-btn service-green">
-                            <span>Learn More</span>
-                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                        </a>
+                        <div class="news-card-body">
+                            <h5 class="news-card-title">PESO Admin</h5>
+                            <ul class="news-card-features">
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot announcements">✓</span>
+                                    <span>Employer Verification (DTI, POEA)</span>
+                                </li>
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot announcements">✓</span>
+                                    <span>Track Applicant Status</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-button-section">
+                            <a href="#" class="news-card-btn announcements">
+                                <span>Admin Portal</span>
+                                <span>→</span>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="card news-card">
                         <img src="https://i.pinimg.com/originals/d6/74/e7/d674e764a10d6b4f8cdd011f030c886f.gif" class="news-card-img" alt="Community">
-                        <div class="card-body news-card-body">
-                            <h5 class="news-card-title">Community</h5>
-                            <p class="card-text">Community initiatives and programs.</p>
-                            <a href="#" class="btn btn-danger">Learn More</a>
+                        <div class="news-card-icon-section">
+                            <div class="news-card-icon community"></div>
                         </div>
-                        <div class="service-card-title">Community</div>
-                        <div class="news-card-text mb-2" style="text-align:center;">Community initiatives and programs.</div>
-                        <ul class="service-features">
-                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Community programs</span></li>
-                            <li class="service-feature"><span class="service-dot service-amber"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Initiatives & outreach</span></li>
-                        </ul>
-                        <div class="service-divider"></div>
-                        <a href="#" class="service-btn service-amber">
-                            <span>Learn More</span>
-                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                        </a>
+                        <div class="news-card-body">
+                            <h5 class="news-card-title">Employer Portal</h5>
+                            <ul class="news-card-features">
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot community">✓</span>
+                                    <span>Post Job Vacancies</span>
+                                </li>
+                                <li class="news-card-feature">
+                                    <span class="news-card-feature-dot community">✓</span>
+                                    <span>Review Applicants</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="news-card-divider"></div>
+                        <div class="news-card-button-section">
+                            <a href="#" class="news-card-btn community">
+                                <span>Post a Job</span>
+                                <span>→</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>

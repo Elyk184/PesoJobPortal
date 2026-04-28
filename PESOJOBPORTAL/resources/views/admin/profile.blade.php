@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Admin Profile | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Profile', 'subtitle' => 'Manage your admin account settings', 'icon' => 'bi-person-circle'])
+<?php
+    $pageTitle = 'Profile';
+    $pageSubtitle = 'Manage your admin account settings';
+    $pageIcon = 'bi-person-circle';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .profile-container {

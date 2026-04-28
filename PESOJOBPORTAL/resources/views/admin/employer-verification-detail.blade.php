@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Company Profile Verification | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Company Profile Review', 'subtitle' => 'Review company profile details', 'icon' => 'bi-building'])
+<?php
+    $pageTitle = 'Company Profile Review';
+    $pageSubtitle = 'Review company profile details';
+    $pageIcon = 'bi-building';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .detail-container { max-width: 900px; margin: 0 auto; }

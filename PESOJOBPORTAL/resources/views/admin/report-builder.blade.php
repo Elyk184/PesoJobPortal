@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Dynamic Report Builder | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Dynamic Report Builder', 'subtitle' => 'Create custom reports', 'icon' => 'bi-file-earmark-pdf'])
+<?php
+    $pageTitle = 'Dynamic Report Builder';
+    $pageSubtitle = 'Create custom reports and analyze data';
+    $pageIcon = 'bi-file-earmark-text';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .report-builder-form { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 2rem; }

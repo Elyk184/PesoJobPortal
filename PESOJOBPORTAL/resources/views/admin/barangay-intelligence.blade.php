@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Barangay Intelligence | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Barangay Intelligence', 'subtitle' => 'Barangay-level employment insights', 'icon' => 'bi-map'])
+<?php
+    $pageTitle = 'Barangay Intelligence';
+    $pageSubtitle = 'Analyze employment data by barangay';
+    $pageIcon = 'bi-map';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .barangay-card { background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; }

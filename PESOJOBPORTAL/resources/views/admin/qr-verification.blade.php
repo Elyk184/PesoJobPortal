@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'QR Verification | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'QR Verification', 'subtitle' => 'Verify documents via QR codes', 'icon' => 'bi-qr-code'])
+<?php
+    $pageTitle = 'QR Verification';
+    $pageSubtitle = 'Verify QR codes and authentication tokens';
+    $pageIcon = 'bi-qr-code';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .qr-container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 500px; }

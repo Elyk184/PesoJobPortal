@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Job Approvals | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Job Approvals', 'subtitle' => 'Review and approve pending job postings', 'icon' => 'bi-file-check'])
+<?php
+    $pageTitle = 'Job Approvals';
+    $pageSubtitle = 'Review and approve pending job postings';
+    $pageIcon = 'bi-file-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .data-table { font-size: 13px; }

@@ -1,31 +1,60 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Jobseeker Approvals | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Jobseeker Approvals', 'subtitle' => 'Review and approve pending jobseeker registrations', 'icon' => 'bi-person-check'])
+<?php
+    $pageTitle = 'Jobseeker Approvals';
+    $pageSubtitle = 'Review and approve pending jobseeker registrations';
+    $pageIcon = 'bi-person-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .approval-header {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3.5rem;
         }
 
         .approval-stat {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-left: 5px solid #0d1f3c;
-            border-radius: 12px;
-            padding: 1.75rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+            border: 2px solid #d1d5db;
+            border-radius: 16px;
+            padding: 2rem 1.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
         .approval-stat:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .approval-stat::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .approval-stat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
+            border-radius: 16px 16px 0 0;
         }
 
         .approval-stat-label {
@@ -34,63 +63,53 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
         }
 
         .approval-stat-value {
-            font-size: 36px;
+            font-size: 40px;
             font-weight: 800;
-            color: #0d1f3c;
+            color: #1f2937;
             letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
         }
 
         .approval-stat-icon {
             font-size: 2.5rem;
-            opacity: 0.1;
+            opacity: 0.08;
             position: absolute;
-            right: 15px;
-            top: 15px;
-        }
-
-        .approval-stat {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .approval-stat::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, rgba(215, 38, 56, 0.08) 0%, rgba(215, 38, 56, 0) 100%);
-            border-radius: 50%;
-            transform: translate(30%, -30%);
+            right: 20px;
+            top: 20px;
+            color: #374151;
         }
 
         .data-table { 
-            font-size: 13px; 
+            font-size: 13px;
+            width: 100%;
         }
         
         .data-table thead { 
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
         }
         
         .data-table th { 
-            color: #0d1f3c; 
+            color: #1f2937; 
             font-weight: 800; 
-            border-bottom: 2px solid #d72638; 
-            font-size: 11px; 
+            border-bottom: 2px solid #d1d5db; 
+            font-size: 12px; 
             text-transform: uppercase; 
             letter-spacing: 0.8px;
-            padding: 1rem !important;
+            padding: 1.25rem 1rem !important;
         }
         
         .data-table td { 
-            padding: 1rem !important; 
+            padding: 1.25rem 1rem !important; 
             vertical-align: middle; 
             font-weight: 500;
+            color: #1f2937;
         }
         
         .data-table tbody tr {
@@ -98,16 +117,20 @@
             border-bottom: 1px solid #e5e7eb;
         }
         
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
         .data-table tbody tr:hover { 
-            background: linear-gradient(90deg, #f9fafb 0%, #f0f1f3 100%);
-            box-shadow: inset 0 0 0 1px rgba(215, 38, 56, 0.1);
+            background: linear-gradient(90deg, #fafbfc 0%, #f3f4f6 100%);
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
         }
 
         .jobseeker-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,7 +138,8 @@
             color: white;
             font-size: 16px;
             margin-right: 0.75rem;
-            box-shadow: 0 2px 8px rgba(215, 38, 56, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
         }
 
         .jobseeker-name {
@@ -125,15 +149,16 @@
         }
 
         .badge-apps {
-            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-            color: #1e3a8a;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
             font-weight: 700;
             padding: 6px 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
+            display: inline-block;
         }
 
         .action-buttons {
@@ -144,14 +169,15 @@
         }
 
         .btn-sm {
-            padding: 6px 12px;
+            padding: 8px 14px;
             font-size: 12px;
             font-weight: 700;
-            border-radius: 6px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            border: none;
         }
 
         .btn-view {
@@ -163,8 +189,8 @@
 
         .btn-view:hover {
             background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
             color: #1e3a8a;
         }
 
@@ -177,8 +203,8 @@
 
         .btn-approve:hover {
             background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35);
             color: #15803d;
         }
 
@@ -191,8 +217,8 @@
 
         .btn-reject:hover {
             background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
             color: #7c2d12;
         }
 
@@ -224,45 +250,75 @@
         }
 
         .dashboard-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+            border-radius: 16px;
+            padding: 2.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 2px solid #d1d5db;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px);
         }
 
         .dashboard-card h5 {
-            color: #0d1f3c;
+            color: #1f2937;
             font-weight: 800;
-            margin-bottom: 1.5rem;
-            border-bottom: 3px solid #d72638;
-            padding-bottom: 1rem;
-            font-size: 17px;
+            margin-bottom: 1.75rem;
+            margin-top: 0;
+            padding-bottom: 1.25rem;
+            border-bottom: 2px solid #d1d5db;
+            font-size: 18px;
             letter-spacing: -0.3px;
+        }
+        
+        .dashboard-card h5 i {
+            color: #374151;
+            margin-right: 0.5rem;
         }
 
         .pagination {
             justify-content: center;
-            margin-top: 2rem;
+            margin-top: 3rem;
+            gap: 0.5rem;
         }
 
         .pagination .page-link {
-            color: #0d1f3c;
-            border-color: #e5e7eb;
+            color: #1f2937;
+            border-color: #d1d5db;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
         }
 
         .pagination .page-link:hover {
-            background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
-            border-color: #d72638;
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            border-color: #1f2937;
             color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .pagination .page-item.active .page-link {
-            background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%);
-            border-color: #d72638;
-            box-shadow: 0 4px 12px rgba(215, 38, 56, 0.3);
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            border-color: #1f2937;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         .modal-header {
@@ -427,5 +483,4 @@
         @endif
     </div>
 </div>
-
 @endsection

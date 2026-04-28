@@ -51,9 +51,14 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
     Route::get('/recommendations', [JobseekerController::class, 'recommendations'])->name('recommendations');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
+<<<<<<< HEAD
     Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
     Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
     Route::post('/notifications/{userNotification}/read', [JobseekerController::class, 'markNotificationAsRead'])->name('notifications.read');
+=======
+    Route::get('/apply/{job}', [JobseekerController::class, 'applyJob'])->name('apply-job');
+    Route::post('/apply/{job}', [JobseekerController::class, 'submitApplication'])->name('submit-application');
+>>>>>>> ab9de89d2f5e284c46207d8c18a9ec535de60d62
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
     Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
     Route::get('/skill-gap', [JobseekerController::class, 'skillGap'])->name('skill-gap');
@@ -135,6 +140,33 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/settings', 'admin.settings')->name('settings');
     Route::view('/alerts-notifications', 'admin.alerts-notifications')->name('alerts-notifications');
     Route::view('/qr-verification', 'admin.qr-verification')->name('qr-verification');
+});
+
+// API routes for AJAX requests
+Route::middleware('auth')->group(function () {
+    Route::get('/api/jobs/{job}/detail', function ($job) {
+        $job = \App\Models\PesoJob::findOrFail($job);
+        return response()->json($job);
+    });
+    
+    Route::post('/api/jobs/{job}/delete', function ($job) {
+        $job = \App\Models\PesoJob::findOrFail($job);
+        
+        $validated = request()->validate([
+            'reason' => 'required|string|min:10'
+        ]);
+        
+        // Archive the job
+        $job->update([
+            'archived_at' => now(),
+            'deletion_reason' => $validated['reason']
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Job archived successfully'
+        ]);
+    });
 });
 
 Route::get('/contact', function () {

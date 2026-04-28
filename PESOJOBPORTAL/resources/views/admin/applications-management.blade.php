@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Applications Management | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Applications Management', 'subtitle' => 'Manage all job applications', 'icon' => 'bi-file-text'])
+<?php
+    $pageTitle = 'Applications Management';
+    $pageSubtitle = 'Manage job applications and applicant information';
+    $pageIcon = 'bi-file-earmark-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .management-table { width: 100%; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }

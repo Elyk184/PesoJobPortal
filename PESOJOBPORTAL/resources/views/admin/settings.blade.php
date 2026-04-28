@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'Settings | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'Settings', 'subtitle' => 'Configure system settings', 'icon' => 'bi-gear'])
+<?php
+    $pageTitle = 'Settings';
+    $pageSubtitle = 'Configure system settings';
+    $pageIcon = 'bi-gear';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .settings-form { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 2rem; }

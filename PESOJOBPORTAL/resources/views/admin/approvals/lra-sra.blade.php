@@ -1,10 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.admin-dashboard')
 
 @section('title', 'LRA/SRA Approvals | PESO Admin')
 
-@section('admin-content')
-@include('admin.layouts.topbar', ['title' => 'LRA/SRA Approvals', 'subtitle' => 'Review and approve local recruitment and special recruitment agreement requests', 'icon' => 'bi-clipboard-check'])
+<?php
+    $pageTitle = 'LRA/SRA Approvals';
+    $pageSubtitle = 'Review and approve LRA/SRA requests';
+    $pageIcon = 'bi-clipboard-check';
+?>
 
+@section('content')
 <div class="admin-dashboard">
     <style>
         .data-table { font-size: 13px; }
