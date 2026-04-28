@@ -4,15 +4,6 @@
 
 @section('content')
 <section aria-label="Jobseeker notifications">
-	<div class="dashboard-topbar">
-		<div>
-			<div class="dashboard-topbar-title">Notifications</div>
-			<div class="dashboard-topbar-subtitle">Updates from PESO Manolo Fortich</div>
-		</div>
-		<div class="text-end">
-			<span class="badge text-bg-primary" id="notificationUnreadBadge">{{ $unreadCount }} unread</span>
-		</div>
-	</div>
 
 	<div class="dashboard-section-card p-3 p-lg-4">
 		<div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">

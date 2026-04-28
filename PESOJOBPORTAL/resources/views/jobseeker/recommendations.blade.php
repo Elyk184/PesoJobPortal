@@ -4,16 +4,6 @@
 
 @section('content')
 <section aria-label="Job recommendations">
-	<div class="dashboard-topbar">
-		<div>
-			<div class="dashboard-topbar-title">Recommendations</div>
-			<div class="dashboard-topbar-subtitle">Personalized matches based on your profile skillset</div>
-		</div>
-		<div class="d-none d-md-block text-end">
-			<div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'Jobseeker' }}</div>
-			<div class="dashboard-topbar-subtitle">Recommended by Admin Matching</div>
-		</div>
-	</div>
 
 	<div class="dashboard-section-card p-3 p-lg-4 mb-4">
 		<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
@@ -72,7 +62,7 @@
 	<div class="dashboard-section-card p-3 p-lg-4">
 		<div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
 			<h3 class="h5 mb-0 fw-bold"><i class="bi bi-lightning-charge me-2"></i>Matched Job Posts</h3>
-			<a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">Browse All Jobs</a>
+			<a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary">Browse All Jobs</a>
 		</div>
 
 		@if ($recommendations->isEmpty())

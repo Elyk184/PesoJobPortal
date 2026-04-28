@@ -173,18 +173,30 @@
                 @if($jobs->count() > 0)
                     <div class="job-list">
                         @foreach($jobs as $job)
-                            <div class="job-item">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
-                                        <h5 class="job-title mb-1">
-                                            <a href="{{ route('jobs.index') }}">{{ $job->title }}</a>
-                                        </h5>
-                                        <p class="text-muted mb-1">
-                                            <i class="bi bi-building me-1"></i>{{ $job->company_name ?? 'Company' }}
-                                            <span class="mx-2">|</span>
-                                            <i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
-                                        </p>
-                                        <div class="job-tags">
+                            <div class="col-12">
+                                <article class="job-card p-3 mb-3 d-flex flex-column flex-md-row align-items-start gap-3">
+                                    <div class="logo-placeholder rounded-3 bg-light d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-briefcase fs-3 text-secondary"></i>
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="job-title mb-1">
+                                                    <a href="{{ route('jobs.index') }}" class="stretched-link text-dark">{{ $job->title }}</a>
+                                                </h5>
+                                                <p class="text-muted mb-1 small">
+                                                    <i class="bi bi-building me-1"></i>{{ $job->company_name ?? 'Company' }}
+                                                    <span class="mx-1">|</span>
+                                                    <i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
+                                                </p>
+                                            </div>
+                                            <div class="text-md-end d-none d-md-block">
+                                                <small class="text-muted">Posted {{ $job->created_at->diffForHumans() }}</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="job-tags mt-2">
                                             <span class="job-tag">
                                                 <i class="bi bi-clock me-1"></i>{{ ucfirst($job->employment_type) }}
                                             </span>
@@ -211,38 +223,35 @@
                                                 </span>
                                             @endif
                                         </div>
+
+                                        <p class="mb-0 small text-muted mt-2">{{ \Illuminate\Support\Str::limit($job->description, 140) }}</p>
                                     </div>
-                                    <div class="col-md-4 text-md-end">
-                                        <div class="job-actions">
-                                            <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-primary">
-                                                View Details
-                                            </a>
-                                            @auth
-                                                @php
-                                                    $isSaved = \App\Models\SavedJob::where('job_post_id', $job->id)->where('user_id', auth()->id())->exists();
-                                                @endphp
-                                                @if($isSaved)
-                                                    <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-warning" title="Unsave">
-                                                            <i class="bi bi-bookmark-dash"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Save">
-                                                            <i class="bi bi-bookmark"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            @endauth
-                                        </div>
-                                        <small class="text-muted d-block mt-2">
-                                            Posted {{ $job->created_at->diffForHumans() }}
-                                        </small>
+
+                                    <div class="job-card-actions ms-auto text-end d-flex flex-column gap-2">
+                                        <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-primary">View</a>
+                                        @auth
+                                            @php
+                                                $isSaved = \App\Models\SavedJob::where('job_post_id', $job->id)->where('user_id', auth()->id())->exists();
+                                            @endphp
+                                            @if($isSaved)
+                                                <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-warning" title="Unsave">
+                                                        <i class="bi bi-bookmark-dash"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Save">
+                                                        <i class="bi bi-bookmark"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @endauth
+                                        <small class="text-muted d-block d-md-none">Posted {{ $job->created_at->diffForHumans() }}</small>
                                     </div>
-                                </div>
+                                </article>
                             </div>
                         @endforeach
                     </div>
@@ -276,6 +285,12 @@
         background: #f8f9fa;
         padding: 15px;
         border-radius: 8px;
+    }
+    .filter-row .form-control, .filter-row .form-select {
+        min-height: 40px;
+    }
+    .filter-row .btn {
+        min-height: 40px;
     }
 
     .job-list {
@@ -322,6 +337,30 @@
         justify-content: flex-end;
     }
 
+    .job-card {
+        background: #fff;
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        transition: box-shadow 0.18s ease, transform 0.12s ease;
+        position: relative;
+    }
+
+    .job-card:hover {
+        box-shadow: 0 12px 30px rgba(15, 45, 82, 0.06);
+        transform: translateY(-4px);
+    }
+
+    .job-card .logo-placeholder {
+        width: 64px;
+        height: 64px;
+        flex: 0 0 64px;
+        border-radius: 10px;
+    }
+
+    .job-card-actions { min-width: 110px; }
+    .job-card .stretched-link { text-decoration: none; }
+    .job-card .stretched-link:hover { color: #0d6efd; }
+
     /* Responsive adjustments */
     @media (max-width: 991px) {
         .job-actions {
@@ -344,5 +383,29 @@
         border-radius: 0 6px 6px 0;
     }
 </style>
+@push('scripts')
+<script>
+    (function () {
+        const form = document.getElementById('filterForm');
+        if (!form) return;
+
+        // Auto-submit selects on change
+        Array.from(form.querySelectorAll('select')).forEach(function (sel) {
+            sel.addEventListener('change', function () { form.submit(); });
+        });
+
+        // Debounced search submit
+        const searchInput = form.querySelector('input[name="search"]');
+        if (searchInput) {
+            let timer = null;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(function () { form.submit(); }, 600);
+            });
+        }
+    })();
+</script>
+@endpush
+
 @endsection
 

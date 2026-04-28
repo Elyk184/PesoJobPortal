@@ -4,16 +4,6 @@
 
 @section('content')
 <section aria-label="Saved jobs">
-    <div class="dashboard-topbar">
-        <div>
-            <div class="dashboard-topbar-title">Saved Jobs</div>
-            <div class="dashboard-topbar-subtitle">Jobs you have bookmarked for later</div>
-        </div>
-        <div class="d-none d-md-block text-end">
-            <div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'Jobseeker' }}</div>
-            <div class="dashboard-topbar-subtitle">{{ $savedCount }} saved</div>
-        </div>
-    </div>
 
     <div class="dashboard-section-card p-3 p-lg-4 mb-4">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
@@ -21,7 +11,7 @@
                 <h2 class="h4 mb-1 fw-bold">Your Saved Job Opportunities</h2>
                 <p class="mb-0 text-muted">Bookmark jobs while browsing and review them here anytime.</p>
             </div>
-            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-primary px-3 shadow-sm">
+            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-primary px-3 shadow-sm">
                 <i class="bi bi-briefcase me-2"></i>Browse Jobs
             </a>
         </div>
@@ -60,25 +50,31 @@
     <div class="dashboard-section-card p-3 p-lg-4">
         <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-bookmark me-2"></i>Saved Job Posts</h3>
-            <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary">Browse All Jobs</a>
+            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary">Browse All Jobs</a>
         </div>
 
         @if ($savedJobs->isEmpty())
-            <div class="dashboard-empty-state">
-                <div>
-                    <div class="fs-1 mb-2">✦</div>
-                    <div class="fw-semibold text-secondary">No saved jobs yet.</div>
-                    <div class="small">Browse vacancies and click the bookmark icon to save jobs for later.</div>
-                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Browse Vacancies</a>
+            <div class="dashboard-empty-state text-center py-5">
+                <div class="mb-3">
+                    <svg width="84" height="84" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="1" y="4" width="22" height="14" rx="2" fill="#E9F5FF"/>
+                        <path d="M7 9h10M7 13h6" stroke="#2D65B1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
+                <div class="fw-semibold text-secondary">No saved jobs yet.</div>
+                <div class="small mb-3">Save interesting job posts while browsing and review them here anytime.</div>
+                <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-primary btn-lg px-4">Browse Jobs</a>
             </div>
         @else
             <div class="row g-3">
                 @foreach ($savedJobs as $job)
                     <div class="col-12 col-xl-6">
-                        <article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-3">
-                            <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
-                                <div>
+                        <article class="saved-job-card p-3 h-100 d-flex flex-column">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="logo-placeholder rounded-3 bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-building fs-4 text-secondary"></i>
+                                </div>
+                                <div class="flex-grow-1">
                                     <h4 class="h6 mb-1 fw-bold text-dark">{{ $job['title'] }}</h4>
                                     <div class="small text-muted">
                                         <i class="bi bi-building me-1"></i>{{ $job['employer_name'] }}
@@ -86,29 +82,34 @@
                                         <i class="bi bi-geo-alt me-1"></i>{{ $job['location'] }}
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleSaveJob({{ $job['id'] }}, this)">
-                                    <i class="bi bi-bookmark-fill"></i>
-                                </button>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleSaveJob({{ $job['id'] }}, this)">
+                                        <i class="bi bi-bookmark-fill"></i>
+                                    </button>
+                                </div>
                             </div>
 
-                            @if (! empty($job['salary_range']))
-                                <div class="small text-secondary">
-                                    <i class="bi bi-cash-stack me-1"></i>{{ $job['salary_range'] }}
-                                </div>
-                            @endif
+                            <div class="mt-3 small text-secondary">
+                                @if (! empty($job['salary_range']))
+                                    <span class="me-2"><i class="bi bi-cash-stack me-1"></i>{{ $job['salary_range'] }}</span>
+                                @endif
+                                @if (! empty($job['application_deadline']))
+                                    <span class="badge bg-light text-dark border">Expires {{ $job['application_deadline'] }}</span>
+                                @endif
+                            </div>
 
-                            <p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($job['description'], 150) }}</p>
+                            <p class="mb-0 small text-muted mt-2">{{ \Illuminate\Support\Str::limit($job['description'], 140) }}</p>
 
                             @if (! empty($job['requirements_list']))
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach (collect($job['requirements_list'])->take(4) as $requirement)
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    @foreach (collect($job['requirements_list'])->take(3) as $requirement)
                                         <span class="badge rounded-pill text-bg-light border">{{ $requirement }}</span>
                                     @endforeach
                                 </div>
                             @endif
 
-                            <div class="mt-auto pt-2">
-                                <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary w-100">
+                            <div class="mt-auto pt-3">
+                                <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-primary w-100">
                                     View Details & Apply
                                 </a>
                             </div>
@@ -147,4 +148,29 @@
 </script>
 @endpush
 @endsection
+
+<style>
+    .saved-job-card {
+        border-radius: 12px;
+        border: 1px solid var(--dash-border);
+        background: #fff;
+        transition: box-shadow 0.18s ease, transform 0.12s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .saved-job-card:hover {
+        box-shadow: 0 12px 30px rgba(15, 45, 82, 0.06);
+        transform: translateY(-4px);
+    }
+
+    .logo-placeholder {
+        width: 64px;
+        height: 64px;
+        flex: 0 0 64px;
+        border-radius: 10px;
+    }
+
+    .dashboard-empty-state svg { display: inline-block; }
+</style>
 

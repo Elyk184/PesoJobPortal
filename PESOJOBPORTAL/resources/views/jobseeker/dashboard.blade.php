@@ -717,7 +717,7 @@
                     <div class="empty-icon"><i class="bi bi-bell"></i></div>
                     <div class="fw-semibold text-secondary">All caught up.</div>
                     <div class="small">No new notifications right now.</div>
-                    <a href="{{ route('jobseeker.vacancies') }}" class="btn btn-sm btn-outline-primary mt-2">Browse New Jobs</a>
+                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary mt-2">Browse New Jobs</a>
                 </div>
             </div>
         @endif

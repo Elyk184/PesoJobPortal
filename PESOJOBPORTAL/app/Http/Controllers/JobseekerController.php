@@ -181,7 +181,7 @@ class JobseekerController extends Controller
                 'icon' => 'bi-briefcase',
                 'title' => 'New job posts this week',
                 'message' => $jobsThisWeek . ' new active job(s) were posted in the last 7 days.',
-                'url' => route('jobseeker.vacancies'),
+                'url' => route('jobseeker.browse-jobs'),
                 'created_at' => now()->subHours(1),
             ]);
         }
@@ -324,18 +324,7 @@ class JobseekerController extends Controller
             $request->session()->put('jobseeker_recently_viewed_job_ids', $mergedViewedIds);
         }
 
-        return view('jobseeker.vacancies', [
-            'jobs' => $jobs,
-            'locations' => collect($manoloFortichBarangays),
-            'sampleJobs' => collect($this->sampleVacancies()),
-            'filters' => [
-                'keyword' => $keyword,
-                'location' => $location,
-                'skills' => $skills,
-                'employer' => $employer,
-                'sort' => $sort,
-            ],
-        ]);
+        return redirect()->route('jobseeker.browse-jobs');
     }
 
     public function browseJobs(Request $request): View
