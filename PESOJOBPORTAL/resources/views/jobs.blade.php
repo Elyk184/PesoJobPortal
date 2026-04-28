@@ -431,5 +431,6 @@ body{
         </table>
     </div>
 </div>
+@include('components.footer')
 @endsection
 
