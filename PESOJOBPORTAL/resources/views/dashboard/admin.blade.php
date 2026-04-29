@@ -1188,48 +1188,166 @@
             <div class="row mb-4">
                 <!-- Applications Overview Chart -->
                 <div class="col-lg-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5 style="margin-bottom: 1.5rem;"><i class="bi bi-pie-chart me-2"></i>Applications Overview</h5>
-                        <div style="position: relative; height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <div class="dashboard-card modern-chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <h5 style="margin: 0; font-weight: 800; color: #0f172a;"><i class="bi bi-pie-chart me-2" style="color: #f59e0b;"></i>Applications Overview</h5>
+                                <p style="margin: 0.5rem 0 0 0; font-size: 12px; color: #64748b;">Real-time application status</p>
+                            </div>
+                        </div>
+                        <div style="position: relative; height: 280px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
                             <canvas id="applicationsChart"></canvas>
                         </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div>
-                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Total Applications</div>
-                                    <div style="font-size: 28px; font-weight: 700; color: #0f172a;">{{ $stats['total_applications'] }}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Pending</div>
-                                    <div style="font-size: 28px; font-weight: 700; color: #f59e0b;">{{ $stats['pending_applications'] }}</div>
-                                </div>
+                        <div class="chart-stats">
+                            <div class="stat-box pending">
+                                <div class="stat-number">{{ $stats['pending_applications'] }}</div>
+                                <div class="stat-text">Pending</div>
+                            </div>
+                            <div class="stat-box success">
+                                <div class="stat-number">{{ $stats['total_applications'] - $stats['pending_applications'] }}</div>
+                                <div class="stat-text">Processed</div>
+                            </div>
+                            <div class="stat-box info">
+                                <div class="stat-number">{{ $stats['total_applications'] }}</div>
+                                <div class="stat-text">Total</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- System Status Chart -->
+                <!-- Status Overview Chart -->
                 <div class="col-lg-6 mb-4">
-                    <div class="dashboard-card">
-                        <h5 style="margin-bottom: 1.5rem;"><i class="bi bi-bar-chart me-2"></i>Pending Items Status</h5>
-                        <div style="position: relative; height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <div class="dashboard-card modern-chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <h5 style="margin: 0; font-weight: 800; color: #0f172a;"><i class="bi bi-bar-chart me-2" style="color: #3b82f6;"></i>System Status Overview</h5>
+                                <p style="margin: 0.5rem 0 0 0; font-size: 12px; color: #64748b;">Pending approvals across system</p>
+                            </div>
+                        </div>
+                        <div style="position: relative; height: 280px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
                             <canvas id="statusChart"></canvas>
                         </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div>
-                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Job Approvals</div>
-                                    <div style="font-size: 28px; font-weight: 700; color: #ef4444;">{{ $stats['pending_job_approvals'] }}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Documents</div>
-                                    <div style="font-size: 28px; font-weight: 700; color: #10b981;">{{ $stats['pending_documents'] }}</div>
-                                </div>
+                        <div class="chart-stats">
+                            <div class="stat-box danger">
+                                <div class="stat-number">{{ $stats['pending_job_approvals'] }}</div>
+                                <div class="stat-text">Job Reviews</div>
+                            </div>
+                            <div class="stat-box warning">
+                                <div class="stat-number">{{ $stats['pending_lra_sra'] }}</div>
+                                <div class="stat-text">LRA/SRA</div>
+                            </div>
+                            <div class="stat-box success">
+                                <div class="stat-number">{{ $stats['pending_documents'] }}</div>
+                                <div class="stat-text">Documents</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <style>
+                .modern-chart-card {
+                    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                    border: 1px solid #e2e8f0;
+                    padding: 2rem !important;
+                    border-radius: 16px !important;
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .modern-chart-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: -50%;
+                    width: 300px;
+                    height: 300px;
+                    background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+                    border-radius: 50%;
+                    pointer-events: none;
+                }
+
+                .modern-chart-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+                    border-color: #cbd5e1;
+                }
+
+                .chart-header {
+                    position: relative;
+                    z-index: 1;
+                    margin-bottom: 0.5rem;
+                    padding-bottom: 1rem;
+                    border-bottom: 2px solid #f1f5f9;
+                }
+
+                .chart-stats {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1rem;
+                    margin-top: 1.5rem;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .stat-box {
+                    padding: 1rem;
+                    border-radius: 12px;
+                    text-align: center;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.8);
+                    transition: all 0.3s ease;
+                }
+
+                .stat-box:hover {
+                    transform: translateY(-4px);
+                }
+
+                .stat-box.pending {
+                    background: linear-gradient(135deg, #fff8e1 0%, #ffe5a6 100%);
+                    border-color: #f59e0b;
+                }
+
+                .stat-box.success {
+                    background: linear-gradient(135deg, #e6f9f3 0%, #c1f0e6 100%);
+                    border-color: #10b981;
+                }
+
+                .stat-box.info {
+                    background: linear-gradient(135deg, #e1f5ff 0%, #a6e3ff 100%);
+                    border-color: #3b82f6;
+                }
+
+                .stat-box.danger {
+                    background: linear-gradient(135deg, #ffe6e6 0%, #ffb3b3 100%);
+                    border-color: #ef4444;
+                }
+
+                .stat-box.warning {
+                    background: linear-gradient(135deg, #f5e6ff 0%, #e8b3ff 100%);
+                    border-color: #8b5cf6;
+                }
+
+                .stat-number {
+                    font-size: 32px;
+                    font-weight: 900;
+                    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 0.5rem;
+                }
+
+                .stat-text {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: #475569;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+            </style>
 
             <!-- Main Content -->
             <div class="row">
@@ -2221,39 +2339,72 @@
     });
 
     function initializeCharts() {
-        // Applications Chart
+        // Applications Chart - Doughnut with Gradients
         const applicationsCtx = document.getElementById('applicationsChart');
         if (applicationsCtx) {
+            const ctx = applicationsCtx.getContext('2d');
+            
+            // Create gradients
+            const pendingGradient = ctx.createLinearGradient(0, 0, 0, 200);
+            pendingGradient.addColorStop(0, '#f59e0b');
+            pendingGradient.addColorStop(1, '#d97706');
+            
+            const processedGradient = ctx.createLinearGradient(0, 0, 0, 200);
+            processedGradient.addColorStop(0, '#e5e7eb');
+            processedGradient.addColorStop(1, '#d1d5db');
+
             new Chart(applicationsCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'Total'],
+                    labels: ['Pending', 'Processed'],
                     datasets: [{
                         data: [{{ $stats['pending_applications'] }}, {{ $stats['total_applications'] - $stats['pending_applications'] }}],
-                        backgroundColor: ['#f59e0b', '#d1d5db'],
-                        borderColor: 'white',
-                        borderWidth: 3,
-                        borderRadius: 4
+                        backgroundColor: [pendingGradient, processedGradient],
+                        borderColor: ['#fff', '#fff'],
+                        borderWidth: 4,
+                        borderRadius: 8,
+                        spacing: 8
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '72%',
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
                             labels: {
-                                font: { size: 12, weight: 'bold' },
-                                color: '#64748b',
-                                padding: 15,
-                                usePointStyle: true
+                                font: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
+                                color: '#0f172a',
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    return data.labels.map((label, i) => ({
+                                        text: label + ' - ' + data.datasets[0].data[i],
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i,
+                                        pointStyle: 'circle'
+                                    }));
+                                }
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            titleFont: { size: 14, weight: 'bold' },
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 16,
+                            titleFont: { size: 14, weight: '700' },
                             bodyFont: { size: 13 },
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
+                            displayColors: true,
                             callbacks: {
                                 label: function(context) {
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -2267,43 +2418,69 @@
             });
         }
 
-        // Status Chart
+        // Status Chart - Horizontal Bar with Gradients
         const statusCtx = document.getElementById('statusChart');
         if (statusCtx) {
+            const ctx = statusCtx.getContext('2d');
+            
+            // Create gradients for each bar
+            const jobGradient = ctx.createLinearGradient(0, 0, 200, 0);
+            jobGradient.addColorStop(0, '#ef4444');
+            jobGradient.addColorStop(1, '#dc2626');
+            
+            const lraGradient = ctx.createLinearGradient(0, 0, 200, 0);
+            lraGradient.addColorStop(0, '#8b5cf6');
+            lraGradient.addColorStop(1, '#7c3aed');
+            
+            const docGradient = ctx.createLinearGradient(0, 0, 200, 0);
+            docGradient.addColorStop(0, '#10b981');
+            docGradient.addColorStop(1, '#059669');
+
             new Chart(statusCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Job Approvals', 'LRA/SRA', 'Documents'],
+                    labels: ['Job Approvals', 'LRA/SRA Requests', 'Document Verifications'],
                     datasets: [{
                         label: 'Pending Items',
                         data: [{{ $stats['pending_job_approvals'] }}, {{ $stats['pending_lra_sra'] }}, {{ $stats['pending_documents'] }}],
-                        backgroundColor: [
-                            '#ef4444',
-                            '#8b5cf6',
-                            '#10b981'
-                        ],
-                        borderColor: 'white',
+                        backgroundColor: [jobGradient, lraGradient, docGradient],
+                        borderColor: ['#fff', '#fff', '#fff'],
                         borderWidth: 2,
-                        borderRadius: 8,
-                        borderSkipped: false
+                        borderRadius: 10,
+                        borderSkipped: false,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
                     }]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart',
+                        delay: function(context) {
+                            let delay = 0;
+                            if (context.type === 'data') {
+                                delay = context.dataIndex * 100;
+                            }
+                            return delay;
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            titleFont: { size: 14, weight: 'bold' },
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 16,
+                            titleFont: { size: 14, weight: '700' },
                             bodyFont: { size: 13 },
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
                             callbacks: {
                                 label: function(context) {
-                                    return 'Pending: ' + context.parsed.x;
+                                    return 'Pending: ' + context.parsed.x + ' items';
                                 }
                             }
                         }
@@ -2311,22 +2488,27 @@
                     scales: {
                         x: {
                             beginAtZero: true,
+                            max: Math.max({{ $stats['pending_job_approvals'] }}, {{ $stats['pending_lra_sra'] }}, {{ $stats['pending_documents'] }}) + 2,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
+                                color: 'rgba(0, 0, 0, 0.08)',
+                                drawBorder: false,
+                                drawTicks: false
                             },
                             ticks: {
-                                font: { size: 12, weight: 'bold' },
-                                color: '#64748b'
+                                font: { size: 12, weight: '600', family: "'Segoe UI', sans-serif" },
+                                color: '#64748b',
+                                padding: 10
                             }
                         },
                         y: {
                             grid: {
-                                display: false
+                                display: false,
+                                drawBorder: false
                             },
                             ticks: {
-                                font: { size: 12, weight: '600' },
-                                color: '#1e293b'
+                                font: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
+                                color: '#0f172a',
+                                padding: 12
                             }
                         }
                     }
