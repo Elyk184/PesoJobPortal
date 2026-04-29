@@ -7,9 +7,10 @@ use App\Models\EmployerNotification;
 use App\Models\PesoJob;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
-use App\Models\CompanyProfile;
+use App\Models\UserNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -96,6 +97,11 @@ class User extends Authenticatable
     public function rejectedBy()
     {
         return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    public function employerNotifications(): HasMany
+    {
+        return $this->hasMany(EmployerNotification::class, 'employer_id');
     }
 }
 ?>

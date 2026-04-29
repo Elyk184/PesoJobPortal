@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Brief Historical Background')
+@section('title', 'Brief Historical Background | Link Job Resource Portal')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/history-section.css') }}">

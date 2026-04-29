@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Dashboard | PESO Job Portal')</title>
+    <title>@yield('title', 'Jobseeker | Link Job Resource Portal')</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
@@ -18,10 +18,10 @@
     @stack('styles')
     <style>
         :root {
-            --dash-sidebar-900: #22374f;
-            --dash-sidebar-800: #2b435d;
-            --dash-sidebar-700: #334d69;
-            --dash-sidebar-600: #40607f;
+            --dash-sidebar-900: #0f2d52;
+            --dash-sidebar-800: #1f4b8f;
+            --dash-sidebar-700: #27579f;
+            --dash-sidebar-600: #2f62aa;
             --dash-surface: #ffffff;
             --dash-page-bg: #eef2f7;
             --dash-border: #d9e2ee;
@@ -44,9 +44,9 @@
             width: 284px;
             flex: 0 0 284px;
             padding: 18px 16px 20px;
-            background: linear-gradient(180deg, var(--dash-sidebar-900) 0%, #2b3f56 100%);
+            background: linear-gradient(180deg, var(--dash-sidebar-900) 0%, var(--dash-sidebar-800) 100%);
             color: #fff;
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            border-right: 3px solid #d72638;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -76,9 +76,9 @@
             margin-bottom: 14px;
             padding: 12px 14px;
             border-radius: 18px;
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(15, 45, 82, 0.08);
-            box-shadow: 0 12px 24px rgba(15, 45, 82, 0.08);
+            background: linear-gradient(90deg, #0f2d52, #1f4b8f);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            box-shadow: 0 12px 24px rgba(10, 35, 80, 0.24);
         }
 
         .dashboard-mobile-brand {
@@ -86,14 +86,14 @@
             align-items: center;
             gap: 10px;
             font-weight: 800;
-            color: #0f2d52;
+            color: #f5f7fb;
         }
 
         .dashboard-mobile-brand img {
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            object-fit: cover;
+            width: 74px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: contain;
         }
 
         .dashboard-sidebar-close {
@@ -111,12 +111,12 @@
         }
 
         .dashboard-brand-mark img {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            object-fit: cover;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            width: 86px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: contain;
+            background: transparent;
+            border: 0;
         }
 
         .dashboard-brand-kicker {
@@ -212,8 +212,8 @@
         .dashboard-nav-link:hover,
         .dashboard-nav-link.is-active {
             color: #ffffff;
-            background: rgba(79, 138, 201, 0.5);
-            box-shadow: inset 3px 0 0 #61a0ff;
+            background: rgba(215, 38, 56, 0.16);
+            box-shadow: inset 3px 0 0 #d72638;
         }
 
         .dashboard-highlight-label {

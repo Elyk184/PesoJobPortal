@@ -35,12 +35,18 @@
             <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification') ? 'active' : '' }}">
                 <i class="bi bi-building"></i>
                 <span>Employer Verification</span>
+                @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
+                    <span style="margin-left:auto; min-width:22px; height:22px; padding:0 7px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                @endif
             </a>
         </li>
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.job-approvals') ? 'active' : '' }}">
                 <i class="bi bi-file-check"></i>
                 <span>Job Approvals</span>
+                @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
+                    <span style="margin-left:auto; min-width:22px; height:22px; padding:0 7px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#0ea5e9; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                @endif
             </a>
         </li>
         <li class="sidebar-menu-item">
@@ -123,6 +129,9 @@
             <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link {{ request()->routeIs('admin.peso-clearances') ? 'active' : '' }}">
                 <i class="bi bi-file-pdf"></i>
                 <span>PESO Clearances</span>
+                @if(($adminSidebarCounts['pendingPesoClearances'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#f59e0b;">{{ $adminSidebarCounts['pendingPesoClearances'] }}</span>
+                @endif
             </a>
         </li>
 
@@ -143,6 +152,9 @@
             <a href="{{ route('admin.alerts-notifications') }}" class="sidebar-menu-link {{ request()->routeIs('admin.alerts-notifications') ? 'active' : '' }}">
                 <i class="bi bi-bell"></i>
                 <span>Alerts & Notifications</span>
+                @if(($adminSidebarCounts['adminUnreadNotifications'] ?? 0) > 0)
+                    <span class="sidebar-badge">{{ $adminSidebarCounts['adminUnreadNotifications'] }}</span>
+                @endif
             </a>
         </li>
         <li class="sidebar-menu-item">

@@ -6,7 +6,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\EmployerNotification;
 use App\Models\JobApplication;
 use App\Models\PesoJob;
+use App\Models\PortalNotification;
 use App\Models\RecruitmentActivityRequest;
+use App\Models\User;
+use App\Models\UserNotification;
 use App\Models\UserProfile;
 use App\Models\CompanyProfile;
 use Illuminate\Http\RedirectResponse;
@@ -23,13 +26,19 @@ class EmployerController extends Controller
     {
         $employer = $request->user()->loadMissing('companyProfile');
         $logoPath = $employer->companyProfile?->logo_path;
+        $isVerifiedEmployer = (bool) $employer->is_employer_verified || ($employer->companyProfile?->verification_status === 'verified');
+
+        if ($isVerifiedEmployer && ! $employer->is_employer_verified) {
+            $employer->forceFill(['is_employer_verified' => true])->save();
+        }
+
         $companyLogoUrl = ($logoPath && Storage::disk('public')->exists($logoPath))
             ? asset('storage/'.$logoPath)
             : null;
 
         return view('dashboard.employer', [
             'stats' => $this->buildDashboardStats($employer->id),
-            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+            'isVerifiedEmployer' => $isVerifiedEmployer,
             'companyLogoUrl' => $companyLogoUrl,
         ]);
     }
@@ -38,29 +47,40 @@ class EmployerController extends Controller
     {
         $employer = $request->user()->loadMissing('companyProfile');
         $companyProfile = $employer->companyProfile;
+        $isVerifiedEmployer = (bool) $employer->is_employer_verified || ($companyProfile?->verification_status === 'verified');
+
+        if ($isVerifiedEmployer && ! $employer->is_employer_verified) {
+            $employer->forceFill(['is_employer_verified' => true])->save();
+        }
 
         if ($companyProfile === null) {
             $companyProfile = (object) [
                 'company_name' => $employer->name,
-                'is_verified' => (bool) $employer->is_employer_verified,
+                'is_verified' => $isVerifiedEmployer,
             ];
         } else {
             $companyProfile->company_name = $companyProfile->company_name ?? $employer->name;
             $companyProfile->is_verified = (bool) ($companyProfile->is_verified
                 ?? (($companyProfile->verification_status ?? null) === 'verified')
-                ?? $employer->is_employer_verified);
+                ?? $isVerifiedEmployer);
         }
 
         return view('dashboard.employer.post-new-job', [
             'companyProfile' => $companyProfile,
             'employmentTypes' => $this->employmentTypes(),
-            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+            'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
     }
 
     public function manageJobsPage(Request $request): View
     {
         $employer = $request->user();
+        $isVerifiedEmployer = (bool) $employer->is_employer_verified || ($employer->companyProfile?->verification_status === 'verified');
+
+        if ($isVerifiedEmployer && ! $employer->is_employer_verified) {
+            $employer->forceFill(['is_employer_verified' => true])->save();
+        }
+
         $selectedTab = $request->query('status', 'active');
         $availableTabs = ['active', 'pending', 'draft', 'archived', 'filled', 'all'];
 
@@ -92,13 +112,20 @@ class EmployerController extends Controller
             'jobs' => $jobs,
             'selectedTab' => $selectedTab,
             'tabCounts' => $tabCounts,
-            'isVerifiedEmployer' => (bool) $employer->is_employer_verified,
+            'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
     }
 
     public function viewApplicantsPage(Request $request): View
     {
-        $referredApplications = $this->getReferredApplications($request->user()->id);
+        $employer = $request->user()->loadMissing('companyProfile');
+        $isVerifiedEmployer = (bool) $employer->is_employer_verified || ($employer->companyProfile?->verification_status === 'verified');
+
+        if ($isVerifiedEmployer && ! $employer->is_employer_verified) {
+            $employer->forceFill(['is_employer_verified' => true])->save();
+        }
+
+        $referredApplications = $this->getReferredApplications($employer->id);
 
         return view('dashboard.employer.view-applicants', [
             'referredApplications' => $referredApplications,
@@ -107,7 +134,7 @@ class EmployerController extends Controller
             'approved' => $referredApplications->where('employer_status', 'hired')->count(),
             'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
             'jobs' => $this->getEmployerJobs($request->user()->id),
-            'isVerifiedEmployer' => $request->user()->is_employer_verified,
+            'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
     }
 
@@ -192,7 +219,7 @@ class EmployerController extends Controller
 
         if ($request->boolean('logo_only')) {
             $validated = $request->validate([
-                'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+                'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
             ]);
 
             $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
@@ -231,13 +258,13 @@ class EmployerController extends Controller
             'establishment_phone' => ['nullable', 'string', 'max:50'],
             'contact_person_phone' => ['required', 'string', 'max:50'],
             'establishment_email' => ['required', 'email', 'max:255'],
-            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048'],
+            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
             'business_permit' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'dti_sec_registration' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ];
 
         if (Schema::hasColumn('users', 'username')) {
-            $rules['username'] = ['required', 'string', 'max:100', 'alpha_dash', 'unique:users,username,'.$employer->id];
+            $rules['username'] = ['nullable', 'string', 'max:100', 'alpha_dash', 'unique:users,username,'.$employer->id];
         }
 
         $validated = $request->validate($rules);
@@ -251,7 +278,7 @@ class EmployerController extends Controller
             $updateData['password'] = $validated['password'];
         }
 
-        if (Schema::hasColumn('users', 'username') && isset($validated['username'])) {
+        if (Schema::hasColumn('users', 'username') && ! empty($validated['username'])) {
             $updateData['username'] = $validated['username'];
         }
 
@@ -260,6 +287,7 @@ class EmployerController extends Controller
         $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
 
         $profileData = [];
+        $currentVerificationStatus = $profile->verification_status;
 
         // Map input fields to CompanyProfile columns
         $fieldMapping = [
@@ -291,8 +319,8 @@ class EmployerController extends Controller
         }
 
         // Use business_name as company_name if not explicitly provided
-        if (!isset($profileData['company_name'])) {
-            $profileData['company_name'] = $validated['business_name'];
+        if (!isset($profileData['company_name']) || empty($profileData['company_name'])) {
+            $profileData['company_name'] = $validated['business_name'] ?? '';
         }
 
         // Handle file uploads
@@ -307,24 +335,77 @@ class EmployerController extends Controller
             if ($profile->business_permit_path && Storage::disk('public')->exists($profile->business_permit_path)) {
                 Storage::disk('public')->delete($profile->business_permit_path);
             }
-            $profileData['business_permit_path'] = $request->file('business_permit')->store('company-documents', 'public');
+            $storedPath = $request->file('business_permit')->store('company-documents', 'public');
+            $profileData['business_permit_path'] = $storedPath;
+
+            // Record the uploaded document for admin document verification workflow
+            DB::table('employer_documents')->insert([
+                'user_id' => $employer->id,
+                'document_type' => 'business_permit',
+                'file_path' => $storedPath,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
         if ($request->hasFile('dti_sec_registration')) {
             if ($profile->dti_sec_registration_path && Storage::disk('public')->exists($profile->dti_sec_registration_path)) {
                 Storage::disk('public')->delete($profile->dti_sec_registration_path);
             }
-            $profileData['dti_sec_registration_path'] = $request->file('dti_sec_registration')->store('company-documents', 'public');
+            $storedPath = $request->file('dti_sec_registration')->store('company-documents', 'public');
+            $profileData['dti_sec_registration_path'] = $storedPath;
+
+            // Record the uploaded document for admin document verification workflow
+            DB::table('employer_documents')->insert([
+                'user_id' => $employer->id,
+                'document_type' => 'dti_sec_registration',
+                'file_path' => $storedPath,
+                'status' => 'pending',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
-        // Update verification status if documents are uploaded
-        $hasUploadedVerificationDoc = $request->hasFile('business_permit') || $request->hasFile('dti_sec_registration');
-        if ($hasUploadedVerificationDoc && $profile->verification_status !== 'verified') {
+        // Update verification status when BOTH required documents are present (either uploaded now or already stored)
+        $willHaveBusinessPermit = isset($profileData['business_permit_path']) || ($profile->business_permit_path && Storage::disk('public')->exists($profile->business_permit_path));
+        $willHaveDtiSec = isset($profileData['dti_sec_registration_path']) || ($profile->dti_sec_registration_path && Storage::disk('public')->exists($profile->dti_sec_registration_path));
+
+        if ($willHaveBusinessPermit && $willHaveDtiSec && $profile->verification_status !== 'verified') {
             $profileData['verification_status'] = 'under_review';
         }
 
         if (! empty($profileData)) {
             $profile->update($profileData);
+        }
+
+        $nextVerificationStatus = $profileData['verification_status'] ?? $currentVerificationStatus;
+        $becameUnderReview = $currentVerificationStatus !== 'under_review' && $nextVerificationStatus === 'under_review';
+
+        if ($becameUnderReview) {
+            $adminIds = User::query()
+                ->where('role', 'admin')
+                ->pluck('id');
+
+            if ($adminIds->isNotEmpty()) {
+                $portalNotification = PortalNotification::query()->create([
+                    'title' => 'Employer Verification Requires Review',
+                    'message' => sprintf(
+                        "%s submitted Business Permit and DTI/SEC Registration for verification.",
+                        $profileData['company_name'] ?? $profile->company_name ?? $employer->name
+                    ),
+                    'created_by' => $employer->id,
+                ]);
+
+                $rows = $adminIds->map(fn ($adminId) => [
+                    'user_id' => $adminId,
+                    'portal_notification_id' => $portalNotification->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])->all();
+
+                UserNotification::query()->insert($rows);
+            }
         }
 
         return back()->with('success', 'Company profile updated successfully.');
@@ -333,10 +414,28 @@ class EmployerController extends Controller
     public function notificationsPage(Request $request): View
     {
         $notifications = $this->getNotifications($request->user()->id, 50);
+        $jobUnreadCount = $notifications->filter(function ($notification) {
+            $type = strtolower((string) $notification->type);
+            $title = strtolower((string) $notification->title);
+            $message = strtolower((string) $notification->message);
+
+            return ($type === 'job_update' || str_contains($title, 'job') || str_contains($message, 'job post'))
+                && ! $notification->is_read;
+        })->count();
+        $verificationUnreadCount = $notifications->filter(function ($notification) {
+            $type = strtolower((string) $notification->type);
+            $title = strtolower((string) $notification->title);
+            $message = strtolower((string) $notification->message);
+
+            return ($type === 'verification_update' || str_contains($title, 'verification') || str_contains($message, 'verification'))
+                && ! $notification->is_read;
+        })->count();
 
         return view('dashboard.employer.notifications', [
             'notifications' => $notifications,
             'unreadCount' => $notifications->where('is_read', false)->count(),
+            'jobUnreadCount' => $jobUnreadCount,
+            'verificationUnreadCount' => $verificationUnreadCount,
         ]);
     }
 

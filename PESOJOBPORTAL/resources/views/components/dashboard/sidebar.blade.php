@@ -9,7 +9,7 @@
                 <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
             </div>
             <div>
-                <div class="dashboard-brand-kicker">PESO Job Portal</div>
+                <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
                 <div class="dashboard-brand-title">Jobseeker Portal</div>
             </div>
         </div>
@@ -24,7 +24,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
         </div>
         <div>
-            <div class="dashboard-brand-kicker">PESO Job Portal</div>
+            <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
             <div class="dashboard-brand-title">Jobseeker Portal</div>
         </div>
     </div>
@@ -50,15 +50,15 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Job Search</div>
-            <a href="{{ route('jobseeker.vacancies') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
+            <a href="{{ route('jobseeker.browse-jobs') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.browse-jobs') || request()->routeIs('jobseeker.vacancies') ? 'is-active' : '' }}">
                 <i class="bi bi-briefcase"></i>
                 <span>Browse Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.saved-jobs') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.saved-jobs') ? 'is-active' : '' }}">
                 <i class="bi bi-bookmark"></i>
                 <span>Saved Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.recommendations') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.recommendations') ? 'is-active' : '' }}">
                 <i class="bi bi-stars"></i>
                 <span>Recommendations</span>
             </a>
@@ -70,7 +70,7 @@
                 <i class="bi bi-send"></i>
                 <span>Applied Jobs</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.notifications') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.notifications') ? 'is-active' : '' }}">
                 <i class="bi bi-bell"></i>
                 <span>Notifications</span>
             </a>
@@ -86,11 +86,11 @@
                 <i class="bi bi-file-earmark-text"></i>
                 <span>Resume Builder</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.skill-gap') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.skill-gap') ? 'is-active' : '' }}">
                 <i class="bi bi-graph-up"></i>
                 <span>Skill Gap</span>
             </a>
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('jobseeker.peso-clearance') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.peso-clearance') ? 'is-active' : '' }}">
                 <i class="bi bi-shield-check"></i>
                 <span>PESO Clearance</span>
             </a>

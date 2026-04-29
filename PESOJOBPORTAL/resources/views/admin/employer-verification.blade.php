@@ -11,6 +11,8 @@
 @section('content')
 <div class="admin-dashboard">
     <style>
+        .verification-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; }
+        .verification-count-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: #dbeafe; color: #1e40af; padding: 6px 12px; font-size: 12px; font-weight: 700; }
         .verification-table { width: 100%; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }
         .verification-table table { width: 100%; border-collapse: collapse; }
         .verification-table thead { background: #f3f4f6; border-bottom: 2px solid #e5e7eb; }
@@ -40,7 +42,104 @@
         .pagination a { background: #e5e7eb; color: #0d1f3c; text-decoration: none; }
         .pagination a:hover { background: #d1d5db; }
         .pagination .active { background: #d72638; color: white; }
+        .doc-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+        .doc-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+        .doc-present { background: #d1fae5; color: #065f46; }
+        .doc-missing { background: #fee2e2; color: #991b1b; }
+        .alerts-card { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1rem; margin-bottom: 1rem; border: 1px solid #eef2f7; }
+        .alerts-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 0.75rem; }
+        .alerts-head h5 { margin: 0; font-size: 14px; color: #0d1f3c; font-weight: 700; }
+        .alerts-count { background: #dbeafe; color: #1e40af; border-radius: 999px; font-size: 11px; font-weight: 700; padding: 4px 8px; }
+        .alert-row { padding: 0.65rem 0; border-top: 1px solid #f1f5f9; }
+        .alert-row:first-of-type { border-top: none; }
+        .alert-title { margin: 0; font-size: 13px; font-weight: 700; color: #0f172a; }
+        .alert-message { margin: 2px 0 0; font-size: 12px; color: #475569; }
+        .alert-meta { margin-top: 4px; font-size: 11px; color: #64748b; display: flex; gap: 10px; align-items: center; }
+        .alert-state { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .alert-unread { background: #dcfce7; color: #166534; }
+        .alert-read { background: #f1f5f9; color: #475569; }
+        .request-grid { display: grid; gap: 12px; margin-bottom: 1rem; }
+        .request-card { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1rem; border: 1px solid #eef2f7; }
+        .request-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 0.75rem; }
+        .request-title { margin: 0; font-size: 15px; font-weight: 700; color: #0d1f3c; }
+        .request-subtitle { margin: 3px 0 0; color: #64748b; font-size: 12px; }
+        .request-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+        .request-status { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #075985; }
+        .request-docs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.75rem; }
+        .request-doc-link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; background: #f8fafc; border: 1px solid #dbe4ee; color: #0f172a; text-decoration: none; font-size: 12px; font-weight: 600; }
+        .request-doc-link:hover { background: #eff6ff; border-color: #bfdbfe; }
     </style>
+
+    <div class="verification-header">
+        <div>
+            <h4 style="margin: 0; color: #0d1f3c; font-weight: 800;">Employer Verification</h4>
+            <small style="color: #64748b;">Review uploaded Business Permit and DTI/SEC registrations before approving employers.</small>
+        </div>
+        <span class="verification-count-badge"><i class="bi bi-bell-fill"></i>{{ $verificationRequestCount ?? 0 }} pending review</span>
+    </div>
+
+    @if(isset($verificationAlerts) && $verificationAlerts->count() > 0)
+        <div class="alerts-card">
+            <div class="alerts-head">
+                <h5><i class="bi bi-bell-fill me-1"></i>Recent Verification Alerts</h5>
+                <span class="alerts-count">{{ $verificationUnreadCount ?? 0 }} unread</span>
+            </div>
+
+            @foreach($verificationAlerts as $alert)
+                <div class="alert-row">
+                    <p class="alert-title">{{ $alert->portalNotification->title ?? 'Verification Alert' }}</p>
+                    <p class="alert-message">{{ $alert->portalNotification->message ?? '' }}</p>
+                    <div class="alert-meta">
+                        <span>{{ $alert->created_at?->diffForHumans() }}</span>
+                        @if($alert->read_at)
+                            <span class="alert-state alert-read"><i class="bi bi-check2-circle"></i>Read</span>
+                        @else
+                            <span class="alert-state alert-unread"><i class="bi bi-bell"></i>Unread</span>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    @if(isset($verificationRequests) && $verificationRequests->count() > 0)
+        <div class="request-grid">
+            @foreach($verificationRequests as $request)
+                <div class="request-card">
+                    <div class="request-head">
+                        <div>
+                            <h5 class="request-title">{{ $request['company_name'] }}</h5>
+                            <p class="request-subtitle">{{ $request['employer_name'] }} | {{ $request['employer_email'] }}</p>
+                        </div>
+                        <div class="request-meta">
+                            <span class="request-status">{{ ucfirst(str_replace('_', ' ', $request['verification_status'])) }}</span>
+                            @if($request['company_profile_id'])
+                                <a href="{{ route('admin.employer-verification.detail', $request['company_profile_id']) }}" class="btn-small btn-view">Review Profile</a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="doc-badges">
+                        <span class="doc-badge {{ $request['has_business_permit'] ? 'doc-present' : 'doc-missing' }}">
+                            <i class="bi {{ $request['has_business_permit'] ? 'bi-file-earmark-check' : 'bi-file-earmark-x' }}"></i> Business Permit
+                        </span>
+                        <span class="doc-badge {{ $request['has_dti_sec'] ? 'doc-present' : 'doc-missing' }}">
+                            <i class="bi {{ $request['has_dti_sec'] ? 'bi-file-earmark-check' : 'bi-file-earmark-x' }}"></i> DTI/SEC
+                        </span>
+                    </div>
+
+                    <div class="request-docs">
+                        @foreach($request['documents'] as $document)
+                            <a href="{{ asset('storage/' . $document['file_path']) }}" target="_blank" class="request-doc-link">
+                                <i class="bi bi-eye"></i>
+                                {{ ucfirst(str_replace('_', ' ', $document['type'])) }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 
     @if($companyProfiles->count() > 0)
         <div class="verification-table">
@@ -49,6 +148,7 @@
                     <tr>
                         <th>Company</th>
                         <th>Contact Email</th>
+                        <th>Documents</th>
                         <th>Registration Date</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -67,6 +167,20 @@
                                 </div>
                             </td>
                             <td>{{ $profile->establishment_email ?? 'N/A' }}</td>
+                            <td>
+                                <div class="doc-badges">
+                                    @if($profile->business_permit_path)
+                                        <span class="doc-badge doc-present"><i class="bi bi-file-earmark-text"></i> Permit</span>
+                                    @else
+                                        <span class="doc-badge doc-missing"><i class="bi bi-file-earmark-x"></i> Permit</span>
+                                    @endif
+                                    @if($profile->dti_sec_registration_path)
+                                        <span class="doc-badge doc-present"><i class="bi bi-file-earmark-ruled"></i> DTI/SEC</span>
+                                    @else
+                                        <span class="doc-badge doc-missing"><i class="bi bi-file-earmark-x"></i> DTI/SEC</span>
+                                    @endif
+                                </div>
+                            </td>
                             <td><small>{{ $profile->created_at->format('d M Y') }}</small></td>
                             <td>
                                 @if($profile->verification_status === 'pending')
@@ -98,7 +212,7 @@
                 {{ $companyProfiles->links() }}
             </div>
         @endif
-    @else
+    @elseif((isset($verificationRequests) && $verificationRequests->count() === 0))
         <div class="verification-table">
             <div class="empty-state">
                 <i class="bi bi-inbox"></i>
