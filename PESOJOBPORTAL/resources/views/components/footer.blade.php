@@ -82,10 +82,15 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
+        <div class="text-center mt-4 pt-3" style="border-top: 1px solid #1f4b8f; color: #b3c6e0;">
+            <p class="mb-0">&copy; {{ date('Y') }} Link Job Resource Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
+=======
 
         <!-- Footer Bottom -->
         <div style="border-top: 1px solid rgba(215, 38, 56, 0.2); padding-top: 2rem; margin-top: 2rem; text-align: center;">
             <p style="margin: 0; font-size: 13px; color: #b0b8d4;">&copy; {{ date('Y') }} PESO Job Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
+>>>>>>> ab9de89d2f5e284c46207d8c18a9ec535de60d62
         </div>
     </div>
 </footer>

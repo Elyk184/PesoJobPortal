@@ -16,7 +16,7 @@
         color: #0f172a;
         min-height: 100vh;
     }
-    
+
     .peso-main {
         margin: 0;
         padding: 0;
@@ -181,7 +181,7 @@
     .topbar-time-display { font-size: 22px; font-weight: 800; color: #1e293b; line-height: 1.1; letter-spacing: -0.3px; }
     .topbar-date-display { font-size: 13px; color: #64748b; font-weight: 600; letter-spacing: 0.3px; }
     .topbar-datetime-icon { font-size: 28px; color: #3b82f6; }
-    
+
     .analog-clock {
         width: 120px;
         height: 120px;
@@ -194,7 +194,7 @@
         align-items: center;
         justify-content: center;
     }
-    
+
     .clock-center {
         width: 12px;
         height: 12px;
@@ -203,7 +203,7 @@
         position: absolute;
         z-index: 10;
     }
-    
+
     .hand {
         position: absolute;
         bottom: 50%;
@@ -212,26 +212,26 @@
         background: #1e293b;
         border-radius: 10px;
     }
-    
+
     .hour-hand {
         width: 4px;
         height: 32px;
         margin-left: -2px;
     }
-    
+
     .minute-hand {
         width: 3px;
         height: 42px;
         margin-left: -1.5px;
     }
-    
+
     .second-hand {
         width: 2px;
         height: 45px;
         margin-left: -1px;
         background: #ef4444;
     }
-    
+
     .clock-marker {
         position: absolute;
         width: 2px;
@@ -240,11 +240,27 @@
         left: 50%;
         margin-left: -1px;
     }
-    
+
     .clock-marker-12 { top: 6px; }
     .clock-marker-3 { top: 50%; right: 6px; left: auto; width: 8px; height: 2px; margin-left: 0; margin-top: -1px; }
     .clock-marker-6 { bottom: 6px; top: auto; }
     .clock-marker-9 { top: 50%; left: 6px; right: auto; width: 8px; height: 2px; margin-left: 0; margin-top: -1px; }
+    .sidebar-badge {
+        margin-left: auto;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #ef4444;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        flex-shrink: 0;
+    }
 </style>
 
 <div class="admin-wrapper">
@@ -286,12 +302,18 @@
                 <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i>
                     <span>Employer Verification</span>
+                    @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
+                        <span class="sidebar-badge">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.job-approvals') ? 'active' : '' }}">
                     <i class="bi bi-file-check"></i>
                     <span>Job Approvals</span>
+                    @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
+                        <span class="sidebar-badge" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -388,44 +410,44 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = now.getSeconds();
         const milliseconds = now.getMilliseconds();
-        
+
         const timeString = `${hours}:${minutes}`;
         const dateString = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-        
+
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
-        
+
         if (timeElement) {
             timeElement.textContent = timeString;
         }
         if (dateElement) {
             dateElement.textContent = dateString;
         }
-        
+
         // Update analog clock
         updateAnalogClock(now);
     }
-    
+
     function updateAnalogClock(now) {
         const seconds = now.getSeconds();
         const minutes = now.getMinutes();
         const hours = now.getHours();
         const milliseconds = now.getMilliseconds();
-        
+
         // Calculate smooth rotations (including milliseconds for smooth motion)
         const totalSeconds = seconds + milliseconds / 1000;
         const secondDegrees = (totalSeconds / 60) * 360;
-        
+
         const totalMinutes = minutes + totalSeconds / 60;
         const minuteDegrees = (totalMinutes / 60) * 360;
-        
+
         const totalHours = hours % 12 + totalMinutes / 60;
         const hourDegrees = (totalHours / 12) * 360;
-        
+
         const secondHand = document.getElementById('secondHand');
         const minuteHand = document.getElementById('minuteHand');
         const hourHand = document.getElementById('hourHand');
-        
+
         if (secondHand) {
             secondHand.style.transform = `rotate(${secondDegrees}deg)`;
         }

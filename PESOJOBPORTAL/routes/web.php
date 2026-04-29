@@ -10,6 +10,17 @@ use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
 use Illuminate\Support\Facades\Route;
 
+// Database fix route
+Route::get('/admin/database-fix', function () {
+    if (file_exists(base_path('fix_database.php'))) {
+        ob_start();
+        include base_path('fix_database.php');
+        $output = ob_get_clean();
+        return "<pre>" . htmlspecialchars($output) . "</pre>";
+    }
+    return "Fix script not found";
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -19,6 +30,8 @@ Route::view('/history-of-excellence', 'history-excellence')->name('history-of-ex
 Route::view('/objectives', 'objective')->name('objectives');
 Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::view('/structure', 'structure')->name('structure');
+Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
+Route::view('/terms-of-service', 'terms-of-service')->name('terms-of-service');
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
@@ -34,11 +47,22 @@ Route::post('/register', [RegisterController::class, 'register']);
 // Jobseeker routes (protected)
 Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobseeker.')->group(function () {
     Route::get('/dashboard', [JobseekerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/browse-jobs', [JobseekerController::class, 'browseJobs'])->name('browse-jobs');
     Route::get('/vacancies', [JobseekerController::class, 'vacancies'])->name('vacancies');
+    Route::get('/recommendations', [JobseekerController::class, 'recommendations'])->name('recommendations');
     Route::get('/applications', [JobseekerController::class, 'applications'])->name('applications');
+    Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
+    Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
+    Route::post('/notifications/{userNotification}/read', [JobseekerController::class, 'markNotificationAsRead'])->name('notifications.read');
     Route::get('/apply/{job}', [JobseekerController::class, 'applyJob'])->name('apply-job');
     Route::post('/apply/{job}', [JobseekerController::class, 'submitApplication'])->name('submit-application');
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
+    Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
+    Route::get('/skill-gap', [JobseekerController::class, 'skillGap'])->name('skill-gap');
+    Route::get('/saved-jobs', [JobseekerController::class, 'savedJobs'])->name('saved-jobs');
+    Route::post('/saved-jobs/{job}', [JobseekerController::class, 'toggleSaveJob'])->name('saved-jobs.toggle');
+    Route::get('/peso-clearance', [JobseekerController::class, 'pesoClearance'])->name('peso-clearance');
+    Route::post('/peso-clearance/request', [JobseekerController::class, 'requestPesoClearance'])->name('peso-clearance.request');
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
@@ -80,11 +104,7 @@ Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    
-    // Profile
-    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
-    Route::post('/profile/update', [AdminController::class, 'updateProfile'])->name('profile.update');
-    
+
     // Jobseeker Approvals
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
@@ -92,33 +112,34 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{jobseeker}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
         Route::post('/{jobseeker}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
     });
-    
+
     // Approvals & Verification Section
     Route::get('/employer-verification', [AdminController::class, 'employerVerification'])->name('employer-verification');
-    Route::get('/employer-verification/{companyProfile}/detail', [AdminController::class, 'viewCompanyProfile'])->name('employer-verification.detail');
+    Route::get('/employer-verification/{companyProfile}', [AdminController::class, 'viewCompanyProfile'])->name('employer-verification.detail');
     Route::post('/employer-verification/{companyProfile}/approve', [AdminController::class, 'approveCompanyProfile'])->name('employer-verification.approve');
     Route::post('/employer-verification/{companyProfile}/reject', [AdminController::class, 'rejectCompanyProfile'])->name('employer-verification.reject');
-    
+
     Route::get('/job-approvals', [AdminController::class, 'jobApprovals'])->name('job-approvals');
-    Route::get('/jobs/{job}/review', [AdminController::class, 'viewJob'])->name('jobs.review');
-    Route::post('/jobs/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
-    Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
-    
+    Route::get('/job-approvals/{job}', [AdminController::class, 'viewJob'])->name('jobs.review');
+    Route::post('/job-approvals/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
+    Route::post('/job-approvals/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
+
     Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
-    Route::get('/lra-sra/{activityRequest}/review', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
-    Route::post('/lra-sra/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
-    Route::post('/lra-sra/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
-    
+    Route::get('/lra-sra-approvals/{activityRequest}', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
+    Route::post('/lra-sra-approvals/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
+    Route::post('/lra-sra-approvals/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
+
     Route::get('/document-verification', [AdminController::class, 'documentVerification'])->name('document-verification');
-    Route::post('/documents/{document}/approve', [AdminController::class, 'approveDocument'])->name('documents.approve');
-    Route::post('/documents/{document}/reject', [AdminController::class, 'rejectDocument'])->name('documents.reject');
-    
+    Route::post('/document-verification/{documentId}/approve', [AdminController::class, 'approveDocument'])->name('documents.approve');
+    Route::post('/document-verification/{documentId}/reject', [AdminController::class, 'rejectDocument'])->name('documents.reject');
+
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');
-    Route::view('/employers-management', 'admin.employers-management')->name('employers-management');
-    Route::view('/jobs-management', 'admin.jobs-management')->name('jobs-management');
+    Route::get('/employers-management', [AdminController::class, 'employersManagement'])->name('employers-management');
+    Route::get('/jobs-management', [AdminController::class, 'jobsManagement'])->name('jobs-management');
     Route::view('/applications-management', 'admin.applications-management')->name('applications-management');
-    
+    Route::get('/applications-analytics', [AdminController::class, 'applicationsAnalytics'])->name('applications-analytics');
+
     // Intelligence & Reports Section
     Route::view('/employment-stats', 'admin.employment-stats')->name('employment-stats');
     Route::view('/skills-gap-analysis', 'admin.skills-gap-analysis')->name('skills-gap-analysis');
@@ -130,7 +151,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Admin Profile
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
-    
+
     // Tools & Settings Section
     Route::view('/settings', 'admin.settings')->name('settings');
     Route::view('/alerts-notifications', 'admin.alerts-notifications')->name('alerts-notifications');
@@ -143,20 +164,20 @@ Route::middleware('auth')->group(function () {
         $job = \App\Models\PesoJob::findOrFail($job);
         return response()->json($job);
     });
-    
+
     Route::post('/api/jobs/{job}/delete', function ($job) {
         $job = \App\Models\PesoJob::findOrFail($job);
-        
+
         $validated = request()->validate([
             'reason' => 'required|string|min:10'
         ]);
-        
+
         // Archive the job
         $job->update([
             'archived_at' => now(),
             'deletion_reason' => $validated['reason']
         ]);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Job archived successfully'
@@ -170,3 +191,4 @@ Route::get('/contact', function () {
 
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
     ->name('chatbot.chat');
+

@@ -3,8 +3,8 @@
        class="btn btn-sm {{ request()->routeIs('jobseeker.dashboard') ? 'btn-danger' : 'btn-outline-danger' }}">
         <i class="bi bi-speedometer2 me-1"></i>Dashboard
     </a>
-    <a href="{{ route('jobseeker.vacancies') }}"
-       class="btn btn-sm {{ request()->routeIs('jobseeker.vacancies') ? 'btn-danger' : 'btn-outline-danger' }}">
+     <a href="{{ route('jobseeker.browse-jobs') }}"
+         class="btn btn-sm {{ request()->routeIs('jobseeker.browse-jobs') ? 'btn-danger' : 'btn-outline-danger' }}">
         <i class="bi bi-briefcase me-1"></i>Vacancies
     </a>
     <a href="{{ route('jobseeker.applications') }}"

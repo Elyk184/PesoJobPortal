@@ -3,6 +3,44 @@
    File: public/css/history-timeline.css
    ============================================= */
 
+:root {
+    --history-brand-blue: #0d3e72;
+    --history-brand-blue-soft: #114a85;
+    --history-border: #cfe0f4;
+    --history-surface: #f8fbff;
+}
+
+.history-excellence-section {
+    padding: 5.75rem 0 5rem;
+}
+
+.history-excellence-header {
+    margin-bottom: 3.25rem;
+}
+
+.history-excellence-title {
+    margin: 0 0 0.9rem;
+    font-size: clamp(2rem, 4vw, 2.65rem);
+    font-weight: 800;
+    color: var(--history-brand-blue);
+}
+
+.history-excellence-divider {
+    width: 96px;
+    height: 4px;
+    border-radius: 999px;
+    margin: 0 auto 1.1rem;
+    background: linear-gradient(90deg, var(--history-brand-blue), #f5c84b);
+}
+
+.history-excellence-lead {
+    margin: 0 auto;
+    max-width: 900px;
+    font-size: 1.05rem;
+    color: #35516f;
+    line-height: 1.75;
+}
+
 /* ── Timeline wrapper ── */
 .history-timeline {
     position: relative;
@@ -19,7 +57,7 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background-color: #bfdbfe;
+    background-color: var(--history-border);
     transform: translateX(-50%);
     z-index: 0;
 }
@@ -53,10 +91,10 @@
     width: 16px;
     height: 16px;
     min-width: 16px;
-    background-color: #2563eb;
+    background-color: var(--history-brand-blue-soft);
     border-radius: 50%;
     border: 3px solid #ffffff;
-    box-shadow: 0 0 0 2px #2563eb;
+    box-shadow: 0 0 0 2px var(--history-brand-blue-soft);
     margin-top: 1.25rem;
     position: relative;
     z-index: 2;
@@ -87,7 +125,7 @@
 .history-event-content h3 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--history-brand-blue-soft);
     margin: 0 0 0.2rem;
     line-height: 1.3;
 }
@@ -102,29 +140,29 @@
 
 /* ── Description card ── */
 .history-event-description {
-    background-color: #f8faff;
-    border: 1px solid #dbeafe;
-    border-left: 4px solid #2563eb;
+    background-color: var(--history-surface);
+    border: 1px solid var(--history-border);
+    border-left: 4px solid var(--history-brand-blue-soft);
     border-radius: 0.5rem;
     padding: 1rem 1.25rem;
-    box-shadow: 0 1px 4px 0 rgba(37, 99, 235, 0.07);
+    box-shadow: 0 1px 4px 0 rgba(13, 62, 114, 0.08);
     transition: box-shadow 0.2s ease, border-left-color 0.2s ease;
 }
 
 .history-event-description:hover {
-    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.12);
-    border-left-color: #1d4ed8;
+    box-shadow: 0 4px 14px 0 rgba(13, 62, 114, 0.14);
+    border-left-color: var(--history-brand-blue);
 }
 
 /* Right-side cards: accent border on the right instead of left */
 .history-event.right .history-event-description {
-    border-left: 1px solid #dbeafe;
-    border-right: 4px solid #2563eb;
+    border-left: 1px solid var(--history-border);
+    border-right: 4px solid var(--history-brand-blue-soft);
     border-radius: 0.5rem;
 }
 
 .history-event.right .history-event-description:hover {
-    border-right-color: #1d4ed8;
+    border-right-color: var(--history-brand-blue);
 }
 
 /* ── Body text inside description card ── */
@@ -142,6 +180,14 @@
    Responsive — collapse to single column
    ============================================= */
 @media (max-width: 640px) {
+    .history-excellence-section {
+        padding-top: 4.75rem;
+    }
+
+    .history-excellence-header {
+        margin-bottom: 2rem;
+    }
+
     .history-timeline::before {
         left: 8px;
     }
@@ -173,7 +219,7 @@
 
     /* On mobile, all description cards get left accent border */
     .history-event.right .history-event-description {
-        border-left: 4px solid #2563eb;
-        border-right: 1px solid #dbeafe;
+        border-left: 4px solid var(--history-brand-blue-soft);
+        border-right: 1px solid var(--history-border);
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jobseeker Dashboard | PESO Job Portal')
+@section('title', 'Jobseeker Dashboard | Link Job Resource Portal')
 
 @section('content')
     <div class="container py-4 py-lg-5">
@@ -18,7 +18,7 @@
 
         <div class="row g-3">
             <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('jobseeker.vacancies') }}">
+                    <a class="text-decoration-none" href="{{ route('jobseeker.browse-jobs') }}">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title mb-2 fw-semibold">Browse Vacancies</h5>

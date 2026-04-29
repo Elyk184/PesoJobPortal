@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard | PESO Job Portal')
+@section('title', 'Admin Dashboard | Link Job Resource Portal')
 
 @section('content')
 <style>
@@ -8,11 +8,11 @@
     .peso-header {
         display: none !important;
     }
-    
+
     nav {
         display: none !important;
     }
-    
+
     .navbar {
         display: none !important;
     }
@@ -30,7 +30,7 @@
         color: #0f172a;
         min-height: 100vh;
     }
-    
+
     .peso-main {
         margin: 0;
         padding: 0;
@@ -415,7 +415,7 @@
         font-size: 18px;
         letter-spacing: -0.3px;
     }
-    
+
     .dashboard-card h5 i {
         color: #1a1a1a;
         margin-right: 0.5rem;
@@ -891,12 +891,18 @@
                 <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-building"></i>
                     <span>Employer Verification</span>
+                    @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
+                        <span class="badge badge-pending">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-check"></i>
                     <span>Job Approvals</span>
+                    @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
+                        <span class="badge badge-pending" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -979,6 +985,9 @@
                 <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-pdf"></i>
                     <span>PESO Clearances</span>
+                    @if(($adminSidebarCounts['pendingPesoClearances'] ?? 0) > 0)
+                        <span class="sidebar-badge" style="background:#f59e0b;">{{ $adminSidebarCounts['pendingPesoClearances'] }}</span>
+                    @endif
                 </a>
             </li>
 
@@ -1001,6 +1010,9 @@
                 <a href="{{ route('admin.alerts-notifications') }}" class="sidebar-menu-link">
                     <i class="bi bi-bell"></i>
                     <span>Alerts & Notifications</span>
+                    @if(($adminSidebarCounts['adminUnreadNotifications'] ?? 0) > 0)
+                        <span class="sidebar-badge">{{ $adminSidebarCounts['adminUnreadNotifications'] }}</span>
+                    @endif
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -1168,6 +1180,53 @@
                         <div class="stat-card-mini-bar" style="height: 20%;"></div>
                         <div class="stat-card-mini-bar" style="height: 40%;"></div>
                         <div class="stat-card-mini-bar" style="height: 30%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Charts Section -->
+            <div class="row mb-4">
+                <!-- Applications Overview Chart -->
+                <div class="col-lg-6 mb-4">
+                    <div class="dashboard-card">
+                        <h5 style="margin-bottom: 1.5rem;"><i class="bi bi-pie-chart me-2"></i>Applications Overview</h5>
+                        <div style="position: relative; height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="applicationsChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Total Applications</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: #0f172a;">{{ $stats['total_applications'] }}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Pending</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: #f59e0b;">{{ $stats['pending_applications'] }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status Chart -->
+                <div class="col-lg-6 mb-4">
+                    <div class="dashboard-card">
+                        <h5 style="margin-bottom: 1.5rem;"><i class="bi bi-bar-chart me-2"></i>Pending Items Status</h5>
+                        <div style="position: relative; height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Job Approvals</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: #ef4444;">{{ $stats['pending_job_approvals'] }}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Documents</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: #10b981;">{{ $stats['pending_documents'] }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1814,22 +1873,22 @@
     // Update date and time
     function updateDateTime() {
         const now = new Date();
-        
+
         // Format time as HH:MM
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const timeString = `${hours}:${minutes}`;
-        
+
         // Format date as MMM DD, YYYY
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const year = now.getFullYear();
         const dateString = `${month}/${day}/${year}`;
-        
+
         // Update the display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
-        
+
         if (timeElement) {
             timeElement.textContent = timeString;
         }
@@ -1840,7 +1899,7 @@
 
     // Update on page load immediately
     updateDateTime();
-    
+
     // Update every second for live clock
     setInterval(updateDateTime, 1000);
 
@@ -1848,11 +1907,11 @@
     function openJobDetailModal(jobId) {
         const modal = document.getElementById('jobDetailModal');
         const modalContent = document.getElementById('jobDetailContent');
-        
+
         // Show loader
         modalContent.innerHTML = '<div class="job-modal-loader"><div class="spinner"></div></div>';
         modal.classList.add('show');
-        
+
         // Fetch job details via AJAX
         fetch(`/api/jobs/${jobId}/detail`)
             .then(response => response.json())
@@ -1871,7 +1930,7 @@
 
     function renderJobDetailModal(job) {
         const modalContent = document.getElementById('jobDetailContent');
-        
+
         const formatDate = (dateString) => {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
@@ -1968,7 +2027,7 @@
                 </div>
             </div>
         `;
-        
+
         modalContent.innerHTML = html;
     }
 
@@ -2052,7 +2111,7 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .data-table tbody tr[onclick]:hover {
         background: linear-gradient(90deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%) !important;
         box-shadow: inset 0 0 0 1px rgba(0, 123, 255, 0.2);
@@ -2086,7 +2145,7 @@
         </div>
         <div class="delete-modal-body">
             <p style="color: #64748b; margin-bottom: 1rem;">This job will be moved to archives and can be restored later if needed.</p>
-            
+
             <label class="delete-reason-label">Reason for Archiving (Required)</label>
             <textarea id="deleteReason" class="delete-reason-input" placeholder="Please provide a detailed reason for archiving this job posting..."></textarea>
         </div>
@@ -2149,6 +2208,132 @@
     // Update clock immediately and then frequently for smooth second hand
     updateClock();
     setInterval(updateClock, 50); // Update every 50ms for smooth motion
+
+    // Initialize Charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load Chart.js library
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+        script.onload = function() {
+            initializeCharts();
+        };
+        document.head.appendChild(script);
+    });
+
+    function initializeCharts() {
+        // Applications Chart
+        const applicationsCtx = document.getElementById('applicationsChart');
+        if (applicationsCtx) {
+            new Chart(applicationsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pending', 'Total'],
+                    datasets: [{
+                        data: [{{ $stats['pending_applications'] }}, {{ $stats['total_applications'] - $stats['pending_applications'] }}],
+                        backgroundColor: ['#f59e0b', '#d1d5db'],
+                        borderColor: 'white',
+                        borderWidth: 3,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 12, weight: 'bold' },
+                                color: '#64748b',
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Status Chart
+        const statusCtx = document.getElementById('statusChart');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Job Approvals', 'LRA/SRA', 'Documents'],
+                    datasets: [{
+                        label: 'Pending Items',
+                        data: [{{ $stats['pending_job_approvals'] }}, {{ $stats['pending_lra_sra'] }}, {{ $stats['pending_documents'] }}],
+                        backgroundColor: [
+                            '#ef4444',
+                            '#8b5cf6',
+                            '#10b981'
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Pending: ' + context.parsed.x;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 12, weight: 'bold' },
+                                color: '#64748b'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: { size: 12, weight: '600' },
+                                color: '#1e293b'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
 </script>
 
 @endsection

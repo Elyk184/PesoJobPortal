@@ -40,6 +40,11 @@ class JobApplication extends Model
         return $this->belongsTo(PesoJob::class, 'peso_job_id');
     }
 
+    public function jobPost()
+    {
+        return $this->belongsTo(PesoJob::class, 'peso_job_id');
+    }
+
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'admin_approved_by');
