@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Models\PesoClearance;
+use App\Models\UserNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,10 +31,29 @@ class AppServiceProvider extends ServiceProvider
         ], function ($view) {
             $view->with('adminSidebarCounts', $this->adminSidebarCounts());
         });
+
+        View::composer('admin.alerts-notifications', function ($view) {
+            $view->with([
+                'adminSidebarCounts' => $this->adminSidebarCounts(),
+                'adminNotifications' => $this->adminNotifications(),
+                'adminUnreadNotificationsCount' => $this->adminUnreadNotificationsCount(),
+            ]);
+        });
     }
 
     private function adminSidebarCounts(): array
     {
+        $adminId = Auth::id();
+
+        $adminUnreadNotifications = 0;
+
+        if ($adminId && Auth::user()?->role === 'admin') {
+            $adminUnreadNotifications = UserNotification::query()
+                ->where('user_id', $adminId)
+                ->whereNull('read_at')
+                ->count();
+        }
+
         return [
             'pendingEmployerVerification' => DB::table('company_profiles')
                 ->where(function ($query) {
@@ -47,6 +69,40 @@ class AppServiceProvider extends ServiceProvider
                 ->where('status', 'pending')
                 ->whereNull('archived_at')
                 ->count(),
+            'pendingPesoClearances' => PesoClearance::query()
+                ->where('status', 'pending')
+                ->count(),
+            'adminUnreadNotifications' => $adminUnreadNotifications,
         ];
+    }
+
+    private function adminNotifications()
+    {
+        $adminId = Auth::id();
+
+        if (! $adminId || Auth::user()?->role !== 'admin') {
+            return collect();
+        }
+
+        return UserNotification::query()
+            ->where('user_id', $adminId)
+            ->with('portalNotification')
+            ->latest('id')
+            ->limit(10)
+            ->get();
+    }
+
+    private function adminUnreadNotificationsCount(): int
+    {
+        $adminId = Auth::id();
+
+        if (! $adminId || Auth::user()?->role !== 'admin') {
+            return 0;
+        }
+
+        return (int) UserNotification::query()
+            ->where('user_id', $adminId)
+            ->whereNull('read_at')
+            ->count();
     }
 }

@@ -129,6 +129,9 @@
             <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link {{ request()->routeIs('admin.peso-clearances') ? 'active' : '' }}">
                 <i class="bi bi-file-pdf"></i>
                 <span>PESO Clearances</span>
+                @if(($adminSidebarCounts['pendingPesoClearances'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#f59e0b;">{{ $adminSidebarCounts['pendingPesoClearances'] }}</span>
+                @endif
             </a>
         </li>
 
@@ -149,6 +152,9 @@
             <a href="{{ route('admin.alerts-notifications') }}" class="sidebar-menu-link {{ request()->routeIs('admin.alerts-notifications') ? 'active' : '' }}">
                 <i class="bi bi-bell"></i>
                 <span>Alerts & Notifications</span>
+                @if(($adminSidebarCounts['adminUnreadNotifications'] ?? 0) > 0)
+                    <span class="sidebar-badge">{{ $adminSidebarCounts['adminUnreadNotifications'] }}</span>
+                @endif
             </a>
         </li>
         <li class="sidebar-menu-item">

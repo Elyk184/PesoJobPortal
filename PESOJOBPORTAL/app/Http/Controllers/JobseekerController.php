@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\CompanyProfile;
-use App\Models\UserNotification;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
+use App\Models\PortalNotification;
+use App\Models\UserNotification;
 use App\Models\UserProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
@@ -691,6 +692,10 @@ class JobseekerController extends Controller
 
         $request->validate([
             'remarks' => ['nullable', 'string', 'max:500'],
+            'peso_clearance_assurance_receipt' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'barangay_clearance' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'is_first_time_jobseeker' => ['nullable', 'boolean'],
+            'first_time_jobseeker_document' => ['required_if:is_first_time_jobseeker,1', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
         ]);
 
         $hasPendingRequest = PesoClearance::query()
@@ -706,7 +711,15 @@ class JobseekerController extends Controller
             ->where('user_id', $user->id)
             ->count();
 
-        PesoClearance::create([
+        $pesoClearanceReceiptPath = $request->file('peso_clearance_assurance_receipt')
+            ->store('peso-clearance/assurance-receipts', 'public');
+        $barangayClearancePath = $request->file('barangay_clearance')
+            ->store('peso-clearance/barangay-clearances', 'public');
+        $firstTimeJobseekerDocPath = $request->hasFile('first_time_jobseeker_document')
+            ? $request->file('first_time_jobseeker_document')->store('peso-clearance/first-time-jobseeker-docs', 'public')
+            : null;
+
+        $clearance = PesoClearance::create([
             'user_id' => $user->id,
             'request_date' => now(),
             'clearance_number' => 'REQ-' . now()->format('YmdHis') . '-' . str_pad((string) ($clearanceCount + 1), 3, '0', STR_PAD_LEFT),
@@ -714,7 +727,40 @@ class JobseekerController extends Controller
             'expiry_date' => null,
             'status' => 'pending',
             'remarks' => trim((string) $request->input('remarks', '')) ?: 'PESO clearance request submitted by jobseeker.',
+            'peso_clearance_assurance_receipt_path' => $pesoClearanceReceiptPath,
+            'barangay_clearance_path' => $barangayClearancePath,
+            'is_first_time_jobseeker' => $request->boolean('is_first_time_jobseeker'),
+            'first_time_jobseeker_document_path' => $firstTimeJobseekerDocPath,
         ]);
+
+        $adminIds = User::query()
+            ->where('role', 'admin')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($adminIds)) {
+            $portalNotification = PortalNotification::create([
+                'title' => 'New PESO Clearance Request',
+                'message' => sprintf(
+                    '%s submitted a PESO clearance request%s. Go to PESO Clearances to review the attached documents.',
+                    $user->name ?? 'A jobseeker',
+                    $request->boolean('is_first_time_jobseeker') ? ' as a first-time jobseeker' : ''
+                ),
+                'created_by' => $user->id,
+            ]);
+
+            $adminNotifications = collect($adminIds)->map(function ($adminId) use ($portalNotification) {
+                return [
+                    'user_id' => $adminId,
+                    'portal_notification_id' => $portalNotification->id,
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->all();
+
+            UserNotification::query()->insert($adminNotifications);
+        }
 
         return back()->with('status', 'Your PESO clearance request has been sent to the admin for review.');
     }
