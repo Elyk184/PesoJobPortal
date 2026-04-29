@@ -228,10 +228,10 @@
                                     </div>
 
                                     <div class="job-card-actions ms-auto text-end d-flex flex-column gap-2">
-                                        <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="{{ route('jobseeker.apply-job', $job) }}" class="btn btn-sm btn-outline-primary">View</a>
                                         @auth
                                             @php
-                                                $isSaved = \App\Models\SavedJob::where('job_post_id', $job->id)->where('user_id', auth()->id())->exists();
+                                                $isSaved = \App\Models\SavedJob::where('job_id', $job->id)->where('user_id', auth()->id())->exists();
                                             @endphp
                                             @if($isSaved)
                                                 <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
@@ -281,36 +281,93 @@
 </div>
 
 <style>
+    .jobseeker-card {
+        border: 1px solid rgba(15, 45, 82, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(15, 45, 82, 0.06);
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .jobseeker-card-body {
+        padding: 1rem;
+    }
+
+    .jobseeker-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid rgba(15, 45, 82, 0.08);
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.98));
+    }
+
+    .jobseeker-card-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #17365d;
+        display: flex;
+        align-items: center;
+    }
+
+    .jobseeker-card-title .badge {
+        border-radius: 999px;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
     .filter-row {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
+        background: linear-gradient(180deg, #f8fafc, #ffffff);
+        padding: 16px;
+        border: 1px solid rgba(15, 45, 82, 0.08);
+        border-radius: 14px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
     }
     .filter-row .form-control, .filter-row .form-select {
-        min-height: 40px;
+        min-height: 42px;
+        border-radius: 10px;
+        border-color: #d8e2ef;
+        box-shadow: none;
     }
     .filter-row .btn {
-        min-height: 40px;
+        min-height: 42px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .filter-row .input-group-text {
+        border-color: #d8e2ef;
+        color: #6c7a89;
+        border-radius: 10px 0 0 10px;
+        background: #fff;
+    }
+
+    .filter-row .input-group .form-control {
+        border-radius: 0 10px 10px 0;
+    }
+
+    .filter-row label {
+        color: #52657a;
+        margin-bottom: 0.35rem;
+    }
+
+    .filter-row .badge {
+        border-radius: 999px;
+        padding: 0.35rem 0.65rem;
     }
 
     .job-list {
         display: flex;
         flex-direction: column;
-    }
-    .job-item {
-        padding: 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background 0.2s;
-    }
-    .job-item:last-child {
-        border-bottom: none;
-    }
-    .job-item:hover {
-        background: #f8f9fa;
+        gap: 0.9rem;
     }
     .job-title a {
         color: #2c3e50;
         text-decoration: none;
+        font-weight: 800;
     }
     .job-title a:hover {
         color: #3498db;
@@ -323,10 +380,11 @@
     }
     .job-tag {
         font-size: 12px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: #f0f0f0;
-        color: #666;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: #f3f6fb;
+        color: #54657a;
+        border: 1px solid rgba(15, 45, 82, 0.08);
     }
     .job-tag-success { background: rgba(25, 135, 84, 0.1); color: #198754; }
     .job-tag-warning { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
@@ -338,34 +396,74 @@
     }
 
     .job-card {
-        background: #fff;
-        border: 1px solid var(--dash-border);
-        border-radius: 12px;
-        transition: box-shadow 0.18s ease, transform 0.12s ease;
+        background: linear-gradient(180deg, #ffffff, #fbfdff);
+        border: 1px solid rgba(15, 45, 82, 0.09);
+        border-left: 4px solid #2f6fd5;
+        border-radius: 16px;
+        transition: box-shadow 0.18s ease, transform 0.12s ease, border-color 0.12s ease;
         position: relative;
+        padding: 1rem 1rem 0.95rem;
     }
 
     .job-card:hover {
-        box-shadow: 0 12px 30px rgba(15, 45, 82, 0.06);
-        transform: translateY(-4px);
+        box-shadow: 0 16px 35px rgba(15, 45, 82, 0.1);
+        transform: translateY(-3px);
+        border-left-color: #d72638;
     }
 
     .job-card .logo-placeholder {
-        width: 64px;
-        height: 64px;
-        flex: 0 0 64px;
-        border-radius: 10px;
+        width: 60px;
+        height: 60px;
+        flex: 0 0 60px;
+        border-radius: 14px;
+        border: 1px solid rgba(15, 45, 82, 0.08);
     }
 
-    .job-card-actions { min-width: 110px; }
-    .job-card .stretched-link { text-decoration: none; }
+    .job-card-actions {
+        min-width: 118px;
+        display: flex;
+        align-items: flex-end;
+    }
+    .job-card .stretched-link {
+        text-decoration: none;
+    }
     .job-card .stretched-link:hover { color: #0d6efd; }
+
+    .job-card h5 {
+        line-height: 1.2;
+    }
+
+    .job-card .text-muted.small {
+        line-height: 1.45;
+    }
+
+    .job-card .btn {
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .job-card .btn-outline-primary {
+        border-color: rgba(47, 111, 213, 0.3);
+    }
+
+    .job-card .btn-outline-secondary {
+        border-color: rgba(108, 117, 125, 0.25);
+    }
 
     /* Responsive adjustments */
     @media (max-width: 991px) {
         .job-actions {
             justify-content: flex-start;
             margin-top: 10px;
+        }
+
+        .job-card-actions {
+            min-width: 100%;
+            align-items: flex-start;
+        }
+
+        .job-card {
+            padding: 0.9rem;
         }
     }
 
@@ -381,6 +479,25 @@
 
     .input-group .form-control {
         border-radius: 0 6px 6px 0;
+    }
+
+    @media (max-width: 576px) {
+        .jobseeker-card-header,
+        .filter-row,
+        .jobseeker-card-body {
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+        }
+
+        .job-card {
+            padding: 0.85rem;
+        }
+
+        .job-card .logo-placeholder {
+            width: 52px;
+            height: 52px;
+            flex-basis: 52px;
+        }
     }
 </style>
 @push('scripts')

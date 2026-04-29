@@ -330,7 +330,7 @@ class JobseekerController extends Controller
     public function browseJobs(Request $request): View
     {
         $jobsQuery = PesoJob::query()
-            ->where('status', 'active')
+            ->activeApproved()
             ->with(['employer.companyProfile']);
 
         $search = trim((string) $request->query('search', ''));
@@ -382,7 +382,7 @@ class JobseekerController extends Controller
         }
 
         $locations = PesoJob::query()
-            ->where('status', 'active')
+            ->activeApproved()
             ->whereNotNull('location')
             ->where('location', '!=', '')
             ->distinct()
@@ -1694,7 +1694,7 @@ class JobseekerController extends Controller
         $text = mb_strtolower($text);
 
         // Common skill separators and delimiters
-        $delimiters = '/[\r\n,;·•|\\\/]+/';
+        $delimiters = '#[\r\n,;·•|/\\\\]+#u';
         $parts = preg_split($delimiters, $text) ?: [$text];
 
         $candidates = [];
