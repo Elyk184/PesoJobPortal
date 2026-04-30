@@ -809,7 +809,7 @@
                                             <span class="action-text">View</span>
                                         </a>
                                         @if($application->status != 'hired')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="hired">
@@ -820,7 +820,7 @@
                                         </form>
                                         @endif
                                         @if($application->status != 'rejected')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="rejected">
@@ -843,6 +843,68 @@
     </div>
 </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const csrf = '{{ csrf_token() }}';
+    function mapStatusToClasses(status) {
+        const map = {
+            pending: 'bg-light text-dark',
+            reviewing: 'bg-info bg-opacity-25 text-info-emphasis',
+            shortlisted: 'bg-primary bg-opacity-25 text-primary-emphasis',
+            interview: 'bg-secondary bg-opacity-25 text-secondary-emphasis',
+            hired: 'bg-success bg-opacity-25 text-success-emphasis',
+            rejected: 'bg-danger bg-opacity-25 text-danger-emphasis'
+        };
+        return map[status] || 'bg-light text-dark';
+    }
+
+    document.querySelectorAll('form.ajax-status-form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to change this applicant\'s status?')) return;
+            const action = form.dataset.action;
+            const applicationId = form.dataset.applicationId;
+            const formData = new FormData(form);
+            fetch(action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(json => {
+                if (json.success) {
+                    // find the table row for this application
+                    const row = document.querySelector('form.ajax-status-form[data-application-id="' + applicationId + '"]').closest('tr');
+                    if (!row) return;
+                    const badge = row.querySelector('.status-badge');
+                    if (badge) {
+                        // update text
+                        badge.textContent = '';
+                        const icon = document.createElement('i');
+                        icon.className = 'bi bi-circle-fill';
+                        icon.style.fontSize = '0.45rem';
+                        badge.appendChild(icon);
+                        badge.append(' ' + json.application.status);
+                        // replace classes
+                        badge.className = 'status-badge ' + mapStatusToClasses(json.application.status);
+                    }
+                } else {
+                    alert(json.message || 'Failed to update status');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('An error occurred while updating status');
+            });
+        });
+    });
+});
+</script>
+
 @endsection
 
 

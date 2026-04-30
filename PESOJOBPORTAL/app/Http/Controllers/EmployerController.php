@@ -410,8 +410,10 @@ class EmployerController extends Controller
             abort(403, 'You are not authorized to view this applicant.');
         }
 
+        $application->load(['user.profile', 'jobPost']);
+
         return view('dashboard.employer.show-applicant', [
-            'application' => $application->load(['user.profile', 'jobPost']),
+            'application' => $application,
             'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
         ]);
     }
@@ -683,7 +685,7 @@ class EmployerController extends Controller
         UserNotification::query()->insert($rows);
     }
 
-    public function updateApplicantDecision(Request $request, JobApplication $application): RedirectResponse
+    public function updateApplicantDecision(Request $request, JobApplication $application)
     {
         $job = $application->job;
 
@@ -691,20 +693,93 @@ class EmployerController extends Controller
             abort(403, 'You can only update applicants referred to your postings.');
         }
 
+        $previousStatus = $application->status;
+
+        // Support a simple `status` payload from the UI for common stages, keep backward compatibility
         $validated = $request->validate([
-            'employer_status' => ['required', 'in:interview_scheduled,hired,not_selected'],
-            'final_decision' => ['required', 'in:pending,hired,not_selected'],
+            'status' => ['nullable', 'in:pending,reviewing,shortlisted,interview,hired,rejected'],
+            'employer_status' => ['nullable', 'in:interview_scheduled,hired,not_selected'],
+            'final_decision' => ['nullable', 'in:pending,hired,not_selected'],
             'employer_feedback' => ['nullable', 'string'],
         ]);
 
-        $application->update([
-            'employer_status' => $validated['employer_status'],
-            'final_decision' => $validated['final_decision'],
-            'employer_feedback' => $validated['employer_feedback'] ?? null,
-            'status' => $validated['final_decision'] === 'hired'
-                ? 'hired'
-                : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed'),
-        ]);
+        $newStatus = $validated['status'] ?? null;
+        $update = [
+            'employer_feedback' => $validated['employer_feedback'] ?? $application->employer_feedback,
+        ];
+
+        if ($newStatus !== null) {
+            switch ($newStatus) {
+                case 'hired':
+                    $update['employer_status'] = 'hired';
+                    $update['final_decision'] = 'hired';
+                    $update['status'] = 'hired';
+                    break;
+                case 'rejected':
+                    $update['employer_status'] = 'not_selected';
+                    $update['final_decision'] = 'not_selected';
+                    $update['status'] = 'rejected';
+                    break;
+                case 'interview':
+                    $update['employer_status'] = 'interview_scheduled';
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = 'interview';
+                    break;
+                case 'reviewing':
+                case 'shortlisted':
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = $newStatus;
+                    // keep employer_status unchanged for these intermediate states
+                    break;
+                case 'pending':
+                default:
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = 'pending';
+                    break;
+            }
+        } else {
+            // fallback to older fields if provided
+            if (isset($validated['employer_status'])) {
+                $update['employer_status'] = $validated['employer_status'];
+            }
+            if (isset($validated['final_decision'])) {
+                $update['final_decision'] = $validated['final_decision'];
+                $update['status'] = $validated['final_decision'] === 'hired' ? 'hired' : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed');
+            }
+        }
+
+        DB::transaction(function () use ($application, $update, $job, $request, $previousStatus) {
+            $application->update($update);
+
+            if ($application->user_id && $application->status !== $previousStatus) {
+                $statusLabel = $this->applicationStatusLabel($application->status);
+                $message = sprintf(
+                    'Your application for %s has been updated to %s.',
+                    $job->title ?? 'a job posting',
+                    $statusLabel
+                );
+
+                if (! empty($application->employer_feedback)) {
+                    $message .= ' Feedback: ' . $application->employer_feedback;
+                }
+
+                $portalNotification = PortalNotification::create([
+                    'title' => 'Application Status Updated',
+                    'message' => $message,
+                    'created_by' => $request->user()->id,
+                ]);
+
+                UserNotification::create([
+                    'user_id' => $application->user_id,
+                    'portal_notification_id' => $portalNotification->id,
+                    'read_at' => null,
+                ]);
+            }
+        });
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'status' => $application->status]);
+        }
 
         return back()->with('success', 'Applicant decision updated.');
     }
@@ -845,5 +920,18 @@ class EmployerController extends Controller
         } catch (\Throwable) {
             return $requestedStatus;
         }
+    }
+
+    private function applicationStatusLabel(string $status): string
+    {
+        return match ($status) {
+            'pending' => 'Pending',
+            'reviewing' => 'Under Review',
+            'shortlisted' => 'Shortlisted',
+            'interview' => 'Interview Scheduled',
+            'hired' => 'Hired',
+            'rejected' => 'Rejected',
+            default => ucfirst($status),
+        };
     }
 }
