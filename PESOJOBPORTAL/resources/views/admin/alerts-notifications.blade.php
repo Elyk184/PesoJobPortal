@@ -43,6 +43,16 @@
                 <div class="alerts-stat-note">Pending PESO and portal notifications</div>
             </div>
             <div class="alerts-stat">
+                <div class="alerts-stat-label">Pending Job Approvals</div>
+                <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingJobApprovals'] ?? 0 }}</div>
+                <div class="alerts-stat-note">Job posts waiting for review</div>
+            </div>
+            <div class="alerts-stat">
+                <div class="alerts-stat-label">Employer Verifications</div>
+                <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingEmployerVerification'] ?? 0 }}</div>
+                <div class="alerts-stat-note">Company profiles awaiting approval</div>
+            </div>
+            <div class="alerts-stat">
                 <div class="alerts-stat-label">Pending PESO Clearances</div>
                 <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingPesoClearances'] ?? 0 }}</div>
                 <div class="alerts-stat-note">Requests awaiting admin action</div>
@@ -64,10 +74,13 @@
                         $title = (string) data_get($notification, 'portalNotification.title', 'Notification');
                         $message = (string) data_get($notification, 'portalNotification.message', '');
                         $createdAt = data_get($notification, 'portalNotification.created_at');
-                        $isPesoClearance = str_contains(mb_strtolower($title . ' ' . $message), 'peso clearance');
+                        $alertText = mb_strtolower($title . ' ' . $message);
+                        $isJobApproval = str_contains($alertText, 'job post') || str_contains($alertText, 'job approval');
+                        $isEmployerVerification = str_contains($alertText, 'employer verification') || str_contains($alertText, 'company verification') || str_contains($alertText, 'business permit');
+                        $isPesoClearance = str_contains($alertText, 'peso clearance');
                     @endphp
                     <div class="alert-item">
-                        <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : '#2563eb' }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : 'rgba(37, 99, 235, 0.12)' }};">
+                        <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isEmployerVerification ? '#16a34a' : '#2563eb') }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)') }};">
                             <i class="bi bi-bell-fill"></i>
                         </div>
                         <div class="alert-info">
@@ -75,12 +88,24 @@
                             <div class="alert-message">{{ $message }}</div>
                             <div class="alert-meta">
                                 <span><i class="bi bi-clock me-1"></i>{{ $createdAt ? $createdAt->diffForHumans() : 'Recently' }}</span>
+                                @if($isJobApproval)
+                                    <span class="badge text-bg-primary rounded-pill">Job Approval</span>
+                                @endif
+                                @if($isEmployerVerification)
+                                    <span class="badge text-bg-success rounded-pill">Employer Verification</span>
+                                @endif
                                 @if($isPesoClearance)
                                     <span class="badge text-bg-warning text-dark rounded-pill">PESO Clearance</span>
                                 @endif
                             </div>
                         </div>
                         <div class="alert-actions">
+                            @if($isJobApproval)
+                                <a href="{{ route('admin.job-approvals') }}" class="btn-small btn-dismiss" style="background:#2563eb; color:#fff; text-decoration:none;">Open Queue</a>
+                            @endif
+                            @if($isEmployerVerification)
+                                <a href="{{ route('admin.employer-verification') }}" class="btn-small btn-dismiss" style="background:#16a34a; color:#fff; text-decoration:none;">Review Queue</a>
+                            @endif
                             @if($isPesoClearance)
                                 <a href="{{ route('admin.peso-clearances') }}" class="btn-small btn-dismiss" style="background:#f59e0b; color:#fff; text-decoration:none;">Open Queue</a>
                             @endif
@@ -89,7 +114,7 @@
                 @empty
                     <div class="alerts-empty">
                         <div class="fw-semibold mb-1">No admin notifications yet</div>
-                        <div class="small">New PESO clearance requests will appear here as alerts.</div>
+                        <div class="small">New job approvals, employer verifications, and PESO clearance requests will appear here as alerts.</div>
                     </div>
                 @endforelse
             </div>

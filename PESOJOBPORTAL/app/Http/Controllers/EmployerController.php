@@ -389,29 +389,14 @@ class EmployerController extends Controller
         $becameUnderReview = $currentVerificationStatus !== 'under_review' && $nextVerificationStatus === 'under_review';
 
         if ($becameUnderReview) {
-            $adminIds = User::query()
-                ->where('role', 'admin')
-                ->pluck('id');
-
-            if ($adminIds->isNotEmpty()) {
-                $portalNotification = PortalNotification::query()->create([
-                    'title' => 'Employer Verification Requires Review',
-                    'message' => sprintf(
-                        "%s submitted Business Permit and DTI/SEC Registration for verification.",
-                        $profileData['company_name'] ?? $profile->company_name ?? $employer->name
-                    ),
-                    'created_by' => $employer->id,
-                ]);
-
-                $rows = $adminIds->map(fn ($adminId) => [
-                    'user_id' => $adminId,
-                    'portal_notification_id' => $portalNotification->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ])->all();
-
-                UserNotification::query()->insert($rows);
-            }
+            $this->notifyAdmins(
+                'Employer Verification Requires Review',
+                sprintf(
+                    "%s submitted Business Permit and DTI/SEC Registration for verification.",
+                    $profileData['company_name'] ?? $profile->company_name ?? $employer->name
+                ),
+                $employer->id
+            );
         }
 
         return back()->with('success', 'Company profile updated successfully.');
@@ -512,6 +497,18 @@ class EmployerController extends Controller
         $jobData = array_intersect_key($jobData, $jobColumns);
 
         $job = PesoJob::create($jobData);
+
+        if (! $isDraft) {
+            $this->notifyAdmins(
+                'Job Post Pending Approval',
+                sprintf(
+                    "%s submitted a new job post '%s' and it is waiting for admin approval.",
+                    $employer->companyProfile?->company_name ?? $employer->name,
+                    $job->title
+                ),
+                $employer->id
+            );
+        }
 
         $message = match (true) {
             $isDraft => 'Job saved as draft successfully.',
@@ -643,6 +640,33 @@ class EmployerController extends Controller
         ]);
 
         return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
+    }
+
+    private function notifyAdmins(string $title, string $message, ?int $createdBy = null): void
+    {
+        $adminIds = User::query()
+            ->where('role', 'admin')
+            ->pluck('id');
+
+        if ($adminIds->isEmpty()) {
+            return;
+        }
+
+        $portalNotification = PortalNotification::query()->create([
+            'title' => $title,
+            'message' => $message,
+            'created_by' => $createdBy,
+        ]);
+
+        $rows = $adminIds->map(fn ($adminId) => [
+            'user_id' => $adminId,
+            'portal_notification_id' => $portalNotification->id,
+            'read_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->all();
+
+        UserNotification::query()->insert($rows);
     }
 
     public function updateApplicantDecision(Request $request, JobApplication $application): RedirectResponse
