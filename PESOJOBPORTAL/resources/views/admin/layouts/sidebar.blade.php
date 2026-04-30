@@ -108,6 +108,12 @@
             </a>
         </li>
         <li class="sidebar-menu-item">
+            <a href="{{ route('admin.applications-analytics') }}" class="sidebar-menu-link {{ request()->routeIs('admin.applications-analytics') ? 'active' : '' }}">
+                <i class="bi bi-pie-chart"></i>
+                <span>Applications Analytics</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
             <a href="{{ route('admin.skills-gap-analysis') }}" class="sidebar-menu-link {{ request()->routeIs('admin.skills-gap-analysis') ? 'active' : '' }}">
                 <i class="bi bi-diagram-3"></i>
                 <span>Skills Gap Analysis</span>

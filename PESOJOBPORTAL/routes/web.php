@@ -138,6 +138,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/employers-management', [AdminController::class, 'employersManagement'])->name('employers-management');
     Route::get('/jobs-management', [AdminController::class, 'jobsManagement'])->name('jobs-management');
     Route::view('/applications-management', 'admin.applications-management')->name('applications-management');
+    Route::get('/applications-analytics', [AdminController::class, 'applicationsAnalytics'])->name('applications-analytics');
 
     // Intelligence & Reports Section
     Route::view('/employment-stats', 'admin.employment-stats')->name('employment-stats');

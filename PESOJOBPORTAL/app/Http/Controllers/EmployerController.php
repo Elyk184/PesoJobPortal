@@ -222,7 +222,10 @@ class EmployerController extends Controller
                 'company_logo' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
             ]);
 
-            $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
+            $profile = CompanyProfile::firstOrCreate(
+                ['user_id' => $employer->id],
+                ['company_name' => $employer->name]
+            );
 
             if ($profile->logo_path && Storage::disk('public')->exists($profile->logo_path)) {
                 Storage::disk('public')->delete($profile->logo_path);
@@ -284,7 +287,10 @@ class EmployerController extends Controller
 
         $employer->update($updateData);
 
-        $profile = CompanyProfile::firstOrCreate(['user_id' => $employer->id]);
+        $profile = CompanyProfile::firstOrCreate(
+            ['user_id' => $employer->id],
+            ['company_name' => $validated['company_name'] ?? $employer->name]
+        );
 
         $profileData = [];
         $currentVerificationStatus = $profile->verification_status;

@@ -10,6 +10,7 @@ use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
+use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -209,6 +210,104 @@ class AdminController extends Controller
             ->paginate(15);
 
         return view('admin.employers-management', compact('employers'));
+    }
+
+    public function applicationsAnalytics(Request $request): View
+    {
+        // Get date range parameters
+        $period = $request->input('period', '7days');
+        $startDate = null;
+        $endDate = now();
+
+        // Calculate date range based on period
+        switch ($period) {
+            case '7days':
+                $startDate = now()->subDays(7);
+                break;
+            case '30days':
+                $startDate = now()->subDays(30);
+                break;
+            case 'month':
+                $startDate = now()->startOfMonth();
+                $endDate = now()->endOfMonth();
+                break;
+            case 'year':
+                $startDate = now()->startOfYear();
+                $endDate = now()->endOfYear();
+                break;
+            case 'custom':
+                $startDate = $request->input('start_date') ? \Carbon\Carbon::parse($request->input('start_date')) : now()->subDays(30);
+                $endDate = $request->input('end_date') ? \Carbon\Carbon::parse($request->input('end_date')) : now();
+                break;
+        }
+
+        // Get application statistics within date range
+        $totalApplications = JobApplication::whereBetween('created_at', [$startDate, $endDate])->count();
+        $pendingApplications = JobApplication::where('status', 'pending')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+        $acceptedApplications = JobApplication::where('status', 'accepted')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+        $rejectedApplications = JobApplication::where('status', 'rejected')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+
+        // Get gender distribution from jobseeker profiles (for applicants in date range)
+        $genderData = DB::table('jobseeker_profiles')
+            ->select('gender', DB::raw('COUNT(*) as count'))
+            ->whereIn('user_id', function($query) use ($startDate, $endDate) {
+                $query->select('user_id')
+                    ->from('job_applications')
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->distinct();
+            })
+            ->groupBy('gender')
+            ->get();
+
+        $femaleCount = $genderData->where('gender', 'female')->first()?->count ?? 0;
+        $maleCount = $genderData->where('gender', 'male')->first()?->count ?? 0;
+        $otherCount = $genderData->where('gender', null)->first()?->count ?? 0;
+        
+        // Handle case where gender values might be different
+        $otherCount = $totalApplications - ($femaleCount + $maleCount);
+        if ($otherCount < 0) $otherCount = 0;
+
+        // Get daily application trends
+        $dailyTrends = JobApplication::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as total'),
+            DB::raw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending"),
+            DB::raw("SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) as accepted"),
+            DB::raw("SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected")
+        )
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->groupBy(DB::raw('DATE(created_at)'))
+        ->orderBy('date', 'asc')
+        ->get();
+
+        // Format trend data for charts
+        $trendDates = $dailyTrends->pluck('date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('M d'))->toArray();
+        $trendTotal = $dailyTrends->pluck('total')->toArray();
+        $trendPending = $dailyTrends->pluck('pending')->toArray();
+        $trendAccepted = $dailyTrends->pluck('accepted')->toArray();
+        $trendRejected = $dailyTrends->pluck('rejected')->toArray();
+
+        return view('admin.applications-analytics', compact(
+            'totalApplications',
+            'pendingApplications',
+            'acceptedApplications',
+            'rejectedApplications',
+            'femaleCount',
+            'maleCount',
+            'otherCount',
+            'period',
+            'trendDates',
+            'trendTotal',
+            'trendPending',
+            'trendAccepted',
+            'trendRejected'
+        ));
     }
 
     public function viewJob(PesoJob $job): View
