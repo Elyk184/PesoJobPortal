@@ -22,6 +22,8 @@ class JobApplication extends Model
         'admin_approved_at',
         'admin_approved_by',
         'admin_notes',
+        'resume_path',
+        'resume_type',
     ];
 
     protected $casts = [

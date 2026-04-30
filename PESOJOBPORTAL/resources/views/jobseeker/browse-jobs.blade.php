@@ -183,7 +183,7 @@
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h5 class="job-title mb-1">
-                                                    <a href="{{ route('jobs.index') }}" class="stretched-link text-dark">{{ $job->title }}</a>
+                                                    <a href="{{ route('jobseeker.apply-job', $job) }}" class="stretched-link text-dark">{{ $job->title }}</a>
                                                 </h5>
                                                 <p class="text-muted mb-1 small">
                                                     <i class="bi bi-building me-1"></i>{{ $job->company_name ?? 'Company' }}
