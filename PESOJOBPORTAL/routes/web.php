@@ -60,9 +60,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/recommendations/push', [AdminController::class, 'pushRecommendations'])->name('recommendations.push');
 });
 
-Route::get('/contact', function () {
-    return view('contact');
-});
-
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
     ->name('chatbot.chat');
