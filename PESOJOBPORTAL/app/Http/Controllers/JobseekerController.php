@@ -619,7 +619,7 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function toggleSaveJob(PesoJob $job): JsonResponse
+    public function toggleSaveJob(PesoJob $job): JsonResponse|RedirectResponse
     {
         $userId = (int) Auth::id();
 
@@ -642,6 +642,16 @@ class JobseekerController extends Controller
         $savedCount = SavedJob::query()
             ->where('user_id', $userId)
             ->count();
+
+        if (! request()->expectsJson()) {
+            if ($saved) {
+                return redirect()
+                    ->route('jobseeker.saved-jobs')
+                    ->with('success', 'Job saved to your bookmarks.');
+            }
+
+            return back()->with('success', 'Job removed from your saved jobs.');
+        }
 
         return response()->json([
             'saved' => $saved,
