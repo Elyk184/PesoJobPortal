@@ -497,108 +497,139 @@
                     $builderResume = $application->user->profile ?? $application->user->userProfile;
                 @endphp
                 @if($builderResume)
-                <div class="resume-preview" style="display:none; background:#fff; padding:2rem; border:1px solid #d9e6f6; border-radius:12px; margin-top:1rem;">
-                    <div class="builder-resume">
-                        <div style="margin-bottom:2rem;">
-                            <h4 style="margin:0 0 0.5rem 0; color:#1f4f8f; font-weight:800;">{{ $builderResume->resume_name ?? $application->user->name }}</h4>
-                            @if($builderResume->resume_email)
-                            <p style="margin:0; color:#6b7280; font-size:0.95rem;">{{ $builderResume->resume_email }}</p>
-                            @endif
-                        </div>
+                @php
+                    $toText = function ($value): string {
+                        if (is_array($value)) {
+                            $parts = collect($value)
+                                ->flatten()
+                                ->filter(fn ($item) => $item !== null && $item !== '')
+                                ->map(fn ($item) => is_scalar($item) ? (string) $item : json_encode($item))
+                                ->map(fn ($item) => trim((string) $item))
+                                ->filter()
+                                ->values();
 
-                        @php
-                            function formatResumeField($value) {
-                                if (!$value) return '';
-                                if (is_string($value)) return trim($value);
-                                if (is_array($value)) {
-                                    $result = [];
-                                    foreach ($value as $item) {
-                                        $item = is_array($item) || is_object($item) ? json_encode($item) : (string)$item;
-                                        if (trim($item)) $result[] = trim($item);
-                                    }
-                                    return implode(' | ', array_filter($result));
-                                }
-                                return is_object($value) ? json_encode($value) : (string)$value;
-                            }
-                            $objective = formatResumeField($builderResume->objective ?? null);
-                        @endphp
-                        @if($objective && $objective !== '[]' && $objective !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Professional Objective</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($objective)) !!}</p>
-                        </div>
-                        @endif
+                            return $parts->join(' | ');
+                        }
 
-                        @php
-                            $experience = formatResumeField($builderResume->experience ?? null);
-                        @endphp
-                        @if($experience && $experience !== '[]' && $experience !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Experience</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($experience)) !!}</p>
-                        </div>
-                        @endif
+                        if (is_object($value)) {
+                            return trim((string) json_encode($value));
+                        }
 
-                        @php
-                            $education = formatResumeField($builderResume->education ?? null);
-                        @endphp
-                        @if($education && $education !== '[]' && $education !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Education</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($education)) !!}</p>
-                        </div>
-                        @endif
+                        return trim((string) $value);
+                    };
 
-                        @php
-                            $skills = formatResumeField($builderResume->skills ?? null);
-                        @endphp
-                        @if($skills && $skills !== '[]' && $skills !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Skills</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($skills)) !!}</p>
+                    $builderName = $toText($builderResume->resume_name ?? $application->user->name);
+                    $builderEmail = $toText($builderResume->resume_email ?? $application->user->email);
+                    $builderPhone = $toText($builderResume->phone ?? '');
+                    $builderAddress = $toText($builderResume->address ?? '');
+                    $builderObjective = $toText($builderResume->objective ?? '');
+                    $builderSkills = collect(explode(',', $toText($builderResume->skills ?? '')))
+                        ->map(fn ($item) => trim($item))
+                        ->filter()
+                        ->values();
+                    $builderEducationRows = collect(is_array($builderResume->education ?? null) ? $builderResume->education : []);
+                    $builderExperienceRows = collect(is_array($builderResume->experience ?? null) ? $builderResume->experience : []);
+                    $builderTrainingRows = collect(is_array($builderResume->training ?? null) ? $builderResume->training : []);
+                    $builderEligibilityRows = collect(is_array($builderResume->eligibility ?? null) ? $builderResume->eligibility : []);
+                @endphp
+                <div class="resume-preview" style="display:none; background:#fff; padding:2.25rem; border:1px solid #d9e6f6; border-radius:12px; margin-top:1rem; font-family: Georgia, 'Times New Roman', Times, serif; color:#111827; font-size:12px; line-height:1.55;">
+                    <div style="text-align:center; margin-bottom:1rem;">
+                        <h4 style="margin:0; font-size:24px; font-weight:700; letter-spacing:0.02em;">{{ $builderName }}</h4>
+                        <div style="margin-top:6px; font-size:11px; color:#374151;">
+                            {{ collect([$builderAddress, $builderPhone, $builderEmail])->filter()->join(' | ') }}
                         </div>
-                        @endif
-
-                        @php
-                            $training = formatResumeField($builderResume->training ?? null);
-                        @endphp
-                        @if($training && $training !== '[]' && $training !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Training</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($training)) !!}</p>
-                        </div>
-                        @endif
-
-                        @php
-                            $eligibility = formatResumeField($builderResume->eligibility ?? null);
-                        @endphp
-                        @if($eligibility && $eligibility !== '[]' && $eligibility !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Eligibility</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($eligibility)) !!}</p>
-                        </div>
-                        @endif
-
-                        @php
-                            $languages = formatResumeField($builderResume->languages ?? null);
-                        @endphp
-                        @if($languages && $languages !== '[]' && $languages !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Languages</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($languages)) !!}</p>
-                        </div>
-                        @endif
-
-                        @php
-                            $otherSkills = formatResumeField($builderResume->other_skills ?? null);
-                        @endphp
-                        @if($otherSkills && $otherSkills !== '[]' && $otherSkills !== '{}')
-                        <div style="margin-bottom:1.5rem;">
-                            <h5 style="margin:0 0 0.5rem 0; color:#333; font-weight:700; font-size:0.95rem;">Other Skills</h5>
-                            <p style="margin:0; color:#555; line-height:1.6; white-space:pre-wrap;">{!! nl2br(e($otherSkills)) !!}</p>
-                        </div>
-                        @endif
                     </div>
+
+                    @if($builderObjective !== '')
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Objective</div>
+                        <div style="white-space:pre-wrap;">{!! nl2br(e($builderObjective)) !!}</div>
+                    </div>
+                    @endif
+
+                    @if($builderEducationRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Education</div>
+                        @foreach ($builderEducationRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div style="margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
+                                        <div>{{ $item['school'] ?? '' }}</div>
+                                        <div>{{ $item['year'] ?? '' }}</div>
+                                    </div>
+                                    <div style="color:#4b5563; font-style:italic;">{{ $item['course'] ?? '' }}</div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
+
+                    @if($builderExperienceRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Experience</div>
+                        @foreach ($builderExperienceRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div style="margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
+                                        <div>{{ $item['title'] ?? '' }}</div>
+                                        <div>{{ $item['period'] ?? $item['from_date'] ?? '' }}</div>
+                                    </div>
+                                    <div style="color:#4b5563; font-style:italic;">{{ $item['company'] ?? '' }}</div>
+                                    <div>{{ $item['details'] ?? '' }}</div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
+
+                    @if($builderTrainingRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Training</div>
+                        @foreach ($builderTrainingRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div style="margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
+                                        <div>{{ $item['course'] ?? '' }}</div>
+                                        <div>{{ $item['hours'] ?? '' }}</div>
+                                    </div>
+                                    <div style="color:#4b5563; font-style:italic;">{{ $item['institution'] ?? '' }}</div>
+                                    <div>{{ $item['dates'] ?? '' }}</div>
+                                    <div>{{ $item['skills'] ?? '' }}</div>
+                                    <div>{{ $item['certificates'] ?? '' }}</div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
+
+                    @if($builderEligibilityRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Eligibility</div>
+                        @foreach ($builderEligibilityRows as $item)
+                            @if(collect($item)->filter()->isNotEmpty())
+                                <div style="margin-bottom:10px;">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
+                                        <div>{{ $item['eligibility'] ?? '' }}</div>
+                                        <div>{{ $item['date_taken'] ?? '' }}</div>
+                                    </div>
+                                    <div style="color:#4b5563; font-style:italic;">{{ $item['license'] ?? '' }}</div>
+                                    <div>{{ $item['valid_until'] ?? '' }}</div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    @endif
+
+                    @if($builderSkills->count())
+                    <div style="margin-top:18px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Skills</div>
+                        <ul style="margin:0; padding-left:18px;">
+                            @foreach ($builderSkills as $skill)
+                                <li style="margin-bottom:4px;">{{ $skill }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                 </div>
                 @endif
             @else
@@ -651,7 +682,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select name="status" class="form-select" id="applicationStatusSelect">
                             @php $s = $application->status; @endphp
                             <option value="pending" {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="reviewing" {{ $s === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
@@ -660,6 +691,16 @@
                             <option value="hired" {{ $s === 'hired' ? 'selected' : '' }}>Hired</option>
                             <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
+                    </div>
+                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interview' ? '' : 'display:none;' }}">
+                        <label class="form-label">Interview Schedule</label>
+                        <input
+                            type="datetime-local"
+                            name="interview_scheduled_at"
+                            id="interviewScheduledAt"
+                            class="form-control"
+                            value="{{ optional($application->interview_scheduled_at)->format('Y-m-d\\TH:i') }}"
+                        >
                     </div>
                     <div class="form-group">
                         <label class="form-label">Feedback (optional)</label>
@@ -701,6 +742,28 @@ document.addEventListener('click', function(e) {
         preview.style.display = 'none';
         span.textContent = iframe ? 'Preview' : 'Show Resume';
     }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const statusSelect = document.getElementById('applicationStatusSelect');
+    const scheduleGroup = document.getElementById('interviewScheduleGroup');
+    const scheduledAtInput = document.getElementById('interviewScheduledAt');
+
+    if (!statusSelect || !scheduleGroup || !scheduledAtInput) {
+        return;
+    }
+
+    const syncInterviewScheduleVisibility = () => {
+        const shouldShow = statusSelect.value === 'interview';
+        scheduleGroup.style.display = shouldShow ? '' : 'none';
+        scheduledAtInput.required = shouldShow;
+        if (!shouldShow) {
+            scheduledAtInput.value = '';
+        }
+    };
+
+    statusSelect.addEventListener('change', syncInterviewScheduleVisibility);
+    syncInterviewScheduleVisibility();
 });
 </script>
 

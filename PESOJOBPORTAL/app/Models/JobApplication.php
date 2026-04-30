@@ -18,6 +18,7 @@ class JobApplication extends Model
         'final_decision',
         'notes',
         'employer_feedback',
+        'interview_scheduled_at',
         'admin_status',
         'admin_approved_at',
         'admin_approved_by',
@@ -29,6 +30,7 @@ class JobApplication extends Model
     protected $casts = [
         'applied_at' => 'datetime',
         'admin_approved_at' => 'datetime',
+        'interview_scheduled_at' => 'datetime',
         'is_referred' => 'boolean',
     ];
 

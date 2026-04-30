@@ -426,11 +426,12 @@ class JobseekerController extends Controller
     public function applications(Request $request): View
     {
         $statusMap = [
-            'all' => ['pending', 'reviewed', 'interviewed', 'hired', 'rejected'],
+            // include both 'interview' and legacy 'interviewed' values so they are treated the same
+            'all' => ['pending', 'reviewed', 'interview', 'interviewed', 'hired', 'rejected'],
             'pending' => ['pending'],
             'reviewing' => ['reviewed'],
             'shortlisted' => ['reviewed'],
-            'interview' => ['interviewed'],
+            'interview' => ['interview', 'interviewed'],
             'hired' => ['hired'],
             'rejected' => ['rejected'],
         ];
@@ -463,7 +464,8 @@ class JobseekerController extends Controller
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
             'reviewing' => (int) ($rawStatusCounts['reviewed'] ?? 0),
             'shortlisted' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            'interview' => (int) ($rawStatusCounts['interviewed'] ?? 0),
+            // sum both keys in case some records still use the legacy 'interviewed' value
+            'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
             'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
         ];
@@ -1976,6 +1978,12 @@ class JobseekerController extends Controller
 
         $resumePath = null;
         $resumeType = $validated['resume_type'];
+
+        // If an actual file was uploaded, always treat the submission as an upload.
+        // This protects the flow when the hidden resume type gets out of sync in the UI.
+        if ($request->hasFile('resume')) {
+            $resumeType = 'upload';
+        }
 
         // Handle resume based on type
         if ($resumeType === 'upload') {

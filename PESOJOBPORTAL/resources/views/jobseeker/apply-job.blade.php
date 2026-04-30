@@ -420,6 +420,7 @@
                             name="resume"
                             class="file-upload-input"
                             accept=".pdf,.doc,.docx"
+                            {{ $defaultResumeType === 'upload' ? 'required' : '' }}
                         >
                         <div id="fileName" class="file-name-display" style="display:none;"></div>
                     </div>
@@ -530,11 +531,13 @@
         if (resumeType === 'upload') {
             uploadSection.style.display = 'block';
             document.getElementById('resumeBuilderSelect').value = '0';
+            resumeInput.required = true;
         } else {
             uploadSection.style.display = 'none';
             resumeInput.value = '';
             document.getElementById('fileName').style.display = 'none';
             document.getElementById('resumeBuilderSelect').value = '0';
+            resumeInput.required = false;
 
             if (resumeType === 'builder') {
                 document.getElementById('resumeBuilderSelect').value = '1';

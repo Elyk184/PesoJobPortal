@@ -701,11 +701,13 @@ class EmployerController extends Controller
             'employer_status' => ['nullable', 'in:interview_scheduled,hired,not_selected'],
             'final_decision' => ['nullable', 'in:pending,hired,not_selected'],
             'employer_feedback' => ['nullable', 'string'],
+            'interview_scheduled_at' => ['nullable', 'date'],
         ]);
 
         $newStatus = $validated['status'] ?? null;
         $update = [
             'employer_feedback' => $validated['employer_feedback'] ?? $application->employer_feedback,
+            'interview_scheduled_at' => $application->interview_scheduled_at,
         ];
 
         if ($newStatus !== null) {
@@ -724,17 +726,20 @@ class EmployerController extends Controller
                     $update['employer_status'] = 'interview_scheduled';
                     $update['final_decision'] = 'pending';
                     $update['status'] = 'interview';
+                    $update['interview_scheduled_at'] = $validated['interview_scheduled_at'] ?? $application->interview_scheduled_at;
                     break;
                 case 'reviewing':
                 case 'shortlisted':
                     $update['final_decision'] = 'pending';
                     $update['status'] = $newStatus;
                     // keep employer_status unchanged for these intermediate states
+                    $update['interview_scheduled_at'] = null;
                     break;
                 case 'pending':
                 default:
                     $update['final_decision'] = 'pending';
                     $update['status'] = 'pending';
+                    $update['interview_scheduled_at'] = null;
                     break;
             }
         } else {
@@ -745,6 +750,9 @@ class EmployerController extends Controller
             if (isset($validated['final_decision'])) {
                 $update['final_decision'] = $validated['final_decision'];
                 $update['status'] = $validated['final_decision'] === 'hired' ? 'hired' : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed');
+            }
+            if (($update['status'] ?? null) !== 'interview') {
+                $update['interview_scheduled_at'] = null;
             }
         }
 
@@ -758,6 +766,10 @@ class EmployerController extends Controller
                     $job->title ?? 'a job posting',
                     $statusLabel
                 );
+
+                if ($application->status === 'interview' && ! empty($application->interview_scheduled_at)) {
+                    $message .= ' Interview scheduled for ' . $application->interview_scheduled_at->format('M d, Y h:i A') . '.';
+                }
 
                 if (! empty($application->employer_feedback)) {
                     $message .= ' Feedback: ' . $application->employer_feedback;
