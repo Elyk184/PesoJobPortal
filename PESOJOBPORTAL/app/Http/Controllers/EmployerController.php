@@ -402,6 +402,20 @@ class EmployerController extends Controller
         return back()->with('success', 'Company profile updated successfully.');
     }
 
+    public function showApplication(Request $request, JobApplication $application): View
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to view this applicant.');
+        }
+
+        return view('dashboard.employer.show-applicant', [
+            'application' => $application->load(['user.profile', 'jobPost']),
+            'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
+        ]);
+    }
+
     public function notificationsPage(Request $request): View
     {
         $notifications = $this->getNotifications($request->user()->id, 50);
@@ -736,8 +750,7 @@ class EmployerController extends Controller
     private function getReferredApplications(int $employerId)
     {
         return JobApplication::query()
-            ->with(['user.profile', 'job'])
-            ->where('is_referred', true)
+            ->with(['user.profile', 'jobPost'])
             ->whereHas('job', function ($query) use ($employerId) {
                 $query->where('employer_id', $employerId);
             })

@@ -286,6 +286,13 @@
         overflow: hidden;
         transition: all 0.3s ease;
     }
+    /* Make the applicants table card stretch edge-to-edge within the page */
+    .applicants-table-card.full-bleed {
+        border-radius: 0;
+        margin-left: -1.25rem;
+        margin-right: -1.25rem;
+        width: calc(100% + 2.5rem);
+    }
     .table-card-header {
         display: flex;
         align-items: center;
@@ -322,7 +329,8 @@
         gap: 0.45rem;
     }
     .table {
-        min-width: 880px;
+        width: 100%;
+        min-width: unset;
         margin-bottom: 0;
     }
     .table thead {
@@ -335,8 +343,54 @@
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        padding: 1rem 1.2rem;
+        padding: 0.9rem 1.25rem;
         background: transparent;
+    }
+    .table tbody td {
+        padding: 1.1rem 1.25rem;
+        vertical-align: middle;
+    }
+    .user-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 10px rgba(15,49,96,0.06);
+    }
+    .user-initials {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(15,49,96,0.06);
+    }
+    .user-info .name {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+    .user-info .email {
+        display: block;
+        color: #6b7280;
+        font-size: 0.92rem;
+    }
+    .table-actions {
+        justify-content: flex-end;
+    }
+    @media (min-width: 992px) {
+        .table thead th:nth-child(2),
+        .table tbody td:nth-child(2) { text-align: left; }
+        .table thead th:nth-child(3),
+        .table tbody td:nth-child(3) { text-align: center; }
+        .table thead th:nth-child(4),
+        .table tbody td:nth-child(4) { text-align: center; }
+        .table thead th:nth-child(5),
+        .table tbody td:nth-child(5) { text-align: right; }
     }
     .table tbody tr {
         transition: all 0.2s ease;
@@ -408,53 +462,49 @@
         font-size: 0.5rem;
     }
     .action-btn {
-        border-radius: 10px;
-        width: 38px;
-        height: 38px;
-        padding: 0;
+        border-radius: 999px;
+        padding: 0.45rem 0.95rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.35rem;
-        transition: all 0.25s ease;
-        border: 1.5px solid transparent;
+        gap: 0.5rem;
+        transition: all 0.18s ease;
+        border: 1px solid transparent;
         font-size: 0.95rem;
+        min-width: 72px;
+        height: auto;
     }
+    .action-btn i { font-size: 0.95rem; }
     .action-text {
-        display: none;
-        font-size: 0.78rem;
+        display: inline-block;
+        font-size: 0.95rem;
         font-weight: 700;
-        letter-spacing: 0.1px;
+        letter-spacing: 0.2px;
         line-height: 1;
     }
     .action-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 18px rgba(15, 49, 96, 0.12);
     }
-    .btn-outline-primary {
-        color: #1f4f8f;
-        border-color: #d3dfe8 !important;
+    /* Clear, readable colored pills */
+    .action-btn.btn-outline-primary {
+        background: #057a73;
+        color: #ffffff;
+        border-color: transparent !important;
     }
-    .btn-outline-primary:hover {
-        background: #ecf3ff;
-        border-color: #1f4f8f !important;
+    .action-btn.btn-outline-primary:hover { background: #04645e; }
+    .action-btn.btn-outline-success {
+        background: #2d8f3a;
+        color: #ffffff;
+        border-color: transparent !important;
     }
-    .btn-outline-success {
-        color: #28a745;
-        border-color: #d3dfe8 !important;
+    .action-btn.btn-outline-success:hover { background: #26762f; }
+    .action-btn.btn-outline-danger {
+        background: #c92b2b;
+        color: #ffffff;
+        border-color: transparent !important;
     }
-    .btn-outline-success:hover {
-        background: #e8f5e9;
-        border-color: #28a745 !important;
-    }
-    .btn-outline-danger {
-        color: #dc3545;
-        border-color: #d3dfe8 !important;
-    }
-    .btn-outline-danger:hover {
-        background: #ffebee;
-        border-color: #dc3545 !important;
-    }
+    .action-btn.btn-outline-danger:hover { background: #a22424; }
     .empty-state {
         padding: 5rem 2rem;
         text-align: center;
@@ -547,8 +597,8 @@
         }
         .action-btn {
             width: auto;
-            min-width: 38px;
-            padding: 0.55rem 0.75rem;
+            min-width: 72px;
+            padding: 0.45rem 0.95rem;
             border-radius: 999px;
         }
         .action-text {
@@ -574,6 +624,8 @@
             width: 34px;
             height: 34px;
             font-size: 0.85rem;
+            padding: 0;
+            min-width: 34px;
         }
     }
 </style>
@@ -691,7 +743,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="applicants-table-card">
+            <div class="applicants-table-card full-bleed">
                 <div class="table-card-header">
                     <h5 class="table-title"><i class="bi bi-person-lines-fill"></i>Applicant Results</h5>
                     <span class="table-count"><i class="bi bi-people"></i>{{ $referredApplications->count() }} records</span>
@@ -752,12 +804,12 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="table-actions">
-                                        <a href="{{ route('dashboard.applicants.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
+                                        <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
                                             <i class="bi bi-eye-fill"></i>
                                             <span class="action-text">View</span>
                                         </a>
                                         @if($application->status != 'hired')
-                                        <form method="POST" action="{{ route('dashboard.applicants.updateStatus', $application->id) }}" style="display: inline;">
+                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="hired">
@@ -768,7 +820,7 @@
                                         </form>
                                         @endif
                                         @if($application->status != 'rejected')
-                                        <form method="POST" action="{{ route('dashboard.applicants.updateStatus', $application->id) }}" style="display: inline;">
+                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="rejected">

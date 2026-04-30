@@ -94,6 +94,10 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::patch('/applications/{application}', [EmployerController::class, 'updateApplicantDecision'])
         ->name('applications.update');
 
+    // View single application details
+    Route::get('/applications/{application}', [EmployerController::class, 'showApplication'])
+        ->name('applications.show');
+
     Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
         ->name('notifications.read');
 });

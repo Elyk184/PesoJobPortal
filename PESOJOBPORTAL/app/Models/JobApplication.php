@@ -51,6 +51,12 @@ class JobApplication extends Model
     {
         return $this->belongsTo(User::class, 'admin_approved_by');
     }
+
+    // Compatibility alias used by some views: `$application->applicant`
+    public function getApplicantAttribute()
+    {
+        return $this->user;
+    }
 }
 ?>
 
