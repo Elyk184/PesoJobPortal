@@ -3,14 +3,14 @@
 @section('title', 'My Applications | Jobseeker')
 
 @section('content')
-<section aria-label="Job applications">
+<section aria-label="Job applications" class="applications-page">
     <div class="dashboard-section-card p-3 p-lg-4 mb-4">
-        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 applications-hero">
             <div>
-                <h2 class="h4 mb-1 fw-bold">My Applications</h2>
+                <h2 class="h4 mb-1 fw-bold applications-heading">My Applications</h2>
                 <p class="mb-0 text-muted">Track every job you applied for and review the current hiring status in one place.</p>
             </div>
-            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-primary px-3 shadow-sm">
+            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-primary px-3 shadow-sm applications-hero-btn">
                 <i class="bi bi-search me-2"></i>Browse More Jobs
             </a>
         </div>
@@ -58,14 +58,14 @@
     <div class="dashboard-section-card p-3 p-lg-4">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3 border-bottom pb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clipboard-check me-2"></i>Application Status</h3>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm {{ $statusFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">All ({{ $statusCounts['all'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'pending']) }}" class="btn btn-sm {{ $statusFilter === 'pending' ? 'btn-warning' : 'btn-outline-warning' }}">Pending ({{ $statusCounts['pending'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="btn btn-sm {{ $statusFilter === 'reviewing' ? 'btn-info' : 'btn-outline-info' }}">Reviewing ({{ $statusCounts['reviewing'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'shortlisted']) }}" class="btn btn-sm {{ $statusFilter === 'shortlisted' ? 'btn-success' : 'btn-outline-success' }}">Shortlisted ({{ $statusCounts['shortlisted'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="btn btn-sm {{ $statusFilter === 'interview' ? 'btn-primary' : 'btn-outline-primary' }}">Interview ({{ $statusCounts['interview'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="btn btn-sm {{ $statusFilter === 'hired' ? 'btn-success' : 'btn-outline-success' }}">Hired ({{ $statusCounts['hired'] ?? 0 }})</a>
-                <a href="{{ route('jobseeker.applications', ['status' => 'rejected']) }}" class="btn btn-sm {{ $statusFilter === 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected ({{ $statusCounts['rejected'] ?? 0 }})</a>
+            <div class="d-flex flex-wrap gap-2 status-filter-wrap">
+                <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">All ({{ $statusCounts['all'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'pending']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'pending' ? 'btn-warning' : 'btn-outline-warning' }}">Pending ({{ $statusCounts['pending'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'reviewing' ? 'btn-info' : 'btn-outline-info' }}">Reviewing ({{ $statusCounts['reviewing'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'shortlisted']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'shortlisted' ? 'btn-success' : 'btn-outline-success' }}">Shortlisted ({{ $statusCounts['shortlisted'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'interview' ? 'btn-primary' : 'btn-outline-primary' }}">Interview ({{ $statusCounts['interview'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'hired' ? 'btn-success' : 'btn-outline-success' }}">Hired ({{ $statusCounts['hired'] ?? 0 }})</a>
+                <a href="{{ route('jobseeker.applications', ['status' => 'rejected']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected ({{ $statusCounts['rejected'] ?? 0 }})</a>
             </div>
         </div>
 
@@ -120,7 +120,10 @@
                             @endphp
                             <tr>
                                 <td>
-                                    <div class="fw-semibold text-dark">{{ $job?->title ?? 'Job no longer available' }}</div>
+                                    <div class="fw-semibold text-dark d-flex align-items-center gap-2">
+                                        <i class="bi bi-briefcase text-primary"></i>
+                                        <span>{{ $job?->title ?? 'Job no longer available' }}</span>
+                                    </div>
                                     <div class="small text-muted">{{ $job?->location ?? 'Location unavailable' }}</div>
                                 </td>
                                 <td>
@@ -132,7 +135,7 @@
                                     <div class="small text-muted">{{ optional($application->applied_at ?? $application->created_at)->diffForHumans() }}</div>
                                 </td>
                                 <td>
-                                    <span class="badge text-bg-{{ $statusClass }}">{{ $statusLabel }}</span>
+                                    <span class="badge app-status-pill text-bg-{{ $statusClass }}">{{ $statusLabel }}</span>
                                 </td>
                                 <td class="text-end">
                                     <div class="small text-muted">
@@ -154,7 +157,7 @@
                                                 <div class="fw-semibold text-dark">{{ $job?->title ?? 'Job no longer available' }}</div>
                                                 <div class="small text-muted">{{ $job?->employer_name ?? 'Employer unavailable' }}<span class="mx-1">|</span>{{ $job?->location ?? 'Location unavailable' }}</div>
                                             </div>
-                                            <span class="badge text-bg-{{ $statusClass }}">{{ $statusLabel }}</span>
+                                            <span class="badge app-status-pill text-bg-{{ $statusClass }}">{{ $statusLabel }}</span>
                                         </div>
                                         <div class="small text-muted mt-2">
                                             Applied {{ optional($application->applied_at ?? $application->created_at)->format('d M Y') }}
@@ -183,6 +186,33 @@
 
 @push('styles')
 <style>
+    .applications-page .dashboard-section-card {
+        border-radius: 14px;
+    }
+
+    .applications-hero {
+        min-height: 84px;
+    }
+
+    .applications-heading {
+        letter-spacing: 0.01em;
+    }
+
+    .applications-hero-btn {
+        min-height: 40px;
+        font-weight: 700;
+    }
+
+    .status-filter-wrap {
+        align-items: center;
+    }
+
+    .status-filter-btn {
+        border-radius: 999px;
+        font-weight: 700;
+        padding-inline: 0.75rem;
+    }
+
     .applications-table thead th {
         font-size: 0.75rem;
         text-transform: uppercase;
@@ -190,10 +220,24 @@
         color: #66758a;
         border-bottom: 1px solid #dbe5f1;
         background: #f8fbff;
+        white-space: nowrap;
+        padding: 0.85rem 0.75rem;
+    }
+
+    .applications-table tbody td {
+        padding: 0.9rem 0.75rem;
+        vertical-align: middle;
     }
 
     .applications-table tbody tr:hover {
         background: #fbfdff;
+    }
+
+    .app-status-pill {
+        border-radius: 999px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        padding: 0.38rem 0.65rem;
     }
 
     .applications-mobile-row {
@@ -207,6 +251,15 @@
     }
 
     @media (max-width: 767.98px) {
+        .status-filter-wrap {
+            width: 100%;
+        }
+
+        .status-filter-btn {
+            flex: 1 1 calc(50% - 0.5rem);
+            text-align: center;
+        }
+
         .applications-table thead,
         .applications-table tbody tr:not(.applications-mobile-row) {
             display: none;
@@ -218,6 +271,8 @@
 
         .application-card-mobile {
             display: block;
+            border-radius: 10px;
+            padding: 0.95rem 0;
         }
     }
 </style>
