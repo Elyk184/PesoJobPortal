@@ -2391,19 +2391,30 @@
                 return labels;
             };
 
-            // Generate data function
-            const generateData = (count) => Array.from({ length: count }, () => Math.floor(Math.random() * 20) + 5);
+            // Generate data function based on actual stats
+            const generateData = (baseValue, period) => {
+                const count = period === 'day' ? 24 : period === 'week' ? 7 : period === 'month' ? 4 : 12;
+                const data = [];
+                
+                // Create realistic trend data based on the base value
+                for (let i = 0; i < count; i++) {
+                    // Add some variation but keep it around the base value
+                    const variance = Math.floor(baseValue * 0.3); // 30% variance
+                    const value = Math.max(0, baseValue + Math.floor(Math.random() * variance - variance / 2));
+                    data.push(value);
+                }
+                return data;
+            };
 
             let chart = null;
 
             const updateChart = (period) => {
                 const labels = generateDateLabels(period);
-                const count = labels.length;
                 
                 const datasets = [
                     {
                         label: 'Applications',
-                        data: generateData(count),
+                        data: generateData({{ $stats['pending_applications'] }}, period),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
@@ -2417,7 +2428,7 @@
                     },
                     {
                         label: 'Job Approvals',
-                        data: generateData(count),
+                        data: generateData({{ $stats['pending_job_approvals'] }}, period),
                         borderColor: '#ef4444',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
                         borderWidth: 3,
@@ -2431,7 +2442,7 @@
                     },
                     {
                         label: 'LRA/SRA Requests',
-                        data: generateData(count),
+                        data: generateData({{ $stats['pending_lra_sra'] }}, period),
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
                         borderWidth: 3,
@@ -2445,7 +2456,7 @@
                     },
                     {
                         label: 'Documents',
-                        data: generateData(count),
+                        data: generateData({{ $stats['pending_documents'] }}, period),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         borderWidth: 3,
