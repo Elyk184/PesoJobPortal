@@ -108,6 +108,8 @@ Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerCont
 
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::model('application', \App\Models\JobApplication::class);
+    
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Jobseeker Approvals

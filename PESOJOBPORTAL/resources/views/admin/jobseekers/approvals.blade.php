@@ -370,20 +370,6 @@
         }
     </style>
 
-    <!-- Stats Section -->
-    <div class="approval-header">
-        <div class="approval-stat">
-            <i class="bi bi-hourglass-split approval-stat-icon"></i>
-            <div class="approval-stat-label">Pending Approvals</div>
-            <div class="approval-stat-value">{{ $applications->total() }}</div>
-        </div>
-        <div class="approval-stat" style="border-left-color: #3b82f6;">
-            <i class="bi bi-file-earmark-check approval-stat-icon" style="color: #3b82f6; opacity: 0.15;"></i>
-            <div class="approval-stat-label">Page</div>
-            <div class="approval-stat-value">{{ $applications->currentPage() }} of {{ $applications->lastPage() }}</div>
-        </div>
-    </div>
-
     <div class="dashboard-card">
         <h5><i class="bi bi-file-earmark-check me-2"></i>Pending Application Approvals</h5>
         
