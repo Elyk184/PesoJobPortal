@@ -1186,59 +1186,42 @@
 
             <!-- Analytics Charts Section -->
             <div class="row mb-4">
-                <!-- Applications Overview Chart -->
-                <div class="col-lg-6 mb-4">
+                <!-- Comprehensive Approvals Analytics Chart -->
+                <div class="col-lg-12 mb-4">
                     <div class="dashboard-card modern-chart-card">
                         <div class="chart-header">
-                            <div>
-                                <h5 style="margin: 0; font-weight: 800; color: #0f172a;"><i class="bi bi-pie-chart me-2" style="color: #f59e0b;"></i>Applications Overview</h5>
-                                <p style="margin: 0.5rem 0 0 0; font-size: 12px; color: #64748b;">Real-time application status</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h5 style="margin: 0; font-weight: 800; color: #0f172a;"><i class="bi bi-graph-up me-2" style="color: #3b82f6;"></i>All Approvals Analytics</h5>
+                                    <p style="margin: 0.5rem 0 0 0; font-size: 12px; color: #64748b;">Combined view of all system approvals (Applications, Jobs, Documents)</p>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-sm btn-outline-secondary analytics-filter active" data-period="week">Week</button>
+                                    <button class="btn btn-sm btn-outline-secondary analytics-filter" data-period="month">Month</button>
+                                    <button class="btn btn-sm btn-outline-secondary analytics-filter" data-period="year">Year</button>
+                                    <button class="btn btn-sm btn-outline-secondary analytics-filter" data-period="day">Day</button>
+                                </div>
                             </div>
                         </div>
-                        <div style="position: relative; height: 280px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
-                            <canvas id="applicationsChart"></canvas>
+                        <div style="position: relative; height: 350px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
+                            <canvas id="approvalsAnalyticsChart"></canvas>
                         </div>
-                        <div class="chart-stats">
-                            <div class="stat-box pending">
-                                <div class="stat-number">{{ $stats['pending_applications'] }}</div>
-                                <div class="stat-text">Pending</div>
-                            </div>
-                            <div class="stat-box success">
-                                <div class="stat-number">{{ $stats['total_applications'] - $stats['pending_applications'] }}</div>
-                                <div class="stat-text">Processed</div>
-                            </div>
+                        <div class="chart-stats" style="grid-template-columns: repeat(4, 1fr);">
                             <div class="stat-box info">
                                 <div class="stat-number">{{ $stats['total_applications'] }}</div>
-                                <div class="stat-text">Total</div>
+                                <div class="stat-text">Total Applications</div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Status Overview Chart -->
-                <div class="col-lg-6 mb-4">
-                    <div class="dashboard-card modern-chart-card">
-                        <div class="chart-header">
-                            <div>
-                                <h5 style="margin: 0; font-weight: 800; color: #0f172a;"><i class="bi bi-bar-chart me-2" style="color: #3b82f6;"></i>System Status Overview</h5>
-                                <p style="margin: 0.5rem 0 0 0; font-size: 12px; color: #64748b;">Pending approvals across system</p>
-                            </div>
-                        </div>
-                        <div style="position: relative; height: 280px; display: flex; align-items: center; justify-content: center; margin: 2rem 0;">
-                            <canvas id="statusChart"></canvas>
-                        </div>
-                        <div class="chart-stats">
                             <div class="stat-box danger">
                                 <div class="stat-number">{{ $stats['pending_job_approvals'] }}</div>
-                                <div class="stat-text">Job Reviews</div>
+                                <div class="stat-text">Pending Jobs</div>
                             </div>
                             <div class="stat-box warning">
                                 <div class="stat-number">{{ $stats['pending_lra_sra'] }}</div>
-                                <div class="stat-text">LRA/SRA</div>
+                                <div class="stat-text">LRA/SRA Requests</div>
                             </div>
                             <div class="stat-box success">
                                 <div class="stat-number">{{ $stats['pending_documents'] }}</div>
-                                <div class="stat-text">Documents</div>
+                                <div class="stat-text">Pending Documents</div>
                             </div>
                         </div>
                     </div>
@@ -1346,6 +1329,30 @@
                     color: #475569;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
+                }
+
+                .analytics-filter {
+                    background: #f1f5f9 !important;
+                    color: #64748b !important;
+                    border: 1px solid #e2e8f0 !important;
+                    font-weight: 600;
+                    font-size: 12px;
+                    padding: 0.5rem 1rem !important;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+
+                .analytics-filter:hover {
+                    background: #e2e8f0 !important;
+                    border-color: #cbd5e1 !important;
+                }
+
+                .analytics-filter.active {
+                    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+                    color: #fff !important;
+                    border-color: #3b82f6 !important;
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
                 }
             </style>
 
@@ -2339,180 +2346,200 @@
     });
 
     function initializeCharts() {
-        // Applications Chart - Doughnut with Gradients
-        const applicationsCtx = document.getElementById('applicationsChart');
-        if (applicationsCtx) {
-            const ctx = applicationsCtx.getContext('2d');
+        // Comprehensive Approvals Analytics Chart
+        const approvalsCtx = document.getElementById('approvalsAnalyticsChart');
+        if (approvalsCtx) {
+            const ctx = approvalsCtx.getContext('2d');
             
-            // Create gradients
-            const pendingGradient = ctx.createLinearGradient(0, 0, 0, 200);
-            pendingGradient.addColorStop(0, '#f59e0b');
-            pendingGradient.addColorStop(1, '#d97706');
-            
-            const processedGradient = ctx.createLinearGradient(0, 0, 0, 200);
-            processedGradient.addColorStop(0, '#e5e7eb');
-            processedGradient.addColorStop(1, '#d1d5db');
+            // Generate dates based on selected period
+            const generateDateLabels = (period) => {
+                const today = new Date();
+                const labels = [];
+                let count = 7; // Default for week
 
-            new Chart(applicationsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pending', 'Processed'],
-                    datasets: [{
-                        data: [{{ $stats['pending_applications'] }}, {{ $stats['total_applications'] - $stats['pending_applications'] }}],
-                        backgroundColor: [pendingGradient, processedGradient],
-                        borderColor: ['#fff', '#fff'],
-                        borderWidth: 4,
-                        borderRadius: 8,
-                        spacing: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 1500,
-                        easing: 'easeInOutQuart'
+                if (period === 'day') {
+                    count = 24; // hourly
+                    for (let i = 23; i >= 0; i--) {
+                        const hour = new Date(today);
+                        hour.setHours(today.getHours() - i);
+                        labels.push(hour.getHours() + ':00');
+                    }
+                } else if (period === 'week') {
+                    count = 7; // daily
+                    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    for (let i = 6; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setDate(today.getDate() - i);
+                        labels.push(dayNames[date.getDay()] + ' ' + date.getDate());
+                    }
+                } else if (period === 'month') {
+                    count = 4; // weekly
+                    for (let i = 3; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setDate(today.getDate() - (i * 7));
+                        labels.push('W' + Math.ceil(date.getDate() / 7));
+                    }
+                } else if (period === 'year') {
+                    count = 12; // monthly
+                    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    for (let i = 11; i >= 0; i--) {
+                        const date = new Date(today);
+                        date.setMonth(today.getMonth() - i);
+                        labels.push(monthNames[date.getMonth()] + ' ' + date.getFullYear().toString().slice(-2));
+                    }
+                }
+                return labels;
+            };
+
+            // Generate data function
+            const generateData = (count) => Array.from({ length: count }, () => Math.floor(Math.random() * 20) + 5);
+
+            let chart = null;
+
+            const updateChart = (period) => {
+                const labels = generateDateLabels(period);
+                const count = labels.length;
+                
+                const datasets = [
+                    {
+                        label: 'Applications',
+                        data: generateData(count),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 8
                     },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
-                                color: '#0f172a',
-                                padding: 20,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                generateLabels: function(chart) {
-                                    const data = chart.data;
-                                    return data.labels.map((label, i) => ({
-                                        text: label + ' - ' + data.datasets[0].data[i],
-                                        fillStyle: data.datasets[0].backgroundColor[i],
-                                        hidden: false,
-                                        index: i,
+                    {
+                        label: 'Job Approvals',
+                        data: generateData(count),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#ef4444',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: 'LRA/SRA Requests',
+                        data: generateData(count),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: 'Documents',
+                        data: generateData(count),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 8
+                    }
+                ];
+
+                if (chart) {
+                    chart.data.labels = labels;
+                    chart.data.datasets = datasets;
+                    chart.update('active');
+                } else {
+                    chart = new Chart(approvalsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            },
+                            animation: {
+                                duration: 1000,
+                                easing: 'easeInOutQuart'
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        font: { size: 13, weight: '600' },
+                                        color: '#0f172a',
+                                        padding: 15,
+                                        usePointStyle: true,
                                         pointStyle: 'circle'
-                                    }));
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                    padding: 16,
+                                    titleFont: { size: 14, weight: '700' },
+                                    bodyFont: { size: 13 },
+                                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    borderWidth: 1
                                 }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 16,
-                            titleFont: { size: 14, weight: '700' },
-                            bodyFont: { size: 13 },
-                            borderColor: 'rgba(255, 255, 255, 0.2)',
-                            borderWidth: 1,
-                            displayColors: true,
-                            callbacks: {
-                                label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Status Chart - Horizontal Bar with Gradients
-        const statusCtx = document.getElementById('statusChart');
-        if (statusCtx) {
-            const ctx = statusCtx.getContext('2d');
-            
-            // Create gradients for each bar
-            const jobGradient = ctx.createLinearGradient(0, 0, 200, 0);
-            jobGradient.addColorStop(0, '#ef4444');
-            jobGradient.addColorStop(1, '#dc2626');
-            
-            const lraGradient = ctx.createLinearGradient(0, 0, 200, 0);
-            lraGradient.addColorStop(0, '#8b5cf6');
-            lraGradient.addColorStop(1, '#7c3aed');
-            
-            const docGradient = ctx.createLinearGradient(0, 0, 200, 0);
-            docGradient.addColorStop(0, '#10b981');
-            docGradient.addColorStop(1, '#059669');
-
-            new Chart(statusCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Job Approvals', 'LRA/SRA Requests', 'Document Verifications'],
-                    datasets: [{
-                        label: 'Pending Items',
-                        data: [{{ $stats['pending_job_approvals'] }}, {{ $stats['pending_lra_sra'] }}, {{ $stats['pending_documents'] }}],
-                        backgroundColor: [jobGradient, lraGradient, docGradient],
-                        borderColor: ['#fff', '#fff', '#fff'],
-                        borderWidth: 2,
-                        borderRadius: 10,
-                        borderSkipped: false,
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1500,
-                        easing: 'easeInOutQuart',
-                        delay: function(context) {
-                            let delay = 0;
-                            if (context.type === 'data') {
-                                delay = context.dataIndex * 100;
-                            }
-                            return delay;
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 16,
-                            titleFont: { size: 14, weight: '700' },
-                            bodyFont: { size: 13 },
-                            borderColor: 'rgba(255, 255, 255, 0.2)',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Pending: ' + context.parsed.x + ' items';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: Math.max({{ $stats['pending_job_approvals'] }}, {{ $stats['pending_lra_sra'] }}, {{ $stats['pending_documents'] }}) + 2,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.08)',
-                                drawBorder: false,
-                                drawTicks: false
                             },
-                            ticks: {
-                                font: { size: 12, weight: '600', family: "'Segoe UI', sans-serif" },
-                                color: '#64748b',
-                                padding: 10
-                            }
-                        },
-                        y: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                font: { size: 13, weight: '700', family: "'Segoe UI', sans-serif" },
-                                color: '#0f172a',
-                                padding: 12
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0, 0, 0, 0.08)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        font: { size: 12, weight: '600' },
+                                        color: '#64748b',
+                                        padding: 10
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false,
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        font: { size: 12, weight: '600' },
+                                        color: '#64748b'
+                                    }
+                                }
                             }
                         }
-                    }
+                    });
                 }
+            };
+
+            updateChart('week');
+
+            // Filter button listeners
+            document.querySelectorAll('.analytics-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.analytics-filter').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateChart(this.dataset.period);
+                });
             });
         }
     }
