@@ -1,11 +1,11 @@
 @extends('layouts.admin-dashboard')
 
-@section('title', 'Jobseeker Approvals | PESO Admin')
+@section('title', 'Application Approvals | PESO Admin')
 
 <?php
-    $pageTitle = 'Jobseeker Approvals';
-    $pageSubtitle = 'Review and approve pending jobseeker registrations';
-    $pageIcon = 'bi-person-check';
+    $pageTitle = 'Application Approvals';
+    $pageSubtitle = 'Review and approve pending job applications';
+    $pageIcon = 'bi-file-earmark-check';
 ?>
 
 @section('content')
@@ -126,7 +126,7 @@
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
         }
 
-        .jobseeker-avatar {
+.applicant-avatar {
             width: 44px;
             height: 44px;
             border-radius: 12px;
@@ -142,7 +142,7 @@
             flex-shrink: 0;
         }
 
-        .jobseeker-name {
+        .applicant-name {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -375,59 +375,59 @@
         <div class="approval-stat">
             <i class="bi bi-hourglass-split approval-stat-icon"></i>
             <div class="approval-stat-label">Pending Approvals</div>
-            <div class="approval-stat-value">{{ $jobseekers->total() }}</div>
+            <div class="approval-stat-value">{{ $applications->total() }}</div>
         </div>
         <div class="approval-stat" style="border-left-color: #3b82f6;">
-            <i class="bi bi-person-check approval-stat-icon" style="color: #3b82f6; opacity: 0.15;"></i>
+            <i class="bi bi-file-earmark-check approval-stat-icon" style="color: #3b82f6; opacity: 0.15;"></i>
             <div class="approval-stat-label">Page</div>
-            <div class="approval-stat-value">{{ $jobseekers->currentPage() }} of {{ $jobseekers->lastPage() }}</div>
+            <div class="approval-stat-value">{{ $applications->currentPage() }} of {{ $applications->lastPage() }}</div>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-person-check me-2"></i>Pending Jobseeker Approvals</h5>
+        <h5><i class="bi bi-file-earmark-check me-2"></i>Pending Application Approvals</h5>
         
-        @if($jobseekers->count() > 0)
+        @if($applications->count() > 0)
             <div class="table-responsive">
                 <table class="table data-table w-100">
                     <thead>
                         <tr>
-                            <th>Jobseeker</th>
-                            <th>Email</th>
-                            <th>Registered</th>
-                            <th>Applications</th>
+                            <th>Applicant</th>
+                            <th>Job Position</th>
+                            <th>Applied Date</th>
+                            <th>Status</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($jobseekers as $jobseeker)
+                        @foreach($applications as $application)
                             <tr>
                                 <td>
-                                    <div class="jobseeker-name">
-                                        <div class="jobseeker-avatar">
-                                            {{ strtoupper(substr($jobseeker->name, 0, 1)) }}
+                                    <div class="applicant-name">
+                                        <div class="applicant-avatar">
+                                            {{ strtoupper(substr($application->user->name ?? 'U', 0, 1)) }}
                                         </div>
-                                        <strong>{{ Str::limit($jobseeker->name, 25) }}</strong>
+                                        <strong>{{ Str::limit($application->user->name ?? 'N/A', 25) }}</strong>
                                     </div>
                                 </td>
-                                <td>{{ Str::limit($jobseeker->email, 22) }}</td>
-                                <td><small>{{ $jobseeker->created_at->format('d M, Y') }}</small></td>
+                                <td>{{ Str::limit($application->job->title ?? 'N/A', 25) }}</td>
+                                <td><small>{{ $application->created_at->format('d M, Y') }}</small></td>
                                 <td>
-                                    <span class="badge-apps">{{ $jobseeker->applications->count() ?? 0 }} apps</span>
+                                    <span class="badge-apps">{{ ucfirst($application->status ?? 'pending') }}</span>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('admin.jobseekers.show', $jobseeker) }}" class="btn btn-sm btn-view">
+                                        <a href="{{ route('admin.applications.show', $application) }}" class="btn btn-sm btn-view">
                                             <i class="bi bi-eye"></i> View
                                         </a>
-                                        <form method="POST" action="{{ route('admin.jobseekers.approve', $jobseeker) }}" style="display: inline;">
+                                        <form method="POST" action="{{ route('admin.applications.approve', $application) }}" style="display: inline;">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-approve" title="Approve">
                                                 <i class="bi bi-check-circle"></i> Approve
                                             </button>
                                         </form>
                                         <button type="button" class="btn btn-sm btn-reject" data-bs-toggle="modal" 
-                                                data-bs-target="#rejectModal{{ $jobseeker->id }}" title="Reject">
+                                                data-bs-target="#rejectModal{{ $application->id }}" title="Reject">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
                                     </div>
@@ -435,28 +435,28 @@
                             </tr>
 
                             <!-- Rejection Modal -->
-                            <div class="modal fade" id="rejectModal{{ $jobseeker->id }}" tabindex="-1">
+                            <div class="modal fade" id="rejectModal{{ $application->id }}" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Reject Registration</h5>
+                                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Reject Application</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <form method="POST" action="{{ route('admin.jobseekers.reject', $jobseeker) }}">
+                                        <form method="POST" action="{{ route('admin.applications.reject', $application) }}">
                                             @csrf
                                             <div class="modal-body">
-                                                <p class="text-muted mb-3">You are rejecting: <strong>{{ $jobseeker->name }}</strong></p>
+                                                <p class="text-muted mb-3">You are rejecting application from: <strong>{{ $application->user->name ?? 'N/A' }}</strong></p>
                                                 <div class="mb-3">
-                                                    <label for="reason_{{ $jobseeker->id }}" class="form-label">
+                                                    <label for="reason_{{ $application->id }}" class="form-label">
                                                         Rejection Reason <span class="text-danger">*</span>
                                                     </label>
-                                                    <textarea id="reason_{{ $jobseeker->id }}" name="reason" class="form-control" rows="5" 
-                                                              placeholder="Please provide a clear reason for rejecting this registration..." required></textarea>
+                                                    <textarea id="reason_{{ $application->id }}" name="reason" class="form-control" rows="5" 
+                                                              placeholder="Please provide a clear reason for rejecting this application..." required></textarea>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Reject Registration</button>
+                                                <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle me-2"></i>Reject Application</button>
                                             </div>
                                         </form>
                                     </div>
@@ -469,15 +469,15 @@
 
             <!-- Pagination -->
             <nav aria-label="Page navigation" class="mt-4">
-                {{ $jobseekers->links('pagination::bootstrap-5') }}
+                {{ $applications->links('pagination::bootstrap-5') }}
             </nav>
         @else
             <div class="empty-state">
                 <i class="bi bi-check-circle"></i>
                 <p>All Caught Up!</p>
-                <small>No pending jobseeker approvals at this time</small>
+                <small>No pending application approvals at this time</small>
                 <small style="display: block; margin-top: 1rem; font-size: 12px; color: #9ca3af;">
-                    New registration requests will appear here when jobseekers sign up
+                    New applications will appear here when jobseekers apply to positions
                 </small>
             </div>
         @endif
