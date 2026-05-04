@@ -113,9 +113,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Jobseeker Approvals
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
-        Route::get('/{jobseeker}', [JobseekerApprovalController::class, 'show'])->name('show');
-        Route::post('/{jobseeker}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
-        Route::post('/{jobseeker}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
+        Route::get('/{application}', [JobseekerApprovalController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
     });
 
     // Approvals & Verification Section

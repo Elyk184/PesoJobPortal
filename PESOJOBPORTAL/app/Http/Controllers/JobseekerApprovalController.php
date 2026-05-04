@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\JobApplication;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -10,68 +11,60 @@ use Illuminate\View\View;
 class JobseekerApprovalController extends Controller
 {
     /**
-     * Display list of pending jobseeker approvals
+     * Display list of pending job application approvals
      */
     public function index(): View
     {
-        $jobseekers = User::where('role', 'jobseeker')
-            ->whereNull('is_approved')
-            ->with(['profile', 'applications'])
+        $applications = JobApplication::where('status', 'pending')
+            ->whereNull('admin_status')
+            ->with(['user', 'job'])
             ->latest()
             ->paginate(15);
 
         return view('admin.jobseekers.approvals', [
-            'jobseekers' => $jobseekers,
+            'applications' => $applications,
         ]);
     }
 
     /**
-     * Show jobseeker details for approval
+     * Show application details for approval
      */
-    public function show(User $jobseeker): View
+    public function show(JobApplication $application): View
     {
-        abort_if($jobseeker->role !== 'jobseeker', 403, 'Unauthorized');
-
         return view('admin.jobseekers.show', [
-            'jobseeker' => $jobseeker->load('profile', 'applications'),
+            'application' => $application->load('user', 'job'),
         ]);
     }
 
     /**
-     * Approve jobseeker registration
+     * Approve job application
      */
-    public function approve(User $jobseeker): \Illuminate\Http\RedirectResponse
+    public function approve(JobApplication $application): \Illuminate\Http\RedirectResponse
     {
-        abort_if($jobseeker->role !== 'jobseeker', 403, 'Unauthorized');
-
-        $jobseeker->update([
-            'is_approved' => true,
-            'approved_at' => now(),
-            'approved_by' => auth()->id(),
+        $application->update([
+            'admin_status' => 'approved',
+            'admin_approved_at' => now(),
+            'admin_approved_by' => auth()->id(),
         ]);
 
-        return back()->with('success', "{$jobseeker->name} has been approved!");
+        return back()->with('success', "Application from {$application->user->name} has been approved!");
     }
 
     /**
-     * Reject jobseeker registration
+     * Reject job application
      */
-    public function reject(Request $request, User $jobseeker): \Illuminate\Http\RedirectResponse
+    public function reject(Request $request, JobApplication $application): \Illuminate\Http\RedirectResponse
     {
-        abort_if($jobseeker->role !== 'jobseeker', 403, 'Unauthorized');
-
         $request->validate([
-            'rejection_reason' => 'required|string|min:10|max:500',
+            'reason' => 'required|string|min:10|max:500',
         ]);
 
-        $jobseeker->update([
-            'is_approved' => false,
-            'rejection_reason' => $request->rejection_reason,
-            'rejected_at' => now(),
-            'rejected_by' => auth()->id(),
+        $application->update([
+            'admin_status' => 'rejected',
+            'admin_notes' => $request->reason,
+            'admin_approved_by' => auth()->id(),
         ]);
 
-        return back()->with('success', "{$jobseeker->name} has been rejected!");
+        return back()->with('success', "Application from {$application->user->name} has been rejected!");
     }
 }
-?>
