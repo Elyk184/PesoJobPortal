@@ -389,32 +389,33 @@ class EmployerController extends Controller
         $becameUnderReview = $currentVerificationStatus !== 'under_review' && $nextVerificationStatus === 'under_review';
 
         if ($becameUnderReview) {
-            $adminIds = User::query()
-                ->where('role', 'admin')
-                ->pluck('id');
-
-            if ($adminIds->isNotEmpty()) {
-                $portalNotification = PortalNotification::query()->create([
-                    'title' => 'Employer Verification Requires Review',
-                    'message' => sprintf(
-                        "%s submitted Business Permit and DTI/SEC Registration for verification.",
-                        $profileData['company_name'] ?? $profile->company_name ?? $employer->name
-                    ),
-                    'created_by' => $employer->id,
-                ]);
-
-                $rows = $adminIds->map(fn ($adminId) => [
-                    'user_id' => $adminId,
-                    'portal_notification_id' => $portalNotification->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ])->all();
-
-                UserNotification::query()->insert($rows);
-            }
+            $this->notifyAdmins(
+                'Employer Verification Requires Review',
+                sprintf(
+                    "%s submitted Business Permit and DTI/SEC Registration for verification.",
+                    $profileData['company_name'] ?? $profile->company_name ?? $employer->name
+                ),
+                $employer->id
+            );
         }
 
         return back()->with('success', 'Company profile updated successfully.');
+    }
+
+    public function showApplication(Request $request, JobApplication $application): View
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to view this applicant.');
+        }
+
+        $application->load(['user.profile', 'jobPost']);
+
+        return view('dashboard.employer.show-applicant', [
+            'application' => $application,
+            'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
+        ]);
     }
 
     public function notificationsPage(Request $request): View
@@ -512,6 +513,18 @@ class EmployerController extends Controller
         $jobData = array_intersect_key($jobData, $jobColumns);
 
         $job = PesoJob::create($jobData);
+
+        if (! $isDraft) {
+            $this->notifyAdmins(
+                'Job Post Pending Approval',
+                sprintf(
+                    "%s submitted a new job post '%s' and it is waiting for admin approval.",
+                    $employer->companyProfile?->company_name ?? $employer->name,
+                    $job->title
+                ),
+                $employer->id
+            );
+        }
 
         $message = match (true) {
             $isDraft => 'Job saved as draft successfully.',
@@ -645,7 +658,34 @@ class EmployerController extends Controller
         return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
     }
 
-    public function updateApplicantDecision(Request $request, JobApplication $application): RedirectResponse
+    private function notifyAdmins(string $title, string $message, ?int $createdBy = null): void
+    {
+        $adminIds = User::query()
+            ->where('role', 'admin')
+            ->pluck('id');
+
+        if ($adminIds->isEmpty()) {
+            return;
+        }
+
+        $portalNotification = PortalNotification::query()->create([
+            'title' => $title,
+            'message' => $message,
+            'created_by' => $createdBy,
+        ]);
+
+        $rows = $adminIds->map(fn ($adminId) => [
+            'user_id' => $adminId,
+            'portal_notification_id' => $portalNotification->id,
+            'read_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->all();
+
+        UserNotification::query()->insert($rows);
+    }
+
+    public function updateApplicantDecision(Request $request, JobApplication $application)
     {
         $job = $application->job;
 
@@ -653,20 +693,105 @@ class EmployerController extends Controller
             abort(403, 'You can only update applicants referred to your postings.');
         }
 
+        $previousStatus = $application->status;
+
+        // Support a simple `status` payload from the UI for common stages, keep backward compatibility
         $validated = $request->validate([
-            'employer_status' => ['required', 'in:interview_scheduled,hired,not_selected'],
-            'final_decision' => ['required', 'in:pending,hired,not_selected'],
+            'status' => ['nullable', 'in:pending,reviewing,shortlisted,interview,hired,rejected'],
+            'employer_status' => ['nullable', 'in:interview_scheduled,hired,not_selected'],
+            'final_decision' => ['nullable', 'in:pending,hired,not_selected'],
             'employer_feedback' => ['nullable', 'string'],
+            'interview_scheduled_at' => ['nullable', 'date'],
         ]);
 
-        $application->update([
-            'employer_status' => $validated['employer_status'],
-            'final_decision' => $validated['final_decision'],
-            'employer_feedback' => $validated['employer_feedback'] ?? null,
-            'status' => $validated['final_decision'] === 'hired'
-                ? 'hired'
-                : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed'),
-        ]);
+        $newStatus = $validated['status'] ?? null;
+        $update = [
+            'employer_feedback' => $validated['employer_feedback'] ?? $application->employer_feedback,
+            'interview_scheduled_at' => $application->interview_scheduled_at,
+        ];
+
+        if ($newStatus !== null) {
+            switch ($newStatus) {
+                case 'hired':
+                    $update['employer_status'] = 'hired';
+                    $update['final_decision'] = 'hired';
+                    $update['status'] = 'hired';
+                    break;
+                case 'rejected':
+                    $update['employer_status'] = 'not_selected';
+                    $update['final_decision'] = 'not_selected';
+                    $update['status'] = 'rejected';
+                    break;
+                case 'interview':
+                    $update['employer_status'] = 'interview_scheduled';
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = 'interview';
+                    $update['interview_scheduled_at'] = $validated['interview_scheduled_at'] ?? $application->interview_scheduled_at;
+                    break;
+                case 'reviewing':
+                case 'shortlisted':
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = $newStatus;
+                    // keep employer_status unchanged for these intermediate states
+                    $update['interview_scheduled_at'] = null;
+                    break;
+                case 'pending':
+                default:
+                    $update['final_decision'] = 'pending';
+                    $update['status'] = 'pending';
+                    $update['interview_scheduled_at'] = null;
+                    break;
+            }
+        } else {
+            // fallback to older fields if provided
+            if (isset($validated['employer_status'])) {
+                $update['employer_status'] = $validated['employer_status'];
+            }
+            if (isset($validated['final_decision'])) {
+                $update['final_decision'] = $validated['final_decision'];
+                $update['status'] = $validated['final_decision'] === 'hired' ? 'hired' : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed');
+            }
+            if (($update['status'] ?? null) !== 'interview') {
+                $update['interview_scheduled_at'] = null;
+            }
+        }
+
+        DB::transaction(function () use ($application, $update, $job, $request, $previousStatus) {
+            $application->update($update);
+
+            if ($application->user_id && $application->status !== $previousStatus) {
+                $statusLabel = $this->applicationStatusLabel($application->status);
+                $message = sprintf(
+                    'Your application for %s has been updated to %s.',
+                    $job->title ?? 'a job posting',
+                    $statusLabel
+                );
+
+                if ($application->status === 'interview' && ! empty($application->interview_scheduled_at)) {
+                    $message .= ' Interview scheduled for ' . $application->interview_scheduled_at->format('M d, Y h:i A') . '.';
+                }
+
+                if (! empty($application->employer_feedback)) {
+                    $message .= ' Feedback: ' . $application->employer_feedback;
+                }
+
+                $portalNotification = PortalNotification::create([
+                    'title' => 'Application Status Updated',
+                    'message' => $message,
+                    'created_by' => $request->user()->id,
+                ]);
+
+                UserNotification::create([
+                    'user_id' => $application->user_id,
+                    'portal_notification_id' => $portalNotification->id,
+                    'read_at' => null,
+                ]);
+            }
+        });
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'status' => $application->status]);
+        }
 
         return back()->with('success', 'Applicant decision updated.');
     }
@@ -712,8 +837,7 @@ class EmployerController extends Controller
     private function getReferredApplications(int $employerId)
     {
         return JobApplication::query()
-            ->with(['user.profile', 'job'])
-            ->where('is_referred', true)
+            ->with(['user.profile', 'jobPost'])
             ->whereHas('job', function ($query) use ($employerId) {
                 $query->where('employer_id', $employerId);
             })
@@ -808,5 +932,18 @@ class EmployerController extends Controller
         } catch (\Throwable) {
             return $requestedStatus;
         }
+    }
+
+    private function applicationStatusLabel(string $status): string
+    {
+        return match ($status) {
+            'pending' => 'Pending',
+            'reviewing' => 'Under Review',
+            'shortlisted' => 'Shortlisted',
+            'interview' => 'Interview Scheduled',
+            'hired' => 'Hired',
+            'rejected' => 'Rejected',
+            default => ucfirst($status),
+        };
     }
 }

@@ -18,15 +18,19 @@ class JobApplication extends Model
         'final_decision',
         'notes',
         'employer_feedback',
+        'interview_scheduled_at',
         'admin_status',
         'admin_approved_at',
         'admin_approved_by',
         'admin_notes',
+        'resume_path',
+        'resume_type',
     ];
 
     protected $casts = [
         'applied_at' => 'datetime',
         'admin_approved_at' => 'datetime',
+        'interview_scheduled_at' => 'datetime',
         'is_referred' => 'boolean',
     ];
 
@@ -48,6 +52,12 @@ class JobApplication extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'admin_approved_by');
+    }
+
+    // Compatibility alias used by some views: `$application->applicant`
+    public function getApplicantAttribute()
+    {
+        return $this->user;
     }
 }
 ?>

@@ -377,6 +377,17 @@
                 </div>
 
                 <div class="sidebar-inner">
+                    @php
+                        $currentEmployerUser = auth()->check() ? auth()->user() : null;
+                        $sidebarApplicantsTotalCount = $currentEmployerUser
+                            ? \App\Models\JobApplication::query()
+                                ->whereHas('job', function ($query) use ($currentEmployerUser) {
+                                    $query->where('employer_id', $currentEmployerUser->id);
+                                })
+                                ->whereNull('employer_status')
+                                ->count()
+                            : 0;
+                    @endphp
                     <ul class="sidebar-nav">
                         <li>
                             <a class="{{ request()->routeIs('employer.dashboard') ? 'active' : '' }}" href="{{ route('employer.dashboard') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="4"></rect><rect x="14" y="10" width="7" height="11"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span><span>Dashboard</span></a>
@@ -392,7 +403,15 @@
                             <a class="{{ request()->routeIs('employer.jobs.manage') ? 'active' : '' }}" href="{{ route('employer.jobs.manage') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H5a2 2 0 0 0-2 2v5"></path><path d="M14 3h5a2 2 0 0 1 2 2v5"></path><path d="M10 21H5a2 2 0 0 1-2-2v-5"></path><path d="M14 21h5a2 2 0 0 0 2-2v-5"></path><path d="M8 12h8"></path></svg></span><span>Manage Jobs</span></a>
                         </li>
                         <li>
-                            <a class="{{ request()->routeIs('employer.applicants.index') ? 'active' : '' }}" href="{{ route('employer.applicants.index') }}"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span><span>View Applicants</span></a>
+                            <a class="{{ request()->routeIs('employer.applicants.index') ? 'active' : '' }}" href="{{ route('employer.applicants.index') }}">
+                                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                                <span>View Applicants</span>
+                                @if($sidebarApplicantsTotalCount > 0)
+                                    <span style="margin-left:auto; display:inline-flex; align-items:center; gap:6px;">
+                                        <span style="min-width:22px; height:22px; padding:0 6px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $sidebarApplicantsTotalCount }}</span>
+                                    </span>
+                                @endif
+                            </a>
                         </li>
                     </ul>
 
@@ -409,7 +428,6 @@
                     <p class="sidebar-group-title">Account</p>
                     <ul class="sidebar-nav">
                         @php
-                            $currentEmployerUser = auth()->check() ? auth()->user() : null;
                             $sidebarNotifications = $currentEmployerUser
                                 ? $currentEmployerUser->employerNotifications()->get()
                                 : collect();

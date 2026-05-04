@@ -183,7 +183,7 @@
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h5 class="job-title mb-1">
-                                                    <a href="{{ route('jobs.index') }}" class="stretched-link text-dark">{{ $job->title }}</a>
+                                                    <a href="{{ route('jobseeker.apply-job', $job) }}" class="stretched-link text-dark">{{ $job->title }}</a>
                                                 </h5>
                                                 <p class="text-muted mb-1 small">
                                                     <i class="bi bi-building me-1"></i>{{ $job->company_name ?? 'Company' }}
@@ -233,21 +233,17 @@
                                             @php
                                                 $isSaved = \App\Models\SavedJob::where('job_id', $job->id)->where('user_id', auth()->id())->exists();
                                             @endphp
-                                            @if($isSaved)
-                                                <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-warning" title="Unsave">
-                                                        <i class="bi bi-bookmark-dash"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form action="{{ route('jobseeker.saved-jobs.toggle', $job) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Save">
-                                                        <i class="bi bi-bookmark"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm {{ $isSaved ? 'btn-warning' : 'btn-outline-secondary' }} js-save-job-btn"
+                                                title="{{ $isSaved ? 'Unsave' : 'Save' }}"
+                                                aria-pressed="{{ $isSaved ? 'true' : 'false' }}"
+                                                data-job-id="{{ $job->id }}"
+                                                data-saved="{{ $isSaved ? '1' : '0' }}"
+                                                data-save-url="{{ route('jobseeker.saved-jobs.toggle', $job) }}"
+                                            >
+                                                <i class="bi {{ $isSaved ? 'bi-bookmark-dash' : 'bi-bookmark' }} js-save-job-icon"></i>
+                                            </button>
                                         @endauth
                                         <small class="text-muted d-block d-md-none">Posted {{ $job->created_at->diffForHumans() }}</small>
                                     </div>
@@ -423,6 +419,8 @@
         min-width: 118px;
         display: flex;
         align-items: flex-end;
+        position: relative;
+        z-index: 3;
     }
     .job-card .stretched-link {
         text-decoration: none;
@@ -448,6 +446,12 @@
 
     .job-card .btn-outline-secondary {
         border-color: rgba(108, 117, 125, 0.25);
+    }
+
+    .js-save-job-btn {
+        min-width: 42px;
+        position: relative;
+        z-index: 4;
     }
 
     /* Responsive adjustments */
@@ -521,6 +525,57 @@
             });
         }
     })();
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('.js-save-job-btn');
+
+        if (! button) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const saveUrl = button.dataset.saveUrl;
+        const icon = button.querySelector('.js-save-job-icon');
+        const wasSaved = button.dataset.saved === '1';
+
+        const setSavedState = function (isSaved) {
+            button.dataset.saved = isSaved ? '1' : '0';
+            button.title = isSaved ? 'Unsave' : 'Save';
+            button.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+            button.classList.toggle('btn-warning', isSaved);
+            button.classList.toggle('btn-outline-secondary', ! isSaved);
+
+            if (icon) {
+                icon.className = isSaved ? 'bi bi-bookmark-dash js-save-job-icon' : 'bi bi-bookmark js-save-job-icon';
+            }
+        };
+
+        button.disabled = true;
+
+        setSavedState(! wasSaved);
+
+        fetch(saveUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            setSavedState(Boolean(data.saved));
+        })
+        .catch(error => {
+            console.error('Error saving job:', error);
+            setSavedState(wasSaved);
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+    });
 </script>
 @endpush
 

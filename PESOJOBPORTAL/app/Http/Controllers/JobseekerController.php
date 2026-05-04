@@ -9,6 +9,7 @@ use App\Models\JobApplication;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
 use App\Models\PortalNotification;
+use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -425,11 +426,12 @@ class JobseekerController extends Controller
     public function applications(Request $request): View
     {
         $statusMap = [
-            'all' => ['pending', 'reviewed', 'interviewed', 'hired', 'rejected'],
+            // include both 'interview' and legacy 'interviewed' values so they are treated the same
+            'all' => ['pending', 'reviewed', 'interview', 'interviewed', 'hired', 'rejected'],
             'pending' => ['pending'],
             'reviewing' => ['reviewed'],
             'shortlisted' => ['reviewed'],
-            'interview' => ['interviewed'],
+            'interview' => ['interview', 'interviewed'],
             'hired' => ['hired'],
             'rejected' => ['rejected'],
         ];
@@ -462,7 +464,8 @@ class JobseekerController extends Controller
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
             'reviewing' => (int) ($rawStatusCounts['reviewed'] ?? 0),
             'shortlisted' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            'interview' => (int) ($rawStatusCounts['interviewed'] ?? 0),
+            // sum both keys in case some records still use the legacy 'interviewed' value
+            'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
             'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
         ];
@@ -619,7 +622,7 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function toggleSaveJob(PesoJob $job): JsonResponse
+    public function toggleSaveJob(PesoJob $job): JsonResponse|RedirectResponse
     {
         $userId = (int) Auth::id();
 
@@ -642,6 +645,16 @@ class JobseekerController extends Controller
         $savedCount = SavedJob::query()
             ->where('user_id', $userId)
             ->count();
+
+        if (! request()->expectsJson()) {
+            if ($saved) {
+                return redirect()
+                    ->route('jobseeker.saved-jobs')
+                    ->with('success', 'Job saved to your bookmarks.');
+            }
+
+            return back()->with('success', 'Job removed from your saved jobs.');
+        }
 
         return response()->json([
             'saved' => $saved,
@@ -1944,8 +1957,12 @@ class JobseekerController extends Controller
     {
         $user = $request->user();
 
+        // Validate based on resume type
         $validated = $request->validate([
             'letter' => ['nullable', 'string', 'max:2000'],
+            'resume' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'resume_type' => ['required', 'in:upload,builder'],
+            'use_resume_builder' => ['nullable', 'boolean'],
         ]);
 
         // Check if already applied
@@ -1959,13 +1976,80 @@ class JobseekerController extends Controller
                 ->with('error', 'You have already applied for this job.');
         }
 
+        $resumePath = null;
+        $resumeType = $validated['resume_type'];
+
+        // If an actual file was uploaded, always treat the submission as an upload.
+        // This protects the flow when the hidden resume type gets out of sync in the UI.
+        if ($request->hasFile('resume')) {
+            $resumeType = 'upload';
+        }
+
+        // Handle resume based on type
+        if ($resumeType === 'upload') {
+            if ($request->hasFile('resume')) {
+                $resumePath = $request->file('resume')->store('resumes', 'public');
+            } else {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Please upload a resume or select another resume option.');
+            }
+        } elseif ($resumeType === 'builder') {
+            $userProfile = $user->profile ?? $user->userProfile;
+            if ($userProfile && $userProfile->resume_name && $userProfile->resume_email) {
+                // Store a reference to resume builder generated resume
+                $resumePath = 'builder:' . $userProfile->id;
+            } else {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'No resume found in Resume Builder. Please create one or upload a resume.');
+            }
+        }
+
         // Create new application
-        JobApplication::create([
+        $application = JobApplication::create([
             'user_id' => $user->id,
             'peso_job_id' => $job->id,
             'status' => 'pending',
             'notes' => $validated['letter'] ?? null,
+            'resume_path' => $resumePath,
+            'resume_type' => $resumeType,
         ]);
+
+        // Notify employer about the new applicant. Keep application flow resilient if notification fails.
+        if (! empty($job->employer_id)) {
+            try {
+                EmployerNotification::query()->create([
+                    'employer_id' => $job->employer_id,
+                    'type' => 'job_update',
+                    'title' => 'New Job Application Received',
+                    'message' => sprintf(
+                        '%s applied for "%s". Review this in View Applicants or Notifications.',
+                        $user->name,
+                        $job->title
+                    ),
+                    'is_read' => false,
+                ]);
+            } catch (\Throwable) {
+                try {
+                    EmployerNotification::query()->create([
+                        'employer_id' => $job->employer_id,
+                        'type' => 'general',
+                        'title' => 'New Job Application Received',
+                        'message' => sprintf(
+                            '%s applied for "%s". Review this in View Applicants or Notifications.',
+                            $user->name,
+                            $job->title
+                        ),
+                        'is_read' => false,
+                    ]);
+                } catch (\Throwable) {
+                    // Intentionally ignored so application submission still succeeds.
+                }
+            }
+        }
 
         return redirect()
             ->route('jobseeker.applications')

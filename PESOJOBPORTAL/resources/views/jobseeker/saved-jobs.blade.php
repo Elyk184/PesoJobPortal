@@ -3,7 +3,7 @@
 @section('title', 'Saved Jobs | Jobseeker')
 
 @section('content')
-<section aria-label="Saved jobs">
+<section aria-label="Saved jobs" class="saved-jobs-page">
 
     <div class="dashboard-section-card p-3 p-lg-4 mb-4">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
@@ -70,31 +70,31 @@
                 @foreach ($savedJobs as $job)
                     <div class="col-12 col-xl-6">
                         <article class="saved-job-card p-3 h-100 d-flex flex-column">
-                            <div class="d-flex align-items-start gap-3">
+                            <div class="saved-job-card-header">
                                 <div class="logo-placeholder rounded-3 bg-light d-flex align-items-center justify-content-center">
                                     <i class="bi bi-building fs-4 text-secondary"></i>
                                 </div>
-                                <div class="flex-grow-1">
+                                <div class="saved-job-heading">
                                     <h4 class="h6 mb-1 fw-bold text-dark">{{ $job['title'] }}</h4>
-                                    <div class="small text-muted">
+                                    <div class="small text-muted saved-job-subtitle">
                                         <i class="bi bi-building me-1"></i>{{ $job['employer_name'] }}
                                         <span class="mx-1">|</span>
                                         <i class="bi bi-geo-alt me-1"></i>{{ $job['location'] }}
                                     </div>
                                 </div>
-                                <div class="text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="toggleSaveJob({{ $job['id'] }}, this)">
+                                <div class="saved-job-actions">
+                                    <button type="button" class="btn btn-sm btn-outline-warning saved-bookmark-btn" onclick="toggleSaveJob({{ $job['id'] }}, this)" title="Remove from saved jobs">
                                         <i class="bi bi-bookmark-fill"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="mt-3 small text-secondary">
+                            <div class="saved-job-meta mt-3 small text-secondary">
                                 @if (! empty($job['salary_range']))
-                                    <span class="me-2"><i class="bi bi-cash-stack me-1"></i>{{ $job['salary_range'] }}</span>
+                                    <span class="saved-meta-item"><i class="bi bi-cash-stack me-1"></i>{{ $job['salary_range'] }}</span>
                                 @endif
                                 @if (! empty($job['application_deadline']))
-                                    <span class="badge bg-light text-dark border">Expires {{ $job['application_deadline'] }}</span>
+                                    <span class="badge bg-light text-dark border saved-expiry-badge">Expires {{ $job['application_deadline'] }}</span>
                                 @endif
                             </div>
 
@@ -108,8 +108,8 @@
                                 </div>
                             @endif
 
-                            <div class="mt-auto pt-3">
-                                <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-primary w-100">
+                            <div class="mt-auto pt-3 saved-cta-wrap">
+                                <a href="{{ route('jobseeker.apply-job', $job['id']) }}" class="btn btn-sm btn-primary w-100">
                                     View Details & Apply
                                 </a>
                             </div>
@@ -150,11 +150,15 @@
 @endsection
 
 <style>
+    .saved-jobs-page .dashboard-section-card {
+        border-radius: 14px;
+    }
+
     .saved-job-card {
-        border-radius: 12px;
+        border-radius: 14px;
         border: 1px solid var(--dash-border);
         background: #fff;
-        transition: box-shadow 0.18s ease, transform 0.12s ease;
+        transition: box-shadow 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
         display: flex;
         flex-direction: column;
     }
@@ -162,6 +166,61 @@
     .saved-job-card:hover {
         box-shadow: 0 12px 30px rgba(15, 45, 82, 0.06);
         transform: translateY(-4px);
+        border-color: rgba(45, 101, 177, 0.24);
+    }
+
+    .saved-job-card-header {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 0.8rem;
+    }
+
+    .saved-job-heading {
+        min-width: 0;
+    }
+
+    .saved-job-subtitle {
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .saved-job-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .saved-bookmark-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .saved-job-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .saved-meta-item {
+        display: inline-flex;
+        align-items: center;
+        color: #4b5e74;
+    }
+
+    .saved-expiry-badge {
+        font-weight: 600;
+    }
+
+    .saved-cta-wrap .btn {
+        min-height: 38px;
+        font-weight: 700;
     }
 
     .logo-placeholder {
@@ -172,5 +231,23 @@
     }
 
     .dashboard-empty-state svg { display: inline-block; }
+
+    @media (max-width: 575.98px) {
+        .saved-job-card-header {
+            grid-template-columns: 56px minmax(0, 1fr);
+        }
+
+        .saved-job-actions {
+            grid-column: 1 / -1;
+            justify-content: flex-end;
+            margin-top: 0.15rem;
+        }
+
+        .logo-placeholder {
+            width: 56px;
+            height: 56px;
+            flex: 0 0 56px;
+        }
+    }
 </style>
 

@@ -94,12 +94,17 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::patch('/applications/{application}', [EmployerController::class, 'updateApplicantDecision'])
         ->name('applications.update');
 
+    // View single application details
+    Route::get('/applications/{application}', [EmployerController::class, 'showApplication'])
+        ->name('applications.show');
+
     Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
         ->name('notifications.read');
 });
 
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerController::class, 'applyJob'])->name('jobs.show');
 
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

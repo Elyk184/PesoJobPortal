@@ -4,11 +4,14 @@
 
 @push('styles')
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
     .jobseeker-dashboard {
         --land-blue-900: #1e3a8a;
         --land-blue-800: #1e40af;
-        --land-red-600: #dc2626;
-        --land-yellow-300: #fcd34d;
+        --land-blue-500: #3b82f6;
+        --land-blue-300: #93c5fd;
+        --land-blue-200: #bfdbfe;
         --land-white: #ffffff;
         --dash-bg: #f4f7fb;
         --dash-card: #ffffff;
@@ -17,25 +20,25 @@
         --dash-muted: #60758e;
         --dash-accent: var(--land-blue-900);
         --dash-success: var(--land-blue-800);
-        --dash-warning: var(--land-yellow-300);
-        --dash-violet: var(--land-red-600);
+        --dash-warning: var(--land-blue-300);
+        --dash-violet: var(--land-blue-500);
         color: var(--dash-text);
-        font-family: "Manrope", "Segoe UI", sans-serif;
+        font-family: "Poppins", "Segoe UI", sans-serif;
         background:
-            radial-gradient(90rem 50rem at 92% -10%, #dfe8f8 0%, rgba(223, 232, 248, 0) 62%),
-            radial-gradient(85rem 45rem at -12% 0%, #eaf1fb 0%, rgba(234, 241, 251, 0) 57%),
+            radial-gradient(90rem 50rem at 92% -10%, rgba(30, 64, 175, 0.12) 0%, rgba(30, 64, 175, 0) 62%),
+            radial-gradient(85rem 45rem at -12% 0%, rgba(191, 219, 254, 0.38) 0%, rgba(191, 219, 254, 0) 57%),
             var(--dash-bg);
         border-radius: 18px;
-        padding: 16px;
+        padding: 18px;
     }
 
     .jobseeker-dashboard .dashboard-hero {
         position: relative;
         overflow: hidden;
         border-radius: 16px;
-        border: 1px solid var(--dash-border);
-        background: linear-gradient(135deg, var(--land-white) 0%, #f6f9ff 44%, #edf3ff 100%);
-        box-shadow: 0 12px 30px rgba(17, 30, 52, 0.08);
+        border: 1px solid #d8e4f5;
+        background: linear-gradient(135deg, #ffffff 0%, #f7faff 45%, #eef4ff 100%);
+        box-shadow: 0 14px 34px rgba(17, 30, 52, 0.08);
     }
 
     .jobseeker-dashboard .dashboard-hero::before {
@@ -45,7 +48,7 @@
         right: 0;
         top: 0;
         height: 4px;
-        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-yellow-300) 100%);
+        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 58%, var(--land-blue-300) 100%);
     }
 
     .jobseeker-dashboard .dashboard-hero::after {
@@ -64,33 +67,33 @@
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: #3d5c83;
+        color: #2563eb;
         font-weight: 700;
         margin-bottom: 0.35rem;
     }
 
     .jobseeker-dashboard .dashboard-hero .h4 {
-        color: #1f3555;
+        color: #0a3764;
     }
 
     .jobseeker-dashboard .dashboard-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        border: 1px solid var(--dash-border);
+        border: 1px solid #c7d8f5;
         border-radius: 999px;
         padding: 6px 12px;
         font-size: 0.76rem;
         color: var(--land-blue-900);
         background: #ffffff;
         font-weight: 700;
-        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.08);
+        box-shadow: 0 6px 16px rgba(30, 58, 138, 0.08);
     }
 
     .jobseeker-dashboard .quick-actions-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
+        gap: 10px;
     }
 
     .jobseeker-dashboard .quick-actions-grid .quick-action-btn:last-child {
@@ -102,20 +105,20 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        border: 1px solid #c5d3e9;
-        border-radius: 10px;
+        border: 1px solid #c7d8f5;
+        border-radius: 12px;
         background: #fff;
-        color: #1f3555;
+        color: #0a3764;
         text-decoration: none;
-        padding: 8px 10px;
-        font-size: 0.78rem;
+        padding: 10px 12px;
+        font-size: 0.8rem;
         font-weight: 700;
         transition: all 0.2s ease;
     }
 
     .jobseeker-dashboard .quick-action-btn:hover {
-        border-color: var(--land-red-600);
-        background: rgba(220, 38, 38, 0.08);
+        border-color: var(--land-blue-900);
+        background: rgba(191, 219, 254, 0.28);
         transform: translateY(-1px);
         box-shadow: 0 8px 18px rgba(10, 35, 80, 0.14);
     }
@@ -133,16 +136,16 @@
     }
 
     .jobseeker-dashboard .completion-meter .progress-bar {
-        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-yellow-300) 100%);
+        background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 55%, var(--land-blue-300) 100%);
     }
 
     .jobseeker-dashboard .dashboard-stat-card {
         background: var(--dash-card);
-        border: 1px solid var(--dash-border);
-        border-radius: 14px;
+        border: 1px solid #d8e4f5;
+        border-radius: 16px;
         position: relative;
         overflow: hidden;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
 
     .jobseeker-dashboard .dashboard-stat-card::before {
@@ -152,13 +155,14 @@
         right: 0;
         top: 0;
         height: 3px;
-        background: linear-gradient(90deg, var(--land-blue-900), var(--land-red-600));
+        background: linear-gradient(90deg, var(--land-blue-900), var(--land-blue-800) 58%, var(--land-blue-300));
         opacity: 0.9;
     }
 
     .jobseeker-dashboard .dashboard-stat-card:hover {
-        border-color: #b8c9de;
-        box-shadow: 0 10px 24px rgba(24, 43, 66, 0.08);
+        border-color: #b6c9e3;
+        box-shadow: 0 12px 28px rgba(24, 43, 66, 0.09);
+        transform: translateY(-1px);
     }
 
     .jobseeker-dashboard .dashboard-stat-icon {
@@ -178,8 +182,8 @@
     }
 
     .jobseeker-dashboard .stat-saved {
-        background: rgba(252, 211, 77, 0.22);
-        color: #8a6512;
+        background: rgba(191, 219, 254, 0.42);
+        color: #1e40af;
     }
 
     .jobseeker-dashboard .dashboard-stat-trend {
@@ -204,9 +208,10 @@
     }
 
     .jobseeker-dashboard .section-head {
-        border-bottom: 1px solid var(--dash-border);
+        border-bottom: 1px solid #d8e4f5;
         padding-bottom: 12px;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
+        min-height: 46px;
     }
 
     .jobseeker-dashboard .section-head .h5 {
@@ -216,6 +221,7 @@
     .jobseeker-dashboard .dashboard-section-card {
         position: relative;
         overflow: hidden;
+        border-radius: 18px;
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
@@ -295,10 +301,10 @@
         height: 100%;
     }
 
-    .jobseeker-dashboard .status-segment.pending { background: #f59e0b; }
-    .jobseeker-dashboard .status-segment.interview { background: #1e40af; }
-    .jobseeker-dashboard .status-segment.hired { background: #dc2626; }
-    .jobseeker-dashboard .status-segment.recommended { background: #1e3a8a; }
+    .jobseeker-dashboard .status-segment.pending { background: #dbeafe; }
+    .jobseeker-dashboard .status-segment.interview { background: #93c5fd; }
+    .jobseeker-dashboard .status-segment.hired { background: #3b82f6; }
+    .jobseeker-dashboard .status-segment.recommended { background: #1e40af; }
 
     .jobseeker-dashboard .status-item {
         border: 1px solid #dbe5f1;
@@ -343,7 +349,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .jobseeker-dashboard .status-legend-item {
@@ -366,25 +372,25 @@
         display: inline-block;
     }
 
-    .jobseeker-dashboard .status-legend-pending .dot { background: #f59e0b; }
-    .jobseeker-dashboard .status-legend-interview .dot { background: #1e40af; }
-    .jobseeker-dashboard .status-legend-hired .dot { background: #dc2626; }
-    .jobseeker-dashboard .status-legend-recommended .dot { background: #1e3a8a; }
+    .jobseeker-dashboard .status-legend-pending .dot { background: #dbeafe; }
+    .jobseeker-dashboard .status-legend-interview .dot { background: #93c5fd; }
+    .jobseeker-dashboard .status-legend-hired .dot { background: #3b82f6; }
+    .jobseeker-dashboard .status-legend-recommended .dot { background: #1e40af; }
 
     .jobseeker-dashboard .status-pending {
-        border-left: 4px solid #f59e0b;
+        border-left: 4px solid #bfdbfe;
     }
 
     .jobseeker-dashboard .status-interview {
-        border-left: 4px solid #1e40af;
+        border-left: 4px solid #93c5fd;
     }
 
     .jobseeker-dashboard .status-hired {
-        border-left: 4px solid #dc2626;
+        border-left: 4px solid #3b82f6;
     }
 
     .jobseeker-dashboard .status-recommended {
-        border-left: 4px solid #1e3a8a;
+        border-left: 4px solid #1e40af;
     }
 
     .jobseeker-dashboard .dashboard-empty-state {
@@ -477,8 +483,8 @@
         border-radius: 8px;
         display: grid;
         place-items: center;
-        background: #edf3fa;
-        color: #456487;
+        background: #eff6ff;
+        color: #2563eb;
         flex: 0 0 auto;
     }
 
@@ -502,9 +508,9 @@
         margin-left: 8px;
     }
 
-    .jobseeker-dashboard .prio-high { color: #b54708; }
-    .jobseeker-dashboard .prio-medium { color: #0f5ba7; }
-    .jobseeker-dashboard .prio-low { color: #2f8f5e; }
+    .jobseeker-dashboard .prio-high { color: #1e3a8a; }
+    .jobseeker-dashboard .prio-medium { color: #1e40af; }
+    .jobseeker-dashboard .prio-low { color: #3b82f6; }
 
     .jobseeker-dashboard .recently-viewed-item {
         border: 1px solid var(--dash-border);
@@ -531,6 +537,92 @@
         background: #fbfdff;
         padding: 14px;
         height: 100%;
+    }
+
+    .jobseeker-dashboard .skill-gap-summary {
+        border: 1px solid #d8e4f5;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .jobseeker-dashboard .skill-gap-summary-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: rgba(30, 64, 175, 0.12);
+        color: #1e40af;
+        flex: 0 0 auto;
+        font-size: 1.15rem;
+    }
+
+    .jobseeker-dashboard .skill-gap-summary-score {
+        font-size: clamp(2rem, 4vw, 2.7rem);
+        line-height: 1;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        color: #1e3a8a;
+    }
+
+    .jobseeker-dashboard .skill-gap-summary-label {
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #5f7591;
+        margin-top: 4px;
+    }
+
+    .jobseeker-dashboard .skill-gap-mini-stat {
+        border: 1px solid #d8e4f5;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.82);
+        padding: 12px 14px;
+        min-height: 92px;
+        box-shadow: 0 8px 18px rgba(18, 36, 58, 0.05);
+    }
+
+    .jobseeker-dashboard .skill-gap-mini-stat .dashboard-stat-number {
+        margin-top: 4px;
+    }
+
+    .jobseeker-dashboard .skill-gap-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .jobseeker-dashboard .skill-gap-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid #cfe0f7;
+        background: #f7fbff;
+        color: #2d65b1;
+    }
+
+    .jobseeker-dashboard .skill-gap-chip.matched {
+        border-color: #bfdbfe;
+        background: #eff6ff;
+        color: #1e40af;
+    }
+
+    .jobseeker-dashboard .skill-gap-chip.missing {
+        border-color: #dbeafe;
+        background: #f8fbff;
+        color: #2563eb;
+    }
+
+    .jobseeker-dashboard .skill-gap-chip.market {
+        border-color: #c7d8f5;
+        background: #ffffff;
+        color: #0a3764;
     }
 
     .jobseeker-dashboard .skill-gap-header {
@@ -565,16 +657,16 @@
     .jobseeker-dashboard .skill-gap-progress-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, #1e40af 0%, #fcd34d 100%);
+        background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 55%, #bfdbfe 100%);
         transition: width 0.6s ease;
     }
 
     .jobseeker-dashboard .skill-gap-progress-fill.low {
-        background: linear-gradient(90deg, #ef4444 0%, #f59e0b 100%);
+        background: linear-gradient(90deg, #bfdbfe 0%, #93c5fd 100%);
     }
 
     .jobseeker-dashboard .skill-gap-progress-fill.medium {
-        background: linear-gradient(90deg, #f59e0b 0%, #3f8efc 100%);
+        background: linear-gradient(90deg, #bfdbfe 0%, #3b82f6 100%);
     }
 
     .jobseeker-dashboard .skill-tag-list {
@@ -598,15 +690,15 @@
     }
 
     .jobseeker-dashboard .skill-tag.matched {
-        background: #f0fbf5;
-        color: #277b49;
-        border-color: #c8e9d9;
+        background: #eff6ff;
+        color: #1e40af;
+        border-color: #bfdbfe;
     }
 
     .jobseeker-dashboard .skill-tag.missing {
-        background: #fff5f5;
-        color: #b54708;
-        border-color: #fcd5d5;
+        background: #f8fbff;
+        color: #2563eb;
+        border-color: #dbeafe;
     }
 
     .jobseeker-dashboard .skill-tag.user-skill {
@@ -719,22 +811,6 @@
                     Keep it updated to receive relevant job recommendations.
                 </p>
             </div>
-            <div class="col-12 col-lg-4">
-                <div class="d-flex flex-column gap-2 completion-meter ms-lg-auto">
-                    <span class="dashboard-pill">
-                        <i class="bi bi-patch-check"></i>
-                        {{ $profileCompletionLabel ?? 'Getting Started' }} ({{ $profileCompletionPercent ?? 0 }}%)
-                    </span>
-                    <div class="progress w-100" role="progressbar" aria-label="Profile completion" aria-valuenow="{{ $profileCompletionPercent ?? 0 }}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%;"></div>
-                    </div>
-                    <div class="quick-actions-grid">
-                        <a href="{{ route('jobseeker.profile') }}" class="quick-action-btn"><i class="bi bi-person"></i>Update Profile</a>
-                        <a href="{{ route('jobseeker.resume-builder') }}" class="quick-action-btn"><i class="bi bi-file-earmark-text"></i>Resume Builder</a>
-                        <a href="{{ route('jobseeker.applications') }}" class="quick-action-btn"><i class="bi bi-send"></i>My Applications</a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -771,119 +847,111 @@
         </div>
     </div>
 
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 180px;">
-        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
-            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-bell me-2"></i>Notifications</h3>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge text-bg-danger">{{ $unreadNotificationsCount ?? 0 }} unread</span>
-                @if (($unreadNotificationsCount ?? 0) > 0)
-                    <a href="{{ route('jobseeker.dashboard', ['notifications' => 'read']) }}" class="btn btn-sm btn-outline-secondary mark-read-btn">Mark all as read</a>
-                @endif
-            </div>
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 140px;">
+        <div class="d-flex align-items-center justify-content-between gap-3 section-head mb-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clipboard-data me-2"></i>Application Status</h3>
+            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
         </div>
 
-        @if (($dashboardNotifications ?? collect())->isNotEmpty())
-            @php
-                $todayNotifications = collect($dashboardNotifications)->filter(fn($notification) => \Illuminate\Support\Carbon::parse($notification['created_at'])->isToday())->values();
-                $earlierNotifications = collect($dashboardNotifications)->filter(fn($notification) => !\Illuminate\Support\Carbon::parse($notification['created_at'])->isToday())->values();
-            @endphp
-
-            <div class="notifications-list">
-                @if ($todayNotifications->isNotEmpty())
-                    <div class="notification-group-title">Today</div>
-                    @foreach ($todayNotifications as $notification)
-                        <a href="{{ $notification['url'] }}" class="notification-item">
-                            <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
-                            <div>
-                                <div class="notification-title">
-                                    {{ $notification['title'] }}
-                                    <span class="notification-priority prio-{{ $notification['priority'] ?? 'low' }}">{{ $notification['priority'] ?? 'low' }}</span>
-                                </div>
-                                <div class="notification-message">{{ $notification['message'] }}</div>
-                            </div>
-                        </a>
-                    @endforeach
-                @endif
-
-                @if ($earlierNotifications->isNotEmpty())
-                    <div class="notification-group-title">Earlier</div>
-                    @foreach ($earlierNotifications as $notification)
-                        <a href="{{ $notification['url'] }}" class="notification-item">
-                            <div class="notification-icon"><i class="bi {{ $notification['icon'] }}"></i></div>
-                            <div>
-                                <div class="notification-title">
-                                    {{ $notification['title'] }}
-                                    <span class="notification-priority prio-{{ $notification['priority'] ?? 'low' }}">{{ $notification['priority'] ?? 'low' }}</span>
-                                </div>
-                                <div class="notification-message">{{ $notification['message'] }}</div>
-                            </div>
-                        </a>
-                    @endforeach
-                @endif
-            </div>
-        @else
-            <div class="dashboard-empty-state">
-                <div>
-                    <div class="empty-icon"><i class="bi bi-bell"></i></div>
-                    <div class="fw-semibold text-secondary">All caught up.</div>
-                    <div class="small">No new notifications right now.</div>
-                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary mt-2 empty-action-btn">Browse New Jobs</a>
-                </div>
-            </div>
-        @endif
-    </div>
-
-    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 190px;">
-        <div class="d-flex align-items-center justify-content-between gap-3 section-head">
-            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Application Status</h3>
-            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View All</a>
-        </div>
-
-        <div class="status-legend" aria-label="Application status legend">
+        <div class="status-legend mb-3" aria-label="Application status legend">
             <span class="status-legend-item status-legend-pending"><span class="dot" aria-hidden="true"></span><i class="bi bi-hourglass-split"></i>Pending</span>
             <span class="status-legend-item status-legend-interview"><span class="dot" aria-hidden="true"></span><i class="bi bi-mic"></i>Interview</span>
             <span class="status-legend-item status-legend-hired"><span class="dot" aria-hidden="true"></span><i class="bi bi-person-check"></i>Hired</span>
-            <span class="status-legend-item status-legend-recommended"><span class="dot" aria-hidden="true"></span><i class="bi bi-stars"></i>Recommended</span>
+            <span class="status-legend-item status-legend-recommended"><span class="dot" aria-hidden="true"></span><i class="bi bi-stars"></i>Reviewed</span>
         </div>
 
-        @php
-            $pipelineTotal = max(1,
-                (int) ($applicationStatusCounts['pending'] ?? 0)
-                + (int) ($applicationStatusCounts['interview'] ?? 0)
-                + (int) ($applicationStatusCounts['hired'] ?? 0)
-                + (int) ($applicationStatusCounts['recommended'] ?? 0)
-            );
+        <div class="row g-3">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="dashboard-stat-card p-3 h-100">
+                    <div class="dashboard-stat-icon stat-saved mb-3"><i class="bi bi-hourglass-split"></i></div>
+                    <div class="dashboard-stat-label">Pending Review</div>
+                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+                    <div class="small text-muted">Waiting for screening</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="dashboard-stat-card p-3 h-100">
+                    <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
+                    <div class="dashboard-stat-label mt-3">Interview</div>
+                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
+                    <div class="small text-muted">Interview stage applications</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="dashboard-stat-card p-3 h-100">
+                    <div class="dashboard-stat-icon" style="background: rgba(34, 197, 94, 0.12); color: #15803d;"><i class="bi bi-person-check"></i></div>
+                    <div class="dashboard-stat-label mt-3">Hired</div>
+                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
+                    <div class="small text-muted">Successfully placed</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="dashboard-stat-card p-3 h-100">
+                    <div class="dashboard-stat-icon" style="background: rgba(168, 85, 247, 0.12); color: #7c3aed;"><i class="bi bi-stars"></i></div>
+                    <div class="dashboard-stat-label mt-3">Reviewed</div>
+                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
+                    <div class="small text-muted">Checked by recruiters</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            $pendingWidth = (($applicationStatusCounts['pending'] ?? 0) / $pipelineTotal) * 100;
-            $interviewWidth = (($applicationStatusCounts['interview'] ?? 0) / $pipelineTotal) * 100;
-            $hiredWidth = (($applicationStatusCounts['hired'] ?? 0) / $pipelineTotal) * 100;
-            $recommendedWidth = (($applicationStatusCounts['recommended'] ?? 0) / $pipelineTotal) * 100;
-        @endphp
-
-        <div class="status-progress" aria-label="Application status distribution">
-            <div class="status-segment pending" style="width: {{ $pendingWidth }}%"></div>
-            <div class="status-segment interview" style="width: {{ $interviewWidth }}%"></div>
-            <div class="status-segment hired" style="width: {{ $hiredWidth }}%"></div>
-            <div class="status-segment recommended" style="width: {{ $recommendedWidth }}%"></div>
+    <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 160px;">
+        <div class="d-flex align-items-center justify-content-between gap-3 section-head mb-3">
+            <h3 class="h5 mb-0 fw-bold"><i class="bi bi-activity me-2"></i>Activity &amp; Insights</h3>
+            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
         </div>
 
-        <div class="status-grid">
-            <a href="{{ route('jobseeker.applications', ['status' => 'pending']) }}" class="status-item status-pending">
-                <div class="status-item-label">Pending Review</div>
-                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['pending'] ?? 0 }}">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
-            </a>
-            <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="status-item status-interview">
-                <div class="status-item-label">Interview</div>
-                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['interview'] ?? 0 }}">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
-            </a>
-            <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="status-item status-hired">
-                <div class="status-item-label">Hired</div>
-                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['hired'] ?? 0 }}">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
-            </a>
-            <a href="{{ route('jobseeker.applications', ['status' => 'recommended']) }}" class="status-item status-recommended">
-                <div class="status-item-label">Recommended</div>
-                <div class="status-item-value" data-counter-target="{{ $applicationStatusCounts['recommended'] ?? 0 }}">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
-            </a>
+        <div class="row g-3 align-items-stretch">
+            <div class="col-12 col-lg-5">
+                <div class="dashboard-stat-card h-100 p-3">
+                    <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                        <div>
+                            <div class="dashboard-stat-label mb-1">Profile progress</div>
+                            <div class="h4 mb-1 fw-bold">{{ $profileCompletionPercent ?? 0 }}%</div>
+                            <div class="small text-muted">{{ $profileCompletionLabel ?? 'Getting Started' }}</div>
+                        </div>
+                        <div class="dashboard-stat-icon" style="background: rgba(30, 64, 175, 0.12); color: #1e40af;"><i class="bi bi-person-check"></i></div>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 8px; border-radius: 999px; background: #e8eef6;">
+                        <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%; background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-blue-300) 100%);"></div>
+                    </div>
+
+                    <div class="small text-muted">
+                        Complete missing profile details to improve matching, visibility, and response rates.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-7">
+                <div class="row g-3 h-100">
+                    <div class="col-12 col-md-4">
+                        <div class="dashboard-stat-card p-3 h-100">
+                            <div class="dashboard-stat-icon stat-apps mb-3"><i class="bi bi-send"></i></div>
+                            <div class="dashboard-stat-label">Applications this week</div>
+                            <div class="dashboard-stat-number">{{ $kpiTrends['applicationsThisWeek'] ?? 0 }}</div>
+                            <div class="small text-muted">Recent submissions and follow-ups</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="dashboard-stat-card p-3 h-100">
+                            <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
+                            <div class="dashboard-stat-label mt-3">Interview activity</div>
+                            <div class="dashboard-stat-number">{{ $kpiTrends['interviewsThisWeek'] ?? 0 }}</div>
+                            <div class="small text-muted">Updates in the last 7 days</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="dashboard-stat-card p-3 h-100">
+                            <div class="dashboard-stat-icon stat-saved mb-3"><i class="bi bi-stars"></i></div>
+                            <div class="dashboard-stat-label">Pending review</div>
+                            <div class="dashboard-stat-number">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+                            <div class="small text-muted">Applications waiting for action</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -894,31 +962,118 @@
         </div>
 
         @if (($skillGapAnalysis['hasData'] ?? false) && ($skillGapAnalysis['totalMarketSkills'] ?? 0) > 0)
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="min-width: 80px;">
-                        <div class="skill-gap-score">{{ $skillGapAnalysis['coveragePercent'] }}%</div>
-                        <div class="skill-gap-score-label">Coverage</div>
+            <div class="skill-gap-summary p-3 p-lg-4 mb-3">
+                <div class="row g-3 align-items-center">
+                    <div class="col-12 col-lg-5">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="skill-gap-summary-icon">
+                                <i class="bi bi-bullseye"></i>
+                            </div>
+                            <div>
+                                <div class="skill-gap-summary-label mb-1">Market coverage</div>
+                                <div class="skill-gap-summary-score">{{ $skillGapAnalysis['coveragePercent'] }}%</div>
+                                <div class="small text-muted mt-1">How closely your profile matches in-demand skills.</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-gap-progress flex-grow-1" style="min-width: 200px; margin-bottom: 0;">
+
+                    <div class="col-12 col-lg-7">
                         @php
                             $progressClass = ($skillGapAnalysis['coveragePercent'] ?? 0) >= 70 ? '' : (($skillGapAnalysis['coveragePercent'] ?? 0) >= 40 ? 'medium' : 'low');
                         @endphp
-                        <div class="skill-gap-progress-fill {{ $progressClass }}" style="width: {{ $skillGapAnalysis['coveragePercent'] }}%;"></div>
+                        <div class="skill-gap-progress mb-2" style="margin-bottom: 10px;">
+                            <div class="skill-gap-progress-fill {{ $progressClass }}" style="width: {{ $skillGapAnalysis['coveragePercent'] }}%;"></div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                            <span class="skill-gap-chip matched"><i class="bi bi-check2-circle"></i>{{ count($skillGapAnalysis['matchedSkills'] ?? []) }} matched</span>
+                            <span class="skill-gap-chip missing"><i class="bi bi-exclamation-circle"></i>{{ count($skillGapAnalysis['missingSkills'] ?? []) }} missing</span>
+                            <span class="skill-gap-chip market"><i class="bi bi-briefcase"></i>{{ $skillGapAnalysis['totalMarketSkills'] }} market skills</span>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex gap-3">
-                    <div class="text-center">
-                        <div class="fw-bold" style="color: #277b49; font-size: 1.1rem;">{{ count($skillGapAnalysis['matchedSkills'] ?? []) }}</div>
-                        <div class="small text-muted">Matched</div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-4">
+                    <div class="skill-gap-mini-stat d-flex align-items-center gap-3 h-100">
+                        <div class="dashboard-stat-icon" style="background: rgba(30, 64, 175, 0.12); color: #1e40af;"><i class="bi bi-check-circle"></i></div>
+                        <div>
+                            <div class="dashboard-stat-label">Matched Skills</div>
+                            <div class="dashboard-stat-number">{{ count($skillGapAnalysis['matchedSkills'] ?? []) }}</div>
+                            <div class="small text-muted">Skills already in demand</div>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="fw-bold" style="color: #b54708; font-size: 1.1rem;">{{ count($skillGapAnalysis['missingSkills'] ?? []) }}</div>
-                        <div class="small text-muted">Missing</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="skill-gap-mini-stat d-flex align-items-center gap-3 h-100">
+                        <div class="dashboard-stat-icon" style="background: rgba(191, 219, 254, 0.55); color: #2563eb;"><i class="bi bi-exclamation-triangle"></i></div>
+                        <div>
+                            <div class="dashboard-stat-label">Skills to Consider</div>
+                            <div class="dashboard-stat-number">{{ count($skillGapAnalysis['missingSkills'] ?? []) }}</div>
+                            <div class="small text-muted">Gaps to close next</div>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="fw-bold" style="font-size: 1.1rem;">{{ $skillGapAnalysis['totalMarketSkills'] }}</div>
-                        <div class="small text-muted">Market Skills</div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="skill-gap-mini-stat d-flex align-items-center gap-3 h-100">
+                        <div class="dashboard-stat-icon" style="background: rgba(147, 197, 253, 0.28); color: #1e3a8a;"><i class="bi bi-stars"></i></div>
+                        <div>
+                            <div class="dashboard-stat-label">Total Market Skills</div>
+                            <div class="dashboard-stat-number">{{ $skillGapAnalysis['totalMarketSkills'] }}</div>
+                            <div class="small text-muted">Current job demand snapshot</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-5">
+                    <div class="dashboard-section-card p-3 h-100" style="border-radius: 16px;">
+                        <h4 class="h6 fw-bold mb-3"><i class="bi bi-person-badge me-2"></i>Your Current Skills</h4>
+                        @if (! empty($skillGapAnalysis['userSkills']))
+                            <div class="skill-gap-chip-row">
+                                @foreach ($skillGapAnalysis['userSkills'] as $skill)
+                                    <span class="skill-gap-chip matched"><i class="bi bi-check2"></i>{{ ucwords($skill) }}</span>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-muted small">No skills found in your profile. Add skills to see the comparison.</div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <div class="dashboard-section-card p-3 h-100" style="border-radius: 16px;">
+                        @if (! empty($skillGapAnalysis['missingSkills']))
+                            <h4 class="h6 fw-bold mb-3"><i class="bi bi-lightning-charge me-2" style="color: #1e40af;"></i>Skills in Demand You May Be Missing</h4>
+                            <div class="skill-gap-chip-row">
+                                @foreach ($skillGapAnalysis['missingSkills'] as $skill)
+                                    <span class="skill-gap-chip missing">
+                                        <i class="bi bi-plus-circle"></i>{{ ucwords($skill) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                            <div class="alert alert-info mt-3 mb-0 small">
+                                <i class="bi bi-lightbulb me-1"></i> Consider upskilling in these areas to improve your job match rate.
+                            </div>
+                        @else
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-check-circle-fill" style="color: #1e40af; font-size: 1.3rem;"></i>
+                                <span class="fw-bold h5 mb-0" style="color: #1e3a8a;">Excellent Coverage!</span>
+                            </div>
+                            <p class="text-muted mb-0">Your skillset covers all top market demands. Keep your profile updated as new roles are posted.</p>
+                        @endif
+
+                        @if (! empty($skillGapAnalysis['matchedSkills']))
+                            <h4 class="h6 fw-bold mb-3 mt-4"><i class="bi bi-check2-circle me-2" style="color: #1e40af;"></i>Skills You Have That Are In Demand</h4>
+                            <div class="skill-gap-chip-row">
+                                @foreach ($skillGapAnalysis['matchedSkills'] as $skill)
+                                    <span class="skill-gap-chip matched">
+                                        <i class="bi bi-check2"></i>{{ ucwords($skill) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
