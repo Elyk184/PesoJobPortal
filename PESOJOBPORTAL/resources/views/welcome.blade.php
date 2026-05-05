@@ -19,7 +19,7 @@
         @endif
         <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
         <link rel="stylesheet" href="{{ asset('css/services.css') }}">
-        
+
 
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
@@ -139,7 +139,7 @@
                     background-size: cover;
                     background-position: center center;
                 }
-                
+
                 .peso-hero::after {
                     width: 350px;
                     height: 350px;
@@ -154,7 +154,7 @@
                     background-size: cover;
                     background-position: center center;
                 }
-                
+
                 .peso-hero::after {
                     width: 250px;
                     height: 250px;
@@ -646,6 +646,7 @@
                 </div>
             </section>
 
+
             <section class="about-section" id="about-main" aria-label="About PESO Manolo Fortich">
                 <div class="about-grid">
                     <article class="about-item">
@@ -756,6 +757,29 @@
                                 <span>→</span>
                             </a>
                         </div>
+=======
+            <aside aria-label="Quick statistics" class="hero-tabulation">
+                <div class="hero-tabulation-grid">
+                    <div class="hero-stat">
+                        <strong class="stat-counter" data-count="{{ $jobSeekers ?? 0 }}" data-suffix="+">0</strong>
+                        <div class="objective-divider" aria-hidden="true"></div>
+                        <span>Job Seekers</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong class="stat-counter" data-count="{{ $employers ?? 0 }}" data-suffix="+">0</strong>
+                        <div class="objective-divider" aria-hidden="true"></div>
+                        <span>Employers</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong class="stat-counter" data-count="{{ $jobsPosted ?? 0 }}" data-suffix="+">0</strong>
+                        <div class="objective-divider" aria-hidden="true"></div>
+                        <span>Jobs Posted</span>
+                    </div>
+                    <div class="hero-stat">
+                        <strong class="stat-counter" data-count="{{ $placementRate ?? 0 }}" data-suffix="%">0</strong>
+                        <div class="objective-divider" aria-hidden="true"></div>
+                        <span>Placement Rate</span>
+>>>>>>> 158908571d2de94397ddfa0a0a3d5b5e4948925e
                     </div>
                 </div>
             </section>

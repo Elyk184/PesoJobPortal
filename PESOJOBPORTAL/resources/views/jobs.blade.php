@@ -503,5 +503,6 @@ body{
         {{ $jobs->links() }}
     </div>
 </div>
+@include('components.footer')
 @endsection
 

@@ -52,27 +52,13 @@
                     <li><a href="{{ url('/contact') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">Contact</a></li>
                 </ul>
             </div>
-
-            <!-- Office Hours Section -->
-            <div>
-                <h4 style="color: #ffffff; font-weight: 800; font-size: 16px; margin-bottom: 1.5rem; letter-spacing: -0.3px;">Office Hours</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Monday - Thursday</span>
-                        <span style="color: #fff; font-weight: 600;">7:30 AM - 6:00 PM</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Friday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Saturday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; color: #cbd5e1; font-size: 14px;">
-                        <span>Sunday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <h4 class="footer-title" style="color: #f5f7fb; font-weight: 700;">Office Hours</h4>
+                <ul class="list-unstyled" style="color: #b3c6e0;">
+                    <li class="d-flex justify-content-between mb-2"><span>Monday - Thursday</span><span style="color: #fff;">7:30 AM - 6:00 PM</span></li>
+                    <li class="d-flex justify-content-between mb-2"><span>Friday</span><span style="color: #fff;">Closed</span></li>
+                    <li class="d-flex justify-content-between mb-2"><span>Saturday</span><span style="color: #fff;">Closed</span></li>
+                    <li class="d-flex justify-content-between mb-2"><span>Sunday</span><span style="color: #fff;">Closed</span></li>
                 </ul>
                 <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(215, 38, 56, 0.2);">
                     <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" style="background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(215, 38, 56, 0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
@@ -82,15 +68,14 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
+
         <div class="text-center mt-4 pt-3" style="border-top: 1px solid #1f4b8f; color: #b3c6e0;">
             <p class="mb-0">&copy; {{ date('Y') }} Link Job Resource Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
-=======
 
         <!-- Footer Bottom -->
         <div style="border-top: 1px solid rgba(215, 38, 56, 0.2); padding-top: 2rem; margin-top: 2rem; text-align: center;">
             <p style="margin: 0; font-size: 13px; color: #b0b8d4;">&copy; {{ date('Y') }} PESO Job Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
->>>>>>> ab9de89d2f5e284c46207d8c18a9ec535de60d62
+
         </div>
     </div>
 </footer>

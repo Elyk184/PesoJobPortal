@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -12,6 +12,12 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index']);
+>>>>>>> 158908571d2de94397ddfa0a0a3d5b5e4948925e
+=======
+Route::get('/', [WelcomeController::class, 'index']);
+=======
+Route::get('/', [WelcomeController::class, 'index']);
+>>>>>>> 158908571d2de94397ddfa0a0a3d5b5e4948925e
 
 Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');
@@ -113,7 +119,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
         Route::get('/{application}', [JobseekerApprovalController::class, 'show'])->name('show');
         Route::post('/{application}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
-        Route::post('/{application}/reject', [JobseekerController::class, 'reject'])->name('reject');
+        Route::post('/{application}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
     });
 
     // Approvals & Verification Section
@@ -190,3 +196,4 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
     ->name('chatbot.chat');
+
