@@ -125,14 +125,16 @@ class EmployerController extends Controller
             $employer->forceFill(['is_employer_verified' => true])->save();
         }
 
-        $referredApplications = $this->getReferredApplications($employer->id);
+        $referredApplications = $this->getReferredApplications($employer->id, $request);
+
+        $filteredApplications = collect($referredApplications); // For stats
 
         return view('dashboard.employer.view-applicants', [
             'referredApplications' => $referredApplications,
-            'totalApplicants' => $referredApplications->count(),
-            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
-            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
-            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
+            'totalApplicants' => $filteredApplications->count(),
+            'pendingReview' => $filteredApplications->whereNull('employer_status')->count(),
+            'approved' => $filteredApplications->where('employer_status', 'hired')->count(),
+            'rejected' => $filteredApplications->where('employer_status', 'not_selected')->count(),
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -947,15 +949,38 @@ class EmployerController extends Controller
             ->get();
     }
 
-    private function getReferredApplications(int $employerId)
+    private function getReferredApplications(int $employerId, Request $request = null)
     {
-        return JobApplication::query()
+        $query = JobApplication::query()
             ->with(['user.profile', 'jobPost'])
-            ->whereHas('job', function ($query) use ($employerId) {
-                $query->where('employer_id', $employerId);
-            })
-            ->latest()
-            ->get();
+            ->whereHas('job', function ($queryBuilder) use ($employerId) {
+                $queryBuilder->where('employer_id', $employerId);
+            });
+
+        if ($request) {
+            $jobId = $request->query('job_id');
+            $status = $request->query('status');
+            $search = trim($request->query('search', ''));
+
+            if ($jobId) {
+                $query->where('peso_job_id', $jobId);
+            }
+
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                                  ->orWhere('email', 'like', "%{$search}%");
+                    });
+                });
+            }
+        }
+
+        return $query->latest()->get();
     }
 
     private function getNotifications(int $employerId, int $limit = 20)

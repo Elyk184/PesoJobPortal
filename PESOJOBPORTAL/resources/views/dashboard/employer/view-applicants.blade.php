@@ -343,26 +343,25 @@
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        padding: 0.85rem 1rem;
+        padding: 1.25rem 1.25rem;
         background: transparent;
     }
     .table tbody td {
-        padding: 0.8rem 1rem;
-        vertical-align: top;
+        padding: 1.25rem 1.25rem;
+        vertical-align: middle;
+        border-color: #f1f5f9;
     }
-    .table tbody td:first-child {
-        padding-left: 1.15rem;
-    }
-    .table thead th:first-child {
-        padding-left: 1.15rem;
+    /* Removed inconsistent first-child padding for uniformity */
+    .d-flex.align-items-start.gap-3 {
+        gap: 1rem;
     }
     .user-avatar {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid #fff;
-        box-shadow: 0 4px 10px rgba(15,49,96,0.06);
+        box-shadow: 0 6px 12px rgba(15,49,96,0.08);
     }
     .user-initials {
         width: 42px;
@@ -406,8 +405,9 @@
         border-bottom: 1px solid #e8f0f8;
     }
     .table tbody tr:hover {
-        background-color: #f7fbff;
-        box-shadow: inset 0 2px 8px rgba(31, 79, 143, 0.04);
+        background: linear-gradient(90deg, #f8fbff 0%, #f0f7ff 100%);
+        box-shadow: 0 4px 12px rgba(31, 79, 143, 0.08);
+        transform: translateY(-1px);
     }
     .table tbody td {
         vertical-align: middle;
