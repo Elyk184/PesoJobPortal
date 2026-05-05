@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Profile | Jobseeker | PESO Job Portal')
+@section('title', 'Profile | Jobseeker')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
@@ -81,15 +81,21 @@
 @endphp
 
 <section class="container py-4" aria-label="Jobseeker profile">
-    <div class="dashboard-topbar">
-        <div>
-            <div class="dashboard-topbar-title">My Profile</div>
-            <div class="dashboard-topbar-subtitle">Manage your jobseeker profile</div>
-        </div>
-        <a href="{{ route('jobseeker.dashboard') }}" class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-        </a>
-    </div>
+    <style>
+        .dashboard-section-card { background: #fff; border-radius: 12px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(16,24,40,0.04); }
+        .profile-section-header { display:flex; gap:12px; align-items:center; }
+        .profile-section-icon { font-size:1.5rem; color:#667eea; width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; background:#f1f5ff; border-radius:8px; }
+        .profile-section-title { margin:0; font-size:1.15rem; }
+        .profile-section-kicker { font-weight:700; color:#6c757d; font-size:0.85rem; }
+        .profile-input { height:44px; border-radius:8px; }
+        .profile-entry-card { padding:12px; border-radius:10px; }
+        .profile-save-wrap { position: sticky; bottom: 12px; display:flex; justify-content:flex-end; padding-top:8px; background:transparent; z-index:5; }
+        .profile-save-btn { background: linear-gradient(90deg,#667eea,#764ba2); border:none; color:#fff; padding:10px 18px; border-radius:8px; box-shadow: 0 6px 18px rgba(102,126,234,0.12); }
+        .profile-remove-btn { border-radius:6px; }
+        .profile-section-rule { margin: 10px 0 14px; border-top: 1px solid rgba(0,0,0,0.04); }
+        @media (max-width: 767px) { .profile-save-wrap { position: static; margin-top: 10px; } }
+    </style>
+
 
     @if (session('status'))
         <div class="alert alert-success border-0 shadow-sm">{{ session('status') }}</div>

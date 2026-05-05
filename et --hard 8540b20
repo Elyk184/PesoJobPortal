@@ -1,0 +1,28 @@
+[33m2967222[m[33m ([m[1;36mHEAD -> [m[1;32mkyle[m[33m, [m[1;31morigin/binns[m[33m, [m[1;32mbinns[m[33m)[m HEAD@{0}: reset: moving to 29672220db65ff3b2c4ec3cad831df2879a15dcd
+[33m8540b20[m[33m ([m[1;31morigin/kyle[m[33m)[m HEAD@{1}: pull: Fast-forward
+[33mc822a49[m HEAD@{2}: checkout: moving from binns to kyle
+[33m2967222[m[33m ([m[1;36mHEAD -> [m[1;32mkyle[m[33m, [m[1;31morigin/binns[m[33m, [m[1;32mbinns[m[33m)[m HEAD@{3}: pull: Fast-forward
+[33me1ee0e6[m HEAD@{4}: commit (merge): Merge branch 'binns' of https://github.com/Elyk184/PesoJobPortal into binns
+[33mcbec65c[m HEAD@{5}: commit: push
+[33m9db7e78[m HEAD@{6}: commit: added structure content
+[33m57bd8d3[m HEAD@{7}: commit: updated card layout and created structure blade
+[33m5915d74[m HEAD@{8}: reset: moving to origin/binns~
+[33mc635c17[m HEAD@{9}: commit: updated card design
+[33mc7d944e[m HEAD@{10}: pull --rebase: Fast-forward
+[33mcef16d3[m[33m ([m[1;32mmain[m[33m)[m HEAD@{11}: checkout: moving from kyle to binns
+[33mc822a49[m HEAD@{12}: pull: Fast-forward
+[33mc7a08e0[m HEAD@{13}: checkout: moving from binns to kyle
+[33mcef16d3[m[33m ([m[1;32mmain[m[33m)[m HEAD@{14}: checkout: moving from kyle to binns
+[33mc7a08e0[m HEAD@{15}: checkout: moving from test to kyle
+[33mf6d5acb[m[33m ([m[1;32mtest[m[33m)[m HEAD@{16}: pull: Fast-forward
+[33m079fde7[m HEAD@{17}: checkout: moving from binns to test
+[33mcef16d3[m[33m ([m[1;32mmain[m[33m)[m HEAD@{18}: checkout: moving from test to binns
+[33m079fde7[m HEAD@{19}: pull: Fast-forward
+[33mc873c4c[m HEAD@{20}: checkout: moving from binns to test
+[33mcef16d3[m[33m ([m[1;32mmain[m[33m)[m HEAD@{21}: checkout: moving from main to binns
+[33mcef16d3[m[33m ([m[1;32mmain[m[33m)[m HEAD@{22}: commit: news and updates color fixed
+[33m0b48d58[m HEAD@{23}: commit: news and updates color changed
+[33m0200cbd[m HEAD@{24}: commit: news and updates justify text
+[33m2dee7ff[m HEAD@{25}: commit: news and updates design fix
+[33m0512488[m HEAD@{26}: commit: news and updates card layout optimization
+[33m02d2a9b[m HEAD@{27}: clone: from https://github.com/Elyk184/PesoJobPortal.git

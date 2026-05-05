@@ -2,10 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserProfile;
 use App\Models\User;
+use App\Models\CompanyProfile;
+use App\Models\PesoJob;
+use App\Models\JobApplication;
+use App\Models\SavedJob;
+use App\Models\PesoClearance;
+use App\Models\PortalNotification;
+use App\Models\EmployerNotification;
+use App\Models\UserNotification;
+use App\Models\UserProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,19 +23,658 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JobseekerController extends Controller
 {
-    public function dashboard(): View
+    public function dashboard(Request $request): View
     {
-        return view('dashboard.jobseeker.dashboard');
+        $user = Auth::user();
+        $profile = $user?->profile;
+        $userId = $user?->id;
+        $activeJobsCount = PesoJob::query()->where('status', 'active')->count();
+        $sampleJobsCount = count($this->sampleVacancies());
+        $profileCompletionPercent = $this->calculateProfileCompletionPercent($user, $profile);
+        $jobsThisWeek = PesoJob::query()
+            ->where('status', 'active')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->count();
+        $recommendedJobs = $this->buildProfileBasedRecommendations($profile);
+        $isProfileMatchedRecommendations = $recommendedJobs->isNotEmpty();
+
+        if ($recommendedJobs->isEmpty()) {
+            $recommendedJobs = PesoJob::query()
+                ->where('status', 'active')
+                ->latest()
+                ->limit(3)
+                ->get()
+                ->map(function (PesoJob $job) {
+                    return [
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                        'requirements_list' => $this->extractJobRequirements($job),
+                    ];
+                })
+                ->values();
+        }
+
+        $recentlyViewedJobIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        $recentlyViewedJobs = collect();
+
+        if ($recentlyViewedJobIds->isNotEmpty()) {
+            $recentlyViewedMap = PesoJob::query()
+                ->where('status', 'active')
+                ->whereIn('id', $recentlyViewedJobIds->all())
+                ->get()
+                ->keyBy('id');
+
+            $recentlyViewedJobs = $recentlyViewedJobIds
+                ->map(fn ($id) => $recentlyViewedMap->get($id))
+                ->filter()
+                ->take(3)
+                ->map(function (PesoJob $job) {
+                    return [
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                    ];
+                })
+                ->values();
+        }
+
+        $isUsingSampleRecommendations = false;
+
+        if ($recommendedJobs->isEmpty()) {
+            $recommendedJobs = collect($this->sampleVacancies())
+                ->take(3)
+                ->values();
+            $isUsingSampleRecommendations = true;
+        }
+
+        $applicationStatusCounts = [
+            'pending' => 0,
+            'interview' => 0,
+            'hired' => 0,
+            'recommended' => 0,
+            'total' => 0,
+        ];
+
+        if ($userId) {
+            $rawApplicationCounts = JobApplication::query()
+                ->where('user_id', $userId)
+                ->selectRaw('status, COUNT(*) as aggregate')
+                ->groupBy('status')
+                ->pluck('aggregate', 'status');
+
+            $applicationStatusCounts['pending'] = (int) ($rawApplicationCounts['pending'] ?? 0);
+            $applicationStatusCounts['interview'] = (int) ($rawApplicationCounts['interviewed'] ?? 0);
+            $applicationStatusCounts['hired'] = (int) ($rawApplicationCounts['hired'] ?? 0);
+            $applicationStatusCounts['recommended'] = (int) ($rawApplicationCounts['reviewed'] ?? 0);
+            $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
+        }
+
+        $applicationsThisWeek = $userId
+            ? JobApplication::query()
+                ->where('user_id', $userId)
+                ->where('created_at', '>=', now()->subDays(7))
+                ->count()
+            : 0;
+
+        $interviewsThisWeek = $userId
+            ? JobApplication::query()
+                ->where('user_id', $userId)
+                ->where('status', 'interviewed')
+                ->where('updated_at', '>=', now()->subDays(7))
+                ->count()
+            : 0;
+
+        if ($request->query('notifications') === 'read') {
+            $request->session()->put('jobseeker_notifications_read_at', now()->toIso8601String());
+        }
+
+        $notifications = collect();
+
+        if ($profileCompletionPercent < 100) {
+            $notifications->push([
+                'type' => 'profile',
+                'priority' => 'medium',
+                'icon' => 'bi-person-lines-fill',
+                'title' => 'Complete your profile',
+                'message' => 'Your profile is only ' . $profileCompletionPercent . '% complete. Add missing details to improve job matches.',
+                'url' => route('jobseeker.profile'),
+                'created_at' => now(),
+            ]);
+        }
+
+        if ($applicationStatusCounts['interview'] > 0) {
+            $notifications->push([
+                'type' => 'interview',
+                'priority' => 'high',
+                'icon' => 'bi-mic',
+                'title' => 'Interview updates available',
+                'message' => 'You have ' . $applicationStatusCounts['interview'] . ' application(s) in interview status.',
+                'url' => route('jobseeker.applications', ['status' => 'interview']),
+                'created_at' => now()->subMinutes(10),
+            ]);
+        }
+
+        if ($applicationStatusCounts['pending'] > 0) {
+            $notifications->push([
+                'type' => 'pending',
+                'priority' => 'medium',
+                'icon' => 'bi-hourglass-split',
+                'title' => 'Pending applications for review',
+                'message' => 'You currently have ' . $applicationStatusCounts['pending'] . ' pending application(s).',
+                'url' => route('jobseeker.applications', ['status' => 'pending']),
+                'created_at' => now()->subMinutes(20),
+            ]);
+        }
+
+        if ($jobsThisWeek > 0) {
+            $notifications->push([
+                'type' => 'jobs',
+                'priority' => 'low',
+                'icon' => 'bi-briefcase',
+                'title' => 'New job posts this week',
+                'message' => $jobsThisWeek . ' new active job(s) were posted in the last 7 days.',
+                'url' => route('jobseeker.browse-jobs'),
+                'created_at' => now()->subHours(1),
+            ]);
+        }
+
+        $notifications = $notifications
+            ->sortByDesc('created_at')
+            ->values();
+
+        $notificationsReadAt = $request->session()->get('jobseeker_notifications_read_at');
+        $notificationsReadAt = $notificationsReadAt ? Carbon::parse($notificationsReadAt) : null;
+
+        $unreadNotificationsCount = $notificationsReadAt
+            ? $notifications->filter(fn ($item) => Carbon::parse($item['created_at'])->gt($notificationsReadAt))->count()
+            : $notifications->count();
+
+        $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
+
+        return view('dashboard.jobseeker.dashboard', [
+            'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
+            'profileCompletionPercent' => $profileCompletionPercent,
+            'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
+            'recommendedJobs' => $recommendedJobs,
+            'isUsingSampleRecommendations' => $isUsingSampleRecommendations,
+            'isProfileMatchedRecommendations' => $isProfileMatchedRecommendations,
+            'applicationStatusCounts' => $applicationStatusCounts,
+            'dashboardNotifications' => $notifications,
+            'unreadNotificationsCount' => $unreadNotificationsCount,
+            'recentlyViewedJobs' => $recentlyViewedJobs,
+            'recentlyViewedCount' => $recentlyViewedJobIds->count(),
+            'kpiTrends' => [
+                'jobsThisWeek' => $jobsThisWeek,
+                'applicationsThisWeek' => $applicationsThisWeek,
+                'interviewsThisWeek' => $interviewsThisWeek,
+            ],
+            'skillGapAnalysis' => $skillGapAnalysis,
+        ]);
     }
 
-    public function vacancies(): View
+    public function vacancies(Request $request): View
     {
         return view('dashboard.jobseeker.vacancies');
     }
 
-    public function applications(): View
+    public function browseJobs(Request $request): View
     {
-        return view('dashboard.jobseeker.applications');
+        $jobsQuery = PesoJob::query()
+            ->activeApproved()
+            ->with(['employer.companyProfile']);
+
+        $search = trim((string) $request->query('search', ''));
+        $location = trim((string) $request->query('location', ''));
+        $industry = trim((string) $request->query('industry', ''));
+        $barangay = trim((string) $request->query('barangay', ''));
+        $employmentType = trim((string) $request->query('employment_type', ''));
+        $sort = (string) $request->query('sort', 'newest');
+
+        if ($search !== '') {
+            $jobsQuery->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('employer_name', 'like', '%' . $search . '%')
+                    ->orWhere('location', 'like', '%' . $search . '%')
+                    ->orWhere('requirements', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($location !== '') {
+            $jobsQuery->where('location', 'like', '%' . $location . '%');
+        }
+
+        if ($employmentType !== '') {
+            $jobsQuery->where('job_type', $employmentType);
+        }
+
+        if ($industry !== '') {
+            $jobsQuery->whereHas('employer.companyProfile', function ($q) use ($industry) {
+                $q->where('industry', $industry);
+            });
+        }
+
+        if ($barangay !== '') {
+            $jobsQuery->whereHas('employer.companyProfile', function ($q) use ($barangay) {
+                $q->where('barangay', $barangay);
+            });
+        }
+
+        // Sorting
+        if ($sort === 'expiring') {
+            $jobsQuery->orderBy('application_end_date', 'asc');
+        } elseif ($sort === 'salary_high') {
+            $jobsQuery->orderByDesc('salary');
+        } elseif ($sort === 'salary_low') {
+            $jobsQuery->orderBy('salary');
+        } else {
+            $jobsQuery->latest();
+        }
+
+        $locations = PesoJob::query()
+            ->activeApproved()
+            ->whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->orderBy('location')
+            ->pluck('location')
+            ->values();
+
+        $industries = CompanyProfile::query()
+            ->whereNotNull('industry')
+            ->where('industry', '!=', '')
+            ->distinct()
+            ->orderBy('industry')
+            ->pluck('industry')
+            ->values();
+
+        $barangays = CompanyProfile::query()
+            ->whereNotNull('barangay')
+            ->where('barangay', '!=', '')
+            ->distinct()
+            ->orderBy('barangay')
+            ->pluck('barangay')
+            ->values();
+
+        $jobs = $jobsQuery->paginate(10)->withQueryString();
+
+        $jobs->getCollection()->transform(function (PesoJob $job) {
+            $job->setAttribute('requirements_list', $this->extractJobRequirements($job));
+            return $job;
+        });
+
+        return view('dashboard.jobseeker.browse-jobs', [
+            'jobs' => $jobs,
+            'locations' => $locations,
+            'industries' => $industries,
+            'barangays' => $barangays,
+        ]);
+    }
+
+    public function applications(Request $request): View
+    {
+        $statusMap = [
+            'all' => ['pending', 'reviewing', 'shortlisted', 'interview', 'hired', 'rejected'],
+            'pending' => ['pending'],
+            'reviewing' => ['reviewing'],
+            'shortlisted' => ['shortlisted'],
+            'interview' => ['interview', 'interviewed'],
+            'hired' => ['hired'],
+            'rejected' => ['rejected'],
+        ];
+
+        $statusFilter = (string) $request->query('status', 'all');
+
+        if (! array_key_exists($statusFilter, $statusMap)) {
+            $statusFilter = 'all';
+        }
+
+        $userId = (int) Auth::id();
+
+        $query = JobApplication::query()
+            ->where('user_id', $userId)
+            ->whereIn('status', $statusMap[$statusFilter])
+            ->with('job')
+            ->orderByDesc('applied_at')
+            ->orderByDesc('created_at');
+
+        $perPageParam = (string) $request->query('per_page', '10');
+        $perPage = $perPageParam === 'all' ? max(1, $query->count()) : (int) max(1, intval($perPageParam));
+
+        $applications = $query->paginate($perPage)->withQueryString();
+
+        $rawStatusCounts = JobApplication::query()
+            ->where('user_id', $userId)
+            ->selectRaw('status, COUNT(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
+        $statusCounts = [
+            'all' => (int) $rawStatusCounts->sum(),
+            'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
+            'reviewing' => (int) ($rawStatusCounts['reviewing'] ?? 0),
+            'shortlisted' => (int) ($rawStatusCounts['shortlisted'] ?? 0),
+            'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
+            'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
+            'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
+        ];
+
+        return view('dashboard.jobseeker.applications', [
+            'applications' => $applications,
+            'statusCounts' => $statusCounts,
+            'statusFilter' => $statusFilter,
+        ]);
+    }
+
+    public function recommendations(Request $request): View
+    {
+        $user = $request->user();
+        $profile = $user?->profile;
+        $recommendations = $this->buildProfileBasedRecommendations($profile);
+        $profileHasSkills = $this->hasSkillsDetails($profile);
+        $activeJobsCount = PesoJob::query()
+            ->where('status', 'active')
+            ->count();
+        $appliedJobsCount = $user ? JobApplication::query()->where('user_id', $user->id)->count() : 0;
+
+        return view('dashboard.jobseeker.recommendations', [
+            'recommendations' => $recommendations,
+            'recommendedCount' => $recommendations->count(),
+            'activeJobsCount' => $activeJobsCount,
+            'appliedJobsCount' => $appliedJobsCount,
+            'profileHasSkills' => $profileHasSkills,
+        ]);
+    }
+
+    public function notifications(Request $request): View
+    {
+        $userId = (int) $request->user()->id;
+
+        $notifications = UserNotification::query()
+            ->where('user_id', $userId)
+            ->with('portalNotification')
+            ->latest('id')
+            ->limit(50)
+            ->get();
+
+        return view('dashboard.jobseeker.notifications', [
+            'notifications' => $notifications,
+            'unreadCount' => (int) $notifications->whereNull('read_at')->count(),
+            'latestNotificationId' => (int) ($notifications->max('id') ?? 0),
+        ]);
+    }
+
+    public function notificationsFeed(Request $request): JsonResponse
+    {
+        $userId = (int) $request->user()->id;
+        $afterId = max(0, (int) $request->query('after_id', 0));
+
+        $newNotifications = UserNotification::query()
+            ->where('user_id', $userId)
+            ->where('id', '>', $afterId)
+            ->with('portalNotification')
+            ->latest('id')
+            ->get();
+
+        $items = $newNotifications
+            ->map(function (UserNotification $notification) {
+                return [
+                    'id' => $notification->id,
+                    'title' => (string) data_get($notification, 'portalNotification.title', 'Notification'),
+                    'message' => (string) data_get($notification, 'portalNotification.message', ''),
+                ];
+            })
+            ->values();
+
+        $latestId = $newNotifications->isNotEmpty()
+            ? (int) $newNotifications->max('id')
+            : $afterId;
+
+        $unreadCount = UserNotification::query()
+            ->where('user_id', $userId)
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'items' => $items,
+            'latest_id' => $latestId,
+            'unread_count' => (int) $unreadCount,
+        ]);
+    }
+
+    public function markNotificationAsRead(Request $request, UserNotification $userNotification): JsonResponse
+    {
+        if ((int) $userNotification->user_id !== (int) $request->user()->id) {
+            abort(403);
+        }
+
+        if ($userNotification->read_at === null) {
+            $userNotification->forceFill(['read_at' => now()])->save();
+        }
+
+        $unreadCount = UserNotification::query()
+            ->where('user_id', (int) $request->user()->id)
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'ok' => true,
+            'unread_count' => (int) $unreadCount,
+        ]);
+    }
+
+    public function skillGap(): View
+    {
+        $user = Auth::user();
+        $profile = $user?->profile;
+        $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
+
+        return view('dashboard.jobseeker.skill-gap', [
+            'skillGapAnalysis' => $skillGapAnalysis,
+        ]);
+    }
+
+    public function savedJobs(): View
+    {
+        $userId = (int) Auth::id();
+
+        $savedJobIds = SavedJob::query()
+            ->where('user_id', $userId)
+            ->pluck('job_id')
+            ->all();
+
+        $savedJobs = collect();
+
+        if (! empty($savedJobIds)) {
+            $savedJobs = PesoJob::query()
+                ->whereIn('id', $savedJobIds)
+                ->where('status', 'active')
+                ->latest()
+                ->get()
+                ->map(function (PesoJob $job) {
+                    return [
+                        'id' => $job->id,
+                        'title' => $job->title,
+                        'location' => $job->location,
+                        'employer_name' => $job->employer_name,
+                        'salary_range' => $job->salary_range,
+                        'description' => $job->description,
+                        'requirements_list' => $this->extractJobRequirements($job),
+                        'created_at' => $job->created_at,
+                    ];
+                });
+        }
+
+        return view('dashboard.jobseeker.saved-jobs', [
+            'savedJobs' => $savedJobs,
+            'savedCount' => $savedJobs->count(),
+        ]);
+    }
+
+    public function toggleSaveJob(PesoJob $job): JsonResponse|RedirectResponse
+    {
+        $userId = (int) Auth::id();
+
+        $existing = SavedJob::query()
+            ->where('user_id', $userId)
+            ->where('job_id', $job->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $saved = false;
+        } else {
+            SavedJob::create([
+                'user_id' => $userId,
+                'job_id' => $job->id,
+            ]);
+            $saved = true;
+        }
+
+        $savedCount = SavedJob::query()
+            ->where('user_id', $userId)
+            ->count();
+
+        if (! request()->expectsJson()) {
+            if ($saved) {
+                return redirect()
+                    ->route('jobseeker.saved-jobs')
+                    ->with('success', 'Job saved to your bookmarks.');
+            }
+
+            return back()->with('success', 'Job removed from your saved jobs.');
+        }
+
+        return response()->json([
+            'saved' => $saved,
+            'saved_count' => $savedCount,
+        ]);
+    }
+
+    public function pesoClearance(): View
+    {
+        $userId = (int) Auth::id();
+
+        $clearance = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->whereIn('status', ['active', 'expired'])
+            ->latest('id')
+            ->first();
+
+        $pendingRequest = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->where('status', 'pending')
+            ->latest('id')
+            ->first();
+
+        $hasClearance = $clearance !== null;
+        $isActive = $hasClearance && $clearance->status === 'active';
+        $isExpired = $hasClearance && $clearance->expiry_date && $clearance->expiry_date->isPast();
+        $hasPendingRequest = $pendingRequest !== null;
+        $canRequestClearance = ! $hasPendingRequest;
+
+        if ($isExpired && $isActive) {
+            $isActive = false;
+        }
+
+        return view('dashboard.jobseeker.peso-clearance', [
+            'clearance' => $clearance,
+            'pendingRequest' => $pendingRequest,
+            'hasClearance' => $hasClearance,
+            'hasPendingRequest' => $hasPendingRequest,
+            'isActive' => $isActive,
+            'isExpired' => $isExpired,
+            'canRequestClearance' => $canRequestClearance,
+        ]);
+    }
+
+    public function requestPesoClearance(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'remarks' => ['nullable', 'string', 'max:500'],
+            'peso_clearance_assurance_receipt' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'barangay_clearance' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'is_first_time_jobseeker' => ['nullable', 'boolean'],
+            'first_time_jobseeker_document' => ['required_if:is_first_time_jobseeker,1', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+        ]);
+
+        $hasPendingRequest = PesoClearance::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($hasPendingRequest) {
+            return back()->with('warning', 'You already have a pending PESO clearance request.');
+        }
+
+        $clearanceCount = PesoClearance::query()
+            ->where('user_id', $user->id)
+            ->count();
+
+        $pesoClearanceReceiptPath = $request->file('peso_clearance_assurance_receipt')
+            ->store('peso-clearance/assurance-receipts', 'public');
+        $barangayClearancePath = $request->file('barangay_clearance')
+            ->store('peso-clearance/barangay-clearances', 'public');
+        $firstTimeJobseekerDocPath = $request->hasFile('first_time_jobseeker_document')
+            ? $request->file('first_time_jobseeker_document')->store('peso-clearance/first-time-jobseeker-docs', 'public')
+            : null;
+
+        $clearance = PesoClearance::create([
+            'user_id' => $user->id,
+            'request_date' => now(),
+            'clearance_number' => 'REQ-' . now()->format('YmdHis') . '-' . str_pad((string) ($clearanceCount + 1), 3, '0', STR_PAD_LEFT),
+            'issue_date' => null,
+            'expiry_date' => null,
+            'status' => 'pending',
+            'remarks' => trim((string) $request->input('remarks', '')) ?: 'PESO clearance request submitted by jobseeker.',
+            'peso_clearance_assurance_receipt_path' => $pesoClearanceReceiptPath,
+            'barangay_clearance_path' => $barangayClearancePath,
+            'is_first_time_jobseeker' => $request->boolean('is_first_time_jobseeker'),
+            'first_time_jobseeker_document_path' => $firstTimeJobseekerDocPath,
+        ]);
+
+        $adminIds = User::query()
+            ->where('role', 'admin')
+            ->pluck('id')
+            ->all();
+
+        if (! empty($adminIds)) {
+            $portalNotification = PortalNotification::create([
+                'title' => 'New PESO Clearance Request',
+                'message' => sprintf(
+                    '%s submitted a PESO clearance request%s. Go to PESO Clearances to review the attached documents.',
+                    $user->name ?? 'A jobseeker',
+                    $request->boolean('is_first_time_jobseeker') ? ' as a first-time jobseeker' : ''
+                ),
+                'created_by' => $user->id,
+            ]);
+
+            $adminNotifications = collect($adminIds)->map(function ($adminId) use ($portalNotification) {
+                return [
+                    'user_id' => $adminId,
+                    'portal_notification_id' => $portalNotification->id,
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->all();
+
+            UserNotification::query()->insert($adminNotifications);
+        }
+
+        return back()->with('status', 'Your PESO clearance request has been sent to the admin for review.');
     }
 
     public function profile(): View
@@ -43,7 +692,7 @@ class JobseekerController extends Controller
             'personal_information.middle_initial' => ['nullable', 'string', 'max:10'],
             'personal_information.suffix' => ['nullable', 'string', 'max:50'],
             'personal_information.date_of_birth' => ['nullable', 'date'],
-            'personal_information.sex' => ['nullable', 'in:Male,Female'],
+            'personal_information.sex' => ['nullable', 'in:Male,Female,Prefer not to say'],
             'personal_information.religion' => ['nullable', 'string', 'max:255'],
             'personal_information.civil_status' => ['nullable', 'string', 'max:255'],
             'personal_information.height' => ['nullable', 'string', 'max:20'],
@@ -662,5 +1311,654 @@ class JobseekerController extends Controller
             'municipality' => $segments[2] ?? '',
             'province' => $segments[3] ?? '',
         ];
+    }
+
+    private function extractJobRequirements(PesoJob $job): array
+    {
+        $requirements = $job->requirements;
+
+        if (is_array($requirements) && ! empty($requirements)) {
+            return collect($requirements)
+                ->map(fn ($item) => trim((string) $item))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $rawRequirements = trim((string) $job->getRawOriginal('requirements'));
+
+        if ($rawRequirements === '') {
+            return [];
+        }
+
+        return collect(preg_split('/[\r\n,]+/', $rawRequirements) ?: [])
+            ->map(fn ($item) => trim((string) $item))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function buildProfileBasedRecommendations(?UserProfile $profile)
+    {
+        $signals = $this->buildRecommendationSignalsFromProfile($profile);
+
+        if (collect($signals)->flatten()->isEmpty()) {
+            return collect();
+        }
+
+        $activeJobs = PesoJob::query()
+            ->where('status', 'active')
+            ->latest()
+            ->limit(40)
+            ->get();
+
+        $rankedJobs = $activeJobs
+            ->map(function (PesoJob $job) use ($signals) {
+                $matchDetails = $this->buildJobMatchDetails($job, $signals);
+
+                return [
+                    'job' => $job,
+                    'score' => $matchDetails['score'],
+                    'match_reasons' => $matchDetails['reasons'],
+                    'created_at' => $job->created_at?->getTimestamp() ?? 0,
+                ];
+            })
+            ->filter(fn ($item) => $item['score'] > 0)
+            ->sort(function ($left, $right) {
+                if ($left['score'] === $right['score']) {
+                    return $right['created_at'] <=> $left['created_at'];
+                }
+
+                return $right['score'] <=> $left['score'];
+            })
+            ->take(3)
+            ->values();
+
+        return $rankedJobs
+            ->map(function ($item) {
+                /** @var PesoJob $job */
+                $job = $item['job'];
+
+                return [
+                    'title' => $job->title,
+                    'location' => $job->location,
+                    'employer_name' => $job->employer_name,
+                    'salary_range' => $job->salary_range,
+                    'description' => $job->description,
+                    'requirements_list' => $this->extractJobRequirements($job),
+                    'match_score' => $item['score'],
+                    'match_reasons' => $item['match_reasons'],
+                ];
+            })
+            ->values();
+    }
+
+    private function buildRecommendationSignalsFromProfile(?UserProfile $profile): array
+    {
+        if (! $profile) {
+            return [
+                'skills' => [],
+                'occupations' => [],
+                'experience' => [],
+                'locations' => [],
+            ];
+        }
+
+        $otherSkills = $profile->other_skills ?? [];
+
+        $skills = collect($profile->skills ?? [])
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''))
+            ->all();
+
+        $occupationPref = (string) data_get($profile, 'job_preferences.occupation_text', '');
+
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->all();
+
+        $locations = [
+            (string) data_get($profile, 'present_address.barangay', ''),
+            (string) data_get($profile, 'present_address.municipality', ''),
+            (string) data_get($profile, 'present_address.province', ''),
+        ];
+
+        return [
+            'skills' => $this->normalizeRecommendationTerms($skills),
+            'occupations' => $this->normalizeRecommendationTerms([$occupationPref]),
+            'experience' => $this->normalizeRecommendationTerms($experienceTitles),
+            'locations' => $this->normalizeRecommendationTerms($locations),
+        ];
+    }
+
+    private function normalizeRecommendationTerms(array $rawValues): array
+    {
+        $stopWords = ['the', 'and', 'for', 'with', 'from', 'that', 'this', 'are', 'your', 'you', 'job', 'work'];
+
+        return collect($rawValues)
+            ->map(fn ($value) => trim(mb_strtolower((string) $value)))
+            ->filter()
+            ->flatMap(function ($value) {
+                $parts = collect(preg_split('/[\r\n,\/|]+/', $value) ?: [])
+                    ->map(fn ($part) => trim((string) $part))
+                    ->filter();
+
+                $expanded = [];
+
+                foreach ($parts as $part) {
+                    $expanded[] = $part;
+
+                    foreach (preg_split('/\s+/', $part) ?: [] as $word) {
+                        $word = trim((string) $word);
+
+                        if ($word !== '') {
+                            $expanded[] = $word;
+                        }
+                    }
+                }
+
+                return $expanded;
+            })
+            ->map(fn ($term) => trim((string) $term, " \t\n\r\0\x0B.-_"))
+            ->filter(fn ($term) => mb_strlen($term) >= 3)
+            ->reject(fn ($term) => in_array($term, $stopWords, true))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function scoreJobAgainstProfileSignals(PesoJob $job, array $signals): int
+    {
+        $details = $this->buildJobMatchDetails($job, $signals);
+
+        return $details['score'];
+    }
+
+    private function buildJobMatchDetails(PesoJob $job, array $signals): array
+    {
+        $requirementsText = implode(' ', $this->extractJobRequirements($job));
+
+        $haystack = mb_strtolower(implode(' ', [
+            (string) $job->title,
+            (string) $job->description,
+            (string) $job->employer_name,
+            (string) $job->location,
+            $requirementsText,
+        ]));
+
+        $skillsMatches = $this->countTermMatches($haystack, $signals['skills'] ?? []);
+        $occupationMatches = $this->countTermMatches($haystack, $signals['occupations'] ?? []);
+        $experienceMatches = $this->countTermMatches($haystack, $signals['experience'] ?? []);
+        $locationMatches = $this->countTermMatches($haystack, $signals['locations'] ?? []);
+
+        $score = ($skillsMatches * 6)
+            + ($occupationMatches * 8)
+            + ($experienceMatches * 4)
+            + ($locationMatches * 3);
+
+        $reasons = collect([
+            $occupationMatches > 0 ? 'Occupation Preference' : null,
+            $skillsMatches > 0 ? 'Skills Match' : null,
+            $experienceMatches > 0 ? 'Experience Match' : null,
+            $locationMatches > 0 ? 'Location Match' : null,
+        ])->filter()->values()->all();
+
+        return [
+            'score' => $score,
+            'reasons' => $reasons,
+        ];
+    }
+
+    private function countTermMatches(string $haystack, array $terms): int
+    {
+        return collect($terms)
+            ->filter(fn ($term) => $term !== '' && str_contains($haystack, mb_strtolower((string) $term)))
+            ->count();
+    }
+
+    private function buildSkillGapAnalysis(?UserProfile $profile): array
+    {
+        if (! $profile) {
+            return [
+                'hasData' => false,
+                'userSkills' => [],
+                'marketSkills' => [],
+                'matchedSkills' => [],
+                'missingSkills' => [],
+                'coveragePercent' => 0,
+                'totalMarketSkills' => 0,
+            ];
+        }
+
+        // Extract user skills from profile
+        $userSkills = collect();
+
+        // Primary skills array
+        $userSkills = $userSkills->merge($profile->skills ?? []);
+
+        // Other skills categories
+        $otherSkills = $profile->other_skills ?? [];
+        $userSkills = $userSkills
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''));
+
+        // Training skills
+        $trainingSkills = collect($profile->training ?? [])
+            ->pluck('skills')
+            ->filter()
+            ->flatMap(function ($skillsText) {
+                return collect(preg_split('/[\r\n,]+/', (string) $skillsText) ?: [])
+                    ->map(fn ($s) => trim($s))
+                    ->filter();
+            });
+        $userSkills = $userSkills->merge($trainingSkills);
+
+        // Experience titles
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->filter()
+            ->map(fn ($t) => trim((string) $t));
+        $userSkills = $userSkills->merge($experienceTitles);
+
+        // Job preference occupation
+        $occupationPref = trim((string) data_get($profile, 'job_preferences.occupation_text', ''));
+        if ($occupationPref !== '') {
+            $userSkills->push($occupationPref);
+        }
+
+        $normalizedUserSkills = $userSkills
+            ->map(fn ($s) => mb_strtolower(trim((string) $s)))
+            ->filter(fn ($s) => mb_strlen($s) >= 2)
+            ->unique()
+            ->values()
+            ->all();
+
+        // Extract market skills from active job postings
+        $activeJobs = PesoJob::query()
+            ->where('status', 'active')
+            ->get(['title', 'description', 'requirements', 'preferred_skills']);
+
+        $marketSkillFrequency = [];
+
+        foreach ($activeJobs as $job) {
+            $jobText = implode(' ', [
+                (string) $job->title,
+                (string) $job->description,
+                (string) $job->getRawOriginal('requirements'),
+                (string) $job->preferred_skills,
+            ]);
+
+            // Extract skill-like terms (words/phrases that appear to be skills)
+            $skillCandidates = $this->extractSkillCandidatesFromText($jobText);
+
+            foreach ($skillCandidates as $candidate) {
+                $normalized = mb_strtolower(trim($candidate));
+                if (mb_strlen($normalized) < 3) {
+                    continue;
+                }
+                $marketSkillFrequency[$normalized] = ($marketSkillFrequency[$normalized] ?? 0) + 1;
+            }
+        }
+
+        // Sort by frequency and take top market skills
+        arsort($marketSkillFrequency);
+        $topMarketSkills = collect($marketSkillFrequency)
+            ->take(20)
+            ->keys()
+            ->values()
+            ->all();
+
+        // Find matches and gaps
+        $matchedSkills = [];
+        $missingSkills = [];
+
+        foreach ($topMarketSkills as $marketSkill) {
+            $isMatched = false;
+            foreach ($normalizedUserSkills as $userSkill) {
+                if (str_contains($marketSkill, $userSkill) || str_contains($userSkill, $marketSkill)) {
+                    $isMatched = true;
+                    break;
+                }
+            }
+            if ($isMatched) {
+                $matchedSkills[] = $marketSkill;
+            } else {
+                $missingSkills[] = $marketSkill;
+            }
+        }
+
+        $totalMarketSkills = count($topMarketSkills);
+        $coveragePercent = $totalMarketSkills > 0
+            ? (int) round((count($matchedSkills) / $totalMarketSkills) * 100)
+            : 0;
+
+        return [
+            'hasData' => true,
+            'userSkills' => array_slice($normalizedUserSkills, 0, 15),
+            'marketSkills' => array_slice($topMarketSkills, 0, 10),
+            'matchedSkills' => array_slice($matchedSkills, 0, 10),
+            'missingSkills' => array_slice($missingSkills, 0, 10),
+            'coveragePercent' => $coveragePercent,
+            'totalMarketSkills' => $totalMarketSkills,
+        ];
+    }
+
+    private function extractSkillCandidatesFromText(string $text): array
+    {
+        $text = mb_strtolower($text);
+
+        // Common skill separators and delimiters
+        $delimiters = '#[\r\n,;·•|/\\\\]+#u';
+        $parts = preg_split($delimiters, $text) ?: [$text];
+
+        $candidates = [];
+        $stopWords = ['and', 'the', 'for', 'with', 'from', 'that', 'this', 'are', 'your', 'you', 'job', 'work', 'must', 'should', 'will', 'can', 'able', 'years', 'year', 'experience', 'required', 'preferred', 'qualifications', 'responsibilities', 'duties'];
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+
+            // Try the whole part first as a skill phrase
+            $cleanPart = trim(preg_replace('/^[-\s•·]+/', '', $part));
+            if (mb_strlen($cleanPart) >= 3 && mb_strlen($cleanPart) <= 60) {
+                $words = preg_split('/\s+/', $cleanPart) ?: [];
+                $hasOnlyStopWords = true;
+                foreach ($words as $w) {
+                    if (! in_array($w, $stopWords, true)) {
+                        $hasOnlyStopWords = false;
+                        break;
+                    }
+                }
+                if (! $hasOnlyStopWords) {
+                    $candidates[] = $cleanPart;
+                }
+            }
+        }
+
+        // Also extract individual meaningful words as potential skills
+        $words = preg_split('/[\s,;·•()]+/', $text) ?: [];
+        foreach ($words as $word) {
+            $word = trim($word, " \t\n\r\0\x0B.-_()");
+            if (mb_strlen($word) >= 4 && mb_strlen($word) <= 25 && ! in_array($word, $stopWords, true)) {
+                $candidates[] = $word;
+            }
+        }
+
+        return $candidates;
+    }
+
+    private function sampleVacancies(): array
+    {
+        return [
+            [
+                'title' => 'Office Staff / Admin Assistant',
+                'location' => 'Tankulan (Poblacion)',
+                'employer_name' => 'PESO Partner Office',
+                'salary_range' => 'Php 12,000 - Php 15,000',
+                'description' => 'Handles office documents, data encoding, filing, and front desk support.',
+                'requirements_list' => ['MS Office', 'Filing', 'Encoding'],
+            ],
+            [
+                'title' => 'Construction Laborer',
+                'location' => 'Damilag',
+                'employer_name' => 'Local Construction Contractor',
+                'salary_range' => 'Php 450/day',
+                'description' => 'Assists in basic construction tasks and follows workplace safety procedures.',
+                'requirements_list' => ['Basic tools', 'Safety awareness'],
+            ],
+            [
+                'title' => 'Cashier',
+                'location' => 'Alae',
+                'employer_name' => 'Community Retail Store',
+                'salary_range' => 'Php 11,500 - Php 13,000',
+                'description' => 'Handles customer payments, POS transactions, and end-of-day cash balancing.',
+                'requirements_list' => ['Customer service', 'POS'],
+            ],
+            [
+                'title' => 'Delivery Driver',
+                'location' => 'San Miguel',
+                'employer_name' => 'Local Logistics Partner',
+                'salary_range' => 'Php 13,000 - Php 16,000',
+                'description' => 'Delivers goods within Manolo Fortich and nearby routes with proper documentation.',
+                'requirements_list' => ['Driver license', 'Route familiarity'],
+            ],
+            [
+                'title' => 'Sales Associate',
+                'location' => 'Santo Nino',
+                'employer_name' => 'Neighborhood Mart',
+                'salary_range' => 'Php 10,500 - Php 12,500',
+                'description' => 'Supports product display, customer assistance, and sales transactions.',
+                'requirements_list' => ['Selling skills', 'Communication'],
+            ],
+            [
+                'title' => 'Warehouse Helper',
+                'location' => 'Agusan Canyon',
+                'employer_name' => 'Agri Supply Distributor',
+                'salary_range' => 'Php 430/day',
+                'description' => 'Assists in loading, unloading, inventory checks, and stock arrangement.',
+                'requirements_list' => ['Inventory handling', 'Physical fitness'],
+            ],
+        ];
+    }
+
+    private function calculateProfileCompletionPercent(?User $user, ?UserProfile $profile): int
+    {
+        $checks = [
+            $this->hasBasicIdentity($user, $profile),
+            $this->hasContactDetails($user, $profile),
+            $this->hasAddressDetails($profile),
+            $this->hasEducationDetails($profile),
+            $this->hasExperienceDetails($profile),
+            $this->hasSkillsDetails($profile),
+        ];
+
+        $completedChecks = collect($checks)->filter()->count();
+
+        return (int) round(($completedChecks / count($checks)) * 100);
+    }
+
+    private function profileCompletionLabel(int $percent): string
+    {
+        if ($percent >= 100) {
+            return 'Profile Complete';
+        }
+
+        if ($percent >= 67) {
+            return 'Almost Complete';
+        }
+
+        if ($percent >= 34) {
+            return 'In Progress';
+        }
+
+        return 'Getting Started';
+    }
+
+    private function hasBasicIdentity(?User $user, ?UserProfile $profile): bool
+    {
+        $name = trim((string) ($profile?->resume_name ?: $user?->name));
+        $personal = $profile?->personal_information ?? [];
+
+        if (
+            trim((string) data_get($personal, 'first_name', '')) !== ''
+            && trim((string) data_get($personal, 'surname', '')) !== ''
+        ) {
+            return true;
+        }
+
+        return $name !== '';
+    }
+
+    private function hasContactDetails(?User $user, ?UserProfile $profile): bool
+    {
+        $personal = $profile?->personal_information ?? [];
+        $email = trim((string) ($profile?->resume_email ?: data_get($personal, 'email_address', $user?->email ?? '')));
+        $phone = trim((string) ($profile?->phone ?: data_get($personal, 'contact_number', '')));
+
+        return $email !== '' && $phone !== '';
+    }
+
+    private function hasAddressDetails(?UserProfile $profile): bool
+    {
+        $present = $profile?->present_address ?? [];
+        $formattedAddress = trim((string) ($profile?->address ?? ''));
+
+        if (
+            trim((string) data_get($present, 'barangay', '')) !== ''
+            && trim((string) data_get($present, 'municipality', '')) !== ''
+            && trim((string) data_get($present, 'province', '')) !== ''
+        ) {
+            return true;
+        }
+
+        return $formattedAddress !== '';
+    }
+
+    private function hasEducationDetails(?UserProfile $profile): bool
+    {
+        return ! empty($profile?->education ?? []);
+    }
+
+    private function hasExperienceDetails(?UserProfile $profile): bool
+    {
+        return ! empty($profile?->experience ?? []);
+    }
+
+    private function hasSkillsDetails(?UserProfile $profile): bool
+    {
+        $skills = $profile?->skills ?? [];
+        $otherSkills = $profile?->other_skills ?? [];
+
+        if (! empty($skills)) {
+            return true;
+        }
+
+        return ! empty($otherSkills['trade_manual'])
+            || ! empty($otherSkills['it_technical'])
+            || ! empty($otherSkills['soft_skills'])
+            || trim((string) ($otherSkills['other_text'] ?? '')) !== '';
+    }
+
+    public function applyJob(PesoJob $job): View
+    {
+        return view('dashboard.jobseeker.apply-job', [
+            'job' => $job->load(['employer', 'employer.companyProfile']),
+        ]);
+    }
+
+    public function submitApplication(Request $request, PesoJob $job): RedirectResponse
+    {
+        $user = $request->user();
+
+        // Validate based on resume type
+        $validated = $request->validate([
+            'letter' => ['nullable', 'string', 'max:2000'],
+            'resume' => ['nullable', 'file', 'extensions:pdf,doc,docx', 'max:5120'],
+            'resume_type' => ['required', 'in:upload,builder'],
+            'use_resume_builder' => ['nullable', 'boolean'],
+        ]);
+
+        // Check if already applied
+        $existingApplication = JobApplication::where('user_id', $user->id)
+            ->where('peso_job_id', $job->id)
+            ->first();
+
+        if ($existingApplication) {
+            return redirect()
+                ->route('jobseeker.applications')
+                ->with('error', 'You have already applied for this job.');
+        }
+
+        $resumePath = null;
+        $resumeOriginalFilename = null;
+        $resumeFileExtension = null;
+        $resumeType = $validated['resume_type'];
+
+        // If an actual file was uploaded, always treat the submission as an upload.
+        // This protects the flow when the hidden resume type gets out of sync in the UI.
+        if ($request->hasFile('resume')) {
+            $resumeType = 'upload';
+        }
+
+        // Handle resume based on type
+        if ($resumeType === 'upload') {
+            if ($request->hasFile('resume')) {
+                $resumeFile = $request->file('resume');
+                $resumePath = $resumeFile->store('resumes', 'public');
+                $resumeOriginalFilename = $resumeFile->getClientOriginalName();
+                $resumeFileExtension = $resumeFile->getClientOriginalExtension();
+            } else {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Please upload a resume or select another resume option.');
+            }
+        } elseif ($resumeType === 'builder') {
+            $userProfile = $user->profile ?? $user->userProfile;
+            if ($userProfile && $userProfile->resume_name && $userProfile->resume_email) {
+                // Store a reference to resume builder generated resume
+                $resumePath = 'builder:' . $userProfile->id;
+            } else {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'No resume found in Resume Builder. Please create one or upload a resume.');
+            }
+        }
+
+        // Create new application
+        $application = JobApplication::create([
+            'user_id' => $user->id,
+            'peso_job_id' => $job->id,
+            'status' => 'pending',
+            'notes' => $validated['letter'] ?? null,
+            'resume_path' => $resumePath,
+            'resume_original_filename' => $resumeOriginalFilename,
+            'resume_file_extension' => $resumeFileExtension,
+            'resume_type' => $resumeType,
+        ]);
+
+        // Notify employer about the new applicant. Keep application flow resilient if notification fails.
+        if (! empty($job->employer_id)) {
+            try {
+                EmployerNotification::query()->create([
+                    'employer_id' => $job->employer_id,
+                    'type' => 'job_update',
+                    'title' => 'New Job Application Received',
+                    'message' => sprintf(
+                        '%s applied for "%s". Review this in View Applicants or Notifications.',
+                        $user->name,
+                        $job->title
+                    ),
+                    'is_read' => false,
+                ]);
+            } catch (\Throwable) {
+                try {
+                    EmployerNotification::query()->create([
+                        'employer_id' => $job->employer_id,
+                        'type' => 'general',
+                        'title' => 'New Job Application Received',
+                        'message' => sprintf(
+                            '%s applied for "%s". Review this in View Applicants or Notifications.',
+                            $user->name,
+                            $job->title
+                        ),
+                        'is_read' => false,
+                    ]);
+                } catch (\Throwable) {
+                    // Intentionally ignored so application submission still succeeds.
+                }
+            }
+        }
+
+        return redirect()
+            ->route('jobseeker.applications')
+            ->with('status', 'Application submitted successfully!');
     }
 }
