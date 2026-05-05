@@ -3,125 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>{{ $resumeName ?: 'Resume' }} - Harvard Style CV</title>
+    <title>{{ $resumeName ?: 'Resume' }}</title>
     <style>
         @page {
-            margin: 42px 48px;
+            margin: 40px 44px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: #f3f4f6;
         }
 
         body {
             font-family: Georgia, 'Times New Roman', Times, serif;
             color: #111827;
-            font-size: 12px;
+            font-size: 0.98rem;
             line-height: 1.55;
         }
 
-        .name {
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0;
-            text-align: center;
-            letter-spacing: 0.02em;
+        .resume-page {
+            background: #ffffff;
+            border: 1px solid #d8dde5;
+            padding: 34px 40px;
         }
 
-        .contact {
+        .resume-header {
             text-align: center;
-            font-size: 11px;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #111827;
+        }
+
+        .resume-name {
+            font-size: 2.15rem;
+            margin-bottom: 0;
+            letter-spacing: 0.02em;
+            font-weight: 700;
+        }
+
+        .resume-contact {
+            font-size: 0.95rem;
             color: #374151;
             margin-top: 6px;
         }
 
-        .section {
-            margin-top: 18px;
+        .resume-section {
+            margin-bottom: 20px;
         }
 
-        .section-title {
-            font-size: 11px;
+        .resume-section h2 {
+            font-size: 1.02rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
+            margin-bottom: 9px;
+            padding-bottom: 4px;
             border-bottom: 1px solid #111827;
-            padding-bottom: 3px;
-            margin-bottom: 8px;
         }
 
-        .item {
-            margin-bottom: 10px;
+        .resume-section p {
+            font-size: 0.98rem;
+            line-height: 1.55;
+            color: #111827;
+            margin: 0;
         }
 
-        .item-head {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            font-weight: 700;
+        .resume-item {
+            font-size: 0.98rem;
+            margin-bottom: 16px;
         }
 
-        .muted {
-            color: #4b5563;
+        .item-header {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .item-title,
+        .item-year {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .item-year {
+            text-align: right;
+            white-space: nowrap;
+            padding-left: 12px;
+        }
+
+        .item-company {
             font-style: italic;
+            color: #4b5563;
+            margin-bottom: 4px;
         }
 
-        .skills {
+        .item-details {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .skills-list {
+            font-size: 0.98rem;
+            line-height: 1.55;
+            color: #111827;
+            margin-top: 2px;
+        }
+
+        ul {
             margin: 0;
             padding-left: 18px;
         }
 
-        .skills li {
+        li {
             margin-bottom: 4px;
         }
     </style>
 </head>
 <body>
-    <h1 class="name">{{ $resumeName }}</h1>
-    <div class="contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
+    <div class="resume-page">
+        <div class="resume-header">
+            <h1 class="resume-name">{{ $resumeName }}</h1>
+            <div class="resume-contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Objective</div>
-        <div>{{ $resumeObjective ?: ' ' }}</div>
-    </div>
+        <section class="resume-section">
+            <h2>Objective</h2>
+            <p>{{ $resumeObjective ?: ' ' }}</p>
+        </section>
 
-    <div class="section">
-        <div class="section-title">Education</div>
-        @forelse ($educationRows as $item)
-            @if(collect($item)->filter()->isNotEmpty())
-                <div class="item">
-                    <div class="item-head">
-                        <div>{{ $item['school'] ?? '' }}</div>
-                        <div>{{ $item['year'] ?? '' }}</div>
+        <section class="resume-section">
+            <h2>Education</h2>
+            @forelse ($educationRows as $item)
+                @if(collect($item)->filter()->isNotEmpty())
+                    <div class="resume-item">
+                        <div class="item-header">
+                            <div class="item-title">{{ $item['school'] ?? '' }}</div>
+                            <div class="item-year">{{ $item['year'] ?? '' }}</div>
+                        </div>
+                        <div class="item-company">{{ $item['course'] ?? '' }}</div>
                     </div>
-                    <div class="muted">{{ $item['course'] ?? '' }}</div>
-                </div>
-            @endif
-        @empty
-        @endforelse
-    </div>
+                @endif
+            @empty
+            @endforelse
+        </section>
 
-    <div class="section">
-        <div class="section-title">Experience</div>
-        @forelse ($experienceRows as $item)
-            @if(collect($item)->filter()->isNotEmpty())
-                <div class="item">
-                    <div class="item-head">
-                        <div>{{ $item['title'] ?? '' }}</div>
-                        <div>{{ $item['period'] ?? '' }}</div>
+        <section class="resume-section">
+            <h2>Experience</h2>
+            @forelse ($experienceRows as $item)
+                @if(collect($item)->filter()->isNotEmpty())
+                    <div class="resume-item">
+                        <div class="item-header">
+                            <div class="item-title">{{ $item['title'] ?? '' }}</div>
+                            <div class="item-year">{{ $item['period'] ?? '' }}</div>
+                        </div>
+                        <div class="item-company">{{ $item['company'] ?? '' }}</div>
+                        <p class="item-details">{{ $item['details'] ?? '' }}</p>
                     </div>
-                    <div class="muted">{{ $item['company'] ?? '' }}</div>
-                    <div>{{ $item['details'] ?? '' }}</div>
-                </div>
-            @endif
-        @empty
-        @endforelse
-    </div>
+                @endif
+            @empty
+            @endforelse
+        </section>
 
-    <div class="section">
-        <div class="section-title">Skills</div>
-        @if($skillsPreview->count())
-            <ul class="skills">
-                @foreach ($skillsPreview as $skill)
-                    <li>{{ $skill }}</li>
-                @endforeach
-            </ul>
-        @endif
+        <section class="resume-section">
+            <h2>Skills</h2>
+            @if($skillsPreview->count())
+                <p class="skills-list">{{ $skillsPreview->join(', ') }}</p>
+            @else
+                <p class="skills-list"> </p>
+            @endif
+        </section>
     </div>
 </body>
 </html>
