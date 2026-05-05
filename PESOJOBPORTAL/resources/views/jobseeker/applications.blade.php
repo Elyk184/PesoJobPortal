@@ -66,6 +66,14 @@
                 <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'interview' ? 'btn-primary' : 'btn-outline-primary' }}">Interview ({{ $statusCounts['interview'] ?? 0 }})</a>
                 <a href="{{ route('jobseeker.applications', ['status' => 'hired']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'hired' ? 'btn-success' : 'btn-outline-success' }}">Hired ({{ $statusCounts['hired'] ?? 0 }})</a>
                 <a href="{{ route('jobseeker.applications', ['status' => 'rejected']) }}" class="btn btn-sm status-filter-btn {{ $statusFilter === 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected ({{ $statusCounts['rejected'] ?? 0 }})</a>
+                @php
+                    $currentQuery = request()->query();
+                @endphp
+                @if((string) ($currentQuery['per_page'] ?? '') === 'all')
+                    <a href="{{ route('jobseeker.applications', array_filter($currentQuery, fn($v, $k) => $k !== 'per_page', ARRAY_FILTER_USE_BOTH)) }}" class="btn btn-sm btn-outline-secondary">Show paged</a>
+                @else
+                    <a href="{{ route('jobseeker.applications', array_merge($currentQuery, ['per_page' => 'all'])) }}" class="btn btn-sm btn-outline-secondary">Show all</a>
+                @endif
             </div>
         </div>
 
@@ -103,7 +111,9 @@
                                 $status = strtolower((string) ($application->status ?? 'pending'));
                                 $statusLabel = match ($status) {
                                     'pending' => 'Pending',
-                                    'reviewed' => 'Reviewed',
+                                    'reviewing' => 'Reviewing',
+                                    'shortlisted' => 'Shortlisted',
+                                    'interview' => 'Interview',
                                     'interviewed' => 'Interview',
                                     'hired' => 'Hired',
                                     'rejected' => 'Rejected',
@@ -111,8 +121,9 @@
                                 };
                                 $statusClass = match ($status) {
                                     'pending' => 'warning',
-                                    'reviewed' => 'info',
-                                    'interviewed' => 'primary',
+                                    'reviewing' => 'info',
+                                    'shortlisted' => 'success',
+                                    'interview', 'interviewed' => 'primary',
                                     'hired' => 'success',
                                     'rejected' => 'danger',
                                     default => 'secondary',

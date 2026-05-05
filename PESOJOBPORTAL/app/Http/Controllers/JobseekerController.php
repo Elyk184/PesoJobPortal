@@ -426,11 +426,10 @@ class JobseekerController extends Controller
     public function applications(Request $request): View
     {
         $statusMap = [
-            // include both 'interview' and legacy 'interviewed' values so they are treated the same
-            'all' => ['pending', 'reviewed', 'interview', 'interviewed', 'hired', 'rejected'],
+            'all' => ['pending', 'reviewing', 'shortlisted', 'interview', 'hired', 'rejected'],
             'pending' => ['pending'],
-            'reviewing' => ['reviewed'],
-            'shortlisted' => ['reviewed'],
+            'reviewing' => ['reviewing'],
+            'shortlisted' => ['shortlisted'],
             'interview' => ['interview', 'interviewed'],
             'hired' => ['hired'],
             'rejected' => ['rejected'],
@@ -444,14 +443,17 @@ class JobseekerController extends Controller
 
         $userId = (int) Auth::id();
 
-        $applications = JobApplication::query()
+        $query = JobApplication::query()
             ->where('user_id', $userId)
             ->whereIn('status', $statusMap[$statusFilter])
             ->with('job')
             ->orderByDesc('applied_at')
-            ->orderByDesc('created_at')
-            ->paginate(10)
-            ->withQueryString();
+            ->orderByDesc('created_at');
+
+        $perPageParam = (string) $request->query('per_page', '10');
+        $perPage = $perPageParam === 'all' ? max(1, $query->count()) : (int) max(1, intval($perPageParam));
+
+        $applications = $query->paginate($perPage)->withQueryString();
 
         $rawStatusCounts = JobApplication::query()
             ->where('user_id', $userId)
@@ -462,9 +464,8 @@ class JobseekerController extends Controller
         $statusCounts = [
             'all' => (int) $rawStatusCounts->sum(),
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
-            'reviewing' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            'shortlisted' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            // sum both keys in case some records still use the legacy 'interviewed' value
+            'reviewing' => (int) ($rawStatusCounts['reviewing'] ?? 0),
+            'shortlisted' => (int) ($rawStatusCounts['shortlisted'] ?? 0),
             'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
             'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),

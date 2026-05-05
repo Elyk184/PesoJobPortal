@@ -434,7 +434,57 @@ class EmployerController extends Controller
             abort(404, 'Resume not found.');
         }
 
-        // Check if resume exists in storage
+        // Handle resume builder generated resumes (stored as 'builder:profile_id')
+        if (str_starts_with($application->resume_path, 'builder:')) {
+            // For builder resumes, generate PDF on the fly
+            $user = $application->user;
+            $userProfile = $user->profile ?? $user->userProfile;
+            if (! $userProfile) {
+                abort(404, 'Resume builder data not found.');
+            }
+
+            // Prepare data for PDF template
+            $profilePersonal = $userProfile->personal_information ?? [];
+            $profilePresentAddress = $userProfile->present_address ?? [];
+            $profilePermanentAddress = $userProfile->permanent_address ?? [];
+            $profileSkills = $userProfile->skills ?? [];
+            $profileEducationRows = $userProfile->education ?? [];
+            $profileTrainingRows = $userProfile->training ?? [];
+            $profileExperienceRows = $userProfile->experience ?? [];
+            $profileEligibilityRows = $userProfile->eligibility ?? [];
+
+            $resumeName = $userProfile->resume_name ?? $user->name;
+            $resumeEmail = $userProfile->resume_email ?? data_get($profilePersonal, 'email_address', $user->email ?? '');
+            $resumePhone = $userProfile->phone ?? data_get($profilePersonal, 'contact_number', '');
+            $resumeAddress = $userProfile->address ?? '';
+            $resumeObjective = $userProfile->objective ?? '';
+            $resumeSkills = implode(', ', $profileSkills ?: []);
+
+            $pdfData = [
+                'user' => $user,
+                'profile' => $userProfile,
+                'resumeName' => $resumeName,
+                'resumeEmail' => $resumeEmail,
+                'resumePhone' => $resumePhone,
+                'resumeAddress' => $resumeAddress,
+                'resumeObjective' => $resumeObjective,
+                'resumeSkills' => $resumeSkills,
+                'educationRows' => $profileEducationRows,
+                'trainingRows' => $profileTrainingRows,
+                'experienceRows' => $profileExperienceRows,
+                'eligibilityRows' => $profileEligibilityRows,
+                'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
+            ];
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('jobseeker.resume-builder-pdf', $pdfData)
+                ->setPaper('a4', 'portrait');
+
+            $downloadFilename = trim(($resumeName ?: 'resume') . '-harvard-style.pdf');
+
+            return $pdf->download($downloadFilename);
+        }
+
+        // Handle uploaded resumes
         if (! Storage::disk('public')->exists($application->resume_path)) {
             abort(404, 'Resume file not found.');
         }
@@ -451,8 +501,8 @@ class EmployerController extends Controller
             $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
         }
 
-        return Storage::disk('public')->download(
-            $application->resume_path,
+        return response()->download(
+            Storage::disk('public')->path($application->resume_path),
             $downloadFilename
         );
     }

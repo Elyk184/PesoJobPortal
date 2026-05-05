@@ -288,17 +288,17 @@
     }
     /* Make the applicants table card stretch edge-to-edge within the page */
     .applicants-table-card.full-bleed {
-        border-radius: 0;
-        margin-left: -1.25rem;
-        margin-right: -1.25rem;
-        width: calc(100% + 2.5rem);
+        border-radius: 16px;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
     }
     .table-card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
-        padding: 1rem 1.25rem;
+        padding: 0.8rem 1.1rem;
         background: #f8fbff;
         border-bottom: 1px solid #deebf9;
     }
@@ -343,30 +343,30 @@
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        padding: 1rem 1.25rem;
+        padding: 0.85rem 1rem;
         background: transparent;
     }
     .table tbody td {
-        padding: 1.15rem 1.25rem;
-        vertical-align: middle;
+        padding: 0.8rem 1rem;
+        vertical-align: top;
     }
     .table tbody td:first-child {
-        padding-left: 1.5rem;
+        padding-left: 1.15rem;
     }
     .table thead th:first-child {
-        padding-left: 1.5rem;
+        padding-left: 1.15rem;
     }
     .user-avatar {
-        width: 56px;
-        height: 56px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid #fff;
         box-shadow: 0 4px 10px rgba(15,49,96,0.06);
     }
     .user-initials {
-        width: 56px;
-        height: 56px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -378,15 +378,16 @@
     .user-info .name {
         display: block;
         font-weight: 700;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.1rem;
     }
     .user-info .email {
         display: block;
         color: #6b7280;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
     }
     .table-actions {
         justify-content: flex-end;
+        align-items: flex-start;
     }
     @media (min-width: 992px) {
         .table thead th:nth-child(1),
@@ -410,9 +411,9 @@
     }
     .table tbody td {
         vertical-align: middle;
-        padding: 1.15rem 1.25rem;
+        padding: 0.9rem 1rem;
         color: #334155;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
     }
     .table tbody tr:last-child td {
         border-bottom: none;
@@ -444,7 +445,7 @@
     .user-info {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0.08rem;
         min-width: 0;
     }
     .user-info .name {
@@ -475,15 +476,15 @@
     }
     .action-btn {
         border-radius: 999px;
-        padding: 0.45rem 0.9rem;
+        padding: 0.4rem 0.85rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.4rem;
         transition: all 0.18s ease;
         border: 1px solid transparent;
-        font-size: 0.92rem;
-        min-width: 70px;
+        font-size: 0.9rem;
+        min-width: 64px;
         height: auto;
         white-space: nowrap;
     }
@@ -801,7 +802,7 @@
                             @foreach($referredApplications as $application)
                             <tr>
                                 <td>
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-start gap-3">
                                         @if($application->applicant->avatar)
                                         <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}" class="user-avatar">
                                         @else

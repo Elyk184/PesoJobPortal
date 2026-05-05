@@ -243,7 +243,7 @@
             @endif
             @if($application->resume_path)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-outline-primary">
+                <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
                     <i class="bi bi-download"></i> Download Resume
                 </a>
             </div>

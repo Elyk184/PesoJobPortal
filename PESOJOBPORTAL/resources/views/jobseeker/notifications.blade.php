@@ -388,7 +388,15 @@
 			}
 
 			if (sidebarUnread) {
-				sidebarUnread.textContent = `${unreadCount} unread`;
+				if (Number(unreadCount) > 0) {
+					sidebarUnread.textContent = String(unreadCount);
+					sidebarUnread.classList.remove('visually-hidden');
+					sidebarUnread.removeAttribute('aria-hidden');
+				} else {
+					sidebarUnread.textContent = '';
+					sidebarUnread.classList.add('visually-hidden');
+					sidebarUnread.setAttribute('aria-hidden', 'true');
+				}
 			}
 		}
 
