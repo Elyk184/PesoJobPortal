@@ -24,6 +24,8 @@ class JobApplication extends Model
         'admin_approved_by',
         'admin_notes',
         'resume_path',
+        'resume_original_filename',
+        'resume_file_extension',
         'resume_type',
     ];
 

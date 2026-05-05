@@ -412,10 +412,73 @@ class EmployerController extends Controller
 
         $application->load(['user.profile', 'jobPost']);
 
+        // Get feedback if it exists on the application
+        $feedback = $application->feedback ?? null;
+
         return view('dashboard.employer.show-applicant', [
             'application' => $application,
+            'feedback' => $feedback,
             'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
         ]);
+    }
+
+    public function downloadResume(Request $request, JobApplication $application)
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to download this resume.');
+        }
+
+        if (! $application->resume_path) {
+            abort(404, 'Resume not found.');
+        }
+
+        // Check if resume exists in storage
+        if (! Storage::disk('public')->exists($application->resume_path)) {
+            abort(404, 'Resume file not found.');
+        }
+
+        // Determine the download filename
+        if ($application->resume_original_filename) {
+            // For new uploads with original filename stored
+            $downloadFilename = $application->resume_original_filename;
+        } elseif ($application->resume_file_extension) {
+            // For uploads with just the extension stored
+            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.' . $application->resume_file_extension;
+        } else {
+            // Fallback for old records
+            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
+        }
+
+        return Storage::disk('public')->download(
+            $application->resume_path,
+            $downloadFilename
+        );
+    }
+
+    public function storeFeedback(Request $request, JobApplication $application): RedirectResponse
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to provide feedback for this applicant.');
+        }
+
+        $validated = $request->validate([
+            'feedback' => ['required', 'string', 'max:1000'],
+            'feedback_type' => ['required', 'in:general,technical,soft_skills,cultural_fit,other'],
+            'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
+        ]);
+
+        // Store feedback on the application
+        $application->update([
+            'employer_feedback' => $validated['feedback'],
+        ]);
+
+        return redirect()
+            ->route('employer.applications.show', $application->id)
+            ->with('success', 'Feedback saved successfully.');
     }
 
     public function notificationsPage(Request $request): View

@@ -273,8 +273,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 0.5rem;
-        flex-wrap: nowrap;
+        gap: 0.6rem;
+        flex-wrap: wrap;
         white-space: nowrap;
     }
 
@@ -343,12 +343,18 @@
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        padding: 0.9rem 1.25rem;
+        padding: 1rem 1.25rem;
         background: transparent;
     }
     .table tbody td {
-        padding: 1.1rem 1.25rem;
+        padding: 1.15rem 1.25rem;
         vertical-align: middle;
+    }
+    .table tbody td:first-child {
+        padding-left: 1.5rem;
+    }
+    .table thead th:first-child {
+        padding-left: 1.5rem;
     }
     .user-avatar {
         width: 56px;
@@ -383,14 +389,16 @@
         justify-content: flex-end;
     }
     @media (min-width: 992px) {
+        .table thead th:nth-child(1),
+        .table tbody td:nth-child(1) { text-align: left; }
         .table thead th:nth-child(2),
         .table tbody td:nth-child(2) { text-align: left; }
         .table thead th:nth-child(3),
-        .table tbody td:nth-child(3) { text-align: center; }
+        .table tbody td:nth-child(3) { text-align: left; }
         .table thead th:nth-child(4),
         .table tbody td:nth-child(4) { text-align: center; }
         .table thead th:nth-child(5),
-        .table tbody td:nth-child(5) { text-align: right; }
+        .table tbody td:nth-child(5) { text-align: center; }
     }
     .table tbody tr {
         transition: all 0.2s ease;
@@ -402,7 +410,7 @@
     }
     .table tbody td {
         vertical-align: middle;
-        padding: 1.1rem 1.2rem;
+        padding: 1.15rem 1.25rem;
         color: #334155;
         font-size: 0.95rem;
     }
@@ -436,45 +444,50 @@
     .user-info {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.35rem;
+        min-width: 0;
     }
     .user-info .name {
         font-weight: 600;
         color: #0f172a;
+        word-break: break-word;
     }
     .user-info .email {
         font-size: 0.85rem;
         color: #7a8a9a;
+        word-break: break-all;
     }
     .status-badge {
-        padding: 0.5em 1em;
+        padding: 0.5em 0.9em;
         border-radius: 999px;
         font-size: 0.8rem;
         font-weight: 700;
         text-transform: capitalize;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         border: 1px solid transparent;
         letter-spacing: 0.3px;
+        white-space: nowrap;
     }
     .status-badge i {
         font-size: 0.5rem;
     }
     .action-btn {
         border-radius: 999px;
-        padding: 0.45rem 0.95rem;
+        padding: 0.45rem 0.9rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: all 0.18s ease;
         border: 1px solid transparent;
-        font-size: 0.95rem;
-        min-width: 72px;
+        font-size: 0.92rem;
+        min-width: 70px;
         height: auto;
+        white-space: nowrap;
     }
-    .action-btn i { font-size: 0.95rem; }
+    .action-btn i { font-size: 0.92rem; }
     .action-text {
         display: inline-block;
         font-size: 0.95rem;
@@ -613,19 +626,37 @@
             padding: 1rem;
         }
         .table thead th {
-            padding: 0.8rem;
-            font-size: 0.75rem;
+            padding: 0.85rem 0.75rem;
+            font-size: 0.7rem;
         }
         .table tbody td {
-            padding: 0.8rem;
+            padding: 0.9rem 0.75rem;
             font-size: 0.85rem;
         }
+        .table tbody td:first-child {
+            padding-left: 1rem;
+        }
+        .table thead th:first-child {
+            padding-left: 1rem;
+        }
         .action-btn {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             font-size: 0.85rem;
             padding: 0;
-            min-width: 34px;
+            min-width: 36px;
+        }
+        .table-actions {
+            gap: 0.4rem;
+        }
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+        }
+        .user-initials {
+            width: 38px;
+            height: 38px;
+            font-size: 0.8rem;
         }
     }
 </style>
@@ -759,17 +790,17 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th class="ps-4"><span class="th-label"><i class="bi bi-person"></i>Name</span></th>
+                                <th><span class="th-label"><i class="bi bi-person"></i>Name</span></th>
                                 <th><span class="th-label"><i class="bi bi-briefcase"></i>Job Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-calendar-event"></i>Date Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-activity"></i>Status</span></th>
-                                <th class="text-center"><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
+                                <th><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($referredApplications as $application)
                             <tr>
-                                <td class="ps-4">
+                                <td>
                                     <div class="d-flex align-items-center gap-3">
                                         @if($application->applicant->avatar)
                                         <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}" class="user-avatar">
@@ -802,7 +833,7 @@
                                         {{ $application->status }}
                                     </span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <div class="table-actions">
                                         <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
                                             <i class="bi bi-eye-fill"></i>

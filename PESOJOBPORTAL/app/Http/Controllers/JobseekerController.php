@@ -1960,7 +1960,7 @@ class JobseekerController extends Controller
         // Validate based on resume type
         $validated = $request->validate([
             'letter' => ['nullable', 'string', 'max:2000'],
-            'resume' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'resume' => ['nullable', 'file', 'extensions:pdf,doc,docx', 'max:5120'],
             'resume_type' => ['required', 'in:upload,builder'],
             'use_resume_builder' => ['nullable', 'boolean'],
         ]);
@@ -1977,6 +1977,8 @@ class JobseekerController extends Controller
         }
 
         $resumePath = null;
+        $resumeOriginalFilename = null;
+        $resumeFileExtension = null;
         $resumeType = $validated['resume_type'];
 
         // If an actual file was uploaded, always treat the submission as an upload.
@@ -1988,7 +1990,10 @@ class JobseekerController extends Controller
         // Handle resume based on type
         if ($resumeType === 'upload') {
             if ($request->hasFile('resume')) {
-                $resumePath = $request->file('resume')->store('resumes', 'public');
+                $resumeFile = $request->file('resume');
+                $resumePath = $resumeFile->store('resumes', 'public');
+                $resumeOriginalFilename = $resumeFile->getClientOriginalName();
+                $resumeFileExtension = $resumeFile->getClientOriginalExtension();
             } else {
                 return redirect()
                     ->back()
@@ -2015,6 +2020,8 @@ class JobseekerController extends Controller
             'status' => 'pending',
             'notes' => $validated['letter'] ?? null,
             'resume_path' => $resumePath,
+            'resume_original_filename' => $resumeOriginalFilename,
+            'resume_file_extension' => $resumeFileExtension,
             'resume_type' => $resumeType,
         ]);
 

@@ -98,6 +98,14 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::get('/applications/{application}', [EmployerController::class, 'showApplication'])
         ->name('applications.show');
 
+    // Download resume
+    Route::get('/applications/{application}/resume/download', [EmployerController::class, 'downloadResume'])
+        ->name('applications.resume.download');
+
+    // Store feedback for application
+    Route::post('/applications/{application}/feedback', [EmployerController::class, 'storeFeedback'])
+        ->name('applications.feedback');
+
     Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
         ->name('notifications.read');
 });
@@ -109,7 +117,7 @@ Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerCont
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::model('application', \App\Models\JobApplication::class);
-    
+
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Jobseeker Approvals
