@@ -26,8 +26,10 @@
         border: 1px solid #d8e4f5;
         background: linear-gradient(135deg, #ffffff 0%, #f7fbff 48%, #edf4ff 100%);
         color: #0a3764;
-        padding: 1.35rem;
-        box-shadow: 0 14px 34px rgba(17, 30, 52, 0.08);
+        padding: 1.5rem;
+        box-shadow: 0 20px 40px rgba(17, 30, 52, 0.12);
+        margin-bottom: 2.5rem;
+        animation: fadeInUp 0.6s ease-out;
     }
 
     .skillgap-hero::before {
@@ -81,24 +83,36 @@
         color: #183f73;
         border: 1px solid #cfe0f5;
         font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
 
     .skillgap-cta:hover {
         background: #eff6ff;
         color: #102f59;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(30, 64, 175, 0.2);
+    }
+
+    .skillgap-cta:active {
+        transform: translateY(0);
     }
 
     .skillgap-metric {
         border: 1px solid #d8e4f5;
-        border-radius: 16px;
+        border-radius: 14px;
         background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 102px;
+        display: flex;
+        align-items: center;
     }
 
     .skillgap-metric:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 22px rgba(20, 49, 86, 0.1);
-        border-color: #c7d8f5;
+        transform: translateY(-3px);
+        box-shadow: 0 20px 35px rgba(20, 49, 86, 0.15);
+        border-color: #b3d4fc;
     }
 
     .skill-badge {
@@ -159,7 +173,27 @@
     .skillgap-chip-grid {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 0.75rem;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0.25rem 0;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(96, 117, 142, 0.3) transparent;
+    }
+
+    .skillgap-chip-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .skillgap-chip-grid::-webkit-scrollbar-thumb {
+        background: rgba(96, 117, 142, 0.3);
+        border-radius: 3px;
+    }
+
+    @media (max-width: 576px) {
+        .skillgap-chip-grid {
+            gap: 0.5rem;
+        }
     }
 
     .skillgap-analytics-shell {
@@ -423,18 +457,86 @@
 
     @media (max-width: 767.98px) {
         .skillgap-hero {
-            padding: 1rem;
+            padding: 1.25rem;
         }
 
         .skillgap-panel {
             border-radius: 16px;
         }
+
+        .skillgap-chart-container {
+            gap: 12px;
+        }
+
+        .skillgap-column-group {
+            min-width: 68px;
+        }
+
+        .skillgap-bars-wrapper {
+            flex-direction: column-reverse;
+            height: auto;
+            gap: 4px;
+        }
+
+        .skillgap-column {
+            height: 32px;
+            width: auto;
+            min-width: 32px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .skillgap-analytics-shell,
+        .skillgap-panel,
+        .skillgap-progress-shell {
+            margin-left: -1rem;
+            margin-right: -1rem;
+        }
+
+        .skillgap-chart-container {
+            justify-content: center;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .animated-progress {
+        transition: width 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    }
+
+    /* Focus states */
+    .skillgap-cta:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    .skillgap-metric:focus-within {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
     }
 </style>
 @endpush
 
 @section('content')
+
 <section class="skill-gap-page" aria-label="Skill gap analysis">
+
+
+    <!-- Hero Section (unchanged) -->
     <div class="skillgap-hero mb-4">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 position-relative">
             <div>
@@ -464,8 +566,8 @@
             $topMatchedSkill = collect($skillGapAnalysis['matchedSkills'] ?? [])->first();
         @endphp
 
-        <div class="skillgap-analytics-shell p-3 p-lg-4 mb-4">
-            <div class="skillgap-analytics-head d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-2">
+        <div class="skillgap-analytics-shell p-4 mb-5 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="skillgap-analytics-head pb-4 mb-4 border-bottom" style="border-color: #e3ebf5 !important;">
                 <div>
                     <div class="skillgap-analytics-title"><i class="bi bi-graph-up-arrow me-2"></i>Analytics Snapshot</div>
                     <p class="skillgap-analytics-subtitle">A quick view of your current market alignment and the skills most likely to move the needle.</p>
