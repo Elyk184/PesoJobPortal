@@ -8,16 +8,30 @@
           <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
           <div>
             <h5 class="mb-1 text-white fw-bold" style="font-size: 1.1rem; letter-spacing: -0.5px;">PESO Manolo Fortich</h5>
-            <p class="mb-0 small text-muted fw-medium">Public Employment Service Office</p>
+            <p class="mb-0 small text-white-50 fw-medium">Public Employment Service Office</p>
           </div>
         </div>
         <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
         <div class="d-flex gap-2">
-          <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="btn btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px; background: #fff; border: none; box-shadow: 0 2px 8px rgba(15,45,82,0.10);" title="Facebook">
-            <span style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #1f4b8f; border-radius: 50%;"><i class="bi bi-facebook" style="color: #fff; font-size: 1.5rem; font-weight: bold;"></i></span>
+          <a
+            href="https://www.facebook.com/lgupesomanolofortich"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
+            style="width: 54px; height: 54px;"
+            aria-label="Facebook"
+            title="Facebook"
+          >
+            <i class="bi bi-facebook" style="font-size: 1.45rem;"></i>
           </a>
-          <a href="#" class="btn btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px; background: #fff; border: none; box-shadow: 0 2px 8px rgba(15,45,82,0.10);" title="Twitter">
-            <span style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #1f4b8f; border-radius: 50%;"><i class="bi bi-twitter-x" style="color: #fff; font-size: 1.5rem; font-weight: bold;"></i></span>
+          <a
+            href="#"
+            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
+            style="width: 54px; height: 54px;"
+            aria-label="X"
+            title="X"
+          >
+            <i class="bi bi-twitter-x" style="font-size: 1.35rem;"></i>
           </a>
         </div>
       </div>
