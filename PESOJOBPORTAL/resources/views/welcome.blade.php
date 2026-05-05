@@ -188,8 +188,7 @@
                 font-weight: 700;
                 line-height: 1.1;
                 margin-bottom: 10px;
-                color: rgba(255, 255, 255, 0.96);
-                text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+                color: #075cb2e6;
             }
 
             .hero-title-peso {
@@ -198,7 +197,6 @@
                 line-height: 1.1;
                 color: #e74c3c;
                 margin-bottom: 20px;
-                text-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
             }
 
             .hero-title-connecting {
@@ -206,8 +204,7 @@
                 font-weight: 700;
                 line-height: 1.2;
                 margin-bottom: 18px;
-                color: rgba(255, 255, 255, 0.94);
-                text-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+                color: #075cb2e6;
             }
 
             .hero-title-connecting span {
@@ -216,10 +213,9 @@
 
             .hero-description-text {
                 font-size: 18px;
-                color: rgba(255, 255, 255, 0.88);
+                color: #333;
                 margin-bottom: 30px;
                 line-height: 1.6;
-                text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
             }
 
             .hero-btn-getstarted {
