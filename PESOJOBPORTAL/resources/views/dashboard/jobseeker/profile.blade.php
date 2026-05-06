@@ -55,11 +55,11 @@
         ],
         'it_technical' => [
             'label' => 'IT & Technical Skills',
-            'options' => ['Computer Literate', 'Microsoft Office', 'Web Development', 'Programming', 'Database', 'JavaScript', 'HTML/CSS', 'Git', 'Database Management', 'Frontend Development (Web UI)', 'API Integration & Development', 'Software Development & Debugging', 'Network Configuration & Troubleshooting', 'Hardware Installation & Repair', 'Graphic Design', 'React.js', 'Node.js', 'REST API', 'Backend Development (Server-side)', 'Virtual Assistance', 'Data Entry and Record Keeping', 'Filing and Documentation', 'Scheduling and Calendar Management', 'MySQL (Database)', 'Flutter', 'Docker', 'Laravel (Backend)'],
+            'options' => ['Computer Literate', 'Microsoft Office', 'Web Development', 'System Developer', 'Programming', 'Database', 'JavaScript', 'HTML/CSS', 'Git', 'Database Management', 'Frontend Development (Web UI)', 'API Integration & Development', 'Software Development & Debugging', 'Network Configuration & Troubleshooting', 'Hardware Installation & Repair', 'Graphic Design', 'React.js', 'Node.js', 'REST API', 'Backend Development (Server-side)', 'Virtual Assistance', 'Data Entry and Record Keeping', 'Filing and Documentation', 'Scheduling and Calendar Management', 'MySQL (Database)', 'Flutter', 'Docker', 'Laravel (Backend)'],
         ],
         'soft_skills' => [
             'label' => 'Soft Skills',
-            'options' => ['Critical Thinking', 'Problem-Solving', 'Adaptability', 'Time Management', 'Team Collaboration'],
+            'options' => ['Critical Thinking','Knowledge', 'Problem-Solving', 'Adaptability', 'Time Management', 'Team Collaboration'],
         ],
     ];
 
