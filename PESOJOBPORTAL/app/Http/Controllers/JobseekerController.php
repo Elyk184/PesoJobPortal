@@ -12,7 +12,6 @@ use App\Models\PortalNotification;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
-use App\Services\SkillGapService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -451,28 +450,7 @@ class JobseekerController extends Controller
         $user = Auth::user();
         $profile = $user?->profile;
         $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
-
-        /** @var SkillGapService $skillGapService */
-        $skillGapService = app(SkillGapService::class);
-        $actualSkills = $skillGapService->extractActualSkills($profile);
-
-        $savedJobsGap = null;
-        $savedJobIds = $user
-            ? SavedJob::query()->where('user_id', (int) $user->id)->pluck('job_id')->all()
-            : [];
-
-        if (! empty($savedJobIds) && ! empty($actualSkills)) {
-            $savedJobs = PesoJob::query()
-                ->whereIn('id', $savedJobIds)
-                ->where('status', 'active')
-                ->latest()
-                ->limit(10)
-                ->get();
-
-            if ($savedJobs->isNotEmpty()) {
-                $savedJobsGap = $skillGapService->aggregateJobsAnalysis($savedJobs, $actualSkills, 10);
-            }
-        }
+        $savedJobsGap = $this->buildSavedJobsSkillGap($profile);
 
         return view('dashboard.jobseeker.skill-gap', [
             'skillGapAnalysis' => $skillGapAnalysis,
@@ -483,11 +461,6 @@ class JobseekerController extends Controller
     public function savedJobs(): View
     {
         $userId = (int) Auth::id();
-
-        $profile = Auth::user()?->profile;
-        /** @var SkillGapService $skillGapService */
-        $skillGapService = app(SkillGapService::class);
-        $actualSkills = $skillGapService->extractActualSkills($profile);
 
         $savedJobIds = SavedJob::query()
             ->where('user_id', $userId)
@@ -502,11 +475,7 @@ class JobseekerController extends Controller
                 ->where('status', 'active')
                 ->latest()
                 ->get()
-                ->map(function (PesoJob $job) use ($skillGapService, $actualSkills) {
-                    $analysis = ! empty($actualSkills)
-                        ? $skillGapService->analyzeJobVsSkills($job, $actualSkills)
-                        : null;
-
+                ->map(function (PesoJob $job) {
                     return [
                         'id' => $job->id,
                         'title' => $job->title,
@@ -516,7 +485,6 @@ class JobseekerController extends Controller
                         'description' => $job->description,
                         'requirements_list' => $this->extractJobRequirements($job),
                         'created_at' => $job->created_at,
-                        'skill_gap' => $analysis,
                     ];
                 });
         }
@@ -1522,6 +1490,139 @@ class JobseekerController extends Controller
         return collect($terms)
             ->filter(fn ($term) => $term !== '' && str_contains($haystack, mb_strtolower((string) $term)))
             ->count();
+    }
+
+    private function buildSavedJobsSkillGap(?UserProfile $profile): array
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $profile) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $savedJobIds = SavedJob::query()
+            ->where('user_id', (int) $user->id)
+            ->pluck('job_id')
+            ->all();
+
+        if ($savedJobIds === []) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $savedJobs = PesoJob::query()
+            ->whereIn('id', $savedJobIds)
+            ->where('status', 'active')
+            ->get(['title', 'description', 'requirements', 'preferred_skills']);
+
+        if ($savedJobs->isEmpty()) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $userSkills = collect();
+        $userSkills = $userSkills->merge($profile->skills ?? []);
+
+        $otherSkills = $profile->other_skills ?? [];
+        $userSkills = $userSkills
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''));
+
+        $trainingSkills = collect($profile->training ?? [])
+            ->pluck('skills')
+            ->filter()
+            ->flatMap(function ($skillsText) {
+                return collect(preg_split('/[\r\n,]+/', (string) $skillsText) ?: [])
+                    ->map(fn ($s) => trim($s))
+                    ->filter();
+            });
+        $userSkills = $userSkills->merge($trainingSkills);
+
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->filter()
+            ->map(fn ($t) => trim((string) $t));
+        $userSkills = $userSkills->merge($experienceTitles);
+
+        $occupationPref = trim((string) data_get($profile, 'job_preferences.occupation_text', ''));
+        if ($occupationPref !== '') {
+            $userSkills->push($occupationPref);
+        }
+
+        $normalizedUserSkills = $userSkills
+            ->map(fn ($s) => mb_strtolower(trim((string) $s)))
+            ->filter(fn ($s) => mb_strlen($s) >= 2)
+            ->unique()
+            ->values()
+            ->all();
+
+        $jobSkillFrequency = [];
+
+        foreach ($savedJobs as $job) {
+            $jobText = implode(' ', [
+                (string) $job->title,
+                (string) $job->description,
+                (string) $job->getRawOriginal('requirements'),
+                (string) $job->preferred_skills,
+            ]);
+
+            foreach ($this->extractSkillCandidatesFromText($jobText) as $candidate) {
+                $normalized = mb_strtolower(trim($candidate));
+
+                if (mb_strlen($normalized) < 3) {
+                    continue;
+                }
+
+                $jobSkillFrequency[$normalized] = ($jobSkillFrequency[$normalized] ?? 0) + 1;
+            }
+        }
+
+        arsort($jobSkillFrequency);
+
+        $savedJobSkills = collect($jobSkillFrequency)
+            ->take(20)
+            ->keys()
+            ->values()
+            ->all();
+
+        $matchedSkills = [];
+        $missingSkills = [];
+
+        foreach ($savedJobSkills as $savedJobSkill) {
+            $isMatched = false;
+
+            foreach ($normalizedUserSkills as $userSkill) {
+                if (str_contains($savedJobSkill, $userSkill) || str_contains($userSkill, $savedJobSkill)) {
+                    $isMatched = true;
+                    break;
+                }
+            }
+
+            if ($isMatched) {
+                $matchedSkills[] = $savedJobSkill;
+                continue;
+            }
+
+            $missingSkills[] = $savedJobSkill;
+        }
+
+        return [
+            'hasData' => true,
+            'matched_skills_unique_count' => count(array_unique($matchedSkills)),
+            'missing_skills' => array_values(array_unique($missingSkills)),
+        ];
     }
 
     private function buildSkillGapAnalysis(?UserProfile $profile): array

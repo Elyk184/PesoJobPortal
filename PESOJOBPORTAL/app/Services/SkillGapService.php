@@ -187,6 +187,7 @@ class SkillGapService
         $gapFreq = [];
         $gapRows = [];
         $requiredCount = 0;
+        $requiredUnique = [];
 
         foreach ($jobs as $job) {
             if (! $job instanceof PesoJob) {
@@ -195,6 +196,13 @@ class SkillGapService
 
             $analysis = $this->analyzeJobVsSkills($job, $actualSkills);
             $requiredCount += count($analysis['required'] ?? []);
+
+            foreach (($analysis['required'] ?? []) as $req) {
+                $key = $this->normalizeSkillName((string) data_get($req, 'name', ''));
+                if ($key !== '') {
+                    $requiredUnique[$key] = true;
+                }
+            }
 
             foreach (($analysis['missing'] ?? []) as $skillName) {
                 $key = $this->normalizeSkillName($skillName);
@@ -217,6 +225,10 @@ class SkillGapService
             ->values()
             ->all();
 
+        $requiredUniqueCount = count($requiredUnique);
+        $missingUniqueCount = count(array_keys($missingFreq));
+        $matchedUniqueCount = max(0, $requiredUniqueCount - $missingUniqueCount);
+
         $proficiencyGaps = collect(array_keys($gapFreq))
             ->filter()
             ->take($limitSkills)
@@ -229,6 +241,8 @@ class SkillGapService
 
         return [
             'required_skills' => $requiredCount,
+            'required_skills_unique_count' => $requiredUniqueCount,
+            'matched_skills_unique_count' => $matchedUniqueCount,
             'missing_skills' => $missingSkills,
             'proficiency_gaps' => $proficiencyGaps,
             'recommended_actions' => $recommended,

@@ -78,64 +78,6 @@
                                 </div>
                             @endif
 
-                            @if (! empty($job['skill_gap']))
-                                @php
-                                    $gap = $job['skill_gap'];
-                                    $missingSkills = collect($gap['missing'] ?? [])->take(5)->values();
-                                    $proficiencyGaps = collect($gap['proficiency_gaps'] ?? [])->take(3)->values();
-                                    $recommended = collect($gap['recommended_actions'] ?? [])->take(2)->values();
-                                @endphp
-
-                                <div class="saved-job-skillgap mt-3">
-                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                                        <div class="saved-job-skillgap-title">
-                                            <i class="bi bi-diagram-3 me-2"></i>Skill Gap
-                                        </div>
-                                        <span class="badge rounded-pill saved-job-skillgap-badge">
-                                            Coverage: {{ (int) ($gap['coverage_percent'] ?? 0) }}%
-                                        </span>
-                                    </div>
-
-                                    @if ($missingSkills->isNotEmpty())
-                                        <div class="saved-job-skillgap-block">
-                                            <div class="saved-job-skillgap-kicker">Missing skills</div>
-                                            <div class="saved-job-skillgap-chips">
-                                                @foreach ($missingSkills as $skill)
-                                                    <span class="badge rounded-pill saved-job-skillgap-chip">{{ ucwords($skill) }}</span>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    @if ($proficiencyGaps->isNotEmpty())
-                                        <div class="saved-job-skillgap-block">
-                                            <div class="saved-job-skillgap-kicker">Proficiency gaps</div>
-                                            <ul class="saved-job-skillgap-list">
-                                                @foreach ($proficiencyGaps as $gapRow)
-                                                    <li>
-                                                        <strong>{{ ucwords((string) data_get($gapRow, 'name', '')) }}</strong>
-                                                        <span class="text-muted">(need {{ ucwords((string) data_get($gapRow, 'required', '')) }}, you have {{ ucwords((string) data_get($gapRow, 'actual', '')) }})</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    @if ($recommended->isNotEmpty())
-                                        <div class="saved-job-skillgap-block">
-                                            <div class="saved-job-skillgap-kicker">Recommended actions</div>
-                                            <ul class="saved-job-skillgap-list">
-                                                @foreach ($recommended as $rec)
-                                                    <li>
-                                                        <strong>{{ ucwords((string) data_get($rec, 'skill', '')) }}:</strong>
-                                                        {{ collect(data_get($rec, 'actions', []))->take(2)->implode(' • ') }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
                         </article>
                     </div>
                 @endforeach
@@ -266,58 +208,6 @@
         gap: 8px;
     }
 
-    .saved-job-skillgap {
-        border-top: 1px dashed var(--dash-border);
-        padding-top: 12px;
-    }
-
-    .saved-job-skillgap-title {
-        font-weight: 800;
-        color: var(--dash-text);
-        font-size: 0.95rem;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .saved-job-skillgap-badge {
-        background: var(--dash-page-bg);
-        color: var(--dash-muted);
-        border: 1px solid var(--dash-border);
-        font-weight: 700;
-    }
-
-    .saved-job-skillgap-block {
-        margin-top: 10px;
-    }
-
-    .saved-job-skillgap-kicker {
-        font-size: 0.82rem;
-        font-weight: 800;
-        color: var(--dash-muted);
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-
-    .saved-job-skillgap-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .saved-job-skillgap-chip {
-        background: var(--dash-page-bg);
-        border: 1px solid var(--dash-border);
-        color: var(--dash-text);
-        font-weight: 700;
-    }
-
-    .saved-job-skillgap-list {
-        margin: 0;
-        padding-left: 1.15rem;
-        color: var(--dash-muted);
-        font-size: 0.92rem;
-    }
 
     @media (max-width: 575.98px) {
         .saved-job-top {
