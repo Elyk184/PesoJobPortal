@@ -8,7 +8,7 @@
           <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
           <div>
             <h5 class="mb-1 text-white fw-bold" style="font-size: 1.1rem; letter-spacing: -0.5px;">PESO Manolo Fortich</h5>
-            <p class="mb-0 small text-white-50 fw-medium">Public Employment Service Office</p>
+            <p class="mb-0 small text-white fw-medium">Public Employment Service Office</p>
           </div>
         </div>
         <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
@@ -23,15 +23,6 @@
             title="Facebook"
           >
             <i class="bi bi-facebook" style="font-size: 1.45rem;"></i>
-          </a>
-          <a
-            href="#"
-            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-            style="width: 54px; height: 54px;"
-            aria-label="X"
-            title="X"
-          >
-            <i class="bi bi-twitter-x" style="font-size: 1.35rem;"></i>
           </a>
         </div>
       </div>
