@@ -288,6 +288,49 @@
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
+            <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
+                <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Approvals & Verification</small>
+            </li>
+
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link {{ request()->routeIs('admin.jobseekers.*') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-check"></i>
+                    <span>Application Approvals</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification*') ? 'active' : '' }}">
+                    <i class="bi bi-building"></i>
+                    <span>Employer Verification</span>
+                    @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
+                        <span class="sidebar-badge">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                    @endif
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.job-approvals') ? 'active' : '' }}">
+                    <i class="bi bi-file-check"></i>
+                    <span>Job Approvals</span>
+                    @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
+                        <span class="sidebar-badge" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                    @endif
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.lra-sra-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.lra-sra-approvals') ? 'active' : '' }}">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span>LRA/SRA Approvals</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ route('admin.document-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.document-verification') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark"></i>
+                    <span>Document Verification</span>
+                </a>
+            </li>
+
+            <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
+
             <!-- Intelligence & Reports Section -->
             <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Intelligence & Reports</small>

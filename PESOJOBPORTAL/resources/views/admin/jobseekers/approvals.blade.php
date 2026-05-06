@@ -469,4 +469,17 @@
         @endif
     </div>
 </div>
+
+<script>
+    // Hide Application Approvals link from sidebar when viewing this page
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu-link');
+        sidebarLinks.forEach(link => {
+            if (link.href.includes('jobseekers.index')) {
+                link.parentElement.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 @endsection
