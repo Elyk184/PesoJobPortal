@@ -57,36 +57,9 @@ class JobseekerController extends Controller
                 ->values();
         }
 
-        $recentlyViewedJobIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
-            ->map(fn ($id) => (int) $id)
-            ->filter(fn ($id) => $id > 0)
-            ->unique()
-            ->values();
-
-        $recentlyViewedJobs = collect();
-
-        if ($recentlyViewedJobIds->isNotEmpty()) {
-            $recentlyViewedMap = PesoJob::query()
-                ->where('status', 'active')
-                ->whereIn('id', $recentlyViewedJobIds->all())
-                ->get()
-                ->keyBy('id');
-
-            $recentlyViewedJobs = $recentlyViewedJobIds
-                ->map(fn ($id) => $recentlyViewedMap->get($id))
-                ->filter()
-                ->take(3)
-                ->map(function (PesoJob $job) {
-                    return [
-                        'title' => $job->title,
-                        'location' => $job->location,
-                        'employer_name' => $job->employer_name,
-                        'salary_range' => $job->salary_range,
-                        'description' => $job->description,
-                    ];
-                })
-                ->values();
-        }
+        $savedJobsCount = $userId
+            ? SavedJob::query()->where('user_id', $userId)->count()
+            : 0;
 
         $isUsingSampleRecommendations = false;
 
@@ -129,7 +102,7 @@ class JobseekerController extends Controller
         $interviewsThisWeek = $userId
             ? JobApplication::query()
                 ->where('user_id', $userId)
-                ->where('status', 'interviewed')
+                ->whereIn('status', ['interview', 'interviewed'])
                 ->where('updated_at', '>=', now()->subDays(7))
                 ->count()
             : 0;
@@ -211,8 +184,7 @@ class JobseekerController extends Controller
             'applicationStatusCounts' => $applicationStatusCounts,
             'dashboardNotifications' => $notifications,
             'unreadNotificationsCount' => $unreadNotificationsCount,
-            'recentlyViewedJobs' => $recentlyViewedJobs,
-            'recentlyViewedCount' => $recentlyViewedJobIds->count(),
+            'savedJobsCount' => $savedJobsCount,
             'kpiTrends' => [
                 'jobsThisWeek' => $jobsThisWeek,
                 'applicationsThisWeek' => $applicationsThisWeek,

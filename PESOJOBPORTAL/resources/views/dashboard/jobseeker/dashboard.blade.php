@@ -839,10 +839,11 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $recentlyViewedCount ?? 0 }}">{{ $recentlyViewedCount ?? 0 }}</div>
-                    <div class="dashboard-stat-label">Recently Viewed</div>
-                    <div class="dashboard-stat-trend">{{ $kpiTrends['interviewsThisWeek'] ?? 0 }} interview updates</div>
+                    <div class="dashboard-stat-number" data-counter-target="{{ $savedJobsCount ?? 0 }}">{{ $savedJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-label">Saved Jobs</div>
+                    <div class="dashboard-stat-trend">Bookmark jobs to apply later</div>
                 </div>
+                <a href="{{ route('jobseeker.saved-jobs') }}" class="stretched-link" aria-label="View saved jobs"></a>
             </div>
         </div>
     </div>
@@ -906,7 +907,8 @@
 
         <div class="row g-3 align-items-stretch">
             <div class="col-12 col-lg-5">
-                <div class="dashboard-stat-card h-100 p-3">
+                <div class="dashboard-stat-card h-100 p-3 position-relative">
+                    <a href="{{ route('jobseeker.profile') }}" class="stretched-link" aria-label="Go to profile"></a>
                     <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
                         <div>
                             <div class="dashboard-stat-label mb-1">Profile progress</div>
@@ -929,7 +931,8 @@
             <div class="col-12 col-lg-7">
                 <div class="row g-3 h-100">
                     <div class="col-12 col-md-4">
-                        <div class="dashboard-stat-card p-3 h-100">
+                        <div class="dashboard-stat-card p-3 h-100 position-relative">
+                            <a href="{{ route('jobseeker.applications') }}" class="stretched-link" aria-label="View applications"></a>
                             <div class="dashboard-stat-icon stat-apps mb-3"><i class="bi bi-send"></i></div>
                             <div class="dashboard-stat-label">Applications this week</div>
                             <div class="dashboard-stat-number">{{ $kpiTrends['applicationsThisWeek'] ?? 0 }}</div>
@@ -937,7 +940,8 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
-                        <div class="dashboard-stat-card p-3 h-100">
+                        <div class="dashboard-stat-card p-3 h-100 position-relative">
+                            <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="stretched-link" aria-label="View interview applications"></a>
                             <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
                             <div class="dashboard-stat-label mt-3">Interview activity</div>
                             <div class="dashboard-stat-number">{{ $kpiTrends['interviewsThisWeek'] ?? 0 }}</div>
@@ -945,10 +949,11 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
-                        <div class="dashboard-stat-card p-3 h-100">
+                        <div class="dashboard-stat-card p-3 h-100 position-relative">
+                            <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="stretched-link" aria-label="View reviewed applications"></a>
                             <div class="dashboard-stat-icon stat-saved mb-3"><i class="bi bi-stars"></i></div>
                             <div class="dashboard-stat-label">Pending review</div>
-                            <div class="dashboard-stat-number">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+                            <div class="dashboard-stat-number">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
                             <div class="small text-muted">Applications waiting for action</div>
                         </div>
                     </div>
