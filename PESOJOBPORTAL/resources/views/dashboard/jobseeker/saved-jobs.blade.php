@@ -126,7 +126,7 @@
     .saved-job-item {
         border-radius: 14px;
         border: 1px solid var(--dash-border);
-        background: var(--dash-card);
+        background: var(--dash-surface);
         transition: box-shadow 0.18s ease, transform 0.12s ease;
     }
 
@@ -145,7 +145,7 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: var(--dash-bg);
+        background: var(--dash-page-bg);
         display: inline-flex;
         align-items: center;
         justify-content: center;
