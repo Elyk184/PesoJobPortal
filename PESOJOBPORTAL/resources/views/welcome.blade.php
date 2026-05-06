@@ -116,20 +116,9 @@
                 z-index: -1;
             }
 
-            /* PESO Logo Watermark Background */
+            /* PESO Logo Watermark Background (removed) */
             .peso-hero::after {
-                content: '';
-                position: absolute;
-                bottom: -10%;
-                right: -5%;
-                width: 500px;
-                height: 500px;
-                background-image: url('/images/P1so.png');
-                background-size: contain;
-                background-repeat: no-repeat;
-                opacity: 0.08;
-                z-index: 0;
-                pointer-events: none;
+                content: none;
             }
 
             /* Tablet background */
@@ -140,11 +129,7 @@
                     background-position: center center;
                 }
 
-                .peso-hero::after {
-                    width: 350px;
-                    height: 350px;
-                    opacity: 0.06;
-                }
+                .peso-hero::after { content: none; }
             }
 
             /* Mobile background */
@@ -155,13 +140,7 @@
                     background-position: center center;
                 }
 
-                .peso-hero::after {
-                    width: 250px;
-                    height: 250px;
-                    bottom: -5%;
-                    right: 0;
-                    opacity: 0.05;
-                }
+                .peso-hero::after { content: none; }
             }
 
             .hero-static {
