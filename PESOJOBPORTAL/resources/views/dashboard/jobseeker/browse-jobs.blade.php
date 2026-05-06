@@ -231,7 +231,7 @@
                                         <p class="mb-0 small text-muted mt-2">{{ \Illuminate\Support\Str::limit($job->description, 140) }}</p>
                                     </div>
 
-                                    <div class="job-card-actions ms-auto text-end d-flex flex-column gap-2">
+                                    <div class="job-card-actions ms-auto text-end d-flex flex-row flex-wrap align-items-center justify-content-end gap-2">
                                         <a href="{{ route('jobseeker.apply-job', $job) }}" class="btn btn-sm btn-outline-primary">View</a>
                                         @auth
                                             @php
@@ -239,17 +239,17 @@
                                             @endphp
                                             <button
                                                 type="button"
-                                                class="btn btn-sm {{ $isSaved ? 'btn-warning' : 'btn-outline-secondary' }} js-save-job-btn"
+                                                class="btn btn-sm {{ $isSaved ? 'btn-primary' : 'btn-outline-primary' }} js-save-job-btn"
                                                 title="{{ $isSaved ? 'Unsave' : 'Save' }}"
                                                 aria-pressed="{{ $isSaved ? 'true' : 'false' }}"
                                                 data-job-id="{{ $job->id }}"
                                                 data-saved="{{ $isSaved ? '1' : '0' }}"
                                                 data-save-url="{{ route('jobseeker.saved-jobs.toggle', $job) }}"
                                             >
-                                                <i class="bi {{ $isSaved ? 'bi-bookmark-dash' : 'bi-bookmark' }} js-save-job-icon"></i>
+                                                <i class="bi {{ $isSaved ? 'bi-bookmark-fill' : 'bi-bookmark' }} js-save-job-icon"></i>
                                             </button>
                                         @endauth
-                                        <small class="text-muted d-block d-md-none">Posted {{ $job->created_at->diffForHumans() }}</small>
+                                        <small class="text-muted d-block d-md-none w-100 text-end">Posted {{ $job->created_at->diffForHumans() }}</small>
                                     </div>
                                 </article>
                             </div>
@@ -548,11 +548,11 @@
             button.dataset.saved = isSaved ? '1' : '0';
             button.title = isSaved ? 'Unsave' : 'Save';
             button.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
-            button.classList.toggle('btn-warning', isSaved);
-            button.classList.toggle('btn-outline-secondary', ! isSaved);
+            button.classList.toggle('btn-primary', isSaved);
+            button.classList.toggle('btn-outline-primary', ! isSaved);
 
             if (icon) {
-                icon.className = isSaved ? 'bi bi-bookmark-dash js-save-job-icon' : 'bi bi-bookmark js-save-job-icon';
+                icon.className = isSaved ? 'bi bi-bookmark-fill js-save-job-icon' : 'bi bi-bookmark js-save-job-icon';
             }
         };
 
