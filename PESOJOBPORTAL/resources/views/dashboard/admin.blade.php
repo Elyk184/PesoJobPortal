@@ -897,12 +897,14 @@
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Approvals & Verification</small>
             </li>
 
+            @if(!request()->routeIs('admin.jobseekers.index'))
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-earmark-check"></i>
                     <span>Application Approvals</span>
                 </a>
             </li>
+            @endif
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link">
                     <i class="bi bi-building"></i>
