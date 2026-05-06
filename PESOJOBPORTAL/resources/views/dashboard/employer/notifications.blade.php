@@ -115,14 +115,16 @@
             grid-template-columns: 20px 32px minmax(160px, 1.1fr) minmax(240px, 1.9fr) 112px 120px 92px;
             align-items: center;
             gap: 0.85rem;
-            padding: 0.95rem 1.15rem;
+            padding: 1rem 1.15rem;
             border-bottom: 1px solid #ecf1f8;
-            transition: background-color 0.16s ease, box-shadow 0.16s ease;
+            transition: background-color 0.16s ease, box-shadow 0.16s ease, transform 0.12s ease;
+            cursor: pointer;
         }
 
         .gmail-row:hover {
             background: #f8fbff;
-            box-shadow: inset 0 1px 0 rgba(56, 101, 179, 0.05), inset 0 -1px 0 rgba(56, 101, 179, 0.05);
+            box-shadow: 0 6px 18px rgba(17, 39, 76, 0.06), inset 0 1px 0 rgba(56, 101, 179, 0.03);
+            transform: translateY(-2px);
         }
 
         .gmail-row.unread {
@@ -198,16 +200,17 @@
             align-items: center;
             justify-content: center;
             border-radius: 999px;
-            padding: 0.34rem 0.7rem;
-            font-size: 0.7rem;
-            font-weight: 700;
+            padding: 0.28rem 0.6rem;
+            font-size: 0.72rem;
+            font-weight: 800;
             letter-spacing: 0.02em;
             text-transform: uppercase;
-            color: #315d95;
-            background: #e9f2ff;
-            border: 1px solid #cfe1fb;
+            color: #234570;
+            background: linear-gradient(180deg, #f7fbff 0%, #eaf5ff 100%);
+            border: 1px solid #d6e9ff;
             white-space: nowrap;
             justify-self: start;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06);
         }
 
         .gmail-read-tag {
@@ -250,7 +253,7 @@
             transition: all 0.16s ease;
             white-space: nowrap;
             cursor: pointer;
-            margin-right: 0.5rem;
+            margin-right: 0.25rem;
         }
 
         .gmail-view-btn:hover {
@@ -416,6 +419,9 @@
 
         .gmail-action {
             justify-self: end;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
         .gmail-row .unread-dot,
@@ -524,7 +530,7 @@
         <div class="gmail-shell">
             <div class="gmail-toolbar">
                 <div class="gmail-toolbar-left">
-                    <h2 class="gmail-title"><i class="bi bi-envelope"></i>Inbox</h2>
+                    <h2 class="gmail-title"><i class="bi bi-envelope"></i>Notifications</h2>
                 </div>
                 <div class="gmail-toolbar-counts">
                     <span class="gmail-meta"><i class="bi bi-circle-fill"></i>{{ $unreadCount }} unread</span>
@@ -573,7 +579,12 @@
                             $badgeLabel = strtoupper(str_replace('_', ' ', $notification->type));
                         }
                     @endphp
-                    <div class="gmail-row {{ $notification->is_read ? 'read' : 'unread' }}">
+                    <div class="gmail-row {{ $notification->is_read ? 'read' : 'unread' }}"
+                        data-id="{{ $notification->id }}"
+                        data-title="{{ e($notification->title) }}"
+                        data-message="{{ e($notification->message) }}"
+                        data-icon="{{ $typeIcon }}"
+                        data-badge="{{ e($badgeLabel) }}">
                         @if ($notification->is_read)
                             <span class="read-dot" aria-hidden="true"></span>
                         @else
@@ -588,13 +599,13 @@
 
                         @if (! $notification->is_read)
                             <div class="gmail-action">
-                                <button type="button" class="gmail-view-btn" onclick="viewNotification({{ $notification->id }}, '{{ $notification->title }}', '{{ addslashes($notification->message) }}', '{{ $typeIcon }}', '{{ $badgeLabel }}')">
+                                <button type="button" class="gmail-view-btn" onclick="event.stopPropagation(); viewNotification({{ $notification->id }}, '{{ addslashes($notification->title) }}', '{{ addslashes($notification->message) }}', '{{ $typeIcon }}', '{{ addslashes($badgeLabel) }}')">
                                     <i class="bi bi-eye"></i> View
                                 </button>
                                 <form style="display: inline;" method="POST" action="{{ route('employer.notifications.read', $notification) }}">
                                     @csrf
                                     @method('PATCH')
-                                    <button class="mark-read-btn" type="submit">Mark Read</button>
+                                    <button class="mark-read-btn" type="submit" onclick="event.stopPropagation()">Mark Read</button>
                                 </form>
                             </div>
                         @else
@@ -666,6 +677,27 @@
                 }
             }).catch(error => console.error('Error:', error));
         }
+
+        // Make entire row clickable and open notification modal
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.gmail-row').forEach(function (row) {
+                row.addEventListener('click', function (e) {
+                    // If the click originated from a button or form control, ignore
+                    const tag = e.target.tagName.toLowerCase();
+                    if (tag === 'button' || tag === 'a' || e.target.closest('form')) return;
+
+                    const id = row.dataset.id;
+                    const title = row.dataset.title || '';
+                    const message = row.dataset.message || '';
+                    const icon = row.dataset.icon || 'bi-bell';
+                    const badge = row.dataset.badge || '';
+
+                    if (id) {
+                        viewNotification(id, title, message, icon, badge);
+                    }
+                });
+            });
+        });
 
         function closeNotificationModal() {
             document.getElementById('notificationModal').classList.remove('show');
