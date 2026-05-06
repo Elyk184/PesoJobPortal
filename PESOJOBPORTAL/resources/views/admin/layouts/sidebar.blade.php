@@ -1,12 +1,14 @@
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-header">
-        <div class="sidebar-user">
-            <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-            <div class="sidebar-user-name">
-                <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
-                <p>Administrator</p>
+        <a href="{{ route('admin.profile') }}" style="text-decoration: none; color: inherit; display: block; transition: all 0.3s ease; border-radius: 8px; padding: 0.5rem; margin: -0.5rem;">
+            <div class="sidebar-user" style="cursor: pointer;">
+                <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="sidebar-user-name">
+                    <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
+                    <p>Administrator</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <ul class="sidebar-menu">
@@ -28,17 +30,17 @@
         @if(!request()->routeIs('admin.jobseekers.index'))
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link {{ request()->routeIs('admin.jobseekers.*') ? 'active' : '' }}">
-                <i class="bi bi-person-check"></i>
-                <span>Jobseeker Approvals</span>
+                <i class="bi bi-file-earmark-check"></i>
+                <span>Application Approvals</span>
             </a>
         </li>
         @endif
         <li class="sidebar-menu-item">
-            <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification') ? 'active' : '' }}">
+            <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification*') ? 'active' : '' }}">
                 <i class="bi bi-building"></i>
                 <span>Employer Verification</span>
                 @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
-                    <span style="margin-left:auto; min-width:22px; height:22px; padding:0 7px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
+                    <span class="sidebar-badge">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
                 @endif
             </a>
         </li>
@@ -47,7 +49,7 @@
                 <i class="bi bi-file-check"></i>
                 <span>Job Approvals</span>
                 @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
-                    <span style="margin-left:auto; min-width:22px; height:22px; padding:0 7px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:#0ea5e9; color:#fff; font-size:11px; font-weight:700; line-height:1;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
+                    <span class="sidebar-badge" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
                 @endif
             </a>
         </li>
@@ -66,38 +68,6 @@
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
-        <!-- Management Section -->
-        <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
-            <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Management</small>
-        </li>
-
-        <li class="sidebar-menu-item">
-            <a href="{{ route('admin.jobseekers-management') }}" class="sidebar-menu-link {{ request()->routeIs('admin.jobseekers-management') ? 'active' : '' }}">
-                <i class="bi bi-people"></i>
-                <span>Jobseekers</span>
-            </a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="{{ route('admin.employers-management') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employers-management') ? 'active' : '' }}">
-                <i class="bi bi-shop"></i>
-                <span>Employers</span>
-            </a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="{{ route('admin.jobs-management') }}" class="sidebar-menu-link {{ request()->routeIs('admin.jobs-management') ? 'active' : '' }}">
-                <i class="bi bi-briefcase"></i>
-                <span>Jobs</span>
-            </a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="{{ route('admin.applications-management') }}" class="sidebar-menu-link {{ request()->routeIs('admin.applications-management') ? 'active' : '' }}">
-                <i class="bi bi-file-earmark-check"></i>
-                <span>Applications</span>
-            </a>
-        </li>
-
-        <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
-
         <!-- Intelligence & Reports Section -->
         <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
             <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Intelligence & Reports</small>
@@ -107,12 +77,6 @@
             <a href="{{ route('admin.employment-stats') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employment-stats') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart-line"></i>
                 <span>Employment Stats</span>
-            </a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="{{ route('admin.applications-analytics') }}" class="sidebar-menu-link {{ request()->routeIs('admin.applications-analytics') ? 'active' : '' }}">
-                <i class="bi bi-pie-chart"></i>
-                <span>Applications Analytics</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
