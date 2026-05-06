@@ -148,7 +148,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/applications-analytics', [AdminController::class, 'applicationsAnalytics'])->name('applications-analytics');
 
     // Intelligence & Reports Section
-    Route::view('/employment-stats', 'admin.employment-stats')->name('employment-stats');
+    Route::get('/employment-stats', [AdminController::class, 'employmentStats'])->name('employment-stats');
     Route::view('/skills-gap-analysis', 'admin.skills-gap-analysis')->name('skills-gap-analysis');
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
