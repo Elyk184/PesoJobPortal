@@ -847,6 +847,22 @@
         .stat-value {
             font-size: 32px;
         }
+
+        .job-feed {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .job-feed {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+    }
+
+    @media (max-width: 1440px) {
+        .job-feed {
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+        }
     }
 </style>
 
@@ -1516,21 +1532,18 @@
     .jobs-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 280px);
-        overflow: hidden;
+        width: 100%;
     }
 
     .jobs-container .col-12 {
         display: flex;
-        flex: 1;
-        overflow: hidden;
+        flex-direction: column;
+        width: 100%;
     }
 
     .jobs-container .dashboard-card {
         display: flex;
         flex-direction: column;
-        height: 100%;
-        overflow: hidden;
         width: 100%;
     }
 
@@ -1541,38 +1554,18 @@
 
     .job-feed {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 1rem;
-        max-width: 100%;
-        flex: 1;
-        overflow-y: auto;
-        padding-right: 0.5rem;
-    }
-
-    .job-feed::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .job-feed::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 10px;
-    }
-
-    .job-feed::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-    }
-
-    .job-feed::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+        width: 100%;
     }
 
     .empty-state {
-        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 3rem;
+        min-height: 300px;
     }
 
     .job-post {
@@ -1582,7 +1575,9 @@
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-        padding: 0.6rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
     }
 
     .job-post:hover {
@@ -1595,16 +1590,16 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        padding: 0;
+        padding: 0 0 0.75rem 0;
         border-bottom: 1px solid #f0f0f0;
-        gap: 0.4rem;
-        margin-bottom: 0.4rem;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
     }
 
     .job-post-company {
         display: flex;
         align-items: flex-start;
-        gap: 0.4rem;
+        gap: 0.5rem;
         flex: 1;
         min-width: 0;
     }
@@ -1653,13 +1648,15 @@
 
     .job-post-content {
         padding: 0;
+        margin-bottom: 0.75rem;
+        flex: 1;
     }
 
     .job-title {
         font-size: 14px;
         font-weight: 800;
         color: #0f172a;
-        margin: 0 0 0.35rem 0;
+        margin: 0 0 0.5rem 0;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -1672,9 +1669,9 @@
         font-size: 11px;
         color: #475569;
         line-height: 1.35;
-        margin: 0 0 0.45rem 0;
+        margin: 0 0 0.6rem 0;
         display: -webkit-box;
-        -webkit-line-clamp: 1;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1684,6 +1681,7 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+        margin-bottom: 0.75rem;
     }
 
     .job-meta-item {
@@ -1706,20 +1704,22 @@
         display: flex;
         gap: 0.5rem;
         align-items: center;
+        margin-top: auto;
     }
 
     .job-view-btn {
-        padding: 0.35rem 0.65rem;
+        padding: 0.4rem 0.75rem;
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         text-decoration: none;
         border-radius: 4px;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 700;
         transition: all 0.2s ease;
         border: none;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        white-space: nowrap;
     }
     .job-view-btn:hover {
         box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
@@ -1727,7 +1727,7 @@
     }
 
     .job-trash-btn {
-        padding: 0.35rem 0.5rem;
+        padding: 0.4rem 0.5rem;
         background: #f3f4f6;
         color: #ef4444;
         border: none;
@@ -1738,6 +1738,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
     }
 
     .job-trash-btn:hover {
