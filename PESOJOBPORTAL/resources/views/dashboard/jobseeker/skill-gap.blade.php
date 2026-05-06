@@ -222,186 +222,76 @@
         margin-bottom: 0;
     }
 
-    .skillgap-analytics-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .skillgap-chart-shell {
-        border: 1px solid #d8e4f5;
-        border-radius: 18px;
-        background: #ffffff;
-        padding: 16px;
-        box-shadow: 0 8px 18px rgba(17, 30, 52, 0.05);
-    }
-
-    .skillgap-chart-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
-        align-items: end;
-        min-height: 240px;
-    }
-
-    .skillgap-chart-item {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        align-items: stretch;
-        justify-content: end;
-        min-height: 220px;
-    }
-
-    .skillgap-chart-track {
-        position: relative;
-        flex: 1 1 auto;
+    .skillgap-summary-card {
         border: 1px solid #d8e4f5;
         border-radius: 16px;
-        background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
-        min-height: 150px;
-        overflow: hidden;
-        display: flex;
-        align-items: flex-end;
-        padding: 10px;
+        background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        box-shadow: 0 8px 18px rgba(17, 30, 52, 0.05);
+        height: 100%;
     }
 
-    .skillgap-chart-bar {
-        width: 100%;
-        border-radius: 12px 12px 8px 8px;
-        background: linear-gradient(180deg, #1e40af 0%, #3b82f6 52%, #bfdbfe 100%);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
-        min-height: 18px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .skillgap-summary-label {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #2d65b1;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.35rem;
     }
 
-    .skillgap-chart-item:hover .skillgap-chart-bar {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(30, 64, 175, 0.18);
-    }
-
-    .skillgap-chart-bar.coverage {
-        background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 52%, #93c5fd 100%);
-    }
-
-    .skillgap-chart-bar.matched {
-        background: linear-gradient(180deg, #1e40af 0%, #3b82f6 52%, #bfdbfe 100%);
-    }
-
-    .skillgap-chart-bar.missing {
-        background: linear-gradient(180deg, #3b82f6 0%, #93c5fd 52%, #dbeafe 100%);
-    }
-
-    .skillgap-chart-bar.market {
-        background: linear-gradient(180deg, #1e3a8a 0%, #60a5fa 52%, #bfdbfe 100%);
-    }
-
-    .skillgap-chart-value {
+    .skillgap-summary-value {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #1e3a8a;
-        line-height: 1;
-    }
-
-    .skillgap-chart-label {
-        font-size: 0.8rem;
-        font-weight: 700;
         color: #0a3764;
-        text-align: center;
+        line-height: 1.2;
+        margin-bottom: 0.35rem;
     }
 
-    .skillgap-chart-meta {
-        font-size: 0.72rem;
+    .skillgap-summary-text {
+        font-size: 0.9rem;
         color: #60758e;
-        text-align: center;
-    }
-
-    .skillgap-analytics-bar-group {
-        border: 1px solid #d8e4f5;
-        border-radius: 16px;
-        background: #ffffff;
-        padding: 20px;
-        box-shadow: 0 8px 18px rgba(17, 30, 52, 0.05);
-        position: relative;
-    }
-
-    .skillgap-analytics-bar-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 1.5rem;
-    }
-
-    .skillgap-analytics-bar-title {
-        font-size: 0.84rem;
-        font-weight: 700;
-        color: #0a3764;
         margin-bottom: 0;
     }
 
-    .skillgap-chart-container {
-        position: relative;
-        height: 280px;
-        display: flex;
-        align-items: flex-end;
-        gap: 16px;
-        padding: 20px 0;
-        overflow-x: auto;
+    .skillgap-next-step-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+        display: grid;
+        gap: 0.75rem;
     }
 
-    .skillgap-column-group {
+    .skillgap-next-step-item {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.8rem 0.9rem;
+        border-radius: 14px;
+        background: #f8fbff;
+        border: 1px solid #e3ebf5;
+    }
+
+    .skillgap-next-step-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
         flex: 0 0 auto;
-        gap: 8px;
-        min-width: 80px;
+        background: #eaf2ff;
+        color: #1e40af;
     }
 
-    .skillgap-bars-wrapper {
-        display: flex;
-        gap: 8px;
-        align-items: flex-end;
-        height: 200px;
-    }
-
-    .skillgap-column {
-        width: 32px;
-        border-radius: 8px 8px 0 0;
-        position: relative;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .skillgap-column:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(30, 64, 175, 0.2);
-    }
-
-    .skillgap-column.matched {
-        background: linear-gradient(180deg, #1e40af 0%, #3b82f6 100%);
-    }
-
-    .skillgap-column.missing {
-        background: linear-gradient(180deg, #06b6d4 0%, #22d3ee 100%);
-    }
-
-    .skillgap-column-label {
-        font-size: 0.75rem;
+    .skillgap-next-step-title {
         font-weight: 700;
         color: #0a3764;
-        white-space: nowrap;
-        text-align: center;
+        margin-bottom: 0.1rem;
     }
 
-    .skillgap-trend-line {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 200px;
-        pointer-events: none;
+    .skillgap-next-step-text {
+        font-size: 0.88rem;
+        color: #60758e;
+        margin-bottom: 0;
     }
 
     .skillgap-analytics-track {
@@ -462,26 +352,6 @@
 
         .skillgap-panel {
             border-radius: 16px;
-        }
-
-        .skillgap-chart-container {
-            gap: 12px;
-        }
-
-        .skillgap-column-group {
-            min-width: 68px;
-        }
-
-        .skillgap-bars-wrapper {
-            flex-direction: column-reverse;
-            height: auto;
-            gap: 4px;
-        }
-
-        .skillgap-column {
-            height: 32px;
-            width: auto;
-            min-width: 32px;
         }
     }
 
@@ -569,102 +439,108 @@
         <div class="skillgap-analytics-shell p-4 mb-5 animate-fade-in" style="animation-delay: 0.1s;">
             <div class="skillgap-analytics-head pb-4 mb-4 border-bottom" style="border-color: #e3ebf5 !important;">
                 <div>
-                    <div class="skillgap-analytics-title"><i class="bi bi-graph-up-arrow me-2"></i>Analytics Snapshot</div>
-                    <p class="skillgap-analytics-subtitle">A quick view of your current market alignment and the skills most likely to move the needle.</p>
+                    <div class="skillgap-analytics-title"><i class="bi bi-list-check me-2"></i>Simple Skill Summary</div>
+                    <p class="skillgap-analytics-subtitle">A plain-language summary of what matches, what is missing, and what to do next.</p>
                 </div>
                 <span class="skillgap-stat-pill">Updated from active postings</span>
             </div>
 
             @php
-                $chartMax = max(100, $marketSkillsCount, $matchedCount + $missingCount, 1);
-                $coverageBarHeight = max(18, ($coveragePercent / $chartMax) * 100);
-                $matchedBarHeight = max(18, ($matchedCount / $chartMax) * 100);
-                $missingBarHeight = max(18, ($missingCount / $chartMax) * 100);
-                $marketBarHeight = max(18, ($marketSkillsCount / $chartMax) * 100);
+                $savedMatched = (int) data_get($savedJobsGap, 'matched_skills_unique_count', 0);
+                $savedMissing = is_array(data_get($savedJobsGap, 'missing_skills'))
+                    ? count((array) data_get($savedJobsGap, 'missing_skills'))
+                    : 0;
+
+                $projectionLearn = $missingCount > 0 ? max(1, (int) ceil($missingCount * 0.25)) : 0;
+                $goalMatched = min($matchedCount + $projectionLearn, $marketSkillsCount);
+                $goalMissing = max(0, $missingCount - $projectionLearn);
+                $topMissingSkills = array_slice($skillGapAnalysis['missingSkills'] ?? [], 0, 3);
             @endphp
 
-
-
             <div class="row g-3">
-                <div class="col-12 col-lg-8">
-                    <div class="skillgap-analytics-bar-group h-100">
-                        <div class="skillgap-analytics-bar-head">
-                            <h4 class="skillgap-analytics-bar-title">Skill Profile Overview</h4>
-                            <span class="skillgap-stat-pill">{{ $matchedCount + $missingCount }} total skills</span>
-                        </div>
-
-                        <svg class="skillgap-trend-line" preserveAspectRatio="none" style="position: absolute; top: 40px; left: 20px; right: 20px; height: 210px;">
-                            <defs>
-                                <style>
-                                    .trend { stroke: #60a5fa; stroke-width: 2; fill: none; stroke-dasharray: 6,4; }
-                                </style>
-                            </defs>
-                            <polyline class="trend" points="0,180 40,160 80,140 120,120 160,100 200,80 240,60 280,40"></polyline>
-                        </svg>
-
-                        <div class="skillgap-chart-container">
-                            @php
-                                $categories = ['Current', 'Target', 'Market', 'Growth'];
-                                $dataPoints = [
-                                    ['label' => 'Current', 'matched' => $matchedCount, 'missing' => $missingCount],
-                                    ['label' => 'Target', 'matched' => ceil($matchedCount * 1.15), 'missing' => max(0, $missingCount - 2)],
-                                    ['label' => 'Market', 'matched' => $marketSkillsCount, 'missing' => max(2, $missingCount)],
-                                    ['label' => 'Growth', 'matched' => ceil($matchedCount * 1.3), 'missing' => max(0, $missingCount - 4)],
-                                ];
-                                $maxVal = max(array_map(fn($d) => max($d['matched'], $d['missing']), $dataPoints));
-                            @endphp
-
-                            @foreach ($dataPoints as $point)
-                                @php
-                                    $matchedHeight = ($point['matched'] / max(1, $maxVal)) * 100;
-                                    $missingHeight = ($point['missing'] / max(1, $maxVal)) * 100;
-                                @endphp
-                                <div class="skillgap-column-group">
-                                    <div class="skillgap-bars-wrapper">
-                                        <div class="skillgap-column matched" style="height: {{ $matchedHeight }}%;" title="Matched: {{ $point['matched'] }}"></div>
-                                        <div class="skillgap-column missing" style="height: {{ $missingHeight }}%;" title="Missing: {{ $point['missing'] }}"></div>
-                                    </div>
-                                    <div class="skillgap-column-label">{{ $point['label'] }}</div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <div class="d-flex flex-wrap justify-content-center gap-4 mt-3 small">
-                            <span style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 16px; height: 16px; background: linear-gradient(180deg, #1e40af 0%, #3b82f6 100%); border-radius: 2px;"></span>
-                                <strong style="color: #0a3764;">Matched Skills</strong>
-                            </span>
-                            <span style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 16px; height: 16px; background: linear-gradient(180deg, #06b6d4 0%, #22d3ee 100%); border-radius: 2px;"></span>
-                                <strong style="color: #0a3764;">Missing Skills</strong>
-                            </span>
-                            <span style="display: flex; align-items: center; gap: 6px;">
-                                <span style="width: 16px; height: 16px; border: 2px dashed #60a5fa; border-radius: 2px;"></span>
-                                <strong style="color: #0a3764;">Progression Trend</strong>
-                            </span>
-                        </div>
+                <div class="col-12 col-md-4">
+                    <div class="skillgap-summary-card p-3 h-100">
+                        <div class="skillgap-summary-label">Current coverage</div>
+                        <div class="skillgap-summary-value">{{ $coveragePercent }}% of in-demand skills</div>
+                        <p class="skillgap-summary-text mb-0">You match {{ $matchedCount }} out of {{ $matchedCount + $missingCount }} skills we found in active job posts.</p>
                     </div>
                 </div>
-
-                <div class="col-12 col-lg-4">
-                    <div class="skillgap-analytics-insight">
-                        <div class="skillgap-analytics-insight-title">Best next move</div>
-                        <div class="skillgap-analytics-insight-value mb-2">
-                            {{ $topMissingSkill ? ucwords($topMissingSkill) : 'Keep building momentum' }}
-                        </div>
-                        <p class="skillgap-analytics-insight-text mb-3">
-                            {{ $topMissingSkill ? 'This is one of the strongest gaps to close for a better match rate.' : 'Your profile is already covering the market well. Keep your skills current as job demand changes.' }}
-                        </p>
-                        <div class="skillgap-analytics-insight-title">Strongest current match</div>
-                        <div class="skillgap-analytics-insight-value mb-2">
-                            {{ $topMatchedSkill ? ucwords($topMatchedSkill) : 'Profile ready' }}
-                        </div>
-                        <p class="skillgap-analytics-insight-text mb-0">
-                            {{ $topMatchedSkill ? 'A good signal that your profile already aligns with active jobs.' : 'Add more skills to surface your strongest matches.' }}
-                        </p>
+                <div class="col-12 col-md-4">
+                    <div class="skillgap-summary-card p-3 h-100">
+                        <div class="skillgap-summary-label">Best fit now</div>
+                        <div class="skillgap-summary-value">{{ $topMatchedSkill ? ucwords($topMatchedSkill) : 'No clear match yet' }}</div>
+                        <p class="skillgap-summary-text mb-0">{{ $topMatchedSkill ? 'This is one of the strongest signals in your profile.' : 'Add more skills to highlight your strongest matches.' }}</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="skillgap-summary-card p-3 h-100">
+                        <div class="skillgap-summary-label">Next skill to learn</div>
+                        <div class="skillgap-summary-value">{{ $topMissingSkill ? ucwords($topMissingSkill) : 'Keep your profile updated' }}</div>
+                        <p class="skillgap-summary-text mb-0">{{ $topMissingSkill ? 'Start with this skill to improve your job match rate.' : 'Your current profile already aligns well with the market.' }}</p>
                     </div>
                 </div>
             </div>
+
+            <div class="row g-3 mt-1">
+                <div class="col-12 col-lg-7">
+                    <div class="skillgap-summary-card p-3 p-lg-4 h-100">
+                        <div class="skillgap-summary-label mb-2">What this means</div>
+                        <ul class="skillgap-next-step-list">
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-check2"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Skills already matching</div>
+                                    <p class="skillgap-next-step-text">{{ $matchedCount }} skill{{ $matchedCount === 1 ? '' : 's' }} already line up with active job postings.</p>
+                                </div>
+                            </li>
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-lightbulb"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Skills to improve</div>
+                                    <p class="skillgap-next-step-text">Learning {{ $projectionLearn }} more relevant skill{{ $projectionLearn === 1 ? '' : 's' }} could move your profile closer to the market.</p>
+                                </div>
+                            </li>
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-flag"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Saved jobs reference</div>
+                                    <p class="skillgap-next-step-text">{{ $savedMatched }} matched skills and {{ $savedMissing }} missing skills were found from your saved jobs.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5">
+                    <div class="skillgap-summary-card p-3 p-lg-4 h-100">
+                        <div class="skillgap-summary-label mb-2">Easy next steps</div>
+                        <ul class="skillgap-next-step-list">
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-person-gear"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Update your profile</div>
+                                    <p class="skillgap-next-step-text">Add more skills to your profile so the system can find better matches.</p>
+                                </div>
+                            </li>
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-book"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Focus on one missing skill</div>
+                                    <p class="skillgap-next-step-text">Start with {{ $topMissingSkill ? ucwords($topMissingSkill) : 'the first missing skill' }} and build from there.</p>
+                                </div>
+                            </li>
+                            <li class="skillgap-next-step-item">
+                                <span class="skillgap-next-step-icon"><i class="bi bi-graph-up"></i></span>
+                                <div>
+                                    <div class="skillgap-next-step-title">Review market demand</div>
+                                    <p class="skillgap-next-step-text">The list below shows the most common skills employers ask for.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="small text-muted mt-3">Possible alternatives to charts: a checklist, a plain text summary, or a progress bar. This page now uses the checklist and summary view because it is easier to scan.</div>
         </div>
 
         <div class="row g-3 mb-4">
@@ -796,6 +672,7 @@
                 </div>
             </div>
         @endif
+
     @else
         <div class="skillgap-panel p-3 p-lg-4">
             <div class="text-center py-5 px-3">
@@ -809,5 +686,6 @@
         </div>
     @endif
 </section>
+
 @endsection
 

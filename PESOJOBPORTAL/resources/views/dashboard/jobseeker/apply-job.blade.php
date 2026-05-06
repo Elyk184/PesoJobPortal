@@ -199,8 +199,8 @@
         .resume-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            margin-bottom: 1rem;
+            gap: 0.55rem;
+            margin-bottom: 0.85rem;
         }
 
         .resume-btn {
@@ -214,6 +214,13 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            text-decoration: none;
+            width: 100%;
         }
 
         .resume-btn:hover {
@@ -226,6 +233,12 @@
             background: rgba(255, 255, 255, 0.95);
             color: #2f6fd5;
             border-color: rgba(255, 255, 255, 0.95);
+        }
+
+        @media (max-width: 420px) {
+            .resume-options {
+                grid-template-columns: 1fr;
+            }
         }
 
         .file-upload-wrapper {
@@ -395,17 +408,17 @@
                         <button type="button" class="resume-btn {{ $defaultResumeType === 'upload' ? 'active' : '' }}" data-resume-type="upload" onclick="switchResumeType(this)">
                             <i class="bi bi-upload"></i> Upload
                         </button>
-                    </div>
 
-                    @if($hasResumeBuilderData)
-                        <button type="button" class="resume-btn w-100 {{ $defaultResumeType === 'builder' ? 'active' : '' }}" style="margin-bottom: 1rem; grid-column: 1/-1;" data-resume-type="builder" onclick="switchResumeType(this)">
-                            <i class="bi bi-file-earmark-text"></i> Use Resume Builder
-                        </button>
-                    @else
-                        <a href="{{ route('jobseeker.resume-builder') }}" class="resume-btn w-100" style="margin-bottom: 1rem; grid-column: 1/-1; text-decoration:none; display:block;">
-                            <i class="bi bi-file-earmark-text"></i> Create Resume in Builder
-                        </a>
-                    @endif
+                        @if($hasResumeBuilderData)
+                            <button type="button" class="resume-btn {{ $defaultResumeType === 'builder' ? 'active' : '' }}" data-resume-type="builder" onclick="switchResumeType(this)">
+                                <i class="bi bi-file-earmark-text"></i> Use Resume Builder
+                            </button>
+                        @else
+                            <a href="{{ route('jobseeker.resume-builder') }}" class="resume-btn">
+                                <i class="bi bi-file-earmark-text"></i> Create in Builder
+                            </a>
+                        @endif
+                    </div>
 
                     <!-- Upload Resume -->
                     <div id="uploadSection" class="file-upload-wrapper" style="{{ $defaultResumeType === 'upload' ? '' : 'display:none;' }}">

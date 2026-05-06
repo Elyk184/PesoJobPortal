@@ -21,9 +21,6 @@
                             @endif
                         </h6>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-x-circle me-1"></i>Clear All
-                            </a>
                             <button type="button" class="btn btn-sm btn-outline-primary d-lg-none" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
                                 <i class="bi bi-sliders"></i> More
                             </button>
@@ -73,29 +70,36 @@
                                 <label class="form-label small fw-semibold">Employment Type</label>
                                 <select name="employment_type" class="form-select form-select-sm">
                                     <option value="">All Types</option>
-                                    <option value="full-time" {{ request('employment_type') == 'full-time' ? 'selected' : '' }}>Full Time</option>
-                                    <option value="part-time" {{ request('employment_type') == 'part-time' ? 'selected' : '' }}>Part Time</option>
+                                    <option value="full_time" {{ request('employment_type') == 'full_time' ? 'selected' : '' }}>Full Time</option>
+                                    <option value="part_time" {{ request('employment_type') == 'part_time' ? 'selected' : '' }}>Part Time</option>
                                     <option value="contract" {{ request('employment_type') == 'contract' ? 'selected' : '' }}>Contract</option>
+                                    <option value="temporary" {{ request('employment_type') == 'temporary' ? 'selected' : '' }}>Temporary</option>
                                     <option value="internship" {{ request('employment_type') == 'internship' ? 'selected' : '' }}>Internship</option>
+                                    <option value="freelance" {{ request('employment_type') == 'freelance' ? 'selected' : '' }}>Freelance</option>
                                 </select>
                             </div>
 
-                            <!-- Sort -->
-                            <div class="col-6 col-lg-2">
+                            <!-- Sort + Actions -->
+                            <div class="col-12 col-lg-3">
                                 <label class="form-label small fw-semibold">Sort By</label>
-                                <select name="sort" class="form-select form-select-sm">
-                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
-                                    <option value="expiring" {{ request('sort') == 'expiring' ? 'selected' : '' }}>Expiring Soon</option>
-                                    <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Highest Salary</option>
-                                    <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Lowest Salary</option>
-                                </select>
-                            </div>
-
-                            <!-- Apply Button -->
-                            <div class="col-12 col-lg-1 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary btn-sm w-100">
-                                    <i class="bi bi-funnel me-1"></i>Filter
-                                </button>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <select name="sort" class="form-select form-select-sm">
+                                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                        <option value="expiring" {{ request('sort') == 'expiring' ? 'selected' : '' }}>Expiring Soon</option>
+                                        <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Highest Salary</option>
+                                        <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Lowest Salary</option>
+                                    </select>
+                                    <div class="d-flex gap-1 flex-shrink-0">
+                                        <button type="submit" class="btn btn-primary btn-sm px-2 d-inline-flex align-items-center gap-1 text-nowrap" aria-label="Filter">
+                                            <i class="bi bi-funnel"></i>
+                                            <span>Filter</span>
+                                        </button>
+                                        <a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-outline-secondary btn-sm px-2 d-inline-flex align-items-center gap-1 text-nowrap" aria-label="Clear All" title="Clear All">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span>Clear All</span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -149,7 +153,7 @@
                                 @endif
                                 @if(request('employment_type'))
                                     <span class="badge bg-light text-dark border">
-                                        Type: {{ ucfirst(request('employment_type')) }}
+                                        Type: {{ \Illuminate\Support\Str::of(request('employment_type'))->replace(['_', '-'], ' ')->title() }}
                                         <a href="{{ request()->fullUrlWithQuery(['employment_type' => null]) }}" class="text-decoration-none ms-1">&times;</a>
                                     </span>
                                 @endif
@@ -227,7 +231,7 @@
                                         <p class="mb-0 small text-muted mt-2">{{ \Illuminate\Support\Str::limit($job->description, 140) }}</p>
                                     </div>
 
-                                    <div class="job-card-actions ms-auto text-end d-flex flex-column gap-2">
+                                    <div class="job-card-actions ms-auto text-end d-flex flex-row flex-wrap align-items-center justify-content-end gap-2">
                                         <a href="{{ route('jobseeker.apply-job', $job) }}" class="btn btn-sm btn-outline-primary">View</a>
                                         @auth
                                             @php
@@ -235,17 +239,17 @@
                                             @endphp
                                             <button
                                                 type="button"
-                                                class="btn btn-sm {{ $isSaved ? 'btn-warning' : 'btn-outline-secondary' }} js-save-job-btn"
+                                                class="btn btn-sm {{ $isSaved ? 'btn-primary' : 'btn-outline-primary' }} js-save-job-btn"
                                                 title="{{ $isSaved ? 'Unsave' : 'Save' }}"
                                                 aria-pressed="{{ $isSaved ? 'true' : 'false' }}"
                                                 data-job-id="{{ $job->id }}"
                                                 data-saved="{{ $isSaved ? '1' : '0' }}"
                                                 data-save-url="{{ route('jobseeker.saved-jobs.toggle', $job) }}"
                                             >
-                                                <i class="bi {{ $isSaved ? 'bi-bookmark-dash' : 'bi-bookmark' }} js-save-job-icon"></i>
+                                                <i class="bi {{ $isSaved ? 'bi-bookmark-fill' : 'bi-bookmark' }} js-save-job-icon"></i>
                                             </button>
                                         @endauth
-                                        <small class="text-muted d-block d-md-none">Posted {{ $job->created_at->diffForHumans() }}</small>
+                                        <small class="text-muted d-block d-md-none w-100 text-end">Posted {{ $job->created_at->diffForHumans() }}</small>
                                     </div>
                                 </article>
                             </div>
@@ -544,11 +548,11 @@
             button.dataset.saved = isSaved ? '1' : '0';
             button.title = isSaved ? 'Unsave' : 'Save';
             button.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
-            button.classList.toggle('btn-warning', isSaved);
-            button.classList.toggle('btn-outline-secondary', ! isSaved);
+            button.classList.toggle('btn-primary', isSaved);
+            button.classList.toggle('btn-outline-primary', ! isSaved);
 
             if (icon) {
-                icon.className = isSaved ? 'bi bi-bookmark-dash js-save-job-icon' : 'bi bi-bookmark js-save-job-icon';
+                icon.className = isSaved ? 'bi bi-bookmark-fill js-save-job-icon' : 'bi bi-bookmark js-save-job-icon';
             }
         };
 

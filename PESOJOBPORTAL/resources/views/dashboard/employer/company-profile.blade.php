@@ -820,10 +820,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5fa565a71d516ec0744babea080ca427a40e20a3
             <!-- Action Buttons -->
             <div class="profile-actions">
                 <a href="{{ route('employer.company-profile.download') }}" class="btn btn-outline-primary">

@@ -155,6 +155,23 @@
         </section>
 
         <section class="resume-section">
+            <h2>Training</h2>
+            @forelse ($trainingRows ?? [] as $item)
+                @if(collect($item)->filter()->isNotEmpty())
+                    <div class="resume-item">
+                        <div class="item-header">
+                            <div class="item-title">{{ $item['course'] ?? '' }}</div>
+                            <div class="item-year">{{ $item['dates'] ?? '' }}</div>
+                        </div>
+                        <div class="item-company">{{ $item['institution'] ?? '' }}</div>
+                        <p class="item-details">{{ collect([$item['hours'] ?? '', $item['skills'] ?? '', $item['certificates'] ?? ''])->filter()->join(' | ') }}</p>
+                    </div>
+                @endif
+            @empty
+            @endforelse
+        </section>
+
+        <section class="resume-section">
             <h2>Experience</h2>
             @forelse ($experienceRows as $item)
                 @if(collect($item)->filter()->isNotEmpty())
@@ -165,6 +182,23 @@
                         </div>
                         <div class="item-company">{{ $item['company'] ?? '' }}</div>
                         <p class="item-details">{{ $item['details'] ?? '' }}</p>
+                    </div>
+                @endif
+            @empty
+            @endforelse
+        </section>
+
+        <section class="resume-section">
+            <h2>Eligibility</h2>
+            @forelse ($eligibilityRows ?? [] as $item)
+                @if(collect($item)->filter()->isNotEmpty())
+                    <div class="resume-item">
+                        <div class="item-header">
+                            <div class="item-title">{{ $item['eligibility'] ?? '' }}</div>
+                            <div class="item-year">{{ $item['valid_until'] ?? '' }}</div>
+                        </div>
+                        <div class="item-company">{{ $item['license'] ?? '' }}</div>
+                        <p class="item-details">{{ $item['date_taken'] ?? '' }}</p>
                     </div>
                 @endif
             @empty

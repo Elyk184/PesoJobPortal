@@ -11,7 +11,7 @@ use App\Http\Controllers\JobsController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');

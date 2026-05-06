@@ -1,5 +1,28 @@
 <!-- PESO Footer - Fixed Alignment -->
 <footer class="peso-footer text-light py-5 mt-5 border-top border-danger" style="background: linear-gradient(90deg, #0f2d52, #1f4b8f); border-top: 3px solid #d72638 !important; box-shadow: 0 -8px 24px rgba(10,35,80,0.22);">
+  <style>
+    /* Force footer text to pure white for contrast, but preserve button/link CTAs */
+    .peso-footer,
+    .peso-footer h5,
+    .peso-footer p,
+    .peso-footer a:not(.btn),
+    .peso-footer li,
+    .peso-footer .small,
+    .peso-footer .fw-medium {
+      color: #ffffff !important;
+    }
+
+    /* Keep CTA buttons readable (they have white backgrounds) */
+    .peso-footer .btn {
+      color: #15386b !important;
+    }
+
+    .peso-footer a:not(.btn):hover {
+      color: #ffffff !important;
+      opacity: 0.9;
+      text-decoration: underline;
+    }
+  </style>
   <div class="container-xl">
     <div class="row g-4 g-lg-5 mb-5 align-items-start" style="min-height: 280px;">
       <!-- About Column -->
@@ -12,28 +35,7 @@
           </div>
         </div>
         <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
-        <div class="d-flex gap-2">
-          <a
-            href="https://www.facebook.com/lgupesomanolofortich"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-            style="width: 54px; height: 54px;"
-            aria-label="Facebook"
-            title="Facebook"
-          >
-            <i class="bi bi-facebook" style="font-size: 1.45rem;"></i>
-          </a>
-          <a
-            href="#"
-            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-            style="width: 54px; height: 54px;"
-            aria-label="X"
-            title="X"
-          >
-            <i class="bi bi-twitter-x" style="font-size: 1.35rem;"></i>
-          </a>
-        </div>
+        <!-- Social icons removed -->
       </div>
 
       <!-- Contact Column -->

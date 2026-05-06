@@ -478,7 +478,7 @@ class EmployerController extends Controller
                 'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
             ];
 
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('jobseeker.resume-builder-pdf', $pdfData)
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $pdfData)
                 ->setPaper('a4', 'portrait');
 
             $downloadFilename = trim(($resumeName ?: 'resume') . '-harvard-style.pdf');
