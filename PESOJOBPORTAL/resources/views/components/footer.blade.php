@@ -12,19 +12,6 @@
           </div>
         </div>
         <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
-        <div class="d-flex gap-2">
-          <a
-            href="https://www.facebook.com/lgupesomanolofortich"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-outline-light btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-            style="width: 54px; height: 54px;"
-            aria-label="Facebook"
-            title="Facebook"
-          >
-            <i class="bi bi-facebook" style="font-size: 1.45rem;"></i>
-          </a>
-        </div>
       </div>
 
       <!-- Contact Column -->
@@ -76,7 +63,6 @@
           </div>
         </div>
         <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="btn px-4 py-2 w-100 fw-bold mb-3" style="background: #fff; color: #15386b; border: none; box-shadow: 0 2px 8px rgba(15,45,82,0.10); letter-spacing: 0.5px; font-size: 1.08rem;">
-          <i class="bi bi-facebook me-2" style="color: #15386b;"></i>
           Visit Facebook
         </a>
       </div>
