@@ -22,8 +22,137 @@
         .chart-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
         .chart-title { font-size: 16px; font-weight: 700; color: #0d1f3c; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .print-button-container { margin-bottom: 1.5rem; display: flex; gap: 0.5rem; }
+        .print-btn { padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s ease; }
+        .print-btn:hover { background: #2563eb; }
+        .print-btn i { font-size: 16px; }
+        
         @media (max-width: 1024px) {
             .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            body {
+                background: white;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .admin-sidebar,
+            .admin-topbar,
+            .sidebar-header,
+            .sidebar-menu,
+            .print-button-container,
+            .navbar,
+            .peso-header,
+            nav {
+                display: none !important;
+            }
+
+            .admin-wrapper {
+                display: flex;
+            }
+
+            .admin-main {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+
+            .admin-dashboard {
+                background: white !important;
+                padding: 0;
+            }
+
+            .stats-grid {
+                gap: 1rem;
+                page-break-inside: avoid;
+            }
+
+            .stat-card {
+                background: white;
+                border: 1px solid #d1d5db;
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+
+            .chart-card {
+                background: white;
+                border: 1px solid #d1d5db;
+                box-shadow: none;
+                page-break-inside: avoid;
+                padding: 1rem;
+            }
+
+            .chart-title {
+                font-size: 14px;
+                margin-bottom: 1rem;
+            }
+
+            .charts-grid {
+                gap: 1rem;
+            }
+
+            canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            /* Add page breaks strategically */
+            .chart-card:nth-child(3) {
+                page-break-before: auto;
+            }
+
+            /* Print header */
+            .print-header {
+                text-align: center;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid #0d1f3c;
+                page-break-after: avoid;
+            }
+
+            .print-header h1 {
+                margin: 0;
+                font-size: 24px;
+                color: #0d1f3c;
+            }
+
+            .print-header p {
+                margin: 0.5rem 0 0;
+                font-size: 12px;
+                color: #6b7280;
+            }
+
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+        }
+    </style>
+
+    <!-- Print Button -->
+    <div class="print-button-container">
+        <button class="print-btn" onclick="window.print()">
+            <i class="bi bi-printer"></i>
+            Print Report
+        </button>
+    </div>
+
+    <!-- Print Header (Only shows in print) -->
+    <div class="print-header" style="display: none;">
+        <h1>Employment Statistics Report</h1>
+        <p>Generated on {{ now()->format('F d, Y') }}</p>
+    </div>
+
+    <style>
+        @media print {
+            .print-header { display: block !important; }
         }
     </style>
 
@@ -284,6 +413,25 @@
         }
     });
     @endif
+
+    // Print functionality
+    window.addEventListener('beforeprint', function() {
+        // This event fires before printing
+        const charts = Chart.helpers?.get || [];
+    });
+
+    window.addEventListener('afterprint', function() {
+        // This event fires after printing
+        console.log('Print completed');
+    });
+
+    // Add keyboard shortcut for print (Ctrl+P)
+    document.addEventListener('keydown', function(event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+            event.preventDefault();
+            window.print();
+        }
+    });
 </script>
 
 @endsection
