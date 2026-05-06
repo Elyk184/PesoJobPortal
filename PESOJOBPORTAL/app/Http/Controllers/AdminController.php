@@ -268,7 +268,7 @@ class AdminController extends Controller
         $femaleCount = $genderData->where('gender', 'female')->first()?->count ?? 0;
         $maleCount = $genderData->where('gender', 'male')->first()?->count ?? 0;
         $otherCount = $genderData->where('gender', null)->first()?->count ?? 0;
-        
+
         // Handle case where gender values might be different
         $otherCount = $totalApplications - ($femaleCount + $maleCount);
         if ($otherCount < 0) $otherCount = 0;
@@ -455,21 +455,42 @@ class AdminController extends Controller
         return view('admin.peso-clearances', compact('clearances'));
     }
 
+    public function showPesoClearance(PesoClearance $clearance): View
+    {
+        $clearance->load('user');
+        return view('admin.peso-clearance-show', compact('clearance'));
+    }
+
     public function issuePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
     {
         if ($clearance->status !== 'pending') {
             return back()->with('warning', 'Only pending clearance requests can be issued.');
         }
 
+        $request->validate([
+            'clearance_number' => ['nullable', 'string', 'max:255', 'unique:peso_clearances,clearance_number,' . $clearance->id],
+            'issue_date' => ['nullable', 'date'],
+            'expiry_date' => ['nullable', 'date'],
+        ]);
+
+        $providedNumber = trim((string) $request->input('clearance_number'));
+        $clearanceNumber = $providedNumber !== '' ? $providedNumber : '00000';
+
+        $issueDateInput = $request->input('issue_date');
+        $expiryDateInput = $request->input('expiry_date');
+
+        $issueDate = $issueDateInput ? Carbon::parse($issueDateInput) : now();
+        $expiryDate = $expiryDateInput ? Carbon::parse($expiryDateInput) : now()->addYear();
+
         $clearance->update([
             'status' => 'active',
-            'clearance_number' => 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id,
-            'issue_date' => now(),
-            'expiry_date' => now()->addYear(),
+            'clearance_number' => $clearanceNumber,
+            'issue_date' => $issueDate,
+            'expiry_date' => $expiryDate,
             'remarks' => $clearance->remarks,
         ]);
 
-        return back()->with('success', 'PESO clearance has been issued successfully.');
+        return redirect()->route('admin.peso-clearances')->with('success', 'PESO clearance has been issued successfully.');
     }
 
     public function approveDocument(Request $request, int $documentId): RedirectResponse

@@ -95,14 +95,9 @@
                                 </td>
                                 <td><span class="status-badge {{ $statusClass }}"><i class="bi bi-dot me-1"></i>{{ $statusLabel }}</span></td>
                                 <td class="text-end">
-                                    @if ($clearance->status === 'pending')
-                                        <form method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn-small btn-view"><i class="bi bi-check2-circle"></i>Issue</button>
-                                        </form>
-                                    @else
-                                        <button class="btn-small btn-view"><i class="bi bi-eye"></i>View</button>
-                                    @endif
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <a href="{{ route('admin.peso-clearances.show', $clearance) }}" class="btn-small btn-view"><i class="bi bi-eye"></i>View</a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

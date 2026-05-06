@@ -149,6 +149,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
     Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
+    Route::get('/peso-clearances/{clearance}', [AdminController::class, 'showPesoClearance'])->name('peso-clearances.show');
     Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
 
     // Admin Profile
