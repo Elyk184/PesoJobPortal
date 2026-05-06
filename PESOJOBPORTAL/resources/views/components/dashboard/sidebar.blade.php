@@ -141,12 +141,6 @@
         </div>
     </nav>
 
-    <div class="dashboard-highlight">
-        <div class="dashboard-highlight-label">PESO Clearance</div>
-        <div class="dashboard-highlight-value">Not yet verified</div>
-        <div class="dashboard-highlight-note">View-only status for portal use.</div>
-    </div>
-
     <form method="POST" action="{{ route('logout') }}" class="dashboard-logout">
         @csrf
         <button type="submit" class="btn btn-light w-100 fw-semibold">
