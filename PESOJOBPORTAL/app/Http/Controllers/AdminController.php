@@ -9,6 +9,7 @@ use App\Models\PesoClearance;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
+use App\Models\PortalNotification;
 use App\Models\UserNotification;
 use Carbon\Carbon;
 use Illuminate\View\View;
@@ -434,6 +435,25 @@ class AdminController extends Controller
         }
     }
 
+    private function notifyJobseeker(User $user, string $title, string $message): void
+    {
+        try {
+            $portalNotification = PortalNotification::query()->create([
+                'title' => $title,
+                'message' => $message,
+                'created_by' => Auth::id(),
+            ]);
+
+            UserNotification::query()->create([
+                'user_id' => $user->id,
+                'portal_notification_id' => $portalNotification->id,
+                'read_at' => null,
+            ]);
+        } catch (\Throwable) {
+            // Ignore notification failures so clearance issuance still succeeds.
+        }
+    }
+
     // Document Verification
     public function documentVerification(): View
     {
@@ -489,6 +509,17 @@ class AdminController extends Controller
             'expiry_date' => $expiryDate,
             'remarks' => $clearance->remarks,
         ]);
+
+        if ($clearance->user) {
+            $this->notifyJobseeker(
+                $clearance->user,
+                'PESO Clearance Issued',
+                sprintf(
+                    'Your PESO clearance request has been issued. Clearance Number: %s.',
+                    $clearanceNumber
+                )
+            );
+        }
 
         return redirect()->route('admin.peso-clearances')->with('success', 'PESO clearance has been issued successfully.');
     }
