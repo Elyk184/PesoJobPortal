@@ -113,9 +113,9 @@ class JobseekerController extends Controller
                 ->pluck('aggregate', 'status');
 
             $applicationStatusCounts['pending'] = (int) ($rawApplicationCounts['pending'] ?? 0);
-            $applicationStatusCounts['interview'] = (int) ($rawApplicationCounts['interviewed'] ?? 0);
+            $applicationStatusCounts['interview'] = (int) (($rawApplicationCounts['interview'] ?? 0) + ($rawApplicationCounts['interviewed'] ?? 0));
             $applicationStatusCounts['hired'] = (int) ($rawApplicationCounts['hired'] ?? 0);
-            $applicationStatusCounts['recommended'] = (int) ($rawApplicationCounts['reviewed'] ?? 0);
+            $applicationStatusCounts['recommended'] = (int) (($rawApplicationCounts['reviewing'] ?? 0) + ($rawApplicationCounts['reviewed'] ?? 0) + ($rawApplicationCounts['shortlisted'] ?? 0));
             $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
         }
 
@@ -324,9 +324,9 @@ class JobseekerController extends Controller
     public function applications(Request $request): View
     {
         $statusMap = [
-            'all' => ['pending', 'reviewing', 'shortlisted', 'interview', 'hired', 'rejected'],
+            'all' => ['pending', 'reviewing', 'reviewed', 'shortlisted', 'interview', 'interviewed', 'hired', 'rejected'],
             'pending' => ['pending'],
-            'reviewing' => ['reviewing'],
+            'reviewing' => ['reviewing', 'reviewed'],
             'shortlisted' => ['shortlisted'],
             'interview' => ['interview', 'interviewed'],
             'hired' => ['hired'],
@@ -362,7 +362,7 @@ class JobseekerController extends Controller
         $statusCounts = [
             'all' => (int) $rawStatusCounts->sum(),
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
-            'reviewing' => (int) ($rawStatusCounts['reviewing'] ?? 0),
+            'reviewing' => (int) (($rawStatusCounts['reviewing'] ?? 0) + ($rawStatusCounts['reviewed'] ?? 0)),
             'shortlisted' => (int) ($rawStatusCounts['shortlisted'] ?? 0),
             'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),

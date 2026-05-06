@@ -870,7 +870,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="dashboard-stat-card p-3 h-100">
+                <div class="dashboard-stat-card p-3 h-100 position-relative">
+                    <a href="{{ route('jobseeker.applications', ['status' => 'interview']) }}" class="stretched-link" aria-label="View interview applications"></a>
                     <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
                     <div class="dashboard-stat-label mt-3">Interview</div>
                     <div class="dashboard-stat-number">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
@@ -886,7 +887,8 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="dashboard-stat-card p-3 h-100">
+                <div class="dashboard-stat-card p-3 h-100 position-relative">
+                    <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="stretched-link" aria-label="View reviewed applications"></a>
                     <div class="dashboard-stat-icon" style="background: rgba(168, 85, 247, 0.12); color: #7c3aed;"><i class="bi bi-stars"></i></div>
                     <div class="dashboard-stat-label mt-3">Reviewed</div>
                     <div class="dashboard-stat-number">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
