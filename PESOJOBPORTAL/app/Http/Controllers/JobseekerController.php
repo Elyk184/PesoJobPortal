@@ -12,6 +12,7 @@ use App\Models\PortalNotification;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
+use App\Services\SkillGapService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -451,14 +452,42 @@ class JobseekerController extends Controller
         $profile = $user?->profile;
         $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
 
+        /** @var SkillGapService $skillGapService */
+        $skillGapService = app(SkillGapService::class);
+        $actualSkills = $skillGapService->extractActualSkills($profile);
+
+        $savedJobsGap = null;
+        $savedJobIds = $user
+            ? SavedJob::query()->where('user_id', (int) $user->id)->pluck('job_id')->all()
+            : [];
+
+        if (! empty($savedJobIds) && ! empty($actualSkills)) {
+            $savedJobs = PesoJob::query()
+                ->whereIn('id', $savedJobIds)
+                ->where('status', 'active')
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            if ($savedJobs->isNotEmpty()) {
+                $savedJobsGap = $skillGapService->aggregateJobsAnalysis($savedJobs, $actualSkills, 10);
+            }
+        }
+
         return view('dashboard.jobseeker.skill-gap', [
             'skillGapAnalysis' => $skillGapAnalysis,
+            'savedJobsGap' => $savedJobsGap,
         ]);
     }
 
     public function savedJobs(): View
     {
         $userId = (int) Auth::id();
+
+        $profile = Auth::user()?->profile;
+        /** @var SkillGapService $skillGapService */
+        $skillGapService = app(SkillGapService::class);
+        $actualSkills = $skillGapService->extractActualSkills($profile);
 
         $savedJobIds = SavedJob::query()
             ->where('user_id', $userId)
@@ -473,7 +502,11 @@ class JobseekerController extends Controller
                 ->where('status', 'active')
                 ->latest()
                 ->get()
-                ->map(function (PesoJob $job) {
+                ->map(function (PesoJob $job) use ($skillGapService, $actualSkills) {
+                    $analysis = ! empty($actualSkills)
+                        ? $skillGapService->analyzeJobVsSkills($job, $actualSkills)
+                        : null;
+
                     return [
                         'id' => $job->id,
                         'title' => $job->title,
@@ -483,6 +516,7 @@ class JobseekerController extends Controller
                         'description' => $job->description,
                         'requirements_list' => $this->extractJobRequirements($job),
                         'created_at' => $job->created_at,
+                        'skill_gap' => $analysis,
                     ];
                 });
         }

@@ -796,6 +796,52 @@
                 </div>
             </div>
         @endif
+
+        @if (! empty($savedJobsGap) && (! empty($savedJobsGap['missing_skills']) || ! empty($savedJobsGap['proficiency_gaps'])))
+            <div class="skillgap-panel p-3 p-lg-4 mb-4">
+                <div class="skillgap-panel-header d-flex align-items-center justify-content-between gap-2">
+                    <h3 class="h5 fw-bold mb-0"><i class="bi bi-diagram-3 me-2"></i>Saved Jobs Skill Gaps</h3>
+                    <span class="skillgap-stat-pill">Required vs your profile</span>
+                </div>
+
+                @if (! empty($savedJobsGap['missing_skills']))
+                    <h4 class="h6 fw-bold mb-3"><i class="bi bi-exclamation-circle me-2" style="color: #1e40af;"></i>Missing skills from your saved jobs</h4>
+                    <div class="skillgap-chip-grid mb-3">
+                        @foreach (collect($savedJobsGap['missing_skills'])->take(10) as $skill)
+                            <span class="badge rounded-pill skill-badge skill-badge-missing"><i class="bi bi-plus-circle me-1"></i>{{ ucwords($skill) }}</span>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if (! empty($savedJobsGap['proficiency_gaps']))
+                    <h4 class="h6 fw-bold mb-2"><i class="bi bi-graph-up me-2" style="color: #1e40af;"></i>Proficiency gaps (estimated)</h4>
+                    <ul class="small text-muted mb-3" style="padding-left: 1.1rem;">
+                        @foreach (collect($savedJobsGap['proficiency_gaps'])->take(10) as $gapRow)
+                            <li>
+                                <strong style="color: #0a3764;">{{ ucwords((string) data_get($gapRow, 'name', '')) }}</strong>
+                                — need {{ ucwords((string) data_get($gapRow, 'required', '')) }}, you have {{ ucwords((string) data_get($gapRow, 'actual', '')) }}
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+
+                @if (! empty($savedJobsGap['recommended_actions']))
+                    <h4 class="h6 fw-bold mb-2"><i class="bi bi-lightbulb me-2" style="color: #1e40af;"></i>Recommended actions</h4>
+                    <div class="row g-3">
+                        @foreach (collect($savedJobsGap['recommended_actions'])->take(6) as $rec)
+                            <div class="col-12 col-md-6">
+                                <div class="skillgap-analytics-insight">
+                                    <div class="fw-bold" style="color: #0a3764;">{{ ucwords((string) data_get($rec, 'skill', '')) }}</div>
+                                    <div class="small text-muted">
+                                        {{ collect(data_get($rec, 'actions', []))->take(3)->implode(' • ') }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @endif
     @else
         <div class="skillgap-panel p-3 p-lg-4">
             <div class="text-center py-5 px-3">
