@@ -268,11 +268,11 @@
             </div>
             @endif
 
-            <form action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
+            <form id="feedbackForm" action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label class="form-label">Feedback Type</label>
-                    <select name="feedback_type" class="form-select" required>
+                    <select id="feedbackType" name="feedback_type" class="form-select" required>
                         <option value="">Select feedback type</option>
                         <option value="interview_experience">Interview Experience</option>
                         <option value="job_performance">Job Performance</option>
@@ -293,11 +293,8 @@
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Feedback</label>
-                    <textarea name="feedback" class="form-control" rows="4" placeholder="Write your feedback about this applicant..." required style="resize: vertical;"></textarea>
+                    <textarea id="feedbackText" name="feedback" class="form-control" rows="4" placeholder="Write your feedback about this applicant..." required style="resize: vertical;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="bi bi-send"></i> Submit Feedback
-                </button>
             </form>
         </div>
     </div>
@@ -306,7 +303,7 @@
         <div class="right-sticky">
         <div class="info-card">
             <h5 class="mb-4 section-title"><i class="bi bi-pencil-square text-primary"></i>Update Status</h5>
-            <form action="{{ route('employer.applications.update', $application->id) }}" method="POST">
+            <form id="statusForm" action="{{ route('employer.applications.update', $application->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="mb-4">
@@ -379,6 +376,39 @@
             }
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackForm = document.getElementById('feedbackForm');
+        const statusForm = document.getElementById('statusForm');
+
+        if (!statusForm) return;
+
+        statusForm.addEventListener('submit', async function (e) {
+            if (!feedbackForm) return; // nothing to copy
+
+            const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
+            const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
+            const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
+
+            // If there's feedback or rating or type selected, attempt to save it first
+            if (feedbackText.trim().length > 0 || rating || feedbackType) {
+                e.preventDefault();
+                const data = new FormData(feedbackForm);
+                try {
+                    await fetch(feedbackForm.action, {
+                        method: 'POST',
+                        body: data,
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                } catch (err) {
+                    console.error('Failed to save feedback before status update', err);
+                }
+                // continue with status update regardless of result
+                statusForm.submit();
+            }
+        });
+    });
 </script>
 @endpush
 
