@@ -72,11 +72,11 @@
         </div>
     </div>
 
-    <!-- Full Width Charts -->
-    <div class="chart-card">
-        <div class="chart-title">
-            <i class="bi bi-bar-chart"></i>
-            Top Job Categories
+<!-- Top Categories Chart -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-bar-chart"></i>
+                Top Job Types
         </div>
         <canvas id="categoriesChart" height="80"></canvas>
     </div>

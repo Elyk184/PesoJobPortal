@@ -339,14 +339,30 @@ class AdminController extends Controller
             ->get()
             ->pluck('count', 'status');
 
-        // Top job categories
-        $topCategories = PesoJob::select('category', DB::raw('COUNT(*) as count'))
+        // Top job types/positions
+        $topCategories = PesoJob::select('job_type', DB::raw('COUNT(*) as count'))
             ->where('status', 'active')
             ->notArchived()
-            ->groupBy('category')
+            ->whereNotNull('job_type')
+            ->groupBy('job_type')
             ->orderByDesc('count')
             ->limit(8)
             ->get();
+
+        // If no job types, get by location as fallback
+        if ($topCategories->isEmpty()) {
+            $topCategories = PesoJob::select('location', DB::raw('COUNT(*) as count'))
+                ->where('status', 'active')
+                ->notArchived()
+                ->groupBy('location')
+                ->orderByDesc('count')
+                ->limit(8)
+                ->get()
+                ->map(function($item) {
+                    $item->job_type = $item->location;
+                    return $item;
+                });
+        }
 
         // Jobseeker profile completion
         $jobseekerStats = DB::table('users')
@@ -375,7 +391,7 @@ class AdminController extends Controller
         $jobsPending = $jobsByMonth->pluck('pending')->toArray();
         $jobsClosed = $jobsByMonth->pluck('closed')->toArray();
 
-        $categoryLabels = $topCategories->pluck('category')->toArray();
+        $categoryLabels = $topCategories->pluck('job_type')->toArray();
         $categoryData = $topCategories->pluck('count')->toArray();
 
         $appStatusLabels = ['Pending', 'Accepted', 'Rejected'];
