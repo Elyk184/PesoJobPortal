@@ -936,38 +936,6 @@
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
-            <!-- Management Section -->
-            <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
-                <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Management</small>
-            </li>
-
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.jobseekers-management') }}" class="sidebar-menu-link">
-                    <i class="bi bi-people"></i>
-                    <span>Jobseekers</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.employers-management') }}" class="sidebar-menu-link">
-                    <i class="bi bi-shop"></i>
-                    <span>Employers</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.jobs-management') }}" class="sidebar-menu-link">
-                    <i class="bi bi-briefcase"></i>
-                    <span>Jobs</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.applications-management') }}" class="sidebar-menu-link">
-                    <i class="bi bi-file-earmark-check"></i>
-                    <span>Applications</span>
-                </a>
-            </li>
-
-            <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
-
             <!-- Intelligence & Reports Section -->
             <li style="padding: 0 1.5rem; margin: 0.5rem 0; opacity: 0.6;">
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Intelligence & Reports</small>
