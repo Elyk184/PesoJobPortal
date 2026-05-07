@@ -874,6 +874,18 @@ class JobseekerController extends Controller
             'experience.*.company' => ['nullable', 'string', 'max:255'],
             'experience.*.period' => ['nullable', 'string', 'max:100'],
             'experience.*.details' => ['nullable', 'string', 'max:1000'],
+            'training' => ['nullable', 'array'],
+            'training.*.course' => ['nullable', 'string', 'max:255'],
+            'training.*.institution' => ['nullable', 'string', 'max:255'],
+            'training.*.dates' => ['nullable', 'string', 'max:100'],
+            'training.*.hours' => ['nullable', 'string', 'max:100'],
+            'training.*.skills' => ['nullable', 'string', 'max:500'],
+            'training.*.certificates' => ['nullable', 'string', 'max:255'],
+            'eligibility' => ['nullable', 'array'],
+            'eligibility.*.eligibility' => ['nullable', 'string', 'max:255'],
+            'eligibility.*.license' => ['nullable', 'string', 'max:255'],
+            'eligibility.*.date_taken' => ['nullable', 'string', 'max:100'],
+            'eligibility.*.valid_until' => ['nullable', 'string', 'max:100'],
         ]);
 
         $profile = UserProfile::updateOrCreate(
@@ -888,6 +900,8 @@ class JobseekerController extends Controller
                 'skills' => $this->normalizeList($validated['skills'] ?? ''),
                 'education' => $this->normalizeResumeSection($validated['education'] ?? [], ['school', 'course', 'year']),
                 'experience' => $this->normalizeResumeSection($validated['experience'] ?? [], ['title', 'company', 'period', 'details']),
+                'training' => $this->normalizeResumeSection($validated['training'] ?? [], ['course', 'institution', 'dates', 'hours', 'skills', 'certificates']),
+                'eligibility' => $this->normalizeResumeSection($validated['eligibility'] ?? [], ['eligibility', 'license', 'date_taken', 'valid_until']),
             ]
         );
 

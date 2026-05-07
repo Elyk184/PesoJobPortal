@@ -133,11 +133,14 @@
             <div class="resume-contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
         </div>
 
+        @if($resumeObjective)
         <section class="resume-section">
             <h2>Objective</h2>
-            <p>{{ $resumeObjective ?: ' ' }}</p>
+            <p>{{ $resumeObjective }}</p>
         </section>
+        @endif
 
+        @if($educationRows && collect($educationRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
         <section class="resume-section">
             <h2>Education</h2>
             @forelse ($educationRows as $item)
@@ -153,7 +156,9 @@
             @empty
             @endforelse
         </section>
+        @endif
 
+        @if($trainingRows && collect($trainingRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
         <section class="resume-section">
             <h2>Training</h2>
             @forelse ($trainingRows ?? [] as $item)
@@ -170,7 +175,9 @@
             @empty
             @endforelse
         </section>
+        @endif
 
+        @if($experienceRows && collect($experienceRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
         <section class="resume-section">
             <h2>Experience</h2>
             @forelse ($experienceRows as $item)
@@ -187,7 +194,9 @@
             @empty
             @endforelse
         </section>
+        @endif
 
+        @if($eligibilityRows && collect($eligibilityRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
         <section class="resume-section">
             <h2>Eligibility</h2>
             @forelse ($eligibilityRows ?? [] as $item)
@@ -204,15 +213,14 @@
             @empty
             @endforelse
         </section>
+        @endif
 
+        @if($skillsPreview->count())
         <section class="resume-section">
             <h2>Skills</h2>
-            @if($skillsPreview->count())
-                <p class="skills-list">{{ $skillsPreview->join(', ') }}</p>
-            @else
-                <p class="skills-list"> </p>
-            @endif
+            <p class="skills-list">{{ $skillsPreview->join(', ') }}</p>
         </section>
+        @endif
     </div>
 </body>
 </html>
