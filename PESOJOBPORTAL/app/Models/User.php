@@ -103,6 +103,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(EmployerNotification::class, 'employer_id');
     }
+
+    public function userNotifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class);
+    }
 }
-?>
 

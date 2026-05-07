@@ -112,12 +112,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    // Jobseeker Approvals
+    // Jobseeker Management
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
-        Route::get('/{application}', [JobseekerApprovalController::class, 'show'])->name('show');
-        Route::post('/{application}/approve', [JobseekerApprovalController::class, 'approve'])->name('approve');
-        Route::post('/{application}/reject', [JobseekerApprovalController::class, 'reject'])->name('reject');
+        Route::get('/{jobseeker}', [JobseekerApprovalController::class, 'show'])->name('show');
+        Route::post('/{jobseeker}/recommend-job', [JobseekerApprovalController::class, 'recommendJob'])->name('recommend-job');
     });
 
     // Approvals & Verification Section
