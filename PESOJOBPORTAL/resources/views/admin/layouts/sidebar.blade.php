@@ -30,7 +30,7 @@
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.employer-verification*') ? 'active' : '' }}">
                 <i class="bi bi-building"></i>
-                <span>Employer Verification</span>
+                <span>Employers</span>
                 @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
                     <span class="sidebar-badge">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
                 @endif
@@ -39,7 +39,7 @@
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.job-approvals') ? 'active' : '' }}">
                 <i class="bi bi-file-check"></i>
-                <span>Job Approvals</span>
+                <span>Job Applicants</span>
                 @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
                     <span class="sidebar-badge" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
                 @endif
