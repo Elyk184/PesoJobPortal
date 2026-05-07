@@ -953,18 +953,6 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.barangay-intelligence') }}" class="sidebar-menu-link">
-                    <i class="bi bi-map"></i>
-                    <span>Barangay Intelligence</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.report-builder') }}" class="sidebar-menu-link">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Dynamic Report Builder</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
                 <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-pdf"></i>
                     <span>PESO Clearances</span>
