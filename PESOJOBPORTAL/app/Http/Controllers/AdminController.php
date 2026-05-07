@@ -175,8 +175,11 @@ class AdminController extends Controller
 
     public function jobApprovals(): View
     {
-        $pendingJobs = PesoJob::where('status', 'pending')->with('employer')->paginate(15);
-        return view('admin.approvals.jobs', compact('pendingJobs'));
+        $applications = JobApplication::with(['user', 'pesoJob.employer'])
+            ->orderByRaw("CASE WHEN admin_status = 'pending' THEN 0 WHEN admin_status = 'under_review' THEN 1 WHEN admin_status = 'rejected' THEN 2 WHEN admin_status = 'approved' THEN 3 END")
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        return view('admin.approvals.job-applications', compact('applications'));
     }
 
     public function jobsManagement(): View
