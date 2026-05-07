@@ -899,10 +899,7 @@
 
             @if(!request()->routeIs('admin.jobseekers.index'))
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link">
-                    <i class="bi bi-file-earmark-check"></i>
-                    <span>Application Approvals</span>
-                </a>
+               
             </li>
             @endif
             <li class="sidebar-menu-item">
