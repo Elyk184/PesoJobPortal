@@ -46,17 +46,9 @@ class AdminController extends Controller
     // Employer Verification
     public function employerVerification(Request $request): View
     {
-        // Show employers who have uploaded verification documents or whose status indicates review/rejection.
-        $companyProfiles = CompanyProfile::where(function($q) {
-                $q->whereIn('verification_status', ['under_review', 'rejected']);
-            })->orWhere(function($q) {
-                // Also include profiles that already have both required documents uploaded even if status is still 'pending'
-                $q->whereNotNull('business_permit_path')
-                  ->whereNotNull('dti_sec_registration_path')
-                  ->where('verification_status', '!=', 'verified');
-            })
-            ->with('employer')
-            ->orderByRaw("CASE WHEN verification_status = 'under_review' THEN 0 WHEN verification_status = 'rejected' THEN 1 ELSE 2 END")
+        // Show all employer company profiles
+        $companyProfiles = CompanyProfile::with('employer')
+            ->orderByRaw("CASE WHEN verification_status = 'pending' THEN 0 WHEN verification_status = 'under_review' THEN 1 WHEN verification_status = 'rejected' THEN 2 WHEN verification_status = 'verified' THEN 3 END")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
