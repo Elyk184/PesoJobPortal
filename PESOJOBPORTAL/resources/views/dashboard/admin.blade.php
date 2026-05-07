@@ -914,7 +914,7 @@
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-check"></i>
-                    <span>Job Applicants</span>
+                    <span>Job Approvals</span>
                     @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
                         <span class="badge badge-pending" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
                     @endif
