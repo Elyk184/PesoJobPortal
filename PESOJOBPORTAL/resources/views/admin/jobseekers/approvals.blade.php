@@ -417,53 +417,15 @@
                                         <a href="{{ route('admin.jobseekers.show', $jobseeker) }}" class="btn btn-sm btn-view">
                                             <i class="bi bi-eye"></i> View Profile
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-recommend" data-bs-toggle="modal" 
-                                                data-bs-target="#recommendModal{{ $jobseeker->id }}" title="Recommend Job">
+                                        <button type="button" class="btn btn-sm btn-recommend open-recommend-modal" 
+                                                data-jobseeker-id="{{ $jobseeker->id }}" 
+                                                data-jobseeker-name="{{ $jobseeker->name ?? 'N/A' }}" 
+                                                title="Recommend Job">
                                             <i class="bi bi-star"></i> Recommend
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- Recommendation Modal -->
-                            <div class="modal fade" id="recommendModal{{ $jobseeker->id }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: 2px solid #d72638;">
-                                            <h5 class="modal-title" style="color: white; font-weight: 800;"><i class="bi bi-star-fill me-2"></i>Recommend a Job</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form method="POST" action="{{ route('admin.jobseekers.recommend-job', $jobseeker) }}">
-                                            @csrf
-                                            <div class="modal-body" style="padding: 2rem;">
-                                                <p class="text-muted mb-3">Recommending a job to: <strong>{{ $jobseeker->name ?? 'N/A' }}</strong></p>
-                                                <div class="mb-3">
-                                                    <label for="job_{{ $jobseeker->id }}" class="form-label">
-                                                        Select Job <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select id="job_{{ $jobseeker->id }}" name="job_id" class="form-control" required>
-                                                        <option value="">-- Choose a Job --</option>
-                                                        @foreach($availableJobs as $job)
-                                                            <option value="{{ $job->id }}">{{ $job->title }} - {{ $job->company->company_name ?? 'Unknown' }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="message_{{ $jobseeker->id }}" class="form-label">
-                                                        Message (Optional)
-                                                    </label>
-                                                    <textarea id="message_{{ $jobseeker->id }}" name="message" class="form-control" rows="3" 
-                                                              placeholder="Add a personal note about why this job is a good fit..."></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer" style="border-top: 1px solid #e5e7eb; padding: 1.5rem;">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-recommend"><i class="bi bi-star-fill me-2"></i>Send Recommendation</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -481,6 +443,81 @@
             </div>
         @endif
     </div>
+
+    <!-- Single Reusable Recommendation Modal -->
+    <div class="modal fade" id="recommendModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: 2px solid #d72638;">
+                    <h5 class="modal-title" style="color: white; font-weight: 800;"><i class="bi bi-star-fill me-2"></i>Recommend a Job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="recommendForm" method="POST">
+                    @csrf
+                    <div class="modal-body" style="padding: 2rem;">
+                        <p class="text-muted mb-3">Recommending a job to: <strong id="jobseekerName">N/A</strong></p>
+                        <div class="mb-3">
+                            <label for="jobSelect" class="form-label">
+                                Select Job <span class="text-danger">*</span>
+                            </label>
+                            <select id="jobSelect" name="job_id" class="form-control" required>
+                                <option value="">-- Choose a Job --</option>
+                                @foreach($availableJobs as $job)
+                                    <option value="{{ $job->id }}">{{ $job->title }} - {{ $job->company->company_name ?? 'Unknown' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="messageInput" class="form-label">
+                                Message (Optional)
+                            </label>
+                            <textarea id="messageInput" name="message" class="form-control" rows="3" 
+                                      placeholder="Add a personal note about why this job is a good fit..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid #e5e7eb; padding: 1.5rem;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-recommend"><i class="bi bi-star-fill me-2"></i>Send Recommendation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const openModalButtons = document.querySelectorAll('.open-recommend-modal');
+            const recommendModal = document.getElementById('recommendModal');
+            const recommendForm = document.getElementById('recommendForm');
+            const jobseekerNameSpan = document.getElementById('jobseekerName');
+            let currentJobseekerId = null;
+
+            openModalButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const jobseekerId = this.dataset.jobseekerId;
+                    const jobseekerName = this.dataset.jobseekerName;
+
+                    currentJobseekerId = jobseekerId;
+                    jobseekerNameSpan.textContent = jobseekerName;
+
+                    // Update form action
+                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-job';
+                    
+                    // Reset form fields
+                    document.getElementById('jobSelect').value = '';
+                    document.getElementById('messageInput').value = '';
+
+                    // Show modal using Bootstrap
+                    const modal = new bootstrap.Modal(recommendModal, {
+                        keyboard: false,
+                        backdrop: 'static'
+                    });
+                    modal.show();
+                });
+            });
+        });
+    </script>
 </div>
 
 @endsection
