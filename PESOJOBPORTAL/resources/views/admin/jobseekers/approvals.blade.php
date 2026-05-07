@@ -306,6 +306,66 @@
             border-color: #1f2937;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
+
+        /* Modal Fixes */
+        body.modal-open {
+            overflow-y: scroll;
+            padding-right: 0 !important;
+        }
+
+        .modal {
+            z-index: 1050;
+        }
+
+        .modal-backdrop {
+            z-index: 1040;
+        }
+
+        .modal.fade {
+            transition: opacity 0.15s linear, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.show {
+            transform: scale(1);
+        }
+
+        .modal-dialog {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border-radius: 16px 16px 0 0;
+            border: none;
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 
     <div class="approval-header">
