@@ -82,18 +82,188 @@
 
 <section class="container py-4" aria-label="Jobseeker profile">
     <style>
-        .dashboard-section-card { background: #fff; border-radius: 12px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(16,24,40,0.04); }
-        .profile-section-header { display:flex; gap:12px; align-items:center; }
-        .profile-section-icon { font-size:1.5rem; color:#667eea; width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; background:#f1f5ff; border-radius:8px; }
-        .profile-section-title { margin:0; font-size:1.15rem; }
-        .profile-section-kicker { font-weight:700; color:#6c757d; font-size:0.85rem; }
-        .profile-input { height:44px; border-radius:8px; }
-        .profile-entry-card { padding:12px; border-radius:10px; }
-        .profile-save-wrap { position: sticky; bottom: 12px; display:flex; justify-content:flex-end; padding-top:8px; background:transparent; z-index:5; }
-        .profile-save-btn { background: linear-gradient(90deg,#667eea,#764ba2); border:none; color:#fff; padding:10px 18px; border-radius:8px; box-shadow: 0 6px 18px rgba(102,126,234,0.12); }
-        .profile-remove-btn { border-radius:6px; }
-        .profile-section-rule { margin: 10px 0 14px; border-top: 1px solid rgba(0,0,0,0.04); }
-        @media (max-width: 767px) { .profile-save-wrap { position: static; margin-top: 10px; } }
+        .dashboard-section-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06);
+            border: 1px solid #f0f4f8;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-section-card:hover {
+            box-shadow: 0 8px 24px rgba(59,130,246,0.08);
+            border-color: #e0e7f1;
+        }
+
+        .profile-section-header { display:flex; gap:16px; align-items:flex-start; }
+        .profile-section-icon {
+            font-size:1.25rem;
+            width:50px;
+            height:50px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+                background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(30,64,175,0.08));
+            border-radius:12px;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.12);
+            color: #3b82f6;
+            transition: all 0.3s ease;
+        }
+
+        .profile-section-header:hover .profile-section-icon {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.18);
+        }
+
+        .profile-section-title {
+            margin:0;
+            font-size:1.3rem;
+            font-weight: 800;
+            color: #1a2332;
+            letter-spacing: -0.3px;
+        }
+        .profile-section-kicker {
+            font-weight:700;
+            color:#94a3b8;
+            font-size:0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .profile-input {
+            height:44px;
+            border-radius:10px;
+            border: 1.5px solid #e2e8f0;
+                color: #3b82f6;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            padding: 10px 14px;
+        }
+
+        .profile-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.08), 0 2px 8px rgba(59,130,246,0.12);
+            outline: none;
+        }
+
+        .profile-entry-card {
+            padding:18px;
+            border-radius:12px;
+            border: 1px solid #e0e7f1;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .profile-entry-card:hover {
+            box-shadow: 0 6px 16px rgba(59,130,246,0.1);
+            border-color: #d4dce8;
+        }
+
+        .profile-remove-btn {
+            border-radius:8px;
+            color: #ef4444;
+            border: 1.5px solid #fecaca;
+            background: #fef2f2;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .profile-remove-btn:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            transform: translateY(-1px);
+        }
+
+        .profile-section-rule {
+            margin: 14px 0 20px;
+            border-top: none;
+            height: 3px;
+            border-radius: 999px;
+                background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+            box-shadow: 0 2px 8px rgba(59,130,246,0.18);
+        }
+
+        .profile-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        @media (max-width: 767px) {
+            .profile-sections {
+                gap: 16px;
+            }
+
+            .dashboard-section-card {
+                padding: 1.25rem;
+            }
+
+            .profile-section-title {
+                font-size: 1.15rem;
+            }
+
+            .profile-input {
+                height: 42px;
+                font-size: 16px;
+            }
+        }
+
+        .profile-save-wrap {
+            position: sticky;
+            bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 20px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(224, 231, 241, 0.5);
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .profile-save-btn {
+                background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border: none;
+            color: #fff;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 20px rgba(59,130,246,0.28);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .profile-save-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(59,130,246,0.36);
+        }
+
+        .profile-save-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.22);
+        }
+
+        @media (max-width: 767px) {
+            .profile-save-wrap {
+                position: static;
+                justify-content: stretch;
+                padding: 12px 0;
+                background: none;
+                border: none;
+                box-shadow: none;
+                margin-top: 16px;
+            }
+
+            .profile-save-btn {
+                flex: 1;
+            }
+        }
     </style>
 
 
@@ -418,8 +588,10 @@
 
                 @foreach ($skillGroups as $key => $group)
                     @php $selectedSkills = data_get($otherSkills, $key, []); @endphp
-                    <div class="profile-skill-group mb-3">
-                        <div class="profile-skill-group-title">{{ $group['label'] }}</div>
+                    <div class="profile-skill-group" data-skill-group="{{ $key }}">
+                        <div class="profile-skill-group-title" role="button" tabindex="0" aria-expanded="true">
+                            {{ $group['label'] }}
+                        </div>
                         <div class="profile-skill-grid">
                             @foreach ($group['options'] as $option)
                                 <label class="profile-check-tile">
@@ -660,6 +832,44 @@
 
         const permanentAddressCopyToggle = document.querySelector('[data-copy-present-address]');
 
+        // Initialize collapsible skill groups
+        function initSkillGroupCollapsibles() {
+            const skillGroups = document.querySelectorAll('.profile-skill-group');
+
+            // Set initial state for each group (all expanded by default)
+            skillGroups.forEach(function (group) {
+                const title = group.querySelector('.profile-skill-group-title');
+                if (!title) return;
+
+                group.classList.remove('mobile-collapsed');
+                title.setAttribute('aria-expanded', 'true');
+            });
+        }
+
+        // Use event delegation for click handling on skill group titles
+        document.addEventListener('click', function (e) {
+            const title = e.target.closest('.profile-skill-group-title');
+            if (!title) return;
+
+            const group = title.closest('.profile-skill-group');
+            if (!group) return;
+
+            e.preventDefault();
+
+            // Toggle collapsed state on all devices
+            group.classList.toggle('mobile-collapsed');
+            const isExpanded = group.classList.contains('mobile-collapsed') === false;
+            title.setAttribute('aria-expanded', isExpanded);
+        });
+
+        // Keyboard navigation for skill group titles
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('profile-skill-group-title')) {
+                e.preventDefault();
+                e.target.click();
+            }
+        });
+
         function copyPresentAddressToPermanent() {
             if (!permanentAddressCopyToggle || !permanentAddressCopyToggle.checked) {
                 return;
@@ -722,6 +932,18 @@
             field.addEventListener('input', function () {
                 copyPresentAddressToPermanent();
             });
+        });
+
+        // Initialize skill group collapsibles on page load
+        initSkillGroupCollapsibles();
+
+        // Re-initialize on window resize (for responsive behavior)
+        let resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                initSkillGroupCollapsibles();
+            }, 250);
         });
     })();
 </script>
