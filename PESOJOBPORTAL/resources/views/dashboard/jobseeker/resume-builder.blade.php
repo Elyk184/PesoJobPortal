@@ -157,6 +157,86 @@
                     </div>
                 </div>
 
+                <div class="mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h4 class="h6 fw-bold mb-0">Training</h4>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-add-row="training">
+                            <i class="bi bi-plus-lg me-1"></i>Add Training
+                        </button>
+                    </div>
+
+                    <div class="vstack gap-3" id="training-rows">
+                        @forelse ($trainingRows ?? [] as $index => $row)
+                            <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="training">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="fw-semibold small text-secondary">Training {{ $index + 1 }}</div>
+                                    <button type="button" class="btn btn-sm btn-link text-danger p-0" data-remove-row>
+                                        Remove
+                                    </button>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][course]" class="form-control" placeholder="Course / Training name" value="{{ $row['course'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][institution]" class="form-control" placeholder="Institution / Provider" value="{{ $row['institution'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][dates]" class="form-control" placeholder="Dates" value="{{ $row['dates'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][hours]" class="form-control" placeholder="Hours" value="{{ $row['hours'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][skills]" class="form-control" placeholder="Skills learned" value="{{ $row['skills'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="training[{{ $index }}][certificates]" class="form-control" placeholder="Certificates" value="{{ $row['certificates'] ?? '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h4 class="h6 fw-bold mb-0">Eligibility</h4>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-add-row="eligibility">
+                            <i class="bi bi-plus-lg me-1"></i>Add Eligibility
+                        </button>
+                    </div>
+
+                    <div class="vstack gap-3" id="eligibility-rows">
+                        @forelse ($eligibilityRows ?? [] as $index => $row)
+                            <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="eligibility">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="fw-semibold small text-secondary">Eligibility {{ $index + 1 }}</div>
+                                    <button type="button" class="btn btn-sm btn-link text-danger p-0" data-remove-row>
+                                        Remove
+                                    </button>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <input type="text" name="eligibility[{{ $index }}][eligibility]" class="form-control" placeholder="Eligibility / Exam" value="{{ $row['eligibility'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="eligibility[{{ $index }}][license]" class="form-control" placeholder="License / Certificate No." value="{{ $row['license'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="eligibility[{{ $index }}][date_taken]" class="form-control" placeholder="Date Taken" value="{{ $row['date_taken'] ?? '' }}">
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="text" name="eligibility[{{ $index }}][valid_until]" class="form-control" placeholder="Valid Until" value="{{ $row['valid_until'] ?? '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                        @endforelse
+                    </div>
+                </div>
+
                 <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
                     <button type="submit" class="btn btn-primary flex-fill">
                         <i class="bi bi-save me-2"></i>Save Resume
@@ -185,11 +265,14 @@
                         <div class="resume-contact">{{ collect([$resumeAddress, $resumePhone, $resumeEmail])->filter()->join(' | ') }}</div>
                     </div>
 
+                    @if($resumeObjective)
                     <section class="resume-section mb-4">
                         <h2>Objective</h2>
                         <p>{{ $resumeObjective }}</p>
                     </section>
+                    @endif
 
+                    @if($educationRows && collect($educationRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
                     <section class="resume-section mb-4">
                         <h2>Education</h2>
                         @forelse ($educationRows as $item)
@@ -205,7 +288,9 @@
                         @empty
                         @endforelse
                     </section>
+                    @endif
 
+                    @if($trainingRows && collect($trainingRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
                     <section class="resume-section mb-4">
                         <h2>Training</h2>
                         @forelse ($trainingRows as $item)
@@ -222,7 +307,9 @@
                         @empty
                         @endforelse
                     </section>
+                    @endif
 
+                    @if($experienceRows && collect($experienceRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
                     <section class="resume-section mb-4">
                         <h2>Experience</h2>
                         @forelse ($experienceRows as $item)
@@ -239,7 +326,9 @@
                         @empty
                         @endforelse
                     </section>
+                    @endif
 
+                    @if($eligibilityRows && collect($eligibilityRows)->filter(function($item) { return collect($item)->filter()->isNotEmpty(); })->isNotEmpty())
                     <section class="resume-section mb-4">
                         <h2>Eligibility</h2>
                         @forelse ($eligibilityRows as $item)
@@ -256,11 +345,14 @@
                         @empty
                         @endforelse
                     </section>
+                    @endif
 
+                    @if($skillsPreview->count())
                     <section class="resume-section mb-0">
                         <h2>Skills</h2>
-                        <p class="mb-0">{{ $skillsPreview->count() ? $skillsPreview->join(', ') : ' ' }}</p>
+                        <p class="mb-0">{{ $skillsPreview->join(', ') }}</p>
                     </section>
+                    @endif
                 </div>
             </div>
         </div>
@@ -297,6 +389,38 @@
             <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Company / Organization"></div>
             <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Year / Period"></div>
             <div class="col-12"><textarea class="form-control" rows="3" name="__NAME__" placeholder="Short job description"></textarea></div>
+        </div>
+    </div>
+</template>
+
+<template id="training-template">
+    <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="training">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold small text-secondary">Training</div>
+            <button type="button" class="btn btn-sm btn-link text-danger p-0" data-remove-row>Remove</button>
+        </div>
+        <div class="row g-2">
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Course / Training name"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Institution / Provider"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Dates"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Hours"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Skills learned"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Certificates"></div>
+        </div>
+    </div>
+</template>
+
+<template id="eligibility-template">
+    <div class="border rounded-3 p-3 bg-light-subtle resume-row" data-row="eligibility">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold small text-secondary">Eligibility</div>
+            <button type="button" class="btn btn-sm btn-link text-danger p-0" data-remove-row>Remove</button>
+        </div>
+        <div class="row g-2">
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Eligibility / Exam"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="License / Certificate No."></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Date Taken"></div>
+            <div class="col-12"><input type="text" class="form-control" name="__NAME__" placeholder="Valid Until"></div>
         </div>
     </div>
 </template>
@@ -360,6 +484,8 @@
         (function () {
             let educationCount = document.querySelectorAll('[data-row="education"]').length;
             let experienceCount = document.querySelectorAll('[data-row="experience"]').length;
+            let trainingCount = document.querySelectorAll('[data-row="training"]').length;
+            let eligibilityCount = document.querySelectorAll('[data-row="eligibility"]').length;
 
             function addRow(type) {
                 const template = document.getElementById(type + '-template');
@@ -369,10 +495,21 @@
                 const clone = template.content.cloneNode(true);
                 const row = clone.querySelector('[data-row="' + type + '"]');
                 const fields = row.querySelectorAll('input, textarea');
-                const rowIndex = type === 'education' ? educationCount++ : experienceCount++;
-                const names = type === 'education'
-                    ? ['education[' + rowIndex + '][school]', 'education[' + rowIndex + '][course]', 'education[' + rowIndex + '][year]']
-                    : ['experience[' + rowIndex + '][title]', 'experience[' + rowIndex + '][company]', 'experience[' + rowIndex + '][period]', 'experience[' + rowIndex + '][details]'];
+                let rowIndex, names;
+
+                if (type === 'education') {
+                    rowIndex = educationCount++;
+                    names = ['education[' + rowIndex + '][school]', 'education[' + rowIndex + '][course]', 'education[' + rowIndex + '][year]'];
+                } else if (type === 'experience') {
+                    rowIndex = experienceCount++;
+                    names = ['experience[' + rowIndex + '][title]', 'experience[' + rowIndex + '][company]', 'experience[' + rowIndex + '][period]', 'experience[' + rowIndex + '][details]'];
+                } else if (type === 'training') {
+                    rowIndex = trainingCount++;
+                    names = ['training[' + rowIndex + '][course]', 'training[' + rowIndex + '][institution]', 'training[' + rowIndex + '][dates]', 'training[' + rowIndex + '][hours]', 'training[' + rowIndex + '][skills]', 'training[' + rowIndex + '][certificates]'];
+                } else if (type === 'eligibility') {
+                    rowIndex = eligibilityCount++;
+                    names = ['eligibility[' + rowIndex + '][eligibility]', 'eligibility[' + rowIndex + '][license]', 'eligibility[' + rowIndex + '][date_taken]', 'eligibility[' + rowIndex + '][valid_until]'];
+                }
 
                 fields.forEach(function (field, index) {
                     field.name = names[index];
