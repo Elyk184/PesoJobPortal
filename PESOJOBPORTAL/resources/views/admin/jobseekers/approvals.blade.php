@@ -316,7 +316,7 @@
         </div>
         <div class="approval-stat">
             <div class="approval-stat-label">Available Jobs</div>
-            <div class="approval-stat-value">{{ $availableJobs }}</div>
+            <div class="approval-stat-value">{{ $availableJobs->count() }}</div>
             <i class="bi bi-briefcase approval-stat-icon"></i>
         </div>
     </div>

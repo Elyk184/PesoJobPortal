@@ -21,9 +21,10 @@ class JobseekerApprovalController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Get count of available jobs from employers
+        // Get available jobs from employers
         $availableJobs = \App\Models\PesoJob::where('status', 'approved')
-            ->count();
+            ->with('company')
+            ->get();
 
         return view('admin.jobseekers.approvals', [
             'jobseekers' => $jobseekers,

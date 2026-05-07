@@ -283,7 +283,7 @@
                         <div class="stat-label">Applications</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">{{ $availableJobs }}</div>
+                        <div class="stat-value">{{ $availableJobs->count() }}</div>
                         <div class="stat-label">Jobs Available</div>
                     </div>
                 </div>
