@@ -23,7 +23,7 @@ class JobseekerApprovalController extends Controller
 
         // Get available jobs from employers
         $availableJobs = \App\Models\PesoJob::where('status', 'approved')
-            ->with('company')
+            ->with('employer.companyProfile')
             ->get();
 
         return view('admin.jobseekers.approvals', [
@@ -41,7 +41,7 @@ class JobseekerApprovalController extends Controller
         
         // Get available jobs from employers
         $availableJobs = \App\Models\PesoJob::where('status', 'approved')
-            ->with('company')
+            ->with('employer.companyProfile')
             ->get();
 
         return view('admin.jobseekers.profile', [

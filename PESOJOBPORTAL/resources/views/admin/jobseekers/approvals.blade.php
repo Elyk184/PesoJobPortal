@@ -463,7 +463,7 @@
                             <select id="jobSelect" name="job_id" class="form-control" required>
                                 <option value="">-- Choose a Job --</option>
                                 @foreach($availableJobs as $job)
-                                    <option value="{{ $job->id }}">{{ $job->title }} - {{ $job->company->company_name ?? 'Unknown' }}</option>
+                                    <option value="{{ $job->id }}">{{ $job->title }} - {{ $job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company' }}</option>
                                 @endforeach
                             </select>
                         </div>
