@@ -47,17 +47,9 @@ class AdminController extends Controller
     // Employer Verification
     public function employerVerification(Request $request): View
     {
-        // Show employers who have uploaded verification documents or whose status indicates review/rejection.
-        $companyProfiles = CompanyProfile::where(function($q) {
-                $q->whereIn('verification_status', ['under_review', 'rejected']);
-            })->orWhere(function($q) {
-                // Also include profiles that already have both required documents uploaded even if status is still 'pending'
-                $q->whereNotNull('business_permit_path')
-                  ->whereNotNull('dti_sec_registration_path')
-                  ->where('verification_status', '!=', 'verified');
-            })
-            ->with('employer')
-            ->orderByRaw("CASE WHEN verification_status = 'under_review' THEN 0 WHEN verification_status = 'rejected' THEN 1 ELSE 2 END")
+        // Show all employer company profiles
+        $companyProfiles = CompanyProfile::with('employer')
+            ->orderByRaw("CASE WHEN verification_status = 'pending' THEN 0 WHEN verification_status = 'under_review' THEN 1 WHEN verification_status = 'rejected' THEN 2 WHEN verification_status = 'verified' THEN 3 END")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -308,6 +300,117 @@ class AdminController extends Controller
             'trendPending',
             'trendAccepted',
             'trendRejected'
+        ));
+    }
+
+    public function employmentStats(): View
+    {
+        // Basic statistics
+        $stats = [
+            'total_jobseekers' => User::where('role', 'jobseeker')->count(),
+            'active_jobs' => PesoJob::where('status', 'active')->notArchived()->count(),
+            'successful_placements' => JobApplication::where('status', 'accepted')->count(),
+            'registered_employers' => User::where('role', 'employer')->count(),
+        ];
+
+        // Job postings by status over last 12 months
+        $jobsByMonth = PesoJob::select(
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+            DB::raw('COUNT(*) as total'),
+            DB::raw("SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active"),
+            DB::raw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending"),
+            DB::raw("SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed")
+        )
+        ->where('created_at', '>=', now()->subMonths(12))
+        ->groupBy(DB::raw('DATE_FORMAT(created_at, "%Y-%m")'))
+        ->orderBy('month')
+        ->get();
+
+        // Application status distribution
+        $applicationsByStatus = JobApplication::select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->get()
+            ->pluck('count', 'status');
+
+        // Top job types/positions
+        $topCategories = PesoJob::select('job_type', DB::raw('COUNT(*) as count'))
+            ->where('status', 'active')
+            ->notArchived()
+            ->whereNotNull('job_type')
+            ->groupBy('job_type')
+            ->orderByDesc('count')
+            ->limit(8)
+            ->get();
+
+        // If no job types, get by location as fallback
+        if ($topCategories->isEmpty()) {
+            $topCategories = PesoJob::select('location', DB::raw('COUNT(*) as count'))
+                ->where('status', 'active')
+                ->notArchived()
+                ->groupBy('location')
+                ->orderByDesc('count')
+                ->limit(8)
+                ->get()
+                ->map(function($item) {
+                    $item->job_type = $item->location;
+                    return $item;
+                });
+        }
+
+        // Jobseeker profile completion
+        $jobseekerStats = DB::table('users')
+            ->leftJoin('user_profiles', 'users.id', '=', 'user_profiles.user_id')
+            ->where('users.role', 'jobseeker')
+            ->select(
+                DB::raw('SUM(CASE WHEN user_profiles.id IS NOT NULL THEN 1 ELSE 0 END) as with_profile'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->first();
+
+        // Applications trend (last 30 days)
+        $applicationsTrend = JobApplication::select(
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as total')
+        )
+        ->where('created_at', '>=', now()->subDays(30))
+        ->groupBy(DB::raw('DATE(created_at)'))
+        ->orderBy('date')
+        ->get();
+
+        // Format chart data
+        $monthLabels = $jobsByMonth->pluck('month')->map(fn($m) => Carbon::createFromFormat('Y-m', $m)->format('M Y'))->toArray();
+        $jobsTotal = $jobsByMonth->pluck('total')->toArray();
+        $jobsActive = $jobsByMonth->pluck('active')->toArray();
+        $jobsPending = $jobsByMonth->pluck('pending')->toArray();
+        $jobsClosed = $jobsByMonth->pluck('closed')->toArray();
+
+        $categoryLabels = $topCategories->pluck('job_type')->toArray();
+        $categoryData = $topCategories->pluck('count')->toArray();
+
+        $appStatusLabels = ['Pending', 'Accepted', 'Rejected'];
+        $appStatusData = [
+            $applicationsByStatus->get('pending', 0),
+            $applicationsByStatus->get('accepted', 0),
+            $applicationsByStatus->get('rejected', 0),
+        ];
+
+        $trendDates = $applicationsTrend->pluck('date')->map(fn($d) => Carbon::parse($d)->format('M d'))->toArray();
+        $trendData = $applicationsTrend->pluck('total')->toArray();
+
+        return view('admin.employment-stats', compact(
+            'stats',
+            'monthLabels',
+            'jobsTotal',
+            'jobsActive',
+            'jobsPending',
+            'jobsClosed',
+            'categoryLabels',
+            'categoryData',
+            'appStatusLabels',
+            'appStatusData',
+            'trendDates',
+            'trendData',
+            'jobseekerStats'
         ));
     }
 

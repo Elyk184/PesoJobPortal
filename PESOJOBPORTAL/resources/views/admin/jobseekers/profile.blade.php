@@ -1,52 +1,35 @@
 @extends('layouts.admin-dashboard')
 
-@section('title', 'Jobseekers | PESO Admin')
+@section('title', $jobseeker->name . ' | Jobseeker Profile | PESO Admin')
 
 <?php
-    $pageTitle = 'Jobseekers';
-    $pageSubtitle = 'Manage jobseekers and recommend jobs';
-    $pageIcon = 'bi-people';
+    $pageTitle = $jobseeker->name;
+    $pageSubtitle = 'Jobseeker Profile & Management';
+    $pageIcon = 'bi-person-circle';
 ?>
 
 @section('content')
 <div class="admin-dashboard">
     <style>
-        .approval-header {
+        .profile-header {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: 1fr auto;
             gap: 2rem;
-            margin-bottom: 3.5rem;
+            margin-bottom: 3rem;
         }
 
-        .approval-stat {
+        .profile-card {
             background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-            border: 2px solid #d1d5db;
             border-radius: 16px;
-            padding: 2rem 1.75rem;
+            padding: 2.5rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #d1d5db;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .approval-stat:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-color: rgba(0, 0, 0, 0.2);
-        }
-
-        .approval-stat::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%;
-        }
-
-        .approval-stat::after {
+        .profile-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -57,182 +40,99 @@
             border-radius: 16px 16px 0 0;
         }
 
-        .approval-stat-label {
-            font-size: 12px;
-            color: #6b7280;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 0.75rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .approval-stat-value {
-            font-size: 40px;
-            font-weight: 800;
-            color: #1f2937;
-            letter-spacing: -0.5px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .approval-stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.08;
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            color: #374151;
-        }
-
-        .data-table { 
-            font-size: 13px;
-            width: 100%;
-        }
-        
-        .data-table thead { 
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        }
-        
-        .data-table th { 
-            color: #1f2937; 
-            font-weight: 800; 
-            border-bottom: 2px solid #d1d5db; 
-            font-size: 12px; 
-            text-transform: uppercase; 
-            letter-spacing: 0.8px;
-            padding: 1.25rem 1rem !important;
-        }
-        
-        .data-table td { 
-            padding: 1.25rem 1rem !important; 
-            vertical-align: middle; 
-            font-weight: 500;
-            color: #1f2937;
-        }
-        
-        .data-table tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .data-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .data-table tbody tr:hover { 
-            background: linear-gradient(90deg, #fafbfc 0%, #f3f4f6 100%);
-            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-        }
-
-        .jobseeker-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
             background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             color: white;
-            font-size: 16px;
-            margin-right: 0.75rem;
+            font-size: 40px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            flex-shrink: 0;
+            margin-bottom: 1.5rem;
         }
 
-        .jobseeker-name {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .profile-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-weight: 800;
+            font-size: 24px;
         }
 
-        .badge-count {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-            color: #1e40af;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 11px;
+        .profile-info p {
+            margin: 0.25rem 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
-            display: inline-block;
+            margin-top: 0.5rem;
         }
 
-        .action-buttons {
+        .action-sidebar {
             display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .btn-sm {
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
+        .btn-action {
+            display: flex;
             align-items: center;
-            gap: 0.4rem;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 12px 16px;
+            border-radius: 12px;
             border: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .btn-view {
-            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
-            color: #1e3a8a;
-            border: none;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        .btn-back {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            color: #374151;
         }
 
-        .btn-view:hover {
-            background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-            color: #1e3a8a;
+        .btn-back:hover {
+            background: linear-gradient(135deg, #d1d5db 0%, #bfdbfe 100%);
+            transform: translateY(-2px);
         }
 
         .btn-recommend {
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             color: #92400e;
-            border: none;
-            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
         }
 
         .btn-recommend:hover {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
-            color: #92400e;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.3;
-            color: #d1d5db;
-        }
-
-        .empty-state p {
-            margin: 1rem 0 0.5rem;
-            font-weight: 700;
-            color: #6b7280;
-            font-size: 18px;
-        }
-
-        .empty-state small {
-            color: #a1a5ab;
-            display: block;
-            margin-top: 0.5rem;
+            transform: translateY(-2px);
         }
 
         .dashboard-card {
@@ -244,6 +144,7 @@
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
         }
 
         .dashboard-card::before {
@@ -257,54 +158,111 @@
             border-radius: 16px 16px 0 0;
         }
 
-        .dashboard-card:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-color: rgba(0, 0, 0, 0.2);
-            transform: translateY(-8px);
-        }
-
         .dashboard-card h5 {
             color: #1f2937;
             font-weight: 800;
-            margin-bottom: 1.75rem;
-            margin-top: 0;
+            margin: 0 0 1.75rem 0;
             padding-bottom: 1.25rem;
             border-bottom: 2px solid #d1d5db;
             font-size: 18px;
             letter-spacing: -0.3px;
         }
-        
+
         .dashboard-card h5 i {
             color: #374151;
             margin-right: 0.5rem;
         }
 
-        .pagination {
-            justify-content: center;
-            margin-top: 3rem;
-            gap: 0.5rem;
+        .info-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .pagination .page-link {
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #6b7280;
+            min-width: 120px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
             color: #1f2937;
-            border-color: #d1d5db;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 8px;
         }
 
-        .pagination .page-link:hover {
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-            border-color: #1f2937;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        .application-item {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .pagination .page-item.active .page-link {
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-            border-color: #1f2937;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        .application-item:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .application-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .application-company {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+        }
+
+        .application-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-applied {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.3;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            margin: 0.5rem 0;
+            font-weight: 700;
+            color: #6b7280;
         }
 
         /* Modal Fixes */
@@ -368,78 +326,99 @@
         }
     </style>
 
-    <div class="approval-header">
-        <div class="approval-stat">
-            <div class="approval-stat-label">Total Jobseekers</div>
-            <div class="approval-stat-value">{{ $jobseekers->total() }}</div>
-            <i class="bi bi-people approval-stat-icon"></i>
+    <div class="profile-header">
+        <div class="profile-card">
+            <div class="profile-avatar">{{ strtoupper(substr($jobseeker->name ?? 'U', 0, 1)) }}</div>
+            <div class="profile-info">
+                <h3>{{ $jobseeker->name }}</h3>
+                <p><i class="bi bi-envelope me-2"></i>{{ $jobseeker->email }}</p>
+                @if($jobseeker->profile?->phone)
+                    <p><i class="bi bi-telephone me-2"></i>{{ $jobseeker->profile->phone }}</p>
+                @endif
+                <p><i class="bi bi-calendar me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $jobseeker->applications->count() }}</div>
+                        <div class="stat-label">Applications</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $availableJobs->count() }}</div>
+                        <div class="stat-label">Jobs Available</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="approval-stat">
-            <div class="approval-stat-label">Available Jobs</div>
-            <div class="approval-stat-value">{{ $availableJobs->count() }}</div>
-            <i class="bi bi-briefcase approval-stat-icon"></i>
+
+        <div class="action-sidebar">
+            <a href="{{ route('admin.jobseekers.index') }}" class="btn btn-action btn-back">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+            <button type="button" class="btn btn-action btn-recommend open-recommend-modal" 
+                    data-jobseeker-id="{{ $jobseeker->id }}"
+                    data-jobseeker-name="{{ $jobseeker->name }}">
+                <i class="bi bi-star"></i> Recommend Job
+            </button>
         </div>
     </div>
 
+    @if($jobseeker->profile)
     <div class="dashboard-card">
-        <h5><i class="bi bi-people me-2"></i>Jobseeker Management</h5>
+        <h5><i class="bi bi-person-lines-fill me-2"></i>Profile Information</h5>
         
-        @if($jobseekers->count() > 0)
-            <div class="table-responsive">
-                <table class="table data-table w-100">
-                    <thead>
-                        <tr>
-                            <th>Jobseeker</th>
-                            <th>Email</th>
-                            <th>Applications</th>
-                            <th>Member Since</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($jobseekers as $jobseeker)
-                            <tr>
-                                <td>
-                                    <div class="jobseeker-name">
-                                        <div class="jobseeker-avatar">
-                                            {{ strtoupper(substr($jobseeker->name ?? 'U', 0, 1)) }}
-                                        </div>
-                                        <strong>{{ Str::limit($jobseeker->name ?? 'N/A', 25) }}</strong>
-                                    </div>
-                                </td>
-                                <td>{{ Str::limit($jobseeker->email ?? 'N/A', 30) }}</td>
-                                <td>
-                                    <span class="badge-count">{{ $jobseeker->applications_count ?? 0 }} apps</span>
-                                </td>
-                                <td><small>{{ $jobseeker->created_at->format('d M, Y') }}</small></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="{{ route('admin.jobseekers.show', $jobseeker) }}" class="btn btn-sm btn-view">
-                                            <i class="bi bi-eye"></i> View Profile
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-recommend open-recommend-modal" 
-                                                data-jobseeker-id="{{ $jobseeker->id }}" 
-                                                data-jobseeker-name="{{ $jobseeker->name ?? 'N/A' }}" 
-                                                title="Recommend Job">
-                                            <i class="bi bi-star"></i> Recommend
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        @if($jobseeker->profile->about)
+            <div class="info-row">
+                <div class="info-label">About</div>
+                <div class="info-value">{{ $jobseeker->profile->about }}</div>
             </div>
+        @endif
 
-            <!-- Pagination -->
-            <nav aria-label="Page navigation" class="mt-4">
-                {{ $jobseekers->links('pagination::bootstrap-5') }}
-            </nav>
+        @if($jobseeker->profile->skills)
+            <div class="info-row">
+                <div class="info-label">Skills</div>
+                <div class="info-value">{{ $jobseeker->profile->skills }}</div>
+            </div>
+        @endif
+
+        @if($jobseeker->profile->location)
+            <div class="info-row">
+                <div class="info-label">Location</div>
+                <div class="info-value">{{ $jobseeker->profile->location }}</div>
+            </div>
+        @endif
+
+        @if($jobseeker->profile->preferred_job_title)
+            <div class="info-row">
+                <div class="info-label">Preferred Title</div>
+                <div class="info-value">{{ $jobseeker->profile->preferred_job_title }}</div>
+            </div>
+        @endif
+    </div>
+    @endif
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-file-earmark-text me-2"></i>Applications History</h5>
+        
+        @if($jobseeker->applications->count() > 0)
+            @foreach($jobseeker->applications as $application)
+                <div class="application-item">
+                    <div class="application-title">{{ $application->job->title ?? 'N/A' }}</div>
+                    <div class="application-company">
+                        <i class="bi bi-building me-1"></i>{{ $application->job->company->company_name ?? 'Unknown Company' }}
+                    </div>
+                    <div>
+                        <span class="application-status status-applied">{{ ucfirst($application->status) }}</span>
+                        <span style="font-size: 12px; color: #9ca3af; margin-left: 1rem;">
+                            Applied on {{ $application->created_at->format('M d, Y') }}
+                        </span>
+                    </div>
+                </div>
+            @endforeach
         @else
             <div class="empty-state">
-                <i class="bi bi-people"></i>
-                <p>No Jobseekers Yet</p>
-                <small>Jobseekers will appear here once they register on the platform</small>
+                <i class="bi bi-inbox"></i>
+                <p>No Applications Yet</p>
+                <small>This jobseeker hasn't applied to any positions</small>
             </div>
         @endif
     </div>

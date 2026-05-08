@@ -13,6 +13,19 @@
     <style>
         .verification-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 1rem; }
         .verification-count-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: #dbeafe; color: #1e40af; padding: 6px 12px; font-size: 12px; font-weight: 700; }
+        .verification-container { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; }
+        .verification-main { }
+        .employers-sidebar { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 1.25rem; border: 1px solid #eef2f7; height: fit-content; position: sticky; top: 20px; }
+        .employers-sidebar-title { margin: 0 0 1rem; font-size: 14px; font-weight: 700; color: #0d1f3c; display: flex; align-items: center; gap: 8px; }
+        .employers-list { list-style: none; padding: 0; margin: 0; }
+        .employer-item { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
+        .employer-item:hover { background: #eff6ff; border-color: #bfdbfe; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1); }
+        .employer-item.active { background: #dbeafe; border-color: #3b82f6; }
+        .employer-avatar { width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+        .employer-item-content { min-width: 0; flex: 1; }
+        .employer-item-name { font-size: 12px; font-weight: 600; color: #0d1f3c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .employer-item-status { font-size: 10px; color: #64748b; margin-top: 2px; }
+        .employers-count { display: inline-flex; align-items: center; justify-content: center; background: #dbeafe; color: #1e40af; border-radius: 6px; font-size: 10px; font-weight: 700; padding: 2px 6px; margin-left: auto; }
         .verification-table { width: 100%; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }
         .verification-table table { width: 100%; border-collapse: collapse; }
         .verification-table thead { background: #f3f4f6; border-bottom: 2px solid #e5e7eb; }
@@ -68,6 +81,10 @@
         .request-docs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.75rem; }
         .request-doc-link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; background: #f8fafc; border: 1px solid #dbe4ee; color: #0f172a; text-decoration: none; font-size: 12px; font-weight: 600; }
         .request-doc-link:hover { background: #eff6ff; border-color: #bfdbfe; }
+        @media (max-width: 1200px) {
+            .verification-container { grid-template-columns: 1fr; }
+            .employers-sidebar { position: relative; top: 0; }
+        }
     </style>
 
     <div class="verification-header">
@@ -77,6 +94,9 @@
         </div>
         <span class="verification-count-badge"><i class="bi bi-bell-fill"></i>{{ $verificationRequestCount ?? 0 }} pending review</span>
     </div>
+
+    <div class="verification-container">
+        <div class="verification-main">
 
     @if(isset($verificationAlerts) && $verificationAlerts->count() > 0)
         <div class="alerts-card">
@@ -221,6 +241,47 @@
             </div>
         </div>
     @endif
+        </div><!-- End verification-main -->
+
+        <!-- Employers Sidebar -->
+        <aside class="employers-sidebar">
+            <h5 class="employers-sidebar-title">
+                <i class="bi bi-building"></i>
+                All Employers
+                <span class="employers-count">{{ $companyProfiles->total() ?? 0 }}</span>
+            </h5>
+            
+            @if($companyProfiles->count() > 0)
+                <ul class="employers-list">
+                    @foreach($companyProfiles as $profile)
+                        <a href="{{ route('admin.employer-verification.detail', $profile->id) }}" class="employer-item" title="{{ $profile->company_name }}">
+                            <div class="employer-avatar">{{ strtoupper(substr($profile->company_name, 0, 1)) }}</div>
+                            <div class="employer-item-content">
+                                <div class="employer-item-name">{{ Str::limit($profile->company_name, 22) }}</div>
+                                <div class="employer-item-status">
+                                    @if($profile->verification_status === 'verified')
+                                        <span style="color: #10b981;">Verified</span>
+                                    @elseif($profile->verification_status === 'pending')
+                                        <span style="color: #f59e0b;">Pending</span>
+                                    @elseif($profile->verification_status === 'under_review')
+                                        <span style="color: #3b82f6;">Reviewing</span>
+                                    @else
+                                        <span style="color: #ef4444;">Rejected</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </ul>
+            @else
+                <div style="text-align: center; padding: 2rem 0; color: #9ca3af;">
+                    <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                    <small>No employers yet</small>
+                </div>
+            @endif
+        </aside>
+    </div><!-- End verification-container -->
 </div>
+
 
 @endsection

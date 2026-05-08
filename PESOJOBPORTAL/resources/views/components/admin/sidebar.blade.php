@@ -37,9 +37,15 @@
             </a>
         </li>
         <li class="sidebar-menu-item">
+            <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link {{ request()->routeIs('admin.jobseekers*') ? 'active' : '' }}">
+                <i class="bi bi-people"></i>
+                <span>Jobseekers</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
             <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.job-approvals') ? 'active' : '' }}">
                 <i class="bi bi-file-check"></i>
-                <span>Job Applicants</span>
+                <span>Job Approvals</span>
                 @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
                     <span class="sidebar-badge" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
                 @endif

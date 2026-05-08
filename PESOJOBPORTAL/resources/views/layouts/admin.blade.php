@@ -331,8 +331,8 @@
 </style>
 
 <div class="admin-wrapper">
-    <!-- Sidebar -->
-    @include('admin.layouts.sidebar')
+    <!-- Sidebar Component -->
+    <x-admin.sidebar />
 
     <!-- Main Content -->
     <main class="admin-main">
