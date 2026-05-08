@@ -78,10 +78,7 @@
             </a>
         </li>
         <li class="sidebar-menu-item">
-            <a href="{{ route('admin.skills-gap-analysis') }}" class="sidebar-menu-link {{ request()->routeIs('admin.skills-gap-analysis') ? 'active' : '' }}">
-                <i class="bi bi-diagram-3"></i>
-                <span>Skills Gap Analysis</span>
-            </a>
+   
         </li>
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link {{ request()->routeIs('admin.peso-clearances') ? 'active' : '' }}">
