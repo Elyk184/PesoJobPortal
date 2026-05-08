@@ -21,8 +21,9 @@ class JobseekerApprovalController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Get available jobs from employers
-        $availableJobs = \App\Models\PesoJob::where('status', 'approved')
+        // Get available jobs from employers (active/approved jobs)
+        $availableJobs = \App\Models\PesoJob::where('status', 'active')
+            ->whereNotNull('approved_at')
             ->with('employer.companyProfile')
             ->get();
 
@@ -39,8 +40,9 @@ class JobseekerApprovalController extends Controller
     {
         $jobseeker->load('profile', 'applications.job');
         
-        // Get available jobs from employers
-        $availableJobs = \App\Models\PesoJob::where('status', 'approved')
+        // Get available jobs from employers (active/approved jobs)
+        $availableJobs = \App\Models\PesoJob::where('status', 'active')
+            ->whereNotNull('approved_at')
             ->with('employer.companyProfile')
             ->get();
 
@@ -60,12 +62,16 @@ class JobseekerApprovalController extends Controller
             'message' => 'nullable|string|max:500',
         ]);
 
-        $job = \App\Models\PesoJob::findOrFail($request->job_id);
+        $job = \App\Models\PesoJob::with('employer.companyProfile')->findOrFail($request->job_id);
+        
+        // Get employer and company information
+        $employerName = $job->employer?->name ?? 'Unknown Employer';
+        $companyName = $job->employer?->companyProfile?->company_name ?? $employerName;
 
         // Create a portal notification
         $notification = \App\Models\PortalNotification::create([
             'title' => "Job Recommendation: {$job->title}",
-            'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$job->company->company_name}",
+            'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
             'created_by' => auth()->id(),
         ]);
 

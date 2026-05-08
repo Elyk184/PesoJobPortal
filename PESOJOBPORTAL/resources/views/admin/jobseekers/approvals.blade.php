@@ -456,17 +456,61 @@
                     @csrf
                     <div class="modal-body" style="padding: 2rem;">
                         <p class="text-muted mb-3">Recommending a job to: <strong id="jobseekerName">N/A</strong></p>
+                        
+                        <!-- Step 1: Select Employer -->
+                        <div class="mb-3">
+                            <label for="employerSelect" class="form-label">
+                                Select Employer <span class="text-danger">*</span>
+                            </label>
+                            <select id="employerSelect" class="form-control" required>
+                                <option value="">-- Choose an Employer --</option>
+                                @php
+                                    $employers = $availableJobs->groupBy(function($job) {
+                                        return $job->employer_id ?? 0;
+                                    })->map(function($jobs) {
+                                        return [
+                                            'id' => $jobs->first()->employer_id,
+                                            'name' => $jobs->first()->employer?->name ?? 'Unknown',
+                                            'company_name' => $jobs->first()->employer?->companyProfile?->company_name ?? $jobs->first()->employer?->name ?? 'Unknown Company'
+                                        ];
+                                    });
+                                @endphp
+                                @foreach($employers as $employer)
+                                    <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Step 2: Select Job (dynamically populated) -->
                         <div class="mb-3">
                             <label for="jobSelect" class="form-label">
                                 Select Job <span class="text-danger">*</span>
                             </label>
-                            <select id="jobSelect" name="job_id" class="form-control" required>
+                            <select id="jobSelect" name="job_id" class="form-control" required disabled>
                                 <option value="">-- Choose a Job --</option>
-                                @foreach($availableJobs as $job)
-                                    <option value="{{ $job->id }}">{{ $job->title }} - {{ $job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company' }}</option>
-                                @endforeach
                             </select>
                         </div>
+                        
+                        <!-- Job Details Display -->
+                        <div id="jobDetailsSection" style="display: none; background: #f8f9fa; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #d72638;">
+                            <div class="mb-2">
+                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Job Title</span>
+                                <div style="font-size: 1rem; font-weight: 700; color: #0d1f3c;" id="displayJobTitle"></div>
+                            </div>
+                            <div class="mb-2">
+                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Employer</span>
+                                <div style="font-size: 0.95rem; color: #1f2937;" id="displayEmployerInfo"></div>
+                            </div>
+                            <div class="mb-2">
+                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Location</span>
+                                <div style="font-size: 0.95rem; color: #1f2937;" id="displayLocation"></div>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Salary Range</span>
+                                <div style="font-size: 0.95rem; color: #1f2937;" id="displaySalary"></div>
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="messageInput" class="form-label">
                                 Message (Optional)
@@ -483,6 +527,26 @@
             </div>
         </div>
     </div>
+    
+    <!-- Hidden data storage for jobs by employer -->
+    <script>
+        const jobsByEmployer = {
+            @foreach($availableJobs->groupBy('employer_id') as $employerId => $jobs)
+                {{ $employerId }}: [
+                    @foreach($jobs as $job)
+                        {
+                            id: {{ $job->id }},
+                            title: '{{ addslashes($job->title) }}',
+                            employerName: '{{ addslashes($job->employer?->name ?? 'Unknown') }}',
+                            companyName: '{{ addslashes($job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company') }}',
+                            location: '{{ addslashes($job->location ?? 'N/A') }}',
+                            salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}'
+                        },
+                    @endforeach
+                ],
+            @endforeach
+        };
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -490,7 +554,59 @@
             const recommendModal = document.getElementById('recommendModal');
             const recommendForm = document.getElementById('recommendForm');
             const jobseekerNameSpan = document.getElementById('jobseekerName');
+            const employerSelect = document.getElementById('employerSelect');
+            const jobSelect = document.getElementById('jobSelect');
+            const jobDetailsSection = document.getElementById('jobDetailsSection');
+            const displayJobTitle = document.getElementById('displayJobTitle');
+            const displayEmployerInfo = document.getElementById('displayEmployerInfo');
+            const displayLocation = document.getElementById('displayLocation');
+            const displaySalary = document.getElementById('displaySalary');
             let currentJobseekerId = null;
+
+            // Handle employer selection change - populate jobs
+            employerSelect.addEventListener('change', function() {
+                jobSelect.innerHTML = '<option value="">-- Choose a Job --</option>';
+                jobDetailsSection.style.display = 'none';
+                jobSelect.value = '';
+                
+                if (this.value && jobsByEmployer[this.value]) {
+                    jobSelect.disabled = false;
+                    jobsByEmployer[this.value].forEach(job => {
+                        const option = document.createElement('option');
+                        option.value = job.id;
+                        option.textContent = job.title;
+                        option.dataset.jobTitle = job.title;
+                        option.dataset.employerName = job.employerName;
+                        option.dataset.companyName = job.companyName;
+                        option.dataset.location = job.location;
+                        option.dataset.salary = job.salary;
+                        jobSelect.appendChild(option);
+                    });
+                } else {
+                    jobSelect.disabled = true;
+                }
+            });
+
+            // Handle job selection change to display details
+            jobSelect.addEventListener('change', function() {
+                if (this.value) {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const jobTitle = selectedOption.dataset.jobTitle;
+                    const employerName = selectedOption.dataset.employerName;
+                    const companyName = selectedOption.dataset.companyName;
+                    const location = selectedOption.dataset.location;
+                    const salary = selectedOption.dataset.salary;
+                    
+                    displayJobTitle.textContent = jobTitle;
+                    displayEmployerInfo.textContent = `${companyName}` + (employerName !== companyName ? ` (${employerName})` : '');
+                    displayLocation.textContent = location;
+                    displaySalary.textContent = salary;
+                    
+                    jobDetailsSection.style.display = 'block';
+                } else {
+                    jobDetailsSection.style.display = 'none';
+                }
+            });
 
             openModalButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
@@ -505,8 +621,12 @@
                     recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-job';
                     
                     // Reset form fields
-                    document.getElementById('jobSelect').value = '';
+                    employerSelect.value = '';
+                    jobSelect.value = '';
+                    jobSelect.disabled = true;
+                    jobSelect.innerHTML = '<option value="">-- Choose a Job --</option>';
                     document.getElementById('messageInput').value = '';
+                    jobDetailsSection.style.display = 'none';
 
                     // Show modal using Bootstrap
                     const modal = new bootstrap.Modal(recommendModal, {
