@@ -535,8 +535,11 @@
                                       style="border-radius: 8px; border: 2px solid #d72638; padding: 1rem; font-size: 1rem; color: #0d1f3c; font-family: inherit;"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px;">
-                        <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
+                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: space-between;">
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
+                            <button type="button" id="moreDetailsBtn" class="btn" style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-info-circle me-2"></i>More Details</button>
+                        </div>
                         <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Applicant</button>
                     </div>
                 </form>
@@ -544,7 +547,262 @@
         </div>
     </div>
     
-    <!-- Hidden data storage for jobs by employer -->
+    <!-- Detailed Job Modal -->
+    <style>
+        .job-detail-modal .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .job-detail-modal .modal-header {
+            background: linear-gradient(135deg, #0d1f3c 0%, #1a3a52 100%);
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            padding: 2rem;
+        }
+
+        .job-detail-modal .modal-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .job-detail-modal .modal-body {
+            padding: 2rem;
+            background: #f9fafb;
+        }
+
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #2563eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-section h5 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0d1f3c;
+            margin-bottom: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .detail-section h5 i {
+            color: #2563eb;
+            font-size: 1.2rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .detail-value.description {
+            font-size: 0.95rem;
+            color: #374151;
+            line-height: 1.7;
+            padding: 1rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+            border-left: 3px solid #d72638;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .bullet-list li {
+            font-size: 0.95rem;
+            color: #374151;
+            margin-bottom: 0.6rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .bullet-list li:before {
+            content: "•";
+            color: #2563eb;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .badge-inline {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid rgba(6, 95, 70, 0.2);
+        }
+    </style>
+    
+    <div class="modal fade job-detail-modal" id="jobDetailModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jobDetailTitle">Job Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Basic Information -->
+                    <div class="detail-section">
+                        <h5><i class="bi bi-briefcase"></i>Job Overview</h5>
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <span class="detail-label">Job Title</span>
+                                <span class="detail-value" id="detailTitle">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Company</span>
+                                <span class="detail-value" id="detailCompany">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value" id="detailLocation">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Job Type</span>
+                                <span class="detail-value" id="detailJobType">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <span class="detail-label">Salary Range</span>
+                                <span class="detail-value" id="detailSalary" style="color: #059669;">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Vacancies</span>
+                                <span class="detail-value" id="detailVacancies">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="detail-section" id="descriptionSection" style="display: none;">
+                        <h5><i class="bi bi-text-left"></i>Description</h5>
+                        <div class="detail-value description" id="detailDescription">-</div>
+                    </div>
+
+                    <!-- Requirements -->
+                    <div class="detail-section" id="requirementsSection" style="display: none;">
+                        <h5><i class="bi bi-list-check"></i>Requirements</h5>
+                        <div class="detail-value" id="detailRequirements">-</div>
+                    </div>
+
+                    <!-- Qualifications -->
+                    <div class="detail-section" id="qualificationsSection" style="display: none;">
+                        <h5><i class="bi bi-mortarboard"></i>Qualifications</h5>
+                        <ul class="bullet-list" id="detailQualifications">
+                            <li>-</li>
+                        </ul>
+                    </div>
+
+                    <!-- Key Responsibilities -->
+                    <div class="detail-section" id="responsibilitiesSection" style="display: none;">
+                        <h5><i class="bi bi-list-task"></i>Key Responsibilities</h5>
+                        <ul class="bullet-list" id="detailResponsibilities">
+                            <li>-</li>
+                        </ul>
+                    </div>
+
+                    <!-- Preferred Skills -->
+                    <div class="detail-section" id="skillsSection" style="display: none;">
+                        <h5><i class="bi bi-star"></i>Preferred Skills</h5>
+                        <ul class="bullet-list" id="detailSkills">
+                            <li>-</li>
+                        </ul>
+                    </div>
+
+                    <!-- Experience & Education -->
+                    <div class="detail-section" id="experienceSection" style="display: none;">
+                        <h5><i class="bi bi-person-workspace"></i>Experience & Education</h5>
+                        <div class="detail-row">
+                            <div class="detail-item" id="experienceItem" style="display: none;">
+                                <span class="detail-label">Experience Required</span>
+                                <div class="detail-value" id="detailExperience">-</div>
+                            </div>
+                            <div class="detail-item" id="educationItem" style="display: none;">
+                                <span class="detail-label">Education Required</span>
+                                <div class="detail-value" id="detailEducation">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Benefits -->
+                    <div class="detail-section" id="benefitsSection" style="display: none;">
+                        <h5><i class="bi bi-gift"></i>Benefits</h5>
+                        <ul class="bullet-list" id="detailBenefits">
+                            <li>-</li>
+                        </ul>
+                    </div>
+
+                    <!-- Application Dates -->
+                    <div class="detail-section">
+                        <h5><i class="bi bi-calendar-event"></i>Application Period</h5>
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <span class="detail-label">Start Date</span>
+                                <span class="detail-value" id="detailStartDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">End Date</span>
+                                <span class="detail-value" id="detailEndDate">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         const jobsByEmployer = {
             @foreach($availableJobs->groupBy('employer_id') as $employerId => $jobs)
@@ -557,7 +815,18 @@
                             companyName: '{{ addslashes($job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company') }}',
                             location: '{{ addslashes($job->location ?? 'N/A') }}',
                             salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}',
-                            description: '{{ addslashes($job->description ?? 'No description provided') }}'
+                            description: '{{ addslashes($job->description ?? 'No description provided') }}',
+                            jobType: '{{ addslashes($job->job_type ?? 'N/A') }}',
+                            vacancies: {{ $job->vacancies ?? 0 }},
+                            qualifications: '{{ addslashes($job->qualifications ?? '') }}',
+                            keyResponsibilities: '{{ addslashes($job->key_responsibilities ?? '') }}',
+                            preferredSkills: '{{ addslashes($job->preferred_skills ?? '') }}',
+                            experience: '{{ addslashes($job->experience ?? '') }}',
+                            education: '{{ addslashes($job->education ?? '') }}',
+                            benefits: '{{ addslashes($job->benefits ?? '') }}',
+                            requirements: '{{ addslashes($job->requirements ?? '') }}',
+                            applicationStartDate: '{{ $job->application_start_date?->format('Y-m-d') ?? '' }}',
+                            applicationEndDate: '{{ $job->application_end_date?->format('Y-m-d') ?? '' }}'
                         },
                     @endforeach
                 ],
@@ -657,6 +926,141 @@
                     modal.show();
                 });
             });
+
+            // Handle More Details button click
+            document.getElementById('moreDetailsBtn').addEventListener('click', function() {
+                const selectedJobId = jobSelect.value;
+                if (!selectedJobId) {
+                    alert('Please select a job first');
+                    return;
+                }
+
+                // Find the selected job data
+                let selectedJob = null;
+                for (let employerId in jobsByEmployer) {
+                    const jobs = jobsByEmployer[employerId];
+                    selectedJob = jobs.find(j => j.id == selectedJobId);
+                    if (selectedJob) break;
+                }
+
+                if (!selectedJob) return;
+
+                // Populate and show detailed modal
+                showJobDetailsModal(selectedJob);
+            });
+
+            function parseList(text) {
+                if (!text || text === '' || text === 'NULL') return [];
+                return text.split('\\n').filter(item => item.trim() !== '');
+            }
+
+            function showJobDetailsModal(jobData) {
+                // Basic info
+                document.getElementById('jobDetailTitle').textContent = jobData.title;
+                document.getElementById('detailTitle').textContent = jobData.title;
+                document.getElementById('detailCompany').textContent = jobData.companyName;
+                document.getElementById('detailLocation').textContent = jobData.location;
+                document.getElementById('detailJobType').textContent = (jobData.jobType || 'N/A').replace(/_/g, ' ').charAt(0).toUpperCase() + (jobData.jobType || 'N/A').replace(/_/g, ' ').slice(1);
+                document.getElementById('detailSalary').textContent = jobData.salary || 'Not specified';
+                document.getElementById('detailVacancies').textContent = jobData.vacancies || '0';
+
+                // Description
+                if (jobData.description && jobData.description !== 'NULL' && jobData.description !== '') {
+                    document.getElementById('descriptionSection').style.display = 'block';
+                    document.getElementById('detailDescription').textContent = jobData.description;
+                } else {
+                    document.getElementById('descriptionSection').style.display = 'none';
+                }
+
+                // Requirements
+                if (jobData.requirements && jobData.requirements !== 'NULL' && jobData.requirements !== '') {
+                    document.getElementById('requirementsSection').style.display = 'block';
+                    document.getElementById('detailRequirements').textContent = jobData.requirements;
+                } else {
+                    document.getElementById('requirementsSection').style.display = 'none';
+                }
+
+                // Qualifications
+                const qualifications = parseList(jobData.qualifications);
+                if (qualifications.length > 0) {
+                    document.getElementById('qualificationsSection').style.display = 'block';
+                    const qualList = document.getElementById('detailQualifications');
+                    qualList.innerHTML = qualifications.map(q => `<li>${q}</li>`).join('');
+                } else {
+                    document.getElementById('qualificationsSection').style.display = 'none';
+                }
+
+                // Responsibilities
+                const responsibilities = parseList(jobData.keyResponsibilities);
+                if (responsibilities.length > 0) {
+                    document.getElementById('responsibilitiesSection').style.display = 'block';
+                    const respList = document.getElementById('detailResponsibilities');
+                    respList.innerHTML = responsibilities.map(r => `<li>${r}</li>`).join('');
+                } else {
+                    document.getElementById('responsibilitiesSection').style.display = 'none';
+                }
+
+                // Skills
+                const skills = parseList(jobData.preferredSkills);
+                if (skills.length > 0) {
+                    document.getElementById('skillsSection').style.display = 'block';
+                    const skillsList = document.getElementById('detailSkills');
+                    skillsList.innerHTML = skills.map(s => `<li>${s}</li>`).join('');
+                } else {
+                    document.getElementById('skillsSection').style.display = 'none';
+                }
+
+                // Experience & Education
+                const hasExperience = jobData.experience && jobData.experience !== 'NULL' && jobData.experience !== '';
+                const hasEducation = jobData.education && jobData.education !== 'NULL' && jobData.education !== '';
+                
+                if (hasExperience || hasEducation) {
+                    document.getElementById('experienceSection').style.display = 'block';
+                    if (hasExperience) {
+                        document.getElementById('experienceItem').style.display = 'block';
+                        const expList = parseList(jobData.experience);
+                        document.getElementById('detailExperience').innerHTML = expList.length > 0 
+                            ? expList.map(e => `<div style="margin-bottom: 0.5rem;">${e}</div>`).join('')
+                            : jobData.experience;
+                    } else {
+                        document.getElementById('experienceItem').style.display = 'none';
+                    }
+                    
+                    if (hasEducation) {
+                        document.getElementById('educationItem').style.display = 'block';
+                        const eduList = parseList(jobData.education);
+                        document.getElementById('detailEducation').innerHTML = eduList.length > 0 
+                            ? eduList.map(e => `<div style="margin-bottom: 0.5rem;">${e}</div>`).join('')
+                            : jobData.education;
+                    } else {
+                        document.getElementById('educationItem').style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('experienceSection').style.display = 'none';
+                }
+
+                // Benefits
+                const benefits = parseList(jobData.benefits);
+                if (benefits.length > 0) {
+                    document.getElementById('benefitsSection').style.display = 'block';
+                    const benefitsList = document.getElementById('detailBenefits');
+                    benefitsList.innerHTML = benefits.map(b => `<li>${b}</li>`).join('');
+                } else {
+                    document.getElementById('benefitsSection').style.display = 'none';
+                }
+
+                // Dates
+                document.getElementById('detailStartDate').textContent = jobData.applicationStartDate 
+                    ? new Date(jobData.applicationStartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : 'Not specified';
+                document.getElementById('detailEndDate').textContent = jobData.applicationEndDate 
+                    ? new Date(jobData.applicationEndDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : 'Not specified';
+
+                // Show modal
+                const detailModal = new bootstrap.Modal(document.getElementById('jobDetailModal'));
+                detailModal.show();
+            }
         });
     </script>
 </div>
