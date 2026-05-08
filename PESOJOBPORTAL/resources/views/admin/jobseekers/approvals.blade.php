@@ -446,82 +446,110 @@
 
     <!-- Single Reusable Recommendation Modal -->
     <div class="modal fade" id="recommendModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: 2px solid #d72638;">
-                    <h5 class="modal-title" style="color: white; font-weight: 800;"><i class="bi bi-star-fill me-2"></i>Recommend a Job</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border: none; border-radius: 12px;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: none; border-radius: 12px 12px 0 0; padding: 1.5rem;">
+                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Job to Applicant</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="recommendForm" method="POST">
                     @csrf
-                    <div class="modal-body" style="padding: 2rem;">
-                        <p class="text-muted mb-3">Recommending a job to: <strong id="jobseekerName">N/A</strong></p>
+                    <div class="modal-body" style="padding: 2.5rem; background: #ffffff;">
+                        <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending to: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
                         
-                        <!-- Step 1: Select Employer -->
-                        <div class="mb-3">
-                            <label for="employerSelect" class="form-label">
-                                Select Employer <span class="text-danger">*</span>
-                            </label>
-                            <select id="employerSelect" class="form-control" required>
-                                <option value="">-- Choose an Employer --</option>
-                                @php
-                                    $employers = $availableJobs->groupBy(function($job) {
-                                        return $job->employer_id ?? 0;
-                                    })->map(function($jobs) {
-                                        return [
-                                            'id' => $jobs->first()->employer_id,
-                                            'name' => $jobs->first()->employer?->name ?? 'Unknown',
-                                            'company_name' => $jobs->first()->employer?->companyProfile?->company_name ?? $jobs->first()->employer?->name ?? 'Unknown Company'
-                                        ];
-                                    });
-                                @endphp
-                                @foreach($employers as $employer)
-                                    <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <!-- Step 2: Select Job (dynamically populated) -->
-                        <div class="mb-3">
-                            <label for="jobSelect" class="form-label">
-                                Select Job <span class="text-danger">*</span>
-                            </label>
-                            <select id="jobSelect" name="job_id" class="form-control" required disabled>
-                                <option value="">-- Choose a Job --</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Job Details Display -->
-                        <div id="jobDetailsSection" style="display: none; background: #f8f9fa; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 4px solid #d72638;">
-                            <div class="mb-2">
-                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Job Title</span>
-                                <div style="font-size: 1rem; font-weight: 700; color: #0d1f3c;" id="displayJobTitle"></div>
+                        <div class="row mb-3">
+                            <!-- Step 1: Select Employer -->
+                            <div class="col-md-6">
+                                <label for="employerSelect" class="form-label" style="font-weight: 700; color: #0d1f3c; margin-bottom: 0.5rem; font-size: 1rem;">
+                                    Employer <span class="text-danger">*</span>
+                                </label>
+                                <select id="employerSelect" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
+                                    <option value="" style="color: #999;">-- Select Employer --</option>
+                                    @php
+                                        $employers = $availableJobs->groupBy(function($job) {
+                                            return $job->employer_id ?? 0;
+                                        })->map(function($jobs) {
+                                            return [
+                                                'id' => $jobs->first()->employer_id,
+                                                'name' => $jobs->first()->employer?->name ?? 'Unknown',
+                                                'company_name' => $jobs->first()->employer?->companyProfile?->company_name ?? $jobs->first()->employer?->name ?? 'Unknown Company'
+                                            ];
+                                        });
+                                    @endphp
+                                    @foreach($employers as $employer)
+                                        <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="mb-2">
-                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Employer</span>
-                                <div style="font-size: 0.95rem; color: #1f2937;" id="displayEmployerInfo"></div>
-                            </div>
-                            <div class="mb-2">
-                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Location</span>
-                                <div style="font-size: 0.95rem; color: #1f2937;" id="displayLocation"></div>
-                            </div>
-                            <div>
-                                <span style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Salary Range</span>
-                                <div style="font-size: 0.95rem; color: #1f2937;" id="displaySalary"></div>
+                            
+                            <!-- Step 2: Select Job -->
+                            <div class="col-md-6">
+                                <label for="jobSelect" class="form-label" style="font-weight: 700; color: #0d1f3c; margin-bottom: 0.5rem; font-size: 1rem;">
+                                    Job Position <span class="text-danger">*</span>
+                                </label>
+                                <select id="jobSelect" name="job_id" class="form-control" required disabled style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
+                                    <option value="" style="color: #999;">-- Select Job --</option>
+                                </select>
                             </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="messageInput" class="form-label">
-                                Message (Optional)
+                        <hr style="margin: 2rem 0; border: none; border-top: 2px solid #e5e7eb;">
+                        
+                        <!-- Job Details Display (Facebook-like post) -->
+                        <div id="jobDetailsSection" style="display: none; background: #f8f9fa; padding: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; border: 1px solid #e5e7eb;">
+                            <!-- Post Header -->
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="bi bi-building" style="color: white; font-size: 1.8rem;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; color: #0d1f3c; font-size: 1.2rem;" id="displayEmployerCompany"></div>
+                                    <div style="color: #6b7280; font-size: 0.95rem;" id="displayEmployerName"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Job Title -->
+                            <h3 style="font-size: 1.6rem; font-weight: 800; color: #0d1f3c; margin: 0 0 1.5rem 0;" id="displayJobTitle"></h3>
+                            
+                            <!-- Job Details Grid -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <!-- Location -->
+                                <div style="display: flex; gap: 1rem;">
+                                    <div style="color: #d72638; font-size: 1.5rem; flex-shrink: 0;">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Location</div>
+                                        <div style="font-size: 1.1rem; color: #0d1f3c; font-weight: 600;" id="displayLocation"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Salary -->
+                                <div style="display: flex; gap: 1rem;">
+                                    <div style="color: #d72638; font-size: 1.5rem; flex-shrink: 0;">
+                                        <i class="bi bi-cash-coin"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Salary Range</div>
+                                        <div style="font-size: 1.1rem; color: #0d1f3c; font-weight: 600;" id="displaySalary"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message/Note Section -->
+                        <div class="mb-0">
+                            <label for="messageInput" class="form-label" style="font-weight: 700; color: #0d1f3c; margin-bottom: 0.75rem; font-size: 1rem;">
+                                <i class="bi bi-chat-dots me-2" style="color: #d72638;"></i>Personal Message (Optional)
                             </label>
-                            <textarea id="messageInput" name="message" class="form-control" rows="3" 
-                                      placeholder="Add a personal note about why this job is a good fit..."></textarea>
+                            <textarea id="messageInput" name="message" class="form-control" rows="4" 
+                                      placeholder="Write a personal message to the applicant about this opportunity..." 
+                                      style="border-radius: 8px; border: 2px solid #d72638; padding: 1rem; font-size: 1rem; color: #0d1f3c; font-family: inherit;"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer" style="border-top: 1px solid #e5e7eb; padding: 1.5rem;">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-recommend"><i class="bi bi-star-fill me-2"></i>Send Recommendation</button>
+                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px;">
+                        <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
+                        <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Applicant</button>
                     </div>
                 </form>
             </div>
@@ -558,7 +586,8 @@
             const jobSelect = document.getElementById('jobSelect');
             const jobDetailsSection = document.getElementById('jobDetailsSection');
             const displayJobTitle = document.getElementById('displayJobTitle');
-            const displayEmployerInfo = document.getElementById('displayEmployerInfo');
+            const displayEmployerCompany = document.getElementById('displayEmployerCompany');
+            const displayEmployerName = document.getElementById('displayEmployerName');
             const displayLocation = document.getElementById('displayLocation');
             const displaySalary = document.getElementById('displaySalary');
             let currentJobseekerId = null;
@@ -598,7 +627,8 @@
                     const salary = selectedOption.dataset.salary;
                     
                     displayJobTitle.textContent = jobTitle;
-                    displayEmployerInfo.textContent = `${companyName}` + (employerName !== companyName ? ` (${employerName})` : '');
+                    displayEmployerCompany.textContent = companyName;
+                    displayEmployerName.textContent = employerName !== companyName ? employerName : '';
                     displayLocation.textContent = location;
                     displaySalary.textContent = salary;
                     
