@@ -46,9 +46,10 @@ class AdminController extends Controller
     // Employer Verification
     public function employerVerification(Request $request): View
     {
-        // Show all employer company profiles
+        // Show only pending and under_review employer company profiles
         $companyProfiles = CompanyProfile::with('employer')
-            ->orderByRaw("CASE WHEN verification_status = 'pending' THEN 0 WHEN verification_status = 'under_review' THEN 1 WHEN verification_status = 'rejected' THEN 2 WHEN verification_status = 'verified' THEN 3 END")
+            ->whereIn('verification_status', ['pending', 'under_review'])
+            ->orderByRaw("CASE WHEN verification_status = 'pending' THEN 0 WHEN verification_status = 'under_review' THEN 1 END")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
