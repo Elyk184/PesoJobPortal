@@ -512,7 +512,7 @@
                             <h3 style="font-size: 1.6rem; font-weight: 800; color: #0d1f3c; margin: 0 0 1.5rem 0;" id="displayJobTitle"></h3>
                             
                             <!-- Job Details Grid -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                                 <!-- Location -->
                                 <div style="display: flex; gap: 1rem;">
                                     <div style="color: #d72638; font-size: 1.5rem; flex-shrink: 0;">
@@ -534,6 +534,15 @@
                                         <div style="font-size: 1.1rem; color: #0d1f3c; font-weight: 600;" id="displaySalary"></div>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <!-- Divider -->
+                            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e5e7eb;">
+                            
+                            <!-- Job Description -->
+                            <div>
+                                <div style="font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem;">About This Job</div>
+                                <div style="font-size: 1rem; color: #1f2937; line-height: 1.6; background: white; padding: 1rem; border-radius: 8px; border-left: 3px solid #d72638;" id="displayJobDescription">No description provided</div>
                             </div>
                         </div>
                         
@@ -568,7 +577,8 @@
                             employerName: '{{ addslashes($job->employer?->name ?? 'Unknown') }}',
                             companyName: '{{ addslashes($job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company') }}',
                             location: '{{ addslashes($job->location ?? 'N/A') }}',
-                            salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}'
+                            salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}',
+                            description: '{{ addslashes($job->description ?? 'No description provided') }}'
                         },
                     @endforeach
                 ],
@@ -625,12 +635,14 @@
                     const companyName = selectedOption.dataset.companyName;
                     const location = selectedOption.dataset.location;
                     const salary = selectedOption.dataset.salary;
+                    const description = selectedOption.dataset.description;
                     
                     displayJobTitle.textContent = jobTitle;
                     displayEmployerCompany.textContent = companyName;
                     displayEmployerName.textContent = employerName !== companyName ? employerName : '';
                     displayLocation.textContent = location;
                     displaySalary.textContent = salary;
+                    document.getElementById('displayJobDescription').textContent = description || 'No description provided';
                     
                     jobDetailsSection.style.display = 'block';
                 } else {
