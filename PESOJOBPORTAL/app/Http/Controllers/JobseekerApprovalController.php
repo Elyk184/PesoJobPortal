@@ -21,9 +21,8 @@ class JobseekerApprovalController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Get available jobs from employers (active/approved jobs)
-        $availableJobs = \App\Models\PesoJob::where('status', 'active')
-            ->whereNotNull('approved_at')
+        // Get available jobs from employers (active or pending jobs)
+        $availableJobs = \App\Models\PesoJob::whereIn('status', ['active', 'pending'])
             ->with('employer.companyProfile')
             ->get();
 
@@ -40,9 +39,8 @@ class JobseekerApprovalController extends Controller
     {
         $jobseeker->load('profile', 'applications.job');
         
-        // Get available jobs from employers (active/approved jobs)
-        $availableJobs = \App\Models\PesoJob::where('status', 'active')
-            ->whereNotNull('approved_at')
+        // Get available jobs from employers (active or pending jobs)
+        $availableJobs = \App\Models\PesoJob::whereIn('status', ['active', 'pending'])
             ->with('employer.companyProfile')
             ->get();
 

@@ -803,35 +803,34 @@
             </div>
         </div>
     </div>
+    @php
+        $jobsByEmployerData = $availableJobs->groupBy('employer_id')->map(function($jobs) {
+            return $jobs->map(function($job) {
+                return [
+                    'id' => $job->id,
+                    'title' => $job->title,
+                    'employerName' => $job->employer?->name ?? 'Unknown',
+                    'companyName' => $job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company',
+                    'location' => $job->location ?? 'N/A',
+                    'salary' => $job->salary_range ?? 'Not specified',
+                    'description' => $job->description ?? 'No description provided',
+                    'jobType' => $job->job_type ?? 'N/A',
+                    'vacancies' => $job->vacancies ?? 0,
+                    'qualifications' => $job->qualifications ?? '',
+                    'keyResponsibilities' => $job->key_responsibilities ?? '',
+                    'preferredSkills' => $job->preferred_skills ?? '',
+                    'experience' => $job->experience ?? '',
+                    'education' => $job->education ?? '',
+                    'benefits' => $job->benefits ?? '',
+                    'requirements' => $job->requirements ?? '',
+                    'applicationStartDate' => $job->application_start_date?->format('Y-m-d') ?? '',
+                    'applicationEndDate' => $job->application_end_date?->format('Y-m-d') ?? '',
+                ];
+            })->values();
+        });
+    @endphp
     <script>
-        const jobsByEmployer = {
-            @foreach($availableJobs->groupBy('employer_id') as $employerId => $jobs)
-                {{ $employerId }}: [
-                    @foreach($jobs as $job)
-                        {
-                            id: {{ $job->id }},
-                            title: '{{ addslashes($job->title) }}',
-                            employerName: '{{ addslashes($job->employer?->name ?? 'Unknown') }}',
-                            companyName: '{{ addslashes($job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company') }}',
-                            location: '{{ addslashes($job->location ?? 'N/A') }}',
-                            salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}',
-                            description: '{{ addslashes($job->description ?? 'No description provided') }}',
-                            jobType: '{{ addslashes($job->job_type ?? 'N/A') }}',
-                            vacancies: {{ $job->vacancies ?? 0 }},
-                            qualifications: '{{ addslashes($job->qualifications ?? '') }}',
-                            keyResponsibilities: '{{ addslashes($job->key_responsibilities ?? '') }}',
-                            preferredSkills: '{{ addslashes($job->preferred_skills ?? '') }}',
-                            experience: '{{ addslashes($job->experience ?? '') }}',
-                            education: '{{ addslashes($job->education ?? '') }}',
-                            benefits: '{{ addslashes($job->benefits ?? '') }}',
-                            requirements: '{{ addslashes($job->requirements ?? '') }}',
-                            applicationStartDate: '{{ $job->application_start_date?->format('Y-m-d') ?? '' }}',
-                            applicationEndDate: '{{ $job->application_end_date?->format('Y-m-d') ?? '' }}'
-                        },
-                    @endforeach
-                ],
-            @endforeach
-        };
+        const jobsByEmployer = @json($jobsByEmployerData);
     </script>
 
     <script>
