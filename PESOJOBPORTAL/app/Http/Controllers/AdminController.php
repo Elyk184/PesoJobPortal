@@ -56,9 +56,17 @@ class AdminController extends Controller
         // Get all employers with their company profiles (if they have one)
         $allEmployers = User::where('role', 'employer')
             ->with('companyProfile')
-            ->orderByRaw("CASE WHEN company_profile.verification_status = 'verified' THEN 0 WHEN company_profile.verification_status = 'under_review' THEN 1 WHEN company_profile.verification_status = 'pending' THEN 2 WHEN company_profile.verification_status IS NULL THEN 3 WHEN company_profile.verification_status = 'rejected' THEN 4 END")
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->sortBy(function ($employer) {
+                $status = $employer->companyProfile?->verification_status;
+                return match($status) {
+                    'verified' => 0,
+                    'under_review' => 1,
+                    'pending' => 2,
+                    'rejected' => 4,
+                    default => 3, // No profile
+                };
+            }, SORT_REGULAR, false);
 
         $verificationRequests = DB::table('employer_documents as documents')
             ->join('users as employers', 'employers.id', '=', 'documents.user_id')
