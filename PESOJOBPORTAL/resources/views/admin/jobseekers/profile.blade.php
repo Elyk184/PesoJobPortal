@@ -376,7 +376,7 @@
         @if($jobseeker->profile->skills)
             <div class="info-row">
                 <div class="info-label">Skills</div>
-                <div class="info-value">{{ $jobseeker->profile->skills }}</div>
+                <div class="info-value">{{ is_array($jobseeker->profile->skills) ? implode(', ', $jobseeker->profile->skills) : $jobseeker->profile->skills }}</div>
             </div>
         @endif
 
