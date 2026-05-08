@@ -46,12 +46,18 @@ class AdminController extends Controller
     // Employer Verification
     public function employerVerification(Request $request): View
     {
-        // Show only pending and under_review employer company profiles
+        // Show only pending and under_review employer company profiles in main table
         $companyProfiles = CompanyProfile::with('employer')
             ->whereIn('verification_status', ['pending', 'under_review'])
             ->orderByRaw("CASE WHEN verification_status = 'pending' THEN 0 WHEN verification_status = 'under_review' THEN 1 END")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
+
+        // Get all employers for sidebar
+        $allEmployers = CompanyProfile::with('employer')
+            ->orderByRaw("CASE WHEN verification_status = 'verified' THEN 0 WHEN verification_status = 'under_review' THEN 1 WHEN verification_status = 'pending' THEN 2 WHEN verification_status = 'rejected' THEN 3 END")
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $verificationRequests = DB::table('employer_documents as documents')
             ->join('users as employers', 'employers.id', '=', 'documents.user_id')
@@ -110,7 +116,7 @@ class AdminController extends Controller
         $verificationUnreadCount = (int) $verificationAlerts->whereNull('read_at')->count();
         $verificationRequestCount = (int) $verificationRequests->count();
 
-        return view('admin.employer-verification', compact('companyProfiles', 'verificationRequests', 'verificationAlerts', 'verificationUnreadCount', 'verificationRequestCount'));
+        return view('admin.employer-verification', compact('companyProfiles', 'allEmployers', 'verificationRequests', 'verificationAlerts', 'verificationUnreadCount', 'verificationRequestCount'));
     }
 
     public function viewCompanyProfile(CompanyProfile $companyProfile): View

@@ -248,12 +248,12 @@
             <h5 class="employers-sidebar-title">
                 <i class="bi bi-building"></i>
                 All Employers
-                <span class="employers-count">{{ $companyProfiles->total() ?? 0 }}</span>
+                <span class="employers-count">{{ $allEmployers->count() ?? 0 }}</span>
             </h5>
             
-            @if($companyProfiles->count() > 0)
+            @if($allEmployers->count() > 0)
                 <ul class="employers-list">
-                    @foreach($companyProfiles as $profile)
+                    @foreach($allEmployers as $profile)
                         <a href="{{ route('admin.employer-verification.detail', $profile->id) }}" class="employer-item" title="{{ $profile->company_name }}">
                             <div class="employer-avatar">{{ strtoupper(substr($profile->company_name, 0, 1)) }}</div>
                             <div class="employer-item-content">
