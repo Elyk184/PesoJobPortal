@@ -53,9 +53,10 @@ class AdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        // Get all employers for sidebar
-        $allEmployers = CompanyProfile::with('employer')
-            ->orderByRaw("CASE WHEN verification_status = 'verified' THEN 0 WHEN verification_status = 'under_review' THEN 1 WHEN verification_status = 'pending' THEN 2 WHEN verification_status = 'rejected' THEN 3 END")
+        // Get all employers with their company profiles (if they have one)
+        $allEmployers = User::where('role', 'employer')
+            ->with('companyProfile')
+            ->orderByRaw("CASE WHEN company_profile.verification_status = 'verified' THEN 0 WHEN company_profile.verification_status = 'under_review' THEN 1 WHEN company_profile.verification_status = 'pending' THEN 2 WHEN company_profile.verification_status IS NULL THEN 3 WHEN company_profile.verification_status = 'rejected' THEN 4 END")
             ->orderBy('created_at', 'desc')
             ->get();
 
