@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ContactSubmission;
 use App\Models\PesoClearance;
 use App\Models\UserNotification;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
                 'adminSidebarCounts' => $this->adminSidebarCounts(),
                 'adminNotifications' => $this->adminNotifications(),
                 'adminUnreadNotificationsCount' => $this->adminUnreadNotificationsCount(),
+                'contactSubmissions' => ContactSubmission::query()->latest('id')->limit(10)->get(),
             ]);
         });
     }
@@ -72,6 +74,7 @@ class AppServiceProvider extends ServiceProvider
             'pendingPesoClearances' => PesoClearance::query()
                 ->where('status', 'pending')
                 ->count(),
+            'pendingContactMessages' => ContactSubmission::query()->count(),
             'adminUnreadNotifications' => $adminUnreadNotifications,
         ];
     }

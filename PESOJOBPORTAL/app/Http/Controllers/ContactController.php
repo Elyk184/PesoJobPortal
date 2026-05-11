@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ContactFormMessage;
+use App\Models\ContactSubmission;
+use App\Models\PortalNotification;
+use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ContactController extends Controller
@@ -25,9 +28,44 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        Mail::to(config('services.contact_form.recipient'))
-            ->send(new ContactFormMessage($validated));
+        DB::transaction(function () use ($validated) {
+            $portalNotification = PortalNotification::query()->create([
+                'title' => 'New Contact Form Message',
+                'message' => sprintf(
+                    '%s (%s) submitted a contact form message about "%s".',
+                    $validated['name'],
+                    $validated['email'],
+                    $validated['subject']
+                ),
+                'created_by' => null,
+            ]);
 
-        return back()->with('status', 'Your message has been sent successfully.');
+            $submission = ContactSubmission::query()->create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'] ?? null,
+                'subject' => $validated['subject'],
+                'message' => $validated['message'],
+                'portal_notification_id' => $portalNotification->id,
+            ]);
+
+            $adminIds = User::query()
+                ->where('role', 'admin')
+                ->pluck('id');
+
+            if ($adminIds->isNotEmpty()) {
+                $rows = $adminIds->map(fn (int $adminId) => [
+                    'user_id' => $adminId,
+                    'portal_notification_id' => $portalNotification->id,
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])->all();
+
+                UserNotification::query()->insert($rows);
+            }
+        });
+
+        return back()->with('status', 'Your message has been sent successfully and the admin has been notified.');
     }
 }

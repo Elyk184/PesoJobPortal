@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactSubmission;
 use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
@@ -509,6 +510,31 @@ class AdminController extends Controller
         }
 
         return view('admin.profile', compact('admin'));
+    }
+
+    public function contactSubmissions(): View
+    {
+        $submissions = ContactSubmission::query()
+            ->latest('id')
+            ->paginate(15);
+
+        $submissionCount = ContactSubmission::query()->count();
+
+        return view('admin.contact-submissions', compact('submissions', 'submissionCount'));
+    }
+
+    public function showContactSubmission(ContactSubmission $contactSubmission): View
+    {
+        return view('admin.contact-submissions-detail', compact('contactSubmission'));
+    }
+
+    public function destroyContactSubmission(ContactSubmission $contactSubmission): RedirectResponse
+    {
+        $contactSubmission->delete();
+
+        return redirect()
+            ->route('admin.contact-submissions')
+            ->with('success', 'Contact submission deleted successfully.');
     }
 
     public function updateProfile(Request $request): RedirectResponse

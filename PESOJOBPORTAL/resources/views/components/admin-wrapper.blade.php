@@ -425,6 +425,15 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
+                <a href="{{ route('admin.contact-submissions') }}" class="sidebar-menu-link {{ request()->routeIs('admin.contact-submissions*') ? 'active' : '' }}">
+                    <i class="bi bi-inbox"></i>
+                    <span>Contact Inbox</span>
+                    @if(($adminSidebarCounts['pendingContactMessages'] ?? 0) > 0)
+                        <span class="sidebar-badge" style="background:#dc2626;">{{ $adminSidebarCounts['pendingContactMessages'] }}</span>
+                    @endif
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
                 <a href="{{ route('admin.qr-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.qr-verification') ? 'active' : '' }}">
                     <i class="bi bi-qr-code"></i>
                     <span>QR Verification</span>

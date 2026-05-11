@@ -57,6 +57,11 @@
                 <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingPesoClearances'] ?? 0 }}</div>
                 <div class="alerts-stat-note">Requests awaiting admin action</div>
             </div>
+            <div class="alerts-stat">
+                <div class="alerts-stat-label">Contact Messages</div>
+                <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingContactMessages'] ?? 0 }}</div>
+                <div class="alerts-stat-note">Landing page inquiries waiting for review</div>
+            </div>
         </div>
 
         <div class="alerts-panel">
@@ -75,12 +80,13 @@
                         $message = (string) data_get($notification, 'portalNotification.message', '');
                         $createdAt = data_get($notification, 'portalNotification.created_at');
                         $alertText = mb_strtolower($title . ' ' . $message);
+                        $isContactMessage = str_contains($alertText, 'contact form message') || str_contains($alertText, 'contact form');
                         $isJobApproval = str_contains($alertText, 'job post') || str_contains($alertText, 'job approval');
                         $isEmployerVerification = str_contains($alertText, 'employer verification') || str_contains($alertText, 'company verification') || str_contains($alertText, 'business permit');
                         $isPesoClearance = str_contains($alertText, 'peso clearance');
                     @endphp
                     <div class="alert-item">
-                        <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isEmployerVerification ? '#16a34a' : '#2563eb') }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)') }};">
+                        <div class="alert-icon" style="color: {{ $isContactMessage ? '#dc2626' : ($isPesoClearance ? '#f59e0b' : ($isEmployerVerification ? '#16a34a' : '#2563eb')) }}; background: {{ $isContactMessage ? 'rgba(220, 38, 38, 0.12)' : ($isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)')) }};">
                             <i class="bi bi-bell-fill"></i>
                         </div>
                         <div class="alert-info">
@@ -88,6 +94,9 @@
                             <div class="alert-message">{{ $message }}</div>
                             <div class="alert-meta">
                                 <span><i class="bi bi-clock me-1"></i>{{ $createdAt ? $createdAt->diffForHumans() : 'Recently' }}</span>
+                                @if($isContactMessage)
+                                    <span class="badge text-bg-danger rounded-pill">Contact Form</span>
+                                @endif
                                 @if($isJobApproval)
                                     <span class="badge text-bg-primary rounded-pill">Job Approval</span>
                                 @endif
@@ -115,6 +124,42 @@
                     <div class="alerts-empty">
                         <div class="fw-semibold mb-1">No admin notifications yet</div>
                         <div class="small">New job approvals, employer verifications, and PESO clearance requests will appear here as alerts.</div>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="alerts-panel">
+            <div class="alerts-panel-head">
+                <div>
+                    <h3>Contact Inbox</h3>
+                    <p>Recent submissions from the landing page contact form.</p>
+                </div>
+                <a href="{{ route('admin.contact-submissions') }}" class="badge text-bg-danger rounded-pill px-3 py-2 text-decoration-none">Open inbox</a>
+            </div>
+
+            <div class="alerts-list">
+                @forelse (($contactSubmissions ?? collect()) as $submission)
+                    <div class="alert-item">
+                        <div class="alert-icon" style="color:#dc2626;background:rgba(220,38,38,0.12);">
+                            <i class="bi bi-envelope-paper-fill"></i>
+                        </div>
+                        <div class="alert-info">
+                            <div class="alert-title">{{ $submission->subject }}</div>
+                            <div class="alert-message">{{ $submission->name }} &lt;{{ $submission->email }}&gt;</div>
+                            <div class="alert-meta">
+                                <span><i class="bi bi-clock me-1"></i>{{ $submission->created_at ? $submission->created_at->diffForHumans() : 'Recently' }}</span>
+                                <span class="badge text-bg-danger rounded-pill">Contact Form</span>
+                            </div>
+                        </div>
+                        <div class="alert-actions">
+                            <a href="{{ route('admin.contact-submissions.show', $submission) }}" class="btn-small btn-dismiss" style="background:#dc2626;color:#fff;text-decoration:none;">View</a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="alerts-empty">
+                        <div class="fw-semibold mb-1">No contact messages yet</div>
+                        <div class="small">Messages submitted from the landing page will appear here and in the contact inbox.</div>
                     </div>
                 @endforelse
             </div>
