@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
             'pendingPesoClearances' => PesoClearance::query()
                 ->where('status', 'pending')
                 ->count(),
-            'pendingContactMessages' => ContactSubmission::query()->count(),
+            'pendingContactMessages' => ContactSubmission::query()->where('status', 'open')->count(),
             'adminUnreadNotifications' => $adminUnreadNotifications,
         ];
     }

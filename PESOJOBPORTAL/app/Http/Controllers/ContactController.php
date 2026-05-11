@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactSubmission;
+use App\Models\ContactSubmissionMessage;
 use App\Models\PortalNotification;
 use App\Models\User;
 use App\Models\UserNotification;
@@ -41,12 +42,26 @@ class ContactController extends Controller
             ]);
 
             $submission = ContactSubmission::query()->create([
+                'reference_code' => 'TMP',
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'] ?? null,
                 'subject' => $validated['subject'],
                 'message' => $validated['message'],
+                'status' => 'open',
+                'last_message_at' => now(),
                 'portal_notification_id' => $portalNotification->id,
+            ]);
+
+            $submission->update([
+                'reference_code' => sprintf('INQ-%s-%06d', now()->format('Y'), $submission->id),
+            ]);
+
+            ContactSubmissionMessage::query()->create([
+                'contact_submission_id' => $submission->id,
+                'sender_type' => 'user',
+                'message' => $validated['message'],
+                'sent_by_user_id' => null,
             ]);
 
             $adminIds = User::query()

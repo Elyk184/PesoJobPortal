@@ -52,11 +52,12 @@
                             <i class="bi bi-envelope-paper-fill"></i>
                         </div>
                         <div class="contact-info">
-                            <div class="contact-title">{{ $submission->subject }}</div>
+                            <div class="contact-title">{{ $submission->reference_code }} · {{ $submission->subject }}</div>
                             <div class="contact-message">{{ $submission->name }} &lt;{{ $submission->email }}&gt;{{ $submission->phone ? ' • ' . $submission->phone : '' }}</div>
                             <div class="contact-meta">
                                 <span><i class="bi bi-clock me-1"></i>{{ $submission->created_at?->format('M d, Y h:i A') }}</span>
-                                <span class="badge text-bg-light border rounded-pill">Stored</span>
+                                <span class="badge text-bg-light border rounded-pill">{{ ucfirst($submission->status ?? 'open') }}</span>
+                                <span class="badge text-bg-danger rounded-pill">{{ $submission->messages_count ?? 0 }} messages</span>
                             </div>
                         </div>
                         <div class="contact-actions">

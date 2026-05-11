@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactSubmission;
+use App\Models\ContactSubmissionMessage;
 use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
@@ -18,6 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Services\BrevoMailService;
 
 class AdminController extends Controller
 {
@@ -515,17 +517,58 @@ class AdminController extends Controller
     public function contactSubmissions(): View
     {
         $submissions = ContactSubmission::query()
+            ->withCount('messages')
+            ->orderByRaw("CASE WHEN status = 'open' THEN 0 WHEN status = 'replied' THEN 1 ELSE 2 END")
             ->latest('id')
             ->paginate(15);
 
-        $submissionCount = ContactSubmission::query()->count();
+        $submissionCount = ContactSubmission::query()->where('status', 'open')->count();
 
         return view('admin.contact-submissions', compact('submissions', 'submissionCount'));
     }
 
     public function showContactSubmission(ContactSubmission $contactSubmission): View
     {
+        $contactSubmission->load(['messages.sender', 'portalNotification']);
+
         return view('admin.contact-submissions-detail', compact('contactSubmission'));
+    }
+
+    public function replyContactSubmission(Request $request, ContactSubmission $contactSubmission, BrevoMailService $brevoMailService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'reply_message' => ['required', 'string', 'max:5000'],
+        ]);
+
+        DB::transaction(function () use ($contactSubmission, $validated, $brevoMailService) {
+            ContactSubmissionMessage::query()->create([
+                'contact_submission_id' => $contactSubmission->id,
+                'sender_type' => 'admin',
+                'message' => $validated['reply_message'],
+                'sent_by_user_id' => Auth::id(),
+            ]);
+
+            $contactSubmission->update([
+                'status' => 'replied',
+                'replied_at' => now(),
+                'last_message_at' => now(),
+            ]);
+
+            $htmlContent = view('emails.contact-submission-reply', [
+                'contactSubmission' => $contactSubmission,
+                'replyMessage' => $validated['reply_message'],
+            ])->render();
+
+            $brevoMailService->sendTransactionalEmail(
+                $contactSubmission->email,
+                $contactSubmission->name,
+                'Re: ' . $contactSubmission->subject . ' [' . $contactSubmission->reference_code . ']',
+                $htmlContent,
+                trim(html_entity_decode(strip_tags($htmlContent)))
+            );
+        });
+
+        return back()->with('success', 'Reply sent to the user and stored in the inquiry thread.');
     }
 
     public function destroyContactSubmission(ContactSubmission $contactSubmission): RedirectResponse

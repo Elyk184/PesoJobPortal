@@ -40,6 +40,10 @@ return [
         'endpoint' => env('GEMINI_ENDPOINT', env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent')),
     ],
 
+    'brevo' => [
+        'key' => env('BREVO_API_KEY', env('MAIL_PASSWORD')),
+    ],
+
     'contact_form' => [
         'recipient' => env('CONTACT_FORM_RECIPIENT_EMAIL', env('MAIL_FROM_ADDRESS')),
     ],

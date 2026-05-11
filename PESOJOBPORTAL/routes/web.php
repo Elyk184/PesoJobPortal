@@ -160,6 +160,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/alerts-notifications', 'admin.alerts-notifications')->name('alerts-notifications');
     Route::get('/contact-submissions', [AdminController::class, 'contactSubmissions'])->name('contact-submissions');
     Route::get('/contact-submissions/{contactSubmission}', [AdminController::class, 'showContactSubmission'])->name('contact-submissions.show');
+    Route::post('/contact-submissions/{contactSubmission}/reply', [AdminController::class, 'replyContactSubmission'])->name('contact-submissions.reply');
     Route::delete('/contact-submissions/{contactSubmission}', [AdminController::class, 'destroyContactSubmission'])->name('contact-submissions.destroy');
     Route::view('/qr-verification', 'admin.qr-verification')->name('qr-verification');
 });

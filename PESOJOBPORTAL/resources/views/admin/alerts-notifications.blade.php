@@ -60,7 +60,7 @@
             <div class="alerts-stat">
                 <div class="alerts-stat-label">Contact Messages</div>
                 <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingContactMessages'] ?? 0 }}</div>
-                <div class="alerts-stat-note">Landing page inquiries waiting for review</div>
+                <div class="alerts-stat-note">Open inquiries waiting for reply</div>
             </div>
         </div>
 
