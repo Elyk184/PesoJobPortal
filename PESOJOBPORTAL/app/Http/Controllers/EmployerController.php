@@ -143,12 +143,13 @@ class EmployerController extends Controller
         }
         
         // Add recommended applicants with type indicator
+        // For display/filtering purposes, map recommendation status to 'recommended'
         foreach ($recommendedApplicants as $rec) {
             $rec->applicant_type = 'recommendation';
             $rec->user_name = $rec->jobseeker->name ?? 'N/A';
             $rec->user_email = $rec->jobseeker->email ?? 'N/A';
             $rec->peso_job_id = $rec->peso_job_id;
-            $rec->status = $rec->status;
+            $rec->status = 'recommended'; // Display all recommendations as 'recommended' status for filtering
             $allApplicants->push($rec);
         }
 
