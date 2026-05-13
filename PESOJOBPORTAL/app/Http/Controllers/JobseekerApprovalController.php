@@ -115,24 +115,24 @@ class JobseekerApprovalController extends Controller
                 return back()->with('error', 'Selected job does not belong to the selected employer.');
             }
 
-            // Check if jobseeker has applied to this job
+            // Get or create job application (admin can recommend even without prior application)
             $jobApplication = JobApplication::where('user_id', $jobseeker->id)
                 ->where('peso_job_id', $validated['job_id'])
                 ->first();
 
-            \Log::info('Job application search', [
-                'user_id' => $jobseeker->id,
-                'peso_job_id' => $validated['job_id'],
-                'found' => $jobApplication ? 'yes' : 'no'
-            ]);
-
             if (!$jobApplication) {
-                \Log::error('No application found', [
-                    'jobseeker_id' => $jobseeker->id,
-                    'jobseeker_name' => $jobseeker->name,
+                \Log::info('Creating job application for recommendation', [
+                    'user_id' => $jobseeker->id,
                     'job_id' => $validated['job_id']
                 ]);
-                return back()->with('error', "{$jobseeker->name} has not applied to this job position.");
+                
+                // Create a new job application entry for this recommendation
+                $jobApplication = JobApplication::create([
+                    'user_id' => $jobseeker->id,
+                    'peso_job_id' => $validated['job_id'],
+                    'status' => 'recommended',
+                    'application_text' => 'Admin recommendation',
+                ]);
             }
 
             // Check if already recommended to this employer for this job
