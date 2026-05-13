@@ -51,7 +51,7 @@
                 <li class="service-feature"><span class="service-dot service-green"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Receive Notifications &amp; Alerts</span></li>
             </ul>
             <div class="service-divider"></div>
-            <a href="#" class="service-btn service-green">
+            <a href="{{ route('login') }}" class="service-btn service-green">
                 <span>Post a Job</span>
                 <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>

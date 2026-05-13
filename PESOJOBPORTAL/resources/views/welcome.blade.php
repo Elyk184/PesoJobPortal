@@ -731,7 +731,7 @@
                         </div>
                         <div class="news-card-divider"></div>
                         <div class="news-card-button-section">
-                            <a href="#" class="news-card-btn community">
+                            <a href="{{ route('login') }}" class="news-card-btn community">
                                 <span>Post a Job</span>
                                 <span>→</span>
                             </a>
