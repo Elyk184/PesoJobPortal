@@ -394,28 +394,6 @@
                         </li>
                     </ul>
 
-                    <p class="sidebar-group-title">Recommendations</p>
-                    <ul class="sidebar-nav">
-                        <li>
-                            <a class="{{ request()->routeIs('employer.recommendations.received') ? 'active' : '' }}" href="{{ route('employer.recommendations.received') }}">
-                                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-5-3.87"></path><path d="M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8"></path><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
-                                <span>Received</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="{{ request()->routeIs('employer.recommendations.sent') ? 'active' : '' }}" href="{{ route('employer.recommendations.sent') }}">
-                                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
-                                <span>Sent</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="{{ request()->routeIs('employer.recommendations.pending-followups') ? 'active' : '' }}" href="{{ route('employer.recommendations.pending-followups') }}">
-                                <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path></svg></span>
-                                <span>Follow-ups</span>
-                            </a>
-                        </li>
-                    </ul>
-
                     <p class="sidebar-group-title">Job Management</p>
                     <ul class="sidebar-nav">
                         <li>

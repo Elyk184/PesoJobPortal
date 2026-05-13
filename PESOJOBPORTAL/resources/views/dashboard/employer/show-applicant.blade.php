@@ -429,10 +429,6 @@
             <p>Review application, resume, and manage applicant status</p>
         </div>
         <div class="page-header-actions">
-            <button type="button" class="btn btn-primary recommend-btn-primary" data-application-id="{{ $application->id }}" data-applicant-name="{{ $application->user->name }}" data-bs-toggle="modal" data-bs-target="#recommendModal" style="background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); border: none; display: inline-flex; align-items: center; gap: 0.5rem;">
-                <i class="bi bi-share"></i>
-                <span>Recommend</span>
-            </button>
             <a href="{{ route('employer.applicants.index') }}" class="btn-back">
                 <i class="bi bi-arrow-left"></i>
                 <span>Back</span>
@@ -469,8 +465,8 @@
                                 $statusClasses = [
                                     'pending' => 'bg-light text-dark',
                                     'reviewing' => 'bg-info bg-opacity-25 text-info-emphasis',
-                                    'shortlisted' => 'bg-primary bg-opacity-25 text-primary-emphasis',
-                                    'interview' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
+                                    'recommended' => 'bg-primary bg-opacity-25 text-primary-emphasis',
+                                    'interviewed' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
                                     'hired' => 'bg-success bg-opacity-25 text-success-emphasis',
                                     'rejected' => 'bg-danger bg-opacity-25 text-danger-emphasis',
                                 ];
@@ -690,13 +686,13 @@
                             @php $s = $application->status; @endphp
                             <option value="pending" {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="reviewing" {{ $s === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                            <option value="shortlisted" {{ $s === 'shortlisted' ? 'selected' : '' }}>Shortlisted</option>
-                            <option value="interview" {{ $s === 'interview' ? 'selected' : '' }}>Interview</option>
+                            <option value="recommended" {{ $s === 'recommended' ? 'selected' : '' }}>Recommended</option>
+                            <option value="interviewed" {{ $s === 'interviewed' ? 'selected' : '' }}>Interviewed</option>
                             <option value="hired" {{ $s === 'hired' ? 'selected' : '' }}>Hired</option>
                             <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
                     </div>
-                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interview' ? '' : 'display:none;' }}">
+                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interviewed' ? '' : 'display:none;' }}">
                         <label class="form-label">Interview Schedule</label>
                         <input
                             type="datetime-local"
@@ -758,7 +754,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const syncInterviewScheduleVisibility = () => {
-        const shouldShow = statusSelect.value === 'interview';
+        const shouldShow = statusSelect.value === 'interviewed';
         scheduleGroup.style.display = shouldShow ? '' : 'none';
         scheduledAtInput.required = shouldShow;
         if (!shouldShow) {
@@ -771,111 +767,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<!-- Recommend Modal -->
-<div class="modal fade" id="recommendModal" tabindex="-1" role="dialog" aria-labelledby="recommendModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(15, 49, 96, 0.12);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); border: none; border-radius: 16px 16px 0 0; padding: 1.5rem;">
-                <h5 class="modal-title" id="recommendModalLabel" style="color: #fff; font-weight: 700;">Recommend Applicant</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="padding: 2rem;">
-                <form id="recommendForm">
-                    @csrf
-                    <input type="hidden" name="job_application_id" id="jobApplicationId">
-                    
-                    <div class="mb-3">
-                        <label for="recommendToEmployer" class="form-label fw-bold" style="color: #274f82;">Recommend To Employer <span style="color: #dc3545;">*</span></label>
-                        <select name="recommended_to_user_id" id="recommendToEmployer" class="form-select" style="border: 1.5px solid #d3dfe8; border-radius: 10px; padding: 0.7rem 1rem; height: 46px;">
-                            <option value="">-- Select an employer --</option>
-                            @php
-                                $employers = \App\Models\User::where('role', 'employer')
-                                    ->where('id', '!=', auth()->id())
-                                    ->with('companyProfile')
-                                    ->get();
-                            @endphp
-                            @forelse($employers as $employer)
-                                <option value="{{ $employer->id }}">
-                                    {{ $employer->name }} 
-                                    @if($employer->companyProfile)
-                                        - {{ $employer->companyProfile->company_name }}
-                                    @endif
-                                </option>
-                            @empty
-                                <option value="">No other employers available</option>
-                            @endforelse
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="recommendationType" class="form-label fw-bold" style="color: #274f82;">Recommendation Type <span style="color: #dc3545;">*</span></label>
-                        <select name="recommendation_type" id="recommendationType" class="form-select" style="border: 1.5px solid #d3dfe8; border-radius: 10px; padding: 0.7rem 1rem; height: 46px;">
-                            <option value="">-- Select type --</option>
-                            <option value="employer_to_employer">Employer to Employer</option>
-                            <option value="employer_to_peso">Employer to PESO</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="recommendationReason" class="form-label fw-bold" style="color: #274f82;">Reason for Recommendation</label>
-                        <textarea name="recommendation_reason" id="recommendationReason" class="form-control" rows="3" placeholder="Why are you recommending this applicant?" style="border: 1.5px solid #d3dfe8; border-radius: 10px; padding: 0.7rem 1rem;"></textarea>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 2rem;">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: #e4edf7; color: #1f4f8f; border: none; font-weight: 600; padding: 0.7rem 1.2rem; border-radius: 10px; cursor: pointer;">Cancel</button>
-                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); border: none; color: white; font-weight: 600; padding: 0.7rem 1.2rem; border-radius: 10px; cursor: pointer;">Send Recommendation</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle Recommend button clicks
-    document.querySelectorAll('.recommend-btn-primary').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const applicationId = this.getAttribute('data-application-id');
-            const applicantName = this.getAttribute('data-applicant-name');
-            document.getElementById('jobApplicationId').value = applicationId;
-            document.querySelector('#recommendModalLabel').textContent = `Recommend ${applicantName}`;
-        });
-    });
-
-    // Handle form submission
-    document.getElementById('recommendForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const applicationId = formData.get('job_application_id');
-        
-        fetch(`/employer/applications/${applicationId}/recommend`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': formData.get('_token'),
-                'Accept': 'application/json'
-            },
-            body: new FormData(this)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Applicant recommended successfully!');
-                bootstrap.Modal.getInstance(document.getElementById('recommendModal')).hide();
-                document.getElementById('recommendForm').reset();
-                // Refresh page to see updated status
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to recommend applicant');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('An error occurred while recommending the applicant');
-        });
-    });
-});
-</script>
-
 @endsection
+

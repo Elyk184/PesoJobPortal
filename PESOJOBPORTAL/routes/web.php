@@ -138,9 +138,6 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
     Route::get('/api/recommendations/analytics', [EmployerController::class, 'getRecommendationAnalytics'])
         ->name('recommendations.analytics');
-
-    Route::get('/api/recommendations/{recommendation}', [EmployerController::class, 'getRecommendationDetails'])
-        ->name('recommendations.api-details');
 });
 
 // Public jobs route
