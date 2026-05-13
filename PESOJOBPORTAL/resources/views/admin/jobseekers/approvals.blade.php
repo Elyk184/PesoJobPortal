@@ -449,13 +449,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border: none; border-radius: 12px;">
                 <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: none; border-radius: 12px 12px 0 0; padding: 1.5rem;">
-                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Job to Applicant</h5>
+                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Applicant to Employer</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="recommendForm" method="POST">
                     @csrf
                     <div class="modal-body" style="padding: 2.5rem; background: #ffffff;">
-                        <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending to: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
+                        <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
                         
                         <div class="row mb-3">
                             <!-- Step 1: Select Employer -->
@@ -466,15 +466,18 @@
                                 <select id="employerSelect" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
                                     <option value="" style="color: #999;">-- Select Employer --</option>
                                     @php
-                                        $employers = $availableJobs->groupBy(function($job) {
-                                            return $job->employer_id ?? 0;
-                                        })->map(function($jobs) {
-                                            return [
-                                                'id' => $jobs->first()->employer_id,
-                                                'name' => $jobs->first()->employer?->name ?? 'Unknown',
-                                                'company_name' => $jobs->first()->employer?->companyProfile?->company_name ?? $jobs->first()->employer?->name ?? 'Unknown Company'
-                                            ];
-                                        });
+                                        // Get all employers, not just those with active jobs
+                                        $employers = \App\Models\User::where('role', 'employer')
+                                            ->with('companyProfile')
+                                            ->orderBy('name')
+                                            ->get()
+                                            ->map(function($user) {
+                                                return [
+                                                    'id' => $user->id,
+                                                    'name' => $user->name,
+                                                    'company_name' => $user->companyProfile?->company_name ?? $user->name
+                                                ];
+                                            });
                                     @endphp
                                     @foreach($employers as $employer)
                                         <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
