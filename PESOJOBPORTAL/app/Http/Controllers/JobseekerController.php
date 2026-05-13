@@ -12,6 +12,7 @@ use App\Models\PortalNotification;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
+use App\Services\JobMatchingService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JobseekerController extends Controller
 {
+    public function __construct(private JobMatchingService $jobMatchingService)
+    {
+    }
+
     public function dashboard(Request $request): View
     {
         $user = Auth::user();
@@ -35,7 +40,7 @@ class JobseekerController extends Controller
             ->where('status', 'active')
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
-        $recommendedJobs = $this->buildProfileBasedRecommendations($profile);
+        $recommendedJobs = $this->buildProfileBasedRecommendations($user);
         $isProfileMatchedRecommendations = $recommendedJobs->isNotEmpty();
 
         if ($recommendedJobs->isEmpty()) {
@@ -352,7 +357,7 @@ class JobseekerController extends Controller
     {
         $user = $request->user();
         $profile = $user?->profile;
-        $recommendations = $this->buildProfileBasedRecommendations($profile);
+        $recommendations = $this->buildProfileBasedRecommendations($user);
         $profileHasSkills = $this->hasSkillsDetails($profile);
         $activeJobsCount = PesoJob::query()
             ->where('status', 'active')
@@ -1312,59 +1317,13 @@ class JobseekerController extends Controller
             ->all();
     }
 
-    private function buildProfileBasedRecommendations(?UserProfile $profile)
+    private function buildProfileBasedRecommendations(?User $user)
     {
-        $signals = $this->buildRecommendationSignalsFromProfile($profile);
-
-        if (collect($signals)->flatten()->isEmpty()) {
+        if (! $user || ! $user->profile) {
             return collect();
         }
 
-        $activeJobs = PesoJob::query()
-            ->where('status', 'active')
-            ->latest()
-            ->limit(40)
-            ->get();
-
-        $rankedJobs = $activeJobs
-            ->map(function (PesoJob $job) use ($signals) {
-                $matchDetails = $this->buildJobMatchDetails($job, $signals);
-
-                return [
-                    'job' => $job,
-                    'score' => $matchDetails['score'],
-                    'match_reasons' => $matchDetails['reasons'],
-                    'created_at' => $job->created_at?->getTimestamp() ?? 0,
-                ];
-            })
-            ->filter(fn ($item) => $item['score'] > 0)
-            ->sort(function ($left, $right) {
-                if ($left['score'] === $right['score']) {
-                    return $right['created_at'] <=> $left['created_at'];
-                }
-
-                return $right['score'] <=> $left['score'];
-            })
-            ->take(3)
-            ->values();
-
-        return $rankedJobs
-            ->map(function ($item) {
-                /** @var PesoJob $job */
-                $job = $item['job'];
-
-                return [
-                    'title' => $job->title,
-                    'location' => $job->location,
-                    'employer_name' => $job->employer_name,
-                    'salary_range' => $job->salary_range,
-                    'description' => $job->description,
-                    'requirements_list' => $this->extractJobRequirements($job),
-                    'match_score' => $item['score'],
-                    'match_reasons' => $item['match_reasons'],
-                ];
-            })
-            ->values();
+        return $this->jobMatchingService->recommendForUser($user, 3);
     }
 
     private function buildRecommendationSignalsFromProfile(?UserProfile $profile): array
@@ -1954,8 +1913,11 @@ class JobseekerController extends Controller
 
     public function applyJob(PesoJob $job): View
     {
+        $user = Auth::user();
+
         return view('dashboard.jobseeker.apply-job', [
             'job' => $job->load(['employer', 'employer.companyProfile']),
+            'jobMatch' => $this->jobMatchingService->matchJob($job, $user?->profile, $user),
         ]);
     }
 
