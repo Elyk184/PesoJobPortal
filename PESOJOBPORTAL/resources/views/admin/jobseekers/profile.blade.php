@@ -519,10 +519,13 @@
                             <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e5e7eb;">
                             
                             <!-- Job Description -->
-                            <div>
+                            <div style="margin-bottom: 1.5rem;">
                                 <div style="font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem;">About This Job</div>
                                 <div style="font-size: 1rem; color: #1f2937; line-height: 1.6; background: white; padding: 1rem; border-radius: 8px; border-left: 3px solid #d72638;" id="displayJobDescription">No description provided</div>
                             </div>
+                            
+                            <!-- More Details Button -->
+                            <button type="button" id="moreDetailsBtn" class="btn" style="width: 100%; border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none; color: white; cursor: pointer; margin-bottom: 1.5rem;"><i class="bi bi-info-circle me-2"></i>More Details</button>
                         </div>
                         
                         <!-- Message/Note Section -->
@@ -535,11 +538,8 @@
                                       style="border-radius: 8px; border: 2px solid #d72638; padding: 1rem; font-size: 1rem; color: #0d1f3c; font-family: inherit;"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: space-between;">
-                        <div style="display: flex; gap: 0.75rem;">
-                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
-                            <button type="button" id="moreDetailsBtn" class="btn" style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-info-circle me-2"></i>More Details</button>
-                        </div>
+                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
                         <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Applicant</button>
                     </div>
                 </form>
