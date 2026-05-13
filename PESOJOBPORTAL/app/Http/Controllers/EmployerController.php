@@ -1398,4 +1398,34 @@ class EmployerController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get single recommendation details as JSON
+     */
+    public function getRecommendationDetails(Request $request, RecommendedApplicant $recommendation): JsonResponse
+    {
+        $employer = $request->user();
+        
+        // Verify employer is recipient
+        if ($recommendation->recommended_to_user_id !== $employer->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Mark as viewed
+        $recommendation->markAsViewed();
+
+        return response()->json([
+            'id' => $recommendation->id,
+            'applicant_name' => $recommendation->jobApplication->user->name,
+            'applicant_email' => $recommendation->jobApplication->user->email,
+            'job_title' => $recommendation->job->title,
+            'job_location' => $recommendation->job->location,
+            'recommender_name' => $recommendation->recommendedBy->name,
+            'recommender_company' => $recommendation->recommendedBy->companyProfile?->company_name,
+            'reason' => $recommendation->recommendation_reason,
+            'status' => ucfirst($recommendation->status),
+            'created_at' => $recommendation->created_at->format('M d, Y \a\t g:i A'),
+            'is_new' => $recommendation->isNew(),
+        ]);
+    }
 }
