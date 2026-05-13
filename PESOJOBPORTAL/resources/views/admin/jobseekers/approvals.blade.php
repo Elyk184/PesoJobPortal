@@ -463,7 +463,7 @@
                                 <label for="employerSelect" class="form-label" style="font-weight: 700; color: #0d1f3c; margin-bottom: 0.5rem; font-size: 1rem;">
                                     Employer <span class="text-danger">*</span>
                                 </label>
-                                <select id="employerSelect" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
+                                <select id="employerSelect" name="employer_id" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
                                     <option value="" style="color: #999;">-- Select Employer --</option>
                                     @php
                                         // Get all employers, not just those with active jobs
@@ -931,8 +931,8 @@
                     currentJobseekerId = jobseekerId;
                     jobseekerNameSpan.textContent = jobseekerName;
 
-                    // Update form action
-                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-job';
+                    // Update form action for applicant recommendation
+                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
                     
                     // Reset form fields
                     employerSelect.value = '';
