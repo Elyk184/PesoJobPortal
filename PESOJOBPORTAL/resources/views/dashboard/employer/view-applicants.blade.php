@@ -99,6 +99,16 @@
         top: -20%;
         right: -20%;
     }
+    .stat-card.clickable-stat {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-card.clickable-stat:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 16px 32px rgba(15, 49, 96, 0.22);
+        border-color: #2b67b1;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f6ff 100%);
+    }
+    }
     .stat-icon {
         width: 60px;
         height: 60px;
@@ -652,7 +662,7 @@
     <!-- Quick Overview Section -->
     <div class="stats-grid mb-4">
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="reset" style="cursor: pointer;" title="Click to show all applicants">
                 <div class="stat-icon bg-primary text-white"><i class="bi bi-people-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $totalApplicants }}</h3>
@@ -661,7 +671,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="pending" style="cursor: pointer;" title="Click to show pending applicants">
                 <div class="stat-icon bg-warning text-white"><i class="bi bi-clock-history"></i></div>
                 <div class="stat-info">
                     <h3>{{ $pendingReview }}</h3>
@@ -670,7 +680,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="recommended" style="cursor: pointer;" title="Click to show recommended applicants">
                 <div class="stat-icon bg-info text-white"><i class="bi bi-star-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $recommended ?? 0 }}</h3>
@@ -679,7 +689,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="hired" style="cursor: pointer;" title="Click to show approved applicants">
                 <div class="stat-icon bg-success text-white"><i class="bi bi-check-circle-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $approved }}</h3>
@@ -688,7 +698,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="rejected" style="cursor: pointer;" title="Click to show rejected applicants">
                 <div class="stat-icon bg-danger text-white"><i class="bi bi-x-circle-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $rejected }}</h3>
@@ -836,29 +846,28 @@
                                                 <i class="bi bi-eye-fill"></i>
                                                 <span class="action-text">View</span>
                                             </a>
-                                        @if($application->status != 'hired')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="hired">
-                                            <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
-                                                <i class="bi bi-check-lg"></i>
-                                                <span class="action-text">Hire</span>
-                                            </button>
-                                        </form>
-                                        @endif
-                                        @if($application->status != 'rejected')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="rejected">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
-                                                <i class="bi bi-x-lg"></i>
-                                                <span class="action-text">Reject</span>
-                                            </button>
-                                        </form>
-                                        @endif
-                                        @endif
+                                            @if($application->status != 'hired')
+                                            <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="hired">
+                                                <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
+                                                    <i class="bi bi-check-lg"></i>
+                                                    <span class="action-text">Hire</span>
+                                                </button>
+                                            </form>
+                                            @endif
+                                            @if($application->status != 'rejected')
+                                            <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
+                                                    <i class="bi bi-x-lg"></i>
+                                                    <span class="action-text">Reject</span>
+                                                </button>
+                                            </form>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -930,6 +939,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error(err);
                 alert('An error occurred while updating status');
             });
+        });
+    });
+
+    // Handle clickable stat cards
+    document.querySelectorAll('.stat-card.clickable-stat').forEach(card => {
+        card.addEventListener('click', function() {
+            const filterType = this.dataset.filterType;
+            const filterValue = this.dataset.filterValue;
+            const statusSelect = document.querySelector('select[name="status"]');
+            const filterForm = document.querySelector('form.filters-grid');
+            
+            if (filterType === 'reset') {
+                // Reset all filters
+                document.querySelector('select[name="job_id"]').value = '';
+                statusSelect.value = '';
+                document.querySelector('input[name="search"]').value = '';
+            } else if (filterType === 'status') {
+                // Set the status filter and submit
+                statusSelect.value = filterValue;
+            }
+            
+            // Scroll to filter section
+            document.querySelector('.filter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Highlight the status dropdown briefly to show it's selected
+            statusSelect.style.borderColor = '#2b67b1';
+            statusSelect.style.boxShadow = '0 0 0 4px rgba(43, 103, 177, 0.2)';
+            setTimeout(() => {
+                statusSelect.style.borderColor = '';
+                statusSelect.style.boxShadow = '';
+            }, 2000);
+            
+            // Auto-submit the form after a brief delay
+            setTimeout(() => {
+                filterForm.submit();
+            }, 400);
         });
     });
 });
