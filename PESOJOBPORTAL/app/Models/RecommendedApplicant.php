@@ -11,6 +11,7 @@ class RecommendedApplicant extends Model
     use HasFactory;
 
     protected $fillable = [
+        'jobseeker_id',
         'job_application_id',
         'peso_job_id',
         'recommended_by_user_id',
@@ -50,6 +51,14 @@ class RecommendedApplicant extends Model
     public function jobApplication(): BelongsTo
     {
         return $this->belongsTo(JobApplication::class);
+    }
+
+    /**
+     * Get the jobseeker who was recommended
+     */
+    public function jobseeker(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'jobseeker_id');
     }
 
     /**

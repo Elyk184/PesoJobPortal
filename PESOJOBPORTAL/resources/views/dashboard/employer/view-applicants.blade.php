@@ -777,24 +777,37 @@
                         </thead>
                         <tbody>
                             @foreach($referredApplications as $application)
+                            @php
+                                // Handle both job applications and recommendations
+                                $isRecommendation = $application->applicant_type === 'recommendation';
+                                $applicant = $isRecommendation ? $application->jobseeker : $application->user;
+                                $job = $isRecommendation ? $application->job : $application->jobPost;
+                                $dateApplied = $isRecommendation ? $application->created_at : $application->applied_at;
+                                $applicantName = $isRecommendation ? $application->user_name : $application->applicant->name;
+                                $applicantEmail = $isRecommendation ? $application->user_email : $application->applicant->email;
+                                $applicantAvatar = $isRecommendation ? ($applicant->avatar ?? null) : ($application->applicant->avatar ?? null);
+                            @endphp
                             <tr>
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center gap-3">
-                                        @if($application->applicant->avatar)
-                                        <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}" class="user-avatar">
+                                        @if($applicantAvatar)
+                                        <img src="{{ Storage::url($applicantAvatar) }}" alt="{{ $applicantName }}" class="user-avatar">
                                         @else
                                         <div class="user-initials" style="background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);">
-                                            {{ strtoupper(substr($application->applicant->name, 0, 1)) }}
+                                            {{ strtoupper(substr($applicantName, 0, 1)) }}
                                         </div>
                                         @endif
                                         <div class="user-info">
-                                            <span class="name">{{ $application->applicant->name }}</span>
-                                            <span class="email">{{ $application->applicant->email }}</span>
+                                            <span class="name">{{ $applicantName }}</span>
+                                            <span class="email">{{ $applicantEmail }}</span>
+                                            @if($isRecommendation)
+                                            <span class="badge bg-info-subtle text-info ms-2" style="font-size: 0.75rem;">Recommended</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $application->jobPost->title }}</td>
-                                <td>{{ $application->applied_at->format('M d, Y') }}</td>
+                                <td>{{ $job->title ?? 'N/A' }}</td>
+                                <td>{{ $dateApplied->format('M d, Y') }}</td>
                                 <td>
                                     @php
                                         $statusClasses = [
@@ -813,10 +826,16 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="table-actions">
-                                        <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
-                                            <i class="bi bi-eye-fill"></i>
-                                            <span class="action-text">View</span>
-                                        </a>
+                                        @if($isRecommendation)
+                                            <button type="button" class="btn btn-sm btn-outline-primary action-btn" title="View Details" onclick="alert('Recommendation Details\n\nFrom: {{ $application->recommendedBy->name ?? 'Admin' }}\n\nMessage: {{ $application->recommendation_reason ?? 'No message provided' }}')">
+                                                <i class="bi bi-eye-fill"></i>
+                                                <span class="action-text">View</span>
+                                            </button>
+                                        @else
+                                            <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                                <span class="action-text">View</span>
+                                            </a>
                                         @if($application->status != 'hired')
                                         <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
                                             @csrf
@@ -838,6 +857,8 @@
                                                 <span class="action-text">Reject</span>
                                             </button>
                                         </form>
+                                        @endif
+                                        @endif
                                         @endif
                                     </div>
                                 </td>

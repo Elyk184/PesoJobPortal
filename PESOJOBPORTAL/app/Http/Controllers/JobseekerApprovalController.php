@@ -115,49 +115,10 @@ class JobseekerApprovalController extends Controller
                 return back()->with('error', 'Selected job does not belong to the selected employer.');
             }
 
-            // Get or create job application (admin can recommend even without prior application)
-            $jobApplication = JobApplication::where('user_id', $jobseeker->id)
-                ->where('peso_job_id', $validated['job_id'])
-                ->first();
-
-            if (!$jobApplication) {
-                \Log::info('Creating job application for recommendation', [
-                    'user_id' => $jobseeker->id,
-                    'job_id' => $validated['job_id']
-                ]);
-                
-                // Create a new job application entry for this recommendation
-                $jobApplication = JobApplication::create([
-                    'user_id' => $jobseeker->id,
-                    'peso_job_id' => $validated['job_id'],
-                    'status' => 'recommended',
-                    'application_text' => 'Admin recommendation',
-                ]);
-            }
-
-            // Check if already recommended to this employer for this job
-            $existing = \App\Models\RecommendedApplicant::where('job_application_id', $jobApplication->id)
-                ->where('recommended_to_user_id', $validated['employer_id'])
-                ->where('status', '!=', 'rejected')
-                ->first();
-
-            \Log::info('Existing recommendation check', [
-                'job_application_id' => $jobApplication->id,
-                'employer_id' => $validated['employer_id'],
-                'exists' => $existing ? 'yes' : 'no'
-            ]);
-
-            if ($existing) {
-                \Log::warning('Applicant already recommended', [
-                    'jobseeker' => $jobseeker->name,
-                    'employer_id' => $validated['employer_id']
-                ]);
-                return back()->with('error', "You have already recommended {$jobseeker->name} to this employer for this position.");
-            }
-
-            // Create recommendation record
+            // Create recommendation record directly (no job application required)
             $recommendation = \App\Models\RecommendedApplicant::create([
-                'job_application_id' => $jobApplication->id,
+                'jobseeker_id' => $jobseeker->id,
+                'job_application_id' => null, // Can be null for admin recommendations
                 'peso_job_id' => $validated['job_id'],
                 'recommended_by_user_id' => auth()->id(),
                 'recommended_to_user_id' => $validated['employer_id'],
@@ -176,16 +137,21 @@ class JobseekerApprovalController extends Controller
             $employer = User::findOrFail($validated['employer_id']);
             $companyName = $employer->companyProfile?->company_name ?? $employer->name;
             
-            $notification = \App\Models\UserNotification::create([
-                'user_id' => $validated['employer_id'],
-                'type' => 'applicant_recommended',
+            // Create portal notification first
+            $portalNotif = \App\Models\PortalNotification::create([
                 'title' => "Applicant Recommendation: {$jobseeker->name}",
-                'message' => "Admin has recommended {$jobseeker->name} for the {$job->title} position",
-                'related_id' => $jobApplication->id,
+                'message' => "Admin has recommended {$jobseeker->name} for the {$job->title} position at {$companyName}",
+                'created_by' => auth()->id(),
+            ]);
+
+            // Then create user notification
+            $notification = $employer->userNotifications()->create([
+                'portal_notification_id' => $portalNotif->id,
             ]);
 
             \Log::info('Notification created', [
                 'notification_id' => $notification->id,
+                'portal_notification_id' => $portalNotif->id,
                 'employer_id' => $validated['employer_id'],
                 'employer_name' => $employer->name
             ]);

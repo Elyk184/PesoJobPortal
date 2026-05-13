@@ -127,34 +127,61 @@ class EmployerController extends Controller
             $employer->forceFill(['is_employer_verified' => true])->save();
         }
 
-        // Get all referred applications
+        // Get all referred applications and recommended applicants
         $referredApplications = $this->getReferredApplications($employer->id);
+        $recommendedApplicants = $this->getRecommendedApplicants($employer->id);
+        
+        // Combine both collections
+        $allApplicants = collect();
+        
+        // Add job applications with type indicator
+        foreach ($referredApplications as $app) {
+            $app->applicant_type = 'application';
+            $app->user_name = $app->user->name ?? 'N/A';
+            $app->user_email = $app->user->email ?? 'N/A';
+            $allApplicants->push($app);
+        }
+        
+        // Add recommended applicants with type indicator
+        foreach ($recommendedApplicants as $rec) {
+            $rec->applicant_type = 'recommendation';
+            $rec->user_name = $rec->jobseeker->name ?? 'N/A';
+            $rec->user_email = $rec->jobseeker->email ?? 'N/A';
+            $rec->peso_job_id = $rec->peso_job_id;
+            $rec->status = $rec->status;
+            $allApplicants->push($rec);
+        }
 
         // Apply filters based on request parameters
         if ($request->has('job_id') && $request->get('job_id') !== '') {
-            $referredApplications = $referredApplications->where('peso_job_id', $request->get('job_id'));
+            $allApplicants = $allApplicants->where('peso_job_id', $request->get('job_id'));
         }
 
         if ($request->has('status') && $request->get('status') !== '') {
-            $referredApplications = $referredApplications->where('status', $request->get('status'));
+            $allApplicants = $allApplicants->where('status', $request->get('status'));
         }
 
         if ($request->has('search') && $request->get('search') !== '') {
             $searchTerm = strtolower($request->get('search'));
-            $referredApplications = $referredApplications->filter(function ($app) use ($searchTerm) {
-                $name = strtolower($app->user->name ?? '');
-                $email = strtolower($app->user->email ?? '');
+            $allApplicants = $allApplicants->filter(function ($app) use ($searchTerm) {
+                $name = strtolower($app->user_name ?? '');
+                $email = strtolower($app->user_email ?? '');
                 return str_contains($name, $searchTerm) || str_contains($email, $searchTerm);
             });
         }
 
+        // Calculate stats including both types
+        $totalCount = $referredApplications->count() + $recommendedApplicants->count();
+        $recommendedCount = $referredApplications->where('status', 'recommended')->count() + 
+                           $recommendedApplicants->where('status', 'pending')->count();
+
         return view('dashboard.employer.view-applicants', [
-            'referredApplications' => $referredApplications,
-            'totalApplicants' => $this->getReferredApplications($employer->id)->count(),
-            'pendingReview' => $this->getReferredApplications($employer->id)->whereNull('employer_status')->count(),
-            'recommended' => $this->getReferredApplications($employer->id)->where('status', 'recommended')->count(),
-            'approved' => $this->getReferredApplications($employer->id)->where('employer_status', 'hired')->count(),
-            'rejected' => $this->getReferredApplications($employer->id)->where('employer_status', 'not_selected')->count(),
+            'referredApplications' => $allApplicants->values(),
+            'totalApplicants' => $totalCount,
+            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
+            'recommended' => $recommendedCount,
+            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
+            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -863,6 +890,17 @@ class EmployerController extends Controller
             ->whereHas('job', function ($query) use ($employerId) {
                 $query->where('employer_id', $employerId);
             })
+            ->latest()
+            ->get();
+    }
+
+    private function getRecommendedApplicants(int $employerId)
+    {
+        return \App\Models\RecommendedApplicant::query()
+            ->with(['jobseeker' => function ($query) {
+                $query->select('id', 'name', 'email', 'role');
+            }, 'job', 'recommendedBy'])
+            ->where('recommended_to_user_id', $employerId)
             ->latest()
             ->get();
     }
