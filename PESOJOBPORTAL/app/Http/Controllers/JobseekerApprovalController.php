@@ -88,63 +88,119 @@ class JobseekerApprovalController extends Controller
      */
     public function recommendApplicant(Request $request, User $jobseeker): \Illuminate\Http\RedirectResponse
     {
-        $request->validate([
+        \Log::info('recommendApplicant called', [
+            'jobseeker_id' => $jobseeker->id,
+            'jobseeker_name' => $jobseeker->name,
+            'request_data' => $request->all(),
+        ]);
+
+        $validated = $request->validate([
             'employer_id' => 'required|exists:users,id',
             'job_id' => 'required|exists:peso_jobs,id',
             'message' => 'nullable|string|max:1000',
         ]);
 
+        \Log::info('Validation passed', $validated);
+
         try {
             // Get the job and verify it belongs to the selected employer
-            $job = \App\Models\PesoJob::findOrFail($request->job_id);
-            if ($job->employer_id != $request->employer_id) {
+            $job = \App\Models\PesoJob::findOrFail($validated['job_id']);
+            \Log::info('Job found', ['job_id' => $job->id, 'job_title' => $job->title, 'employer_id' => $job->employer_id]);
+            
+            if ($job->employer_id != $validated['employer_id']) {
+                \Log::warning('Job does not belong to employer', [
+                    'job_employer_id' => $job->employer_id,
+                    'requested_employer_id' => $validated['employer_id']
+                ]);
                 return back()->with('error', 'Selected job does not belong to the selected employer.');
             }
 
             // Check if jobseeker has applied to this job
             $jobApplication = JobApplication::where('user_id', $jobseeker->id)
-                ->where('peso_job_id', $job->id)
+                ->where('peso_job_id', $validated['job_id'])
                 ->first();
 
+            \Log::info('Job application search', [
+                'user_id' => $jobseeker->id,
+                'peso_job_id' => $validated['job_id'],
+                'found' => $jobApplication ? 'yes' : 'no'
+            ]);
+
             if (!$jobApplication) {
+                \Log::error('No application found', [
+                    'jobseeker_id' => $jobseeker->id,
+                    'jobseeker_name' => $jobseeker->name,
+                    'job_id' => $validated['job_id']
+                ]);
                 return back()->with('error', "{$jobseeker->name} has not applied to this job position.");
             }
 
             // Check if already recommended to this employer for this job
             $existing = \App\Models\RecommendedApplicant::where('job_application_id', $jobApplication->id)
-                ->where('recommended_to_user_id', $request->employer_id)
+                ->where('recommended_to_user_id', $validated['employer_id'])
                 ->where('status', '!=', 'rejected')
                 ->first();
 
+            \Log::info('Existing recommendation check', [
+                'job_application_id' => $jobApplication->id,
+                'employer_id' => $validated['employer_id'],
+                'exists' => $existing ? 'yes' : 'no'
+            ]);
+
             if ($existing) {
+                \Log::warning('Applicant already recommended', [
+                    'jobseeker' => $jobseeker->name,
+                    'employer_id' => $validated['employer_id']
+                ]);
                 return back()->with('error', "You have already recommended {$jobseeker->name} to this employer for this position.");
             }
 
             // Create recommendation record
             $recommendation = \App\Models\RecommendedApplicant::create([
                 'job_application_id' => $jobApplication->id,
-                'peso_job_id' => $job->id,
+                'peso_job_id' => $validated['job_id'],
                 'recommended_by_user_id' => auth()->id(),
-                'recommended_to_user_id' => $request->employer_id,
-                'recommendation_reason' => $request->message ?? null,
+                'recommended_to_user_id' => $validated['employer_id'],
+                'recommendation_reason' => $validated['message'] ?? null,
                 'recommendation_type' => 'admin_to_employer',
                 'status' => 'pending',
             ]);
 
+            \Log::info('Recommendation created', [
+                'recommendation_id' => $recommendation->id,
+                'jobseeker' => $jobseeker->name,
+                'job_id' => $validated['job_id']
+            ]);
+
             // Create notification for employer
-            $employer = User::findOrFail($request->employer_id);
+            $employer = User::findOrFail($validated['employer_id']);
             $companyName = $employer->companyProfile?->company_name ?? $employer->name;
             
-            \App\Models\UserNotification::create([
-                'user_id' => $request->employer_id,
+            $notification = \App\Models\UserNotification::create([
+                'user_id' => $validated['employer_id'],
                 'type' => 'applicant_recommended',
                 'title' => "Applicant Recommendation: {$jobseeker->name}",
                 'message' => "Admin has recommended {$jobseeker->name} for the {$job->title} position",
                 'related_id' => $jobApplication->id,
             ]);
 
-            return back()->with('success', "{$jobseeker->name} has been recommended to {$companyName}!");
+            \Log::info('Notification created', [
+                'notification_id' => $notification->id,
+                'employer_id' => $validated['employer_id'],
+                'employer_name' => $employer->name
+            ]);
+
+            $successMsg = "{$jobseeker->name} has been recommended to {$companyName}!";
+            \Log::info('Recommendation successful', ['message' => $successMsg]);
+            
+            return back()->with('success', $successMsg);
         } catch (\Exception $e) {
+            \Log::error('Recommendation failed', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
