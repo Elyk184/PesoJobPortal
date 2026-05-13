@@ -10,6 +10,23 @@
 
 @section('content')
 <div class="admin-dashboard">
+    {{-- Success/Error Messages --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #10b981;">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong>Success!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <style>
         .profile-header {
             display: grid;
@@ -912,6 +929,8 @@
 
                     // Update form action for applicant recommendation
                     recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
+                    console.log('Form action set to:', recommendForm.action);
+                    console.log('Jobseeker:', jobseekerId, jobseekerName);
                     
                     // Reset form fields
                     employerSelect.value = '';
@@ -1064,6 +1083,17 @@
                 const detailModal = new bootstrap.Modal(document.getElementById('jobDetailModal'));
                 detailModal.show();
             }
+        });
+
+        // Debug: Form submission listener
+        recommendForm.addEventListener('submit', function(e) {
+            console.log('✅ FORM SUBMIT EVENT FIRED!');
+            console.log('Form Action:', this.action);
+            console.log('Employer ID:', document.getElementById('employerSelect').value);
+            console.log('Job ID:', document.getElementById('jobSelect').value);
+            console.log('Message:', document.getElementById('messageInput').value);
+            console.log('CSRF Token:', document.querySelector('[name="_token"]')?.value);
+            console.log('Full form data:', new FormData(this));
         });
     </script>
 </div>
