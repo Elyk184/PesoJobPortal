@@ -21,153 +21,102 @@
             <!-- Main Content -->
             <div class="col-lg-9">
                 <!-- Request Overview -->
-                <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Activity Type</small>
-                            <span class="badge" style="background-color: {{ $activityRequest->activity_type === 'lra' ? '#3b82f6' : '#ec4899' }}; padding: 0.5rem 0.75rem; font-size: 0.9rem;">
-                                {{ strtoupper($activityRequest->activity_type) }}
-                            </span>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Employer</small>
-                            <strong>{{ $activityRequest->employer?->name ?? 'N/A' }}</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Submitted</small>
-                            <strong>{{ $activityRequest->created_at->format('M d, Y') }}</strong>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Status</small>
-                            <span class="badge" style="background-color:
-                                @if($activityRequest->status === 'pending') #f59e0b
-                                @elseif($activityRequest->status === 'approved') #10b981
-                                @else #ef4444 @endif; padding: 0.5rem 0.75rem; font-size: 0.9rem;">
-                                {{ ucfirst($activityRequest->status) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Documents -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light border-0 py-3">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark-pdf me-2"></i>Documents</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Letter of Intent</strong></p>
-                                @if($activityRequest->letter_of_intent_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->letter_of_intent_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
+                <div class="card border-0 shadow-lg mb-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 100%); overflow: hidden;">
+                    <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; background: linear-gradient(135deg, {{ $activityRequest->activity_type === 'lra' ? '#3b82f6' : '#ec4899' }} 0%, transparent 100%); opacity: 0.1; border-radius: 50%; transform: translate(50px, -50px);"></div>
+                    <div class="card-body p-4" style="position: relative;">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div style="padding: 1rem; background: white; border-radius: 0.75rem; border-left: 4px solid {{ $activityRequest->activity_type === 'lra' ? '#3b82f6' : '#ec4899' }};">
+                                    <small class="text-muted d-block mb-2" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;"><i class="bi bi-tag me-1"></i>Activity Type</small>
+                                    <span class="badge" style="background: linear-gradient(135deg, {{ $activityRequest->activity_type === 'lra' ? '#3b82f6' : '#ec4899' }} 0%, {{ $activityRequest->activity_type === 'lra' ? '#2563eb' : '#db2777' }} 100%); padding: 0.5rem 0.75rem; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <i class="bi bi-file-earmark me-1"></i>{{ strtoupper($activityRequest->activity_type) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 1rem; background: white; border-radius: 0.75rem; border-left: 4px solid #10b981;">
+                                    <small class="text-muted d-block mb-2" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;"><i class="bi bi-building me-1"></i>Employer</small>
+                                    <strong style="color: #1f2937; font-size: 0.95rem;">{{ $activityRequest->employer?->name ?? 'N/A' }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 1rem; background: white; border-radius: 0.75rem; border-left: 4px solid #f59e0b;">
+                                    <small class="text-muted d-block mb-2" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;"><i class="bi bi-calendar me-1"></i>Submitted</small>
+                                    <strong style="color: #1f2937; font-size: 0.95rem;">{{ $activityRequest->created_at->format('M d, Y') }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div style="padding: 1rem; background: white; border-radius: 0.75rem; border-left: 4px solid @if($activityRequest->status === 'pending')#f59e0b@elseif($activityRequest->status === 'approved')#10b981@else#ef4444@endif;">
+                                    <small class="text-muted d-block mb-2" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;"><i class="bi bi-info-circle me-1"></i>Status</small>
+                                    <span class="badge" style="background: linear-gradient(135deg, @if($activityRequest->status === 'pending')#f59e0b 0%, #f97316 100%@elseif($activityRequest->status === 'approved')#10b981 0%, #059669 100%@else#ef4444 0%, #dc2626 100%@endif); padding: 0.5rem 0.75rem; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        {{ ucfirst($activityRequest->status) }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Documents -->
+                <div class="card border-0 shadow-lg mb-4" style="border-top: 4px solid #ef4444;">
+                    <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-bottom: 2px solid #fee2e2;">
+                        <h5 class="mb-0"><i class="bi bi-file-earmark-pdf me-2" style="color: #ef4444;"></i><span style="color: #991b1b;">Documents</span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="border rounded p-4 text-center h-100 transition-all" style="background: linear-gradient(135deg, #fef2f2 0%, #fffbfa 100%); border: 2px solid #fee2e2; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+                                    <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #ef4444 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                    <i class="bi bi-file-pdf" style="font-size: 3rem; color: #ef4444; position: relative; z-index: 1;"></i>
+                                    <p class="mt-3 mb-2 small"><strong style="color: #1f2937;">Letter of Intent</strong></p>
+                                    @if($activityRequest->letter_of_intent_path)
+                                        <a href="{{ asset('storage/' . $activityRequest->letter_of_intent_path) }}"
+                                           class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none;" target="_blank">
+                                            <i class="bi bi-download me-1"></i>Download
+                                        </a>
+                                    @else
+                                        <small class="text-muted d-block mt-2" style="font-style: italic;">Not provided</small>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             <!-- SRA Specific Documents -->
             @if($activityRequest->activity_type === 'sra')
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light border-0 py-3">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2"></i>SRA Specific Documents</h5>
+            <div class="card border-0 shadow-lg mb-4" style="border-top: 4px solid #8b5cf6;">
+                <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%); border-bottom: 2px solid #e9d5ff;">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2" style="color: #8b5cf6;"></i><span style="color: #6d28d9;">SRA Specific Documents</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
+                        @php $sraDocuments = [
+                            ['name' => 'DMW Certificate', 'field' => 'dmw_certificate_path', 'icon' => 'bi-file-pdf'],
+                            ['name' => 'Recruitment Officer ID', 'field' => 'recruitment_officer_id_path', 'icon' => 'bi-file-pdf'],
+                            ['name' => 'Job Order Balance', 'field' => 'job_order_balance_path', 'icon' => 'bi-file-pdf'],
+                            ['name' => 'Deployment Report', 'field' => 'deployment_report_path', 'icon' => 'bi-file-pdf'],
+                            ['name' => 'Affidavit of Undertaking', 'field' => 'affidavit_undertaking_path', 'icon' => 'bi-file-pdf'],
+                            ['name' => 'SRA Authority', 'field' => 'sra_authority_file_path', 'icon' => 'bi-file-pdf'],
+                        ]; @endphp
+
+                        @foreach($sraDocuments as $doc)
                         <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>DMW Certificate</strong></p>
-                                @if($activityRequest->dmw_certificate_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->dmw_certificate_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                            <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); border: 2px solid #e9d5ff; transition: all 0.3s ease; position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #8b5cf6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                <i class="bi {{ $doc['icon'] }}" style="font-size: 2.5rem; color: #8b5cf6; position: relative; z-index: 1;"></i>
+                                <p class="mt-2 mb-2 small"><strong style="color: #1f2937;">{{ $doc['name'] }}</strong></p>
+                                @if($activityRequest->{$doc['field']})
+                                    <a href="{{ asset('storage/' . $activityRequest->{$doc['field']}) }}"
+                                       class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none;" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 @else
-                                    <small class="text-muted">Not provided</small>
+                                    <small class="text-muted d-block mt-2" style="font-style: italic;">Not provided</small>
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Recruitment Officer ID</strong></p>
-                                @if($activityRequest->recruitment_officer_id_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->recruitment_officer_id_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Job Order Balance</strong></p>
-                                @if($activityRequest->job_order_balance_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->job_order_balance_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Deployment Report</strong></p>
-                                @if($activityRequest->deployment_report_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->deployment_report_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Affidavit of Undertaking</strong></p>
-                                @if($activityRequest->affidavit_undertaking_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->affidavit_undertaking_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
-                                <p class="mt-2 mb-1 small"><strong>SRA Authority</strong></p>
-                                @if($activityRequest->sra_authority_file_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->sra_authority_file_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -175,37 +124,39 @@
 
             <!-- LRA Specific Documents -->
             @if($activityRequest->activity_type === 'lra')
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light border-0 py-3">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2"></i>LRA Specific Documents</h5>
+            <div class="card border-0 shadow-lg mb-4" style="border-top: 4px solid #06b6d4;">
+                <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border-bottom: 2px solid #ccfbf1;">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2" style="color: #06b6d4;"></i><span style="color: #0369a1;">LRA Specific Documents</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Business Permit</strong></p>
+                            <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border: 2px solid #ccfbf1; position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #06b6d4 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #06b6d4; position: relative; z-index: 1;"></i>
+                                <p class="mt-2 mb-2 small"><strong style="color: #1f2937;">Business Permit</strong></p>
                                 @if($activityRequest->business_permit_path)
                                     <a href="{{ asset('storage/' . $activityRequest->business_permit_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                       class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none;" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 @else
-                                    <small class="text-muted">Not provided</small>
+                                    <small class="text-muted d-block mt-2" style="font-style: italic;">Not provided</small>
                                 @endif
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Recruitment Officer ID</strong></p>
+                            <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border: 2px solid #ccfbf1; position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #06b6d4 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #06b6d4; position: relative; z-index: 1;"></i>
+                                <p class="mt-2 mb-2 small"><strong style="color: #1f2937;">Recruitment Officer ID</strong></p>
                                 @if($activityRequest->lra_recruitment_officer_id_path)
                                     <a href="{{ asset('storage/' . $activityRequest->lra_recruitment_officer_id_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                       class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none;" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 @else
-                                    <small class="text-muted">Not provided</small>
+                                    <small class="text-muted d-block mt-2" style="font-style: italic;">Not provided</small>
                                 @endif
                             </div>
                         </div>
@@ -214,53 +165,57 @@
             </div>
 
             <!-- Job Vacancies Section -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light border-0 py-3">
-                    <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>Job Vacancies</h5>
+            <div class="card border-0 shadow-lg mb-4" style="border-top: 4px solid #3b82f6;">
+                <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border-bottom: 2px solid #bfdbfe;">
+                    <h5 class="mb-0"><i class="bi bi-briefcase me-2" style="color: #3b82f6;"></i><span style="color: #1e40af;">Job Vacancies</span></h5>
                 </div>
                 <div class="card-body">
                     @if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text)
-                        <!-- Both file and text provided -->
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                    <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
-                                    <p class="mt-2 mb-1 small"><strong>Job Vacancies File</strong></p>
+                                <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border: 2px solid #bfdbfe; position: relative; overflow: hidden;">
+                                    <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                    <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #3b82f6; position: relative; z-index: 1;"></i>
+                                    <p class="mt-2 mb-2 small"><strong style="color: #1f2937;">Job Vacancies File</strong></p>
                                     <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                       class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none;" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="border rounded p-3" style="background-color: #f0f9ff; border: 1px solid #bae6fd;">
-                                    <h6 style="color: #0369a1; margin-bottom: 0.75rem;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
-                                    <div style="background: white; padding: 0.75rem; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word;">
+                                <div class="border rounded p-4" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border: 2px solid #bfdbfe; position: relative; overflow: hidden;">
+                                    <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                                    <h6 style="color: #1e40af; margin-bottom: 0.75rem; position: relative; z-index: 1;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
+                                    <div style="background: white; padding: 1rem; border-radius: 0.5rem; max-height: 250px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word; border: 1px solid #dbeafe;">
                                         {{ $activityRequest->job_vacancies_text }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @elseif($activityRequest->job_vacancies_path)
-                        <!-- Only file provided -->
-                        <div class="border rounded p-3 text-center" style="background-color: #f9fafb;">
-                            <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
-                            <p class="mt-2 mb-1 small"><strong>Job Vacancies File</strong></p>
+                        <div class="border rounded p-4 text-center" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border: 2px solid #bfdbfe; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                            <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #3b82f6; position: relative; z-index: 1;"></i>
+                            <p class="mt-2 mb-2 small"><strong style="color: #1f2937;">Job Vacancies File</strong></p>
                             <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
-                               class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                               class="btn btn-sm mt-2" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none;" target="_blank">
                                 <i class="bi bi-download me-1"></i>Download
                             </a>
                         </div>
                     @elseif($activityRequest->job_vacancies_text)
-                        <!-- Only text provided -->
-                        <div class="border rounded p-3" style="background-color: #f0f9ff; border: 1px solid #bae6fd;">
-                            <h6 style="color: #0369a1; margin-bottom: 0.75rem;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
-                            <div style="background: white; padding: 0.75rem; border-radius: 0.5rem; max-height: 300px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word;">
+                        <div class="border rounded p-4" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border: 2px solid #bfdbfe; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
+                            <h6 style="color: #1e40af; margin-bottom: 0.75rem; position: relative; z-index: 1;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
+                            <div style="background: white; padding: 1rem; border-radius: 0.5rem; max-height: 350px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word; border: 1px solid #dbeafe;">
                                 {{ $activityRequest->job_vacancies_text }}
                             </div>
                         </div>
                     @else
-                        <small class="text-muted">Not provided</small>
+                        <div style="padding: 2rem; text-align: center; background: #f9fafb; border-radius: 0.5rem;">
+                            <i class="bi bi-inbox" style="font-size: 2rem; color: #d1d5db;"></i>
+                            <p class="mt-2 text-muted">Not provided</p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -404,7 +359,6 @@
                 </div>
             @endif
         </div>
-    </div>
 </div>
 
 <!-- Rejection Modal -->
