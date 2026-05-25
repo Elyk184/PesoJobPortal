@@ -31,6 +31,10 @@ class RecruitmentActivityRequest extends Model
         'lra_recruitment_officer_id_path',
         'job_vacancies_path',
         'job_vacancies_text',
+        // Certification fields
+        'certification_path',
+        'certification_generated_at',
+        'certification_generated_by',
     ];
 
     protected $attributes = [
@@ -45,5 +49,10 @@ class RecruitmentActivityRequest extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function certificationGeneratedBy()
+    {
+        return $this->belongsTo(User::class, 'certification_generated_by');
     }
 }

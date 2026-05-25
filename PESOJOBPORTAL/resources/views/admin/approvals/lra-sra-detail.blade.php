@@ -220,6 +220,7 @@
                 </div>
             </div>
             @endif
+            @endif
 
             </div>
         </div>
@@ -249,6 +250,55 @@
                     </div>
                 </div>
 
+                <!-- Certification Card -->
+                <div class="card border-0 shadow-lg mb-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%); border-left: 4px solid #10b981; border-top: 2px solid #10b981;">
+                    <div class="card-header border-0 py-2 px-3 border-bottom border-success border-opacity-25" style="background: transparent;">
+                        <h6 class="mb-0" style="font-weight: 700; color: #065f46; letter-spacing: 0.3px; font-size: 0.9rem;"><i class="bi bi-certificate me-2"></i>CERTIFICATION</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        @if($activityRequest->certification_path)
+                            <!-- Certification Generated -->
+                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1px solid #bbf7d0; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-check-circle-fill me-2" style="color: #059669; font-size: 1rem;"></i>
+                                    <span style="font-weight: 600; color: #065f46; font-size: 0.85rem;">Certification Generated</span>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #047857; margin-left: 1.5rem;">
+                                    <p style="margin-bottom: 0.3rem;"><strong>Generated:</strong> {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->format('M d, Y H:i') }}</p>
+                                    <p style="margin-bottom: 0;"><strong>By:</strong> {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}</p>
+                                </div>
+                                <div class="d-grid gap-2" style="margin-top: 0.75rem;">
+                                    <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}" target="_blank"
+                                       class="btn btn-sm" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; font-weight: 600; font-size: 0.8rem;">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
+                                    <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}" style="margin: 0;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm w-100" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; font-weight: 600; font-size: 0.8rem;">
+                                            <i class="bi bi-arrow-repeat me-1"></i>Regenerate
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Generate Certification -->
+                            <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem;">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-exclamation-circle-fill me-2" style="color: #b45309; font-size: 1rem;"></i>
+                                    <span style="font-weight: 600; color: #92400e; font-size: 0.85rem;">Certification Pending</span>
+                                </div>
+                                <p style="font-size: 0.75rem; color: #78350f; margin-left: 1.5rem; margin-bottom: 0.5rem;">Generate a certification document before approving this request.</p>
+                                <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}" class="d-grid">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; font-weight: 600; font-size: 0.8rem;">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i>Generate Certification
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Action Card -->
                 <div class="card border-0 shadow-lg sticky-top" style="top: 20px; background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%); border-left: 4px solid #f59e0b; border-top: 2px solid #f59e0b;">
                     <div class="card-header border-0 py-2 px-3 border-bottom border-warning border-opacity-25" style="background: transparent;">
@@ -256,12 +306,12 @@
                     </div>
                     <div class="card-body p-3">
                         <div style="background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.35rem; padding: 0.5rem; margin-bottom: 0.75rem;" role="alert">
-                            <small style="color: #1e40af; font-weight: 500; font-size: 0.75rem;"><i class="bi bi-info-circle me-1"></i>Review all details before deciding.</small>
+                            <small style="color: #1e40af; font-weight: 500; font-size: 0.75rem;"><i class="bi bi-info-circle me-1"></i>Generate certification first, then approve.</small>
                         </div>
                         <form method="POST" class="d-grid gap-2">
                             @csrf
                             <button type="submit" formaction="{{ route('admin.lra-sra.approve', $activityRequest) }}"
-                                    class="btn btn-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; font-weight: 600; padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+                                    class="btn btn-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; font-weight: 600; padding: 0.5rem 0.75rem; font-size: 0.85rem;" {{ !$activityRequest->certification_path ? 'disabled' : '' }}>
                                 <i class="bi bi-check-circle me-1"></i>Approve
                             </button>
                             <button type="button" class="btn btn-sm" style="background: white; color: #dc2626; border: 2px solid #fca5a5; font-weight: 600; padding: 0.5rem 0.75rem; font-size: 0.85rem;" data-bs-toggle="modal"

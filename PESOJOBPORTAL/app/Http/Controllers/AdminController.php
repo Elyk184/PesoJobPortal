@@ -11,6 +11,7 @@ use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
 use App\Models\PortalNotification;
 use App\Models\UserNotification;
+use App\Services\CertificationService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -505,6 +506,12 @@ class AdminController extends Controller
 
     public function approveLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse
     {
+        // Check if certification exists
+        $certService = new CertificationService();
+        if (!$certService->hasCertification($activityRequest)) {
+            return back()->with('error', 'You must generate a certification before approving this request. Please generate the certification first.');
+        }
+
         $activityRequest->update([
             'status' => 'approved',
             'approved_at' => now(),
@@ -513,6 +520,39 @@ class AdminController extends Controller
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
         return back()->with('success', "{$type} request has been approved.");
+    }
+
+    public function generateLraSraCertification(RecruitmentActivityRequest $activityRequest): RedirectResponse
+    {
+        try {
+            $certService = new CertificationService();
+            $certService->generateCertification($activityRequest, Auth::user());
+
+            $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
+            return back()->with('success', "{$type} certification has been generated successfully.");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to generate certification: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadLraSraCertification(RecruitmentActivityRequest $activityRequest)
+    {
+        try {
+            $certService = new CertificationService();
+            return $certService->downloadCertification($activityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to download certification: ' . $e->getMessage());
+        }
+    }
+
+    public function viewLraSraCertification(RecruitmentActivityRequest $activityRequest)
+    {
+        try {
+            $certService = new CertificationService();
+            return $certService->viewCertification($activityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to view certification: ' . $e->getMessage());
+        }
     }
 
     public function rejectLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse

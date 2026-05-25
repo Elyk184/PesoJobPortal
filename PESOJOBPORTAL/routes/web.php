@@ -108,19 +108,19 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     // Applicant recommendation routes
     Route::post('/applications/{application}/recommend', [EmployerController::class, 'recommendApplicant'])
         ->name('applications.recommend');
-    
+
     Route::get('/recommendations/sent', [EmployerController::class, 'viewMyRecommendations'])
         ->name('recommendations.sent');
-    
+
     Route::get('/recommendations/received', [EmployerController::class, 'viewReceivedRecommendations'])
         ->name('recommendations.received');
-    
+
     Route::post('/recommendations/{recommendation}/accept', [EmployerController::class, 'acceptRecommendation'])
         ->name('recommendations.accept');
-    
+
     Route::post('/recommendations/{recommendation}/reject', [EmployerController::class, 'rejectRecommendation'])
         ->name('recommendations.reject');
-    
+
     Route::post('/recommendations/{recommendation}/hire', [EmployerController::class, 'hireFromRecommendation'])
         ->name('recommendations.hire');
 
@@ -176,6 +176,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
     Route::get('/lra-sra-approvals/{activityRequest}', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
+    Route::post('/lra-sra-approvals/{activityRequest}/generate-certification', [AdminController::class, 'generateLraSraCertification'])->name('lra-sra.generate-certification');
+    Route::get('/lra-sra-approvals/{activityRequest}/view-certification', [AdminController::class, 'viewLraSraCertification'])->name('lra-sra.view-certification');
+    Route::get('/lra-sra-approvals/{activityRequest}/download-certification', [AdminController::class, 'downloadLraSraCertification'])->name('lra-sra.download-certification');
     Route::post('/lra-sra-approvals/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
     Route::post('/lra-sra-approvals/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
 
