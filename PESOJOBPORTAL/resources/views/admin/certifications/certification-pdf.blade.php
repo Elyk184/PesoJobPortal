@@ -38,13 +38,21 @@
             text-align: center;
             margin-bottom: 0.08in;
             padding-bottom: 0.05in;
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 0.05in;
+            right: 0.2in;
+            width: 0.85in;
+            height: auto;
+            object-fit: contain;
         }
 
         .seal-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.04in;
+            display: block;
+            text-align: center;
         }
 
         .seal {
@@ -192,6 +200,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
+            <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}" alt="Bagong Pilipinas" class="header-logo">
             <div class="seal-row">
                 <div class="header-text">
                     <div class="gov-line">Republic of the Philippines</div>
