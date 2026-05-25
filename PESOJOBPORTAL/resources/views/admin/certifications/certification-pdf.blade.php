@@ -36,38 +36,40 @@
         /* Header Section */
         .header {
             text-align: center;
-            margin-bottom: 0.08in;
-            padding-bottom: 0.05in;
+            margin-bottom: 0.15in;
+            padding-bottom: 0.1in;
+            border-bottom: 2px solid #000;
         }
 
         .header-top {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 0.05in;
+            margin-bottom: 0.08in;
             width: 100%;
-            flex-wrap: nowrap;
+            gap: 0.1in;
         }
 
         .header-logo {
-            width: 0.7in;
-            height: auto;
+            width: 1.2in;
+            height: 1.2in;
             object-fit: contain;
-            flex-shrink: 0;
+            flex: 0 0 1.2in;
         }
 
         .header-logo-left {
-            width: 0.7in;
-            height: auto;
+            width: 1.2in;
+            height: 1.2in;
             object-fit: contain;
-            flex-shrink: 0;
+            flex: 0 0 1.2in;
         }
 
         .header-center {
-            flex: 1;
+            flex: 1 1 auto;
             text-align: center;
-            padding: 0 0.3in;
+            padding: 0 0.15in;
+            min-width: 0;
         }
 
         .seal {
@@ -78,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             flex-shrink: 0;
         }
 
@@ -89,58 +91,70 @@
         }
 
         .gov-line {
-            font-size: 8px;
-            line-height: 1.1;
-            letter-spacing: 0.03em;
+            font-size: 11px;
+            line-height: 1.2;
+            letter-spacing: 0.04em;
+            font-weight: 500;
         }
 
         .gov-main {
-            font-size: 8.5px;
+            font-size: 13px;
             font-weight: bold;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
+            line-height: 1.3;
+            text-transform: uppercase;
         }
 
         .decorative-line {
             text-align: center;
-            font-size: 10px;
-            letter-spacing: 0.12em;
-            margin: 0.02in 0;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            margin: 0.05in 0;
+            color: #333;
         }
 
         .title {
             font-size: 18px;
             font-weight: bold;
-            letter-spacing: 0.08em;
-            margin: 0.03in 0;
+            letter-spacing: 0.1em;
+            margin: 0.08in 0 0.06in 0;
             text-align: center;
+            text-transform: uppercase;
+            color: #000;
         }
 
         /* Content Section */
         .content {
-            margin: 0.05in 0;
-            font-size: 9px;
-            line-height: 1.3;
+            margin: 0.12in 0.3in;
+            font-size: 12px;
+            line-height: 1.5;
             flex-grow: 1;
         }
 
         .salutation {
             font-weight: bold;
-            margin-bottom: 0.04in;
+            margin-bottom: 0.08in;
+            text-align: left;
+            font-size: 12px;
         }
 
         .cert-paragraph {
             text-align: justify;
-            margin-bottom: 0.04in;
-            text-indent: 0.15in;
+            margin-bottom: 0.06in;
+            text-indent: 0.3in;
+            line-height: 1.5;
+            font-size: 12px;
         }
 
         .cert-paragraph:first-of-type {
-            text-indent: 0.15in;
+            text-indent: 0.3in;
         }
 
         .location-block {
-            margin: 0.04in 0;
-            font-size: 9px;
+            margin: 0.08in 0;
+            font-size: 12px;
+            text-align: justify;
+            line-height: 1.5;
         }
 
         /* Signature Section */
@@ -170,7 +184,7 @@
         }
 
         .sig-label {
-            font-size: 8px;
+            font-size: 12px;
             font-weight: bold;
             margin-bottom: 0.08in;
             min-height: 0.15in;
@@ -183,31 +197,68 @@
         }
 
         .sig-name {
-            font-size: 8.5px;
+            font-size: 12px;
             font-weight: bold;
         }
 
         .sig-title {
-            font-size: 7.5px;
+            font-size: 12px;
         }
 
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 0.02in;
-            padding-top: 0.02in;
-            font-size: 7px;
-            line-height: 1.2;
+            margin-top: 0.08in;
+            padding-top: 0.08in;
+            border-top: 2px solid #000;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .footer-top-line {
+            border-top: 1px solid #000;
+            margin: 0 0 0.05in 0;
         }
 
         .tagline {
             font-style: italic;
-            margin: 0.01in 0;
-            font-size: 8px;
+            margin: 0.1in 0 0.08in 0;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            gap: 0.1in;
+            margin-top: 0.05in;
+            font-size: 10px;
+            padding: 0 0.1in;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.05in;
+            flex: 0 1 auto;
+            white-space: nowrap;
+        }
+
+        .contact-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+            font-weight: bold;
         }
 
         .contact {
-            font-size: 7px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -221,11 +272,11 @@
                     <div class="gov-line">Republic of the Philippines</div>
                     <div class="gov-line">Province of Bukidnon</div>
                     <div class="gov-main">MUNICIPALITY OF MANOLO FORTICH</div>
-                    <div class="gov-main" style="font-size: 9px;">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
+                    <div class="gov-main" style="font-size: 12px;">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
                 </div>
                 <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}" alt="Bagong Pilipinas" class="header-logo">
             </div>
-            <div class="decorative-line">▼ ▼ ▼ ▼ ▼</div>
+
         </div>
 
         <!-- Title -->
@@ -259,6 +310,7 @@
         </div>
 
         <!-- Signatures -->
+    <div> </div>
         <div class="signature-container">
             <div class="sig-block">
                 <div class="sig-label">ATTESTED BY:</div>
@@ -272,11 +324,25 @@
             </div>
         </div>
 
+        <!-- Tagline -->
+        <div class="tagline">"Lupad Manolo Fortich"</div>
+
         <!-- Footer -->
         <div class="footer">
-            <div class="contact">peso@manolofortich.gov.ph | 0917-808-676</div>
-            <div class="tagline">"Lupad Manolo Fortich"</div>
-            <div class="decorative-line">▼ ▼ ▼ ▼ ▼</div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span class="contact-icon">[E]</span>
+                    <span class="contact">peso@manolofortich.gov.ph</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">[T]</span>
+                    <span class="contact">0917-808-676</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">[F]</span>
+                    <span class="contact">www.facebook.com/LGU Manolo Fortich</span>
+                </div>
+            </div>
         </div>
     </div>
 </body>
