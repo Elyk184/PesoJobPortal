@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
 use App\Models\CompanyProfile;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,8 @@ use Illuminate\View\View;
 
 class EmployerController extends Controller
 {
+    use AuthorizesRequests;
+
     public function dashboard(Request $request): View
     {
         $employer = $request->user()->loadMissing('companyProfile');
@@ -127,7 +130,6 @@ class EmployerController extends Controller
             $employer->forceFill(['is_employer_verified' => true])->save();
         }
 
-<<<<<<< HEAD
         $referredApplications = $this->getReferredApplications($employer->id, $request);
 
         $filteredApplications = collect($referredApplications); // For stats
@@ -138,63 +140,6 @@ class EmployerController extends Controller
             'pendingReview' => $filteredApplications->whereNull('employer_status')->count(),
             'approved' => $filteredApplications->where('employer_status', 'hired')->count(),
             'rejected' => $filteredApplications->where('employer_status', 'not_selected')->count(),
-=======
-        // Get all referred applications and recommended applicants
-        $referredApplications = $this->getReferredApplications($employer->id);
-        $recommendedApplicants = $this->getRecommendedApplicants($employer->id);
-        
-        // Combine both collections
-        $allApplicants = collect();
-        
-        // Add job applications with type indicator
-        foreach ($referredApplications as $app) {
-            $app->applicant_type = 'application';
-            $app->user_name = $app->user->name ?? 'N/A';
-            $app->user_email = $app->user->email ?? 'N/A';
-            $allApplicants->push($app);
-        }
-        
-        // Add recommended applicants with type indicator
-        foreach ($recommendedApplicants as $rec) {
-            $rec->applicant_type = 'recommendation';
-            $rec->user_name = $rec->jobseeker->name ?? 'N/A';
-            $rec->user_email = $rec->jobseeker->email ?? 'N/A';
-            $rec->peso_job_id = $rec->peso_job_id;
-            $rec->status = $rec->status;
-            $allApplicants->push($rec);
-        }
-
-        // Apply filters based on request parameters
-        if ($request->has('job_id') && $request->get('job_id') !== '') {
-            $allApplicants = $allApplicants->where('peso_job_id', $request->get('job_id'));
-        }
-
-        if ($request->has('status') && $request->get('status') !== '') {
-            $allApplicants = $allApplicants->where('status', $request->get('status'));
-        }
-
-        if ($request->has('search') && $request->get('search') !== '') {
-            $searchTerm = strtolower($request->get('search'));
-            $allApplicants = $allApplicants->filter(function ($app) use ($searchTerm) {
-                $name = strtolower($app->user_name ?? '');
-                $email = strtolower($app->user_email ?? '');
-                return str_contains($name, $searchTerm) || str_contains($email, $searchTerm);
-            });
-        }
-
-        // Calculate stats including both types
-        $totalCount = $referredApplications->count() + $recommendedApplicants->count();
-        $recommendedCount = $referredApplications->where('status', 'recommended')->count() + 
-                           $recommendedApplicants->where('status', 'pending')->count();
-
-        return view('dashboard.employer.view-applicants', [
-            'referredApplications' => $allApplicants->values(),
-            'totalApplicants' => $totalCount,
-            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
-            'recommended' => $recommendedCount,
-            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
-            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
->>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -1164,7 +1109,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('create', RecommendedApplicant::class);
-        
+
         // Verify the application belongs to a job this employer can recommend
         if ($application->job->employer_id !== $employer->id) {
             return redirect()->back()->with('error', 'You can only recommend applicants from your own job postings.');
@@ -1186,7 +1131,7 @@ class EmployerController extends Controller
                     ->first();
 
                 if ($existing) {
-                    throw new \Exception('You have already recommended this applicant to ' . 
+                    throw new \Exception('You have already recommended this applicant to ' .
                         User::find($validated['recommended_to_user_id'])->name . '.');
                 }
 
@@ -1229,7 +1174,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('viewSent', RecommendedApplicant::class);
-        
+
         $recommendations = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
             ->where('recommendation_type', '!=', 'general') // Only show specific recommendations sent
             ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedTo'])
@@ -1249,7 +1194,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('viewReceived', RecommendedApplicant::class);
-        
+
         // Only show recommendations specifically addressed to this employer
         $recommendations = RecommendedApplicant::where('recommended_to_user_id', $employer->id)
             ->whereNotNull('recommended_to_user_id') // Must be specifically addressed to someone
@@ -1333,7 +1278,7 @@ class EmployerController extends Controller
 
         DB::transaction(function () use ($recommendation, $employer) {
             $recommendation->markAsHired('Hired through recommendation');
-            
+
             // Update the job application status
             $recommendation->jobApplication->update(['status' => 'hired']);
 
@@ -1424,7 +1369,7 @@ class EmployerController extends Controller
                         'user_id' => $recipient->id,
                         'type' => 'recommendation_followup',
                         'title' => 'Applicant Recommendation Follow-up',
-                        'message' => $employer->name . ' is following up on a recommended applicant for ' . 
+                        'message' => $employer->name . ' is following up on a recommended applicant for ' .
                             $recommendation->job->title,
                         'related_id' => $recommendation->id,
                     ]);
@@ -1506,7 +1451,7 @@ class EmployerController extends Controller
     public function markRecommendationReviewed(Request $request, RecommendedApplicant $recommendation): RedirectResponse
     {
         $employer = $request->user();
-        
+
         if ($recommendation->recommended_to_user_id !== $employer->id) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
@@ -1522,7 +1467,7 @@ class EmployerController extends Controller
     public function shareRecommendation(Request $request, RecommendedApplicant $recommendation): JsonResponse
     {
         $employer = $request->user();
-        
+
         if ($recommendation->recommended_to_user_id !== $employer->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -1544,7 +1489,7 @@ class EmployerController extends Controller
                         'user_id' => $user->id,
                         'type' => 'recommendation_shared',
                         'title' => 'Shared Applicant Recommendation',
-                        'message' => $employer->name . ' shared an applicant recommendation: ' . 
+                        'message' => $employer->name . ' shared an applicant recommendation: ' .
                             $recommendation->job->title,
                         'related_id' => $recommendation->id,
                     ]);
