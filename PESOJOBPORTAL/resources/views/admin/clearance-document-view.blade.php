@@ -40,7 +40,6 @@
         .header {
             text-align: center;
             margin-bottom: 0.8rem;
-            border-bottom: 2px solid #000;
             padding-bottom: 0.6rem;
         }
         
@@ -278,6 +277,7 @@
                 <div class="header-line">Province of Bukidnon</div>
                 <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
                 <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-image.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin-top: 0.05rem;">
             </div>
             
             <div class="title">PESO CLEARANCE</div>
@@ -293,7 +293,7 @@
             <div class="info-section">
                 <div style="width: 100%;">
                     {{--  <div class="info-label">Address</div>  --}}
-                    <div style="font-size: 24px; font-weight: 600; margin-top: 0.3rem;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
+                    <div style="font-size: 24px; font-weight: 600; margin-top: 0.3rem; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
             </div>
             
@@ -320,7 +320,7 @@
                     <?php $orNumber = sprintf('%07d', $clearance->id * 12345 % 9999999); ?>
                     <div class="or-number">OR NO.: {{ $orNumber }}</div>
                     <div class="or-number">DATE ISSUED: {{ now()->format('m/d/Y') }}</div>
-                    <div style="margin-top: 0.5rem; text-align: center;">
+                    <div style="margin-top: 0.5rem; text-align: right;">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode('OR:' . $orNumber . ' - ' . $clearance->clearance_number) }}" alt="QR Code" style="width: 80px; height: 80px; border: 1px solid #000;">
                     </div>
                 </?php>
