@@ -38,21 +38,36 @@
             text-align: center;
             margin-bottom: 0.08in;
             padding-bottom: 0.05in;
-            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.05in;
+            width: 100%;
+            flex-wrap: nowrap;
         }
 
         .header-logo {
-            position: absolute;
-            top: 0.05in;
-            right: 0.2in;
-            width: 0.85in;
+            width: 0.7in;
             height: auto;
             object-fit: contain;
+            flex-shrink: 0;
         }
 
-        .seal-row {
-            display: block;
+        .header-logo-left {
+            width: 0.7in;
+            height: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-center {
+            flex: 1;
             text-align: center;
+            padding: 0 0.3in;
         }
 
         .seal {
@@ -200,14 +215,15 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}" alt="Bagong Pilipinas" class="header-logo">
-            <div class="seal-row">
-                <div class="header-text">
+            <div class="header-top">
+                <img src="{{ public_path('images/manolo fortich seal.png') }}" alt="Manolo Fortich Seal" class="header-logo-left">
+                <div class="header-center">
                     <div class="gov-line">Republic of the Philippines</div>
                     <div class="gov-line">Province of Bukidnon</div>
                     <div class="gov-main">MUNICIPALITY OF MANOLO FORTICH</div>
                     <div class="gov-main" style="font-size: 9px;">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
                 </div>
+                <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}" alt="Bagong Pilipinas" class="header-logo">
             </div>
             <div class="decorative-line">▼ ▼ ▼ ▼ ▼</div>
         </div>

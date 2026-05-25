@@ -55,6 +55,9 @@
             <a href="{{ route('admin.lra-sra-approvals') }}" class="sidebar-menu-link {{ request()->routeIs('admin.lra-sra-approvals') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-check"></i>
                 <span>LRA/SRA Approvals</span>
+                @if(($adminSidebarCounts['pendingLraSraApprovals'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#ec4899;">{{ $adminSidebarCounts['pendingLraSraApprovals'] }}</span>
+                @endif
             </a>
         </li>
         <li class="sidebar-menu-item">
@@ -78,7 +81,7 @@
             </a>
         </li>
         <li class="sidebar-menu-item">
-   
+
         </li>
         <li class="sidebar-menu-item">
             <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link {{ request()->routeIs('admin.peso-clearances') ? 'active' : '' }}">

@@ -69,6 +69,9 @@ class AppServiceProvider extends ServiceProvider
                 ->where('status', 'pending')
                 ->whereNull('archived_at')
                 ->count(),
+            'pendingLraSraApprovals' => DB::table('recruitment_activity_requests')
+                ->where('status', 'pending')
+                ->count(),
             'pendingPesoClearances' => PesoClearance::query()
                 ->where('status', 'pending')
                 ->count(),

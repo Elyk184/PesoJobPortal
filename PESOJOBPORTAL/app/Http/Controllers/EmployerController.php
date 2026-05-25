@@ -41,10 +41,20 @@ class EmployerController extends Controller
             ? asset('storage/'.$logoPath)
             : null;
 
+        // Get recent LRA/SRA status updates (approved or rejected)
+        $recentLraSraUpdates = RecruitmentActivityRequest::query()
+            ->where('employer_id', $employer->id)
+            ->whereIn('status', ['approved', 'rejected'])
+            ->with(['approvedBy'])
+            ->latest('updated_at')
+            ->limit(5)
+            ->get();
+
         return view('dashboard.employer', [
             'stats' => $this->buildDashboardStats($employer->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
             'companyLogoUrl' => $companyLogoUrl,
+            'recentLraSraUpdates' => $recentLraSraUpdates,
         ]);
     }
 
@@ -150,6 +160,36 @@ class EmployerController extends Controller
         return view('dashboard.employer.request-lra-sra', [
             'recruitmentRequests' => $this->getRecruitmentRequests($request->user()->id),
         ]);
+    }
+
+    public function viewRecruitmentActivity(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest): View
+    {
+        // Ensure employer can only view their own requests
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this request.');
+        }
+
+        $recruitmentActivityRequest->load(['employer', 'approvedBy', 'certificationGeneratedBy']);
+
+        return view('dashboard.employer.recruitment-activity-detail', [
+            'activityRequest' => $recruitmentActivityRequest,
+        ]);
+    }
+
+    public function downloadRecruitmentActivityCertificate(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest)
+    {
+        // Ensure employer can only download their own certificates
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this certificate.');
+        }
+
+        // Check if certification exists
+        if (!$recruitmentActivityRequest->certification_path || !Storage::disk('public')->exists($recruitmentActivityRequest->certification_path)) {
+            return back()->with('error', 'Certificate not available for download.');
+        }
+
+        $filePath = Storage::disk('public')->path($recruitmentActivityRequest->certification_path);
+        return response()->download($filePath, "LRA_SRA_Certificate_{$recruitmentActivityRequest->id}.pdf");
     }
 
     public function submitDocumentsPage(Request $request): View
@@ -766,7 +806,16 @@ class EmployerController extends Controller
             $dataToCreate['job_vacancies_text'] = $validated['job_vacancies_text'] ?? null;
         }
 
-        RecruitmentActivityRequest::create($dataToCreate);
+        $activityRequest = RecruitmentActivityRequest::create($dataToCreate);
+
+        // Notify admins of new request
+        $activityType = strtoupper($validated['activity_type']);
+        $employerName = $request->user()->name;
+        $this->notifyAdmins(
+            "New {$activityType} Request",
+            "New {$activityType} request submitted by {$employerName} requiring review and certification.",
+            $request->user()->id
+        );
 
         return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
     }
@@ -943,6 +992,7 @@ class EmployerController extends Controller
     {
         return RecruitmentActivityRequest::query()
             ->where('employer_id', $employerId)
+            ->with(['approvedBy'])
             ->latest()
             ->get();
     }

@@ -519,7 +519,34 @@ class AdminController extends Controller
         ]);
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
-        return back()->with('success', "{$type} request has been approved.");
+        $typeLabel = $activityRequest->activity_type === 'lra' ? 'Local Recruitment Activity' : 'Special Recruitment Activity';
+
+        // Send emails to employer
+        try {
+            if ($activityRequest->employer && $activityRequest->employer->email) {
+                // Send certification email
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\CertificationApprovalMail($activityRequest));
+
+                // Send request approval email
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\RequestApprovedMail($activityRequest));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval emails: ' . $e->getMessage());
+        }
+
+        // Create in-app notification for employer
+        if ($activityRequest->employer) {
+            $this->notifyEmployer(
+                $activityRequest->employer,
+                'lra_sra_update',
+                "{$type} Request Approved",
+                "Your {$typeLabel} request has been approved. Your certification is ready for download."
+            );
+        }
+
+        return back()->with('success', "{$type} request has been approved and emails sent to employer.");
     }
 
     public function generateLraSraCertification(RecruitmentActivityRequest $activityRequest): RedirectResponse
@@ -565,7 +592,29 @@ class AdminController extends Controller
         ]);
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
-        return back()->with('success', "{$type} request has been rejected.");
+        $typeLabel = $activityRequest->activity_type === 'lra' ? 'Local Recruitment Activity' : 'Special Recruitment Activity';
+
+        // Send rejection email to employer
+        try {
+            if ($activityRequest->employer && $activityRequest->employer->email) {
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\RequestRejectedMail($activityRequest, $request->notes));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send rejection email: ' . $e->getMessage());
+        }
+
+        // Create in-app notification for employer
+        if ($activityRequest->employer) {
+            $this->notifyEmployer(
+                $activityRequest->employer,
+                'lra_sra_update',
+                "{$type} Request Rejected",
+                "Your {$typeLabel} request has been rejected. Reason: {$request->notes}"
+            );
+        }
+
+        return back()->with('success', "{$type} request has been rejected and notification sent to employer.");
     }
 
     private function notifyEmployer(User $employer, string $preferredType, string $title, string $message): void

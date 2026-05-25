@@ -417,6 +417,47 @@
             </div>
         </div>
 
+        @if(($recentLraSraUpdates ?? collect())->isNotEmpty())
+        <div class="panel" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-left: 4px solid #10b981;">
+            <h2 style="color: #065f46;"><i class="bi bi-bell me-2" style="color: #10b981;"></i>LRA/SRA Status Updates</h2>
+            <div style="display: grid; gap: 12px;">
+                @foreach($recentLraSraUpdates as $update)
+                    <div style="background: white; border-radius: 8px; padding: 12px; border-left: 3px solid {{ $update->status === 'approved' ? '#10b981' : '#ef4444' }};">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                            <div>
+                                <strong style="color: #1f2937;">{{ strtoupper($update->activity_type) }} Request</strong>
+                                <span class="badge" style="background: {{ $update->status === 'approved' ? '#d1fae5' : '#fee2e2' }}; color: {{ $update->status === 'approved' ? '#065f46' : '#7f1d1d' }}; margin-left: 8px; font-size: 0.75rem;">
+                                    {{ ucfirst($update->status) }}
+                                </span>
+                            </div>
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 8px;">
+                            @if($update->status === 'approved')
+                                <i class="bi bi-check-circle" style="color: #10b981;"></i> Approved on {{ optional($update->approved_at)->format('M d, Y') }}
+                            @else
+                                <i class="bi bi-x-circle" style="color: #ef4444;"></i> Rejected on {{ optional($update->updated_at)->format('M d, Y') }}
+                            @endif
+                        </p>
+                        @if($update->status === 'rejected' && $update->notes)
+                            <p style="color: #64748b; font-size: 0.85rem; background: #f9fafb; padding: 8px; border-radius: 4px; margin: 8px 0 0;">
+                                <strong>Reason:</strong> {{ $update->notes }}
+                            </p>
+                        @elseif($update->status === 'approved' && $update->certification_path)
+                            <p style="color: #047857; font-size: 0.85rem;">
+                                <i class="bi bi-file-pdf" style="color: #10b981;"></i> <a href="{{ route('admin.lra-sra.view-certification', $update) }}" target="_blank" style="color: #10b981; text-decoration: none; font-weight: 600;">View Certificate</a>
+                            </p>
+                        @endif
+                    </div>
+                @endforeach
+                <div style="text-align: center; margin-top: 8px;">
+                    <a href="{{ route('employer.recruitment.index') }}" style="color: #10b981; text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                        View All Requests <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="panel">
             <h2>Quick Actions</h2>
             <div class="quick-actions">
