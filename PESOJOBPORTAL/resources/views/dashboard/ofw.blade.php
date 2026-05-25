@@ -5,7 +5,7 @@
 @section('dashboard-mobile-brand')
     <div class="dashboard-mobile-brand">
         <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
-        <span>OFW User Hub</span>
+        <span>OFW Portal</span>
     </div>
 @endsection
 
@@ -22,7 +22,7 @@
             </div>
 
             <div class="d-none d-md-block text-end">
-                <div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'OFW' }}</div>
+                <div class="fw-semibold text-secondary">{{ $ofwUser->name ?? 'OFW' }}</div>
                 <div class="dashboard-topbar-subtitle">OFW Portal</div>
             </div>
         </div>
@@ -30,8 +30,22 @@
         <div class="dashboard-section-card p-3 p-lg-4 mb-4">
             <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
                 <div>
-                    <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'OFW' }}!</h2>
+                    <h2 class="h4 mb-1 fw-bold">Welcome back, {{ $ofwUser->name ?? 'OFW' }}!</h2>
                     <p class="mb-0 text-muted">Use the official forms below to submit an assistance request and monitor its progress.</p>
+                </div>
+
+                <div class="dashboard-highlight" style="min-width: 280px; background: #f7f9fc; color: #314458; border: 1px solid var(--dash-border); box-shadow: none;">
+                    <div class="dashboard-highlight-label" style="color: var(--dash-muted);">OFW account info</div>
+                    <div class="dashboard-highlight-value" style="color: #23374f;">{{ $profileSummary['name'] ?? $ofwUser->name ?? 'OFW' }}</div>
+                    <div class="dashboard-highlight-note" style="color: var(--dash-muted);">
+                        {{ $profileSummary['email'] ?? $ofwUser->email }}
+                        @if (! empty($profileSummary['phone']))
+                            <br>{{ $profileSummary['phone'] }}
+                        @endif
+                        @if (! empty($profileSummary['address']))
+                            <br>{{ $profileSummary['address'] }}
+                        @endif
+                    </div>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">

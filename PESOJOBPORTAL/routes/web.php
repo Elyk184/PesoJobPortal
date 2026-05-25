@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\OfwController;
 use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\WelcomeController;
@@ -20,7 +21,7 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-Route::view('/ofw-preview', 'dashboard.ofw')->name('ofw.preview');
+Route::middleware('auth')->get('/ofw-preview', [OfwController::class, 'dashboard'])->name('ofw.preview');
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

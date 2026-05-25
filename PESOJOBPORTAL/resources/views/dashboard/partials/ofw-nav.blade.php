@@ -1,5 +1,5 @@
 @php
-    $user = auth()->user();
+    $user = $ofwUser ?? auth()->user();
 @endphp
 
 <aside class="dashboard-sidebar">
@@ -9,8 +9,8 @@
                 <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
             </div>
             <div>
-                <div class="dashboard-brand-kicker">OWWA / DMW Assistance</div>
-                <div class="dashboard-brand-title">OFW User Hub</div>
+                <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
+                <div class="dashboard-brand-title">OFW Portal</div>
             </div>
         </div>
 
@@ -24,8 +24,8 @@
             <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
         </div>
         <div>
-            <div class="dashboard-brand-kicker">OWWA / DMW Assistance</div>
-            <div class="dashboard-brand-title">OFW User Hub</div>
+            <div class="dashboard-brand-kicker">Link Job Resource Portal</div>
+            <div class="dashboard-brand-title">OFW Portal</div>
         </div>
     </div>
 
