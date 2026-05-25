@@ -20,6 +20,10 @@
     --peso-text: #0f3760;
 }
 
+html {
+    scrollbar-gutter: stable;
+}
+
 * {
     box-sizing: border-box;
 }

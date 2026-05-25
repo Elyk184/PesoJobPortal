@@ -16,6 +16,7 @@ use App\Services\JobMatchingService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -835,9 +836,83 @@ class JobseekerController extends Controller
         $user->name = $fullName ?: $user->name;
         $user->save();
 
+        $this->syncLegacyJobseekerProfile($user, $validated, $profile);
+
         return redirect()
             ->route('jobseeker.profile')
             ->with('status', 'Profile saved successfully.');
+    }
+
+    private function syncLegacyJobseekerProfile(User $user, array $validated, UserProfile $profile): void
+    {
+        $personal = $validated['personal_information'] ?? [];
+        $presentAddress = $validated['present_address'] ?? [];
+        $educationRows = $this->normalizeResumeSection($validated['education'] ?? [], ['school', 'course', 'year']);
+        $trainingRows = $this->normalizeResumeSection($validated['training'] ?? [], ['course', 'hours', 'institution', 'dates', 'skills', 'certificates']);
+        $experienceRows = $this->normalizeResumeSection($validated['experience'] ?? [], ['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']);
+        $eligibilityRows = $this->normalizeResumeSection($validated['eligibility'] ?? [], ['eligibility', 'date_taken', 'license', 'valid_until']);
+
+        $otherSkills = [
+            'trade_manual' => $this->normalizeList(implode(', ', $validated['other_skills']['trade_manual'] ?? [])),
+            'it_technical' => $this->normalizeList(implode(', ', $validated['other_skills']['it_technical'] ?? [])),
+            'soft_skills' => $this->normalizeList(implode(', ', $validated['other_skills']['soft_skills'] ?? [])),
+        ];
+
+        $skills = $this->buildSkillList($otherSkills);
+        $certifications = collect($trainingRows)
+            ->pluck('course')
+            ->merge(collect($eligibilityRows)->pluck('eligibility'))
+            ->filter()
+            ->implode(', ');
+
+        $legacyProfileData = [
+            'first_name' => trim((string) ($personal['first_name'] ?? '')) ?: null,
+            'last_name' => trim((string) ($personal['surname'] ?? '')) ?: null,
+            'middle_initial' => trim((string) ($personal['middle_initial'] ?? '')) ?: null,
+            'suffix' => trim((string) ($personal['suffix'] ?? '')) ?: null,
+            'religion' => trim((string) ($personal['religion'] ?? '')) ?: null,
+            'civil_status' => trim((string) ($personal['civil_status'] ?? '')) ?: null,
+            'height' => trim((string) ($personal['height'] ?? '')) ?: null,
+            'tin' => trim((string) ($personal['tin'] ?? '')) ?: null,
+            'email_address' => trim((string) ($personal['email_address'] ?? $user->email ?? '')) ?: null,
+            'bio' => trim((string) ($validated['job_preferences']['occupation_text'] ?? '')) ?: null,
+            'phone' => trim((string) ($personal['contact_number'] ?? '')) ?: null,
+            'date_of_birth' => $personal['date_of_birth'] ?? null,
+            'gender' => $personal['sex'] ?? null,
+            'address' => $this->formatAddress($presentAddress) ?: null,
+            'city' => trim((string) ($presentAddress['municipality'] ?? '')) ?: null,
+            'province' => trim((string) ($presentAddress['province'] ?? '')) ?: null,
+            'postal_code' => null,
+            'skills' => $skills ? mb_substr(implode(', ', $skills), 0, 255) : null,
+            'years_of_experience' => count($experienceRows) ?: null,
+            'education' => $educationRows ? json_encode($educationRows) : null,
+            'training' => $trainingRows ? json_encode($trainingRows) : null,
+            'work_experience' => $experienceRows ? json_encode($experienceRows) : null,
+            'employment_status' => ! empty($validated['employment_status']) ? json_encode($validated['employment_status']) : null,
+            'job_preference' => ! empty($validated['job_preferences']) ? json_encode($validated['job_preferences']) : null,
+            'disability' => ! empty($validated['disability']) ? json_encode($validated['disability']) : null,
+            'avatar_path' => $profile->photo_path ?? null,
+            'certifications' => $certifications ?: null,
+            'languages' => ! empty($validated['languages']) ? json_encode($validated['languages']) : null,
+            'updated_at' => now(),
+        ];
+
+        $exists = DB::table('jobseeker_profiles')
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if ($exists) {
+            DB::table('jobseeker_profiles')
+                ->where('user_id', $user->id)
+                ->update($legacyProfileData);
+
+            return;
+        }
+
+        DB::table('jobseeker_profiles')->insert(array_merge([
+            'user_id' => $user->id,
+            'created_at' => now(),
+        ], $legacyProfileData));
     }
 
     public function resumeBuilder(): View

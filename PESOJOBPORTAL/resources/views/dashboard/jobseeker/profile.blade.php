@@ -188,7 +188,7 @@
                 <div class="profile-section-header">
                     <div class="profile-section-icon"><i class="bi bi-geo-alt"></i></div>
                     <div>
-                        <div class="profile-section-kicker">II.</div>
+                        <div class="profile-section-kicker">II.</div>   
                         <h2 class="profile-section-title">Address</h2>
                     </div>
                 </div>

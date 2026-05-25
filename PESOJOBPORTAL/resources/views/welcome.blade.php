@@ -149,9 +149,9 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 40px;
+                gap: clamp(24px, 4vw, 40px);
                 position: relative;
-                padding: 80px 24px;
+                padding: clamp(56px, 7vw, 80px) clamp(16px, 2vw, 24px);
                 z-index: 1;
             }
 
@@ -159,31 +159,42 @@
                 position: relative;
                 z-index: 2;
                 text-align: left;
-                width: 55%;
+                width: min(55%, 720px);
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .hero-title-welcome {
-                font-size: 46px;
+                font-size: clamp(2rem, 4.4vw, 46px);
                 font-weight: 700;
                 line-height: 1.1;
-                margin-bottom: 10px;
+                margin-bottom: 0.35rem;
                 color: #075cb2e6;
+                text-wrap: balance;
+            }
+
+            .hero-title-welcome span {
+                display: inline-block;
             }
 
             .hero-title-peso {
-                font-size: 46px;
+                font-size: clamp(2rem, 4.4vw, 46px);
                 font-weight: 700;
                 line-height: 1.1;
                 color: #e74c3c;
-                margin-bottom: 20px;
+                margin-bottom: 0.8rem;
+                text-wrap: balance;
             }
 
             .hero-title-connecting {
-                font-size: 34px;
+                font-size: clamp(1.5rem, 3.2vw, 34px);
                 font-weight: 700;
                 line-height: 1.2;
-                margin-bottom: 18px;
+                margin-bottom: 1rem;
                 color: #075cb2e6;
+                text-wrap: balance;
             }
 
             .hero-title-connecting span {
@@ -191,10 +202,11 @@
             }
 
             .hero-description-text {
-                font-size: 18px;
+                font-size: clamp(1rem, 1.5vw, 18px);
                 color: #333;
                 margin-bottom: 30px;
-                line-height: 1.6;
+                line-height: 1.65;
+                max-width: 620px;
             }
 
             .hero-btn-getstarted {
@@ -223,7 +235,7 @@
                 border: 1px solid rgba(252, 211, 77, 0.48);
                 border-radius: 22px;
                 padding: clamp(20px, 2.4vw, 28px);
-                width: 35%;
+                width: min(35%, 430px);
                 box-shadow: 0 18px 40px rgba(9, 32, 77, 0.22);
                 backdrop-filter: blur(10px);
                 position: relative;
@@ -494,12 +506,15 @@
             @media (max-width: 1024px) {
                 .hero-static {
                     flex-direction: column;
-                    padding: 60px 24px;
+                    align-items: center;
+                    padding: 56px 20px;
                 }
 
                 .hero-content-left {
                     width: 100%;
                     text-align: center;
+                    max-width: 760px;
+                    align-items: center;
                 }
 
                 .hero-tabulation {
@@ -511,63 +526,84 @@
             @media (max-width: 768px) {
                 .hero-title-welcome,
                 .hero-title-peso {
-                    font-size: 36px;
+                    font-size: clamp(1.8rem, 7vw, 2.25rem);
+                    line-height: 1.08;
                 }
 
                 .hero-title-connecting {
-                    font-size: 28px;
+                    font-size: clamp(1.35rem, 5.5vw, 1.85rem);
+                    line-height: 1.12;
                 }
 
                 .hero-description-text {
-                    font-size: 16px;
+                    font-size: 0.98rem;
+                    max-width: 42rem;
                 }
 
                 .hero-static {
-                    padding: 40px 20px;
+                    padding: 42px 16px;
+                }
+
+                .hero-tabulation-grid {
+                    gap: 16px 18px;
                 }
             }
 
             @media (max-width: 480px) {
                 .hero-title-welcome,
                 .hero-title-peso {
-                    font-size: 28px;
+                    font-size: clamp(1.35rem, 8vw, 1.75rem);
+                    line-height: 1.12;
                 }
 
                 .hero-title-connecting {
-                    font-size: 22px;
+                    font-size: clamp(1.05rem, 6vw, 1.35rem);
+                    line-height: 1.12;
                 }
 
                 .hero-description-text {
-                    font-size: 14px;
+                    font-size: 0.92rem;
+                    line-height: 1.55;
                 }
 
                 .hero-btn-getstarted {
-                    padding: 10px 30px;
-                    font-size: 14px;
+                    padding: 10px 28px;
+                    font-size: 0.92rem;
                 }
 
                 .hero-tabulation-grid {
-                    gap: 15px;
+                    gap: 14px 16px;
+                    grid-template-columns: 1fr 1fr;
+                }
+
+                .hero-title-connecting span {
+                    display: block;
+                }
+
+                .hero-title-welcome span {
+                    display: block;
+                    margin-top: 0.1rem;
                 }
 
                 .hero-stat strong {
-                    font-size: 24px;
+                    font-size: clamp(1.4rem, 8vw, 1.9rem);
                 }
 
                 .hero-stat span {
-                    font-size: 12px;
+                    font-size: 0.75rem;
+                    line-height: 1.25;
                 }
 
                 .about-section {
-                    padding: 1.5rem;
+                    padding: 1.25rem;
                 }
 
                 .about-item h3 {
-                    font-size: 1.2rem;
+                    font-size: 1.1rem;
                 }
 
                 .news-header {
-                    font-size: 1.4rem;
+                    font-size: 1.2rem;
                 }
             }
         </style>
