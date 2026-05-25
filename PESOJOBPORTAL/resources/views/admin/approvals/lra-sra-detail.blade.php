@@ -72,12 +72,24 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SRA Specific Documents -->
+            @if($activityRequest->activity_type === 'sra')
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0 py-3">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2"></i>SRA Specific Documents</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
                             <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Company Profile</strong></p>
-                                @if($activityRequest->company_profile_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->company_profile_path) }}"
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>DMW Certificate</strong></p>
+                                @if($activityRequest->dmw_certificate_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->dmw_certificate_path) }}"
                                        class="btn btn-sm btn-outline-primary mt-2" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -86,12 +98,68 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Job Advertisement</strong></p>
-                                @if($activityRequest->job_advertisement_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->job_advertisement_path) }}"
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Recruitment Officer ID</strong></p>
+                                @if($activityRequest->recruitment_officer_id_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->recruitment_officer_id_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Job Order Balance</strong></p>
+                                @if($activityRequest->job_order_balance_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->job_order_balance_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Deployment Report</strong></p>
+                                @if($activityRequest->deployment_report_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->deployment_report_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Affidavit of Undertaking</strong></p>
+                                @if($activityRequest->affidavit_undertaking_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->affidavit_undertaking_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #8b5cf6;"></i>
+                                <p class="mt-2 mb-1 small"><strong>SRA Authority</strong></p>
+                                @if($activityRequest->sra_authority_file_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->sra_authority_file_path) }}"
                                        class="btn btn-sm btn-outline-primary mt-2" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -103,6 +171,100 @@
                     </div>
                 </div>
             </div>
+            @endif
+
+            <!-- LRA Specific Documents -->
+            @if($activityRequest->activity_type === 'lra')
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0 py-3">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark me-2"></i>LRA Specific Documents</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Business Permit</strong></p>
+                                @if($activityRequest->business_permit_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->business_permit_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
+                                <p class="mt-2 mb-1 small"><strong>Recruitment Officer ID</strong></p>
+                                @if($activityRequest->lra_recruitment_officer_id_path)
+                                    <a href="{{ asset('storage/' . $activityRequest->lra_recruitment_officer_id_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <small class="text-muted">Not provided</small>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Vacancies Section -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0 py-3">
+                    <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>Job Vacancies</h5>
+                </div>
+                <div class="card-body">
+                    @if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text)
+                        <!-- Both file and text provided -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
+                                    <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
+                                    <p class="mt-2 mb-1 small"><strong>Job Vacancies File</strong></p>
+                                    <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
+                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3" style="background-color: #f0f9ff; border: 1px solid #bae6fd;">
+                                    <h6 style="color: #0369a1; margin-bottom: 0.75rem;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
+                                    <div style="background: white; padding: 0.75rem; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word;">
+                                        {{ $activityRequest->job_vacancies_text }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($activityRequest->job_vacancies_path)
+                        <!-- Only file provided -->
+                        <div class="border rounded p-3 text-center" style="background-color: #f9fafb;">
+                            <i class="bi bi-file-pdf" style="font-size: 2rem; color: #06b6d4;"></i>
+                            <p class="mt-2 mb-1 small"><strong>Job Vacancies File</strong></p>
+                            <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
+                               class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                <i class="bi bi-download me-1"></i>Download
+                            </a>
+                        </div>
+                    @elseif($activityRequest->job_vacancies_text)
+                        <!-- Only text provided -->
+                        <div class="border rounded p-3" style="background-color: #f0f9ff; border: 1px solid #bae6fd;">
+                            <h6 style="color: #0369a1; margin-bottom: 0.75rem;"><i class="bi bi-chat-left-text me-2"></i>Job Vacancies Details</h6>
+                            <div style="background: white; padding: 0.75rem; border-radius: 0.5rem; max-height: 300px; overflow-y: auto; font-size: 0.9rem; color: #1f2937; white-space: pre-wrap; word-break: break-word;">
+                                {{ $activityRequest->job_vacancies_text }}
+                            </div>
+                        </div>
+                    @else
+                        <small class="text-muted">Not provided</small>
+                    @endif
+                </div>
+            </div>
+            @endif
 
             </div>
         </div>
