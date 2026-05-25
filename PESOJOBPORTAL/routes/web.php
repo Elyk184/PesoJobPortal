@@ -20,6 +20,8 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
+Route::view('/ofw-preview', 'dashboard.ofw')->name('ofw.preview');
+
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

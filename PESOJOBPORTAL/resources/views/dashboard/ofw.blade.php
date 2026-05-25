@@ -1,89 +1,148 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'OFW Dashboard | Link Job Resource Portal')
 
-@section('content')
-    <div class="container py-4 py-lg-5">
-        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-lg-between gap-3 mb-4">
-            <div>
-                <h1 class="mb-1 fw-bold">OFW Dashboard</h1>
-                <p class="mb-0 text-muted">Welcome, {{ auth()->user()->name ?? 'OFW' }}.</p>
-            </div>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-outline-danger">Logout</button>
-            </form>
-        </div>
-
-        <div class="row g-3">
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.opportunities') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">Job Opportunities</h5>
-                            <p class="card-text text-muted mb-0">Explore international employment opportunities.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.applications') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">My Applications</h5>
-                            <p class="card-text text-muted mb-0">Monitor your job applications and status updates.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.documents') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">Documents</h5>
-                            <p class="card-text text-muted mb-0">Manage your work permits and required documents.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.profile') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">My Profile</h5>
-                            <p class="card-text text-muted mb-0">View and update your professional profile.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.contract-review') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">Contract Review</h5>
-                            <p class="card-text text-muted mb-0">Review and manage employment contracts.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="text-decoration-none" href="{{ route('ofw.support') }}">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-2 fw-semibold">Support & Resources</h5>
-                            <p class="card-text text-muted mb-0">Access guidance and support materials.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
+@section('dashboard-mobile-brand')
+    <div class="dashboard-mobile-brand">
+        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+        <span>OFW User Hub</span>
     </div>
+@endsection
 
-    @include('components.footer')
+@section('dashboard-sidebar')
+    @include('dashboard.partials.ofw-nav')
+@endsection
+
+@section('content')
+    <section aria-label="OFW dashboard">
+        <div class="dashboard-topbar">
+            <div>
+                <div class="dashboard-topbar-title">OWWA Request for Assistance</div>
+                <div class="dashboard-topbar-subtitle">Submit, track, and manage official OFW assistance requests</div>
+            </div>
+
+            <div class="d-none d-md-block text-end">
+                <div class="fw-semibold text-secondary">{{ auth()->user()->name ?? 'OFW' }}</div>
+                <div class="dashboard-topbar-subtitle">OFW Portal</div>
+            </div>
+        </div>
+
+        <div class="dashboard-section-card p-3 p-lg-4 mb-4">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                <div>
+                    <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'OFW' }}!</h2>
+                    <p class="mb-0 text-muted">Use the official forms below to submit an assistance request and monitor its progress.</p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#owwa-request" class="btn btn-danger px-3 shadow-sm">
+                        <i class="bi bi-file-earmark-plus me-2"></i>Open OWWA Form
+                    </a>
+                    <a href="#dmw-request" class="btn btn-outline-primary px-3">
+                        <i class="bi bi-journal-text me-2"></i>Open DMW Form
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                    <div class="dashboard-stat-icon"><i class="bi bi-inbox"></i></div>
+                    <div>
+                        <div class="dashboard-stat-number">2</div>
+                        <div class="dashboard-stat-label">Open Requests</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                    <div class="dashboard-stat-icon" style="background: rgba(47, 157, 98, 0.12); color: var(--dash-success);"><i class="bi bi-clock-history"></i></div>
+                    <div>
+                        <div class="dashboard-stat-number">1</div>
+                        <div class="dashboard-stat-label">Under Review</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
+                    <div class="dashboard-stat-icon" style="background: rgba(220, 164, 42, 0.12); color: var(--dash-warning);"><i class="bi bi-check2-circle"></i></div>
+                    <div>
+                        <div class="dashboard-stat-number">3</div>
+                        <div class="dashboard-stat-label">Resolved Cases</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section-card p-3 p-lg-4 mb-4" id="portal-accepts">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                <h3 class="h5 mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>What this portal accepts</h3>
+            </div>
+
+            <p class="mb-3 text-muted">
+                As agreed with the officer-in-charge, this OFW portal accepts only formal assistance requests using the official forms.
+                Choose the correct form below and submit only one request per case.
+            </p>
+
+            <ul class="mb-0 text-secondary">
+                <li>OWWA Request for Assistance (RFA)</li>
+                <li>DMW Request for Assistance (RFA)</li>
+                <li>After submission, use My Submitted Requests to track case status.</li>
+            </ul>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-lg-6" id="owwa-request">
+                <div class="dashboard-section-card h-100 p-3 p-lg-4">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>OWWA Request for Assistance</h3>
+                        <span class="badge rounded-pill text-bg-danger">Primary</span>
+                    </div>
+
+                    <p class="text-muted mb-3">
+                        Use the OWWA form for support concerns handled under OWWA assistance workflows.
+                    </p>
+
+                    <a href="#portal-accepts" class="btn btn-danger w-100">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>Open OWWA Form
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6" id="dmw-request">
+                <div class="dashboard-section-card h-100 p-3 p-lg-4">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-journal-text me-2"></i>DMW Request for Assistance</h3>
+                        <span class="badge rounded-pill text-bg-primary">Secondary</span>
+                    </div>
+
+                    <p class="text-muted mb-3">
+                        Use the DMW form for cases that need Department of Migrant Workers assistance and coordination.
+                    </p>
+
+                    <a href="#portal-accepts" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section-card p-3 p-lg-4 mb-4" id="submitted-requests">
+            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                <h3 class="h5 mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>My Submitted Requests</h3>
+                <span class="badge rounded-pill text-bg-light text-secondary">View status</span>
+            </div>
+
+            <div class="dashboard-empty-state">
+                <div>
+                    <div class="fs-1 mb-2">✦</div>
+                    <div class="fw-semibold text-secondary">No submitted requests yet.</div>
+                    <div class="small">Submit an OWWA or DMW request to start tracking your case here.</div>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection

@@ -448,17 +448,25 @@
 <body class="peso-body">
     <div class="dashboard-shell">
         <div class="dashboard-backdrop" data-dashboard-backdrop></div>
-        @include('components.dashboard.sidebar')
+        @hasSection('dashboard-sidebar')
+            @yield('dashboard-sidebar')
+        @else
+            @include('components.dashboard.sidebar')
+        @endif
 
         <main class="dashboard-content">
             <div class="dashboard-mobile-bar">
                 <button type="button" class="btn btn-danger" data-dashboard-toggle aria-label="Open dashboard menu">
                     <i class="bi bi-list"></i>
                 </button>
-                <div class="dashboard-mobile-brand">
-                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
-                    <span>Jobseeker Dashboard</span>
-                </div>
+                @hasSection('dashboard-mobile-brand')
+                    @yield('dashboard-mobile-brand')
+                @else
+                    <div class="dashboard-mobile-brand">
+                        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+                        <span>Jobseeker Dashboard</span>
+                    </div>
+                @endif
                 <span style="width: 40px;"></span>
             </div>
 
