@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -533,7 +534,7 @@ class AdminController extends Controller
                     ->send(new \App\Mail\RequestApprovedMail($activityRequest));
             }
         } catch (\Exception $e) {
-            \Log::error('Failed to send approval emails: ' . $e->getMessage());
+            Log::error('Failed to send approval emails: ' . $e->getMessage());
         }
 
         // Create in-app notification for employer
@@ -601,7 +602,7 @@ class AdminController extends Controller
                     ->send(new \App\Mail\RequestRejectedMail($activityRequest, $request->notes));
             }
         } catch (\Exception $e) {
-            \Log::error('Failed to send rejection email: ' . $e->getMessage());
+            Log::error('Failed to send rejection email: ' . $e->getMessage());
         }
 
         // Create in-app notification for employer
