@@ -338,26 +338,46 @@
 
 
 
-                    <button class="docs-submit" type="submit">Submit LRA/SRA Request</button>
+                    <button id="submitBtn" class="docs-submit" type="submit">Submit LRA/SRA Request</button>
                 </form>
 
                 <p class="docs-note">Tip: clear file names and complete documents help speed up review.</p>
             </section>
 
             <section class="docs-card">
-                <h2>Recent Submissions</h2>
+                <h2>Request Requirements</h2>
                 <div class="submission-list">
-                    @forelse ($recruitmentRequests as $submission)
-                        <article class="submission-item">
-                            <div class="submission-top">
-                                <span class="submission-type">{{ strtoupper($submission->activity_type) }}</span>
-                                <span class="submission-status">{{ strtoupper($submission->status) }}</span>
+                    @php
+                        $letterOfIntent = $REQUEST_FILES['letter_of_intent'] ?? false;
+                        $requirements = [
+                            ['name' => 'Letter of Intent', 'completed' => $letterOfIntent],
+                            ['name' => 'Activity Type Selected', 'completed' => !empty(old('activity_type', $defaultActivityType))],
+                        ];
+                        $completedCount = collect($requirements)->filter(fn($req) => $req['completed'])->count();
+                        $totalCount = count($requirements);
+                        $percentage = round(($completedCount / $totalCount) * 100);
+                    @endphp
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 700; color: #12243f;">Submission Progress</span>
+                            <span style="font-weight: 800; color: #1f4f97; font-size: 1.1rem;">{{ $percentage }}%</span>
+                        </div>
+                        <div style="width: 100%; height: 12px; border-radius: 999px; background: #e1e9f5; overflow: hidden;">
+                            <div style="height: 100%; width: {{ $percentage }}%; background: linear-gradient(135deg, #1f4f97 0%, #2f6ec8 100%); transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; gap: 0.7rem;">
+                        @foreach($requirements as $requirement)
+                            <div style="display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem; border-radius: 8px; background: {{ $requirement['completed'] ? '#eaf2ff' : '#f5f7fb' }};">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; {{ $requirement['completed'] ? 'background: #2f6ec8; color: #fff;' : 'background: #d8e2f1; color: #64748b;' }}">
+                                    {{ $requirement['completed'] ? '✓' : '○' }}
+                                </div>
+                                <span style="color: {{ $requirement['completed'] ? '#12243f' : '#5f6f86' }}; font-weight: {{ $requirement['completed'] ? '700' : '500' }};">{{ $requirement['name'] }}</span>
                             </div>
-                            <p class="submission-meta">Submitted: {{ optional($submission->created_at)->format('M d, Y h:i A') }}</p>
-                        </article>
-                    @empty
-                        <p class="mb-0">No document submissions yet.</p>
-                    @endforelse
+                        @endforeach
+                    </div>
                 </div>
             </section>
         </div>
@@ -365,25 +385,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const sourceSelect = document.getElementById('company_profile_source');
-            const uploadField = document.getElementById('company_profile_upload_field');
-            const uploadInput = document.getElementById('company_profile');
-            const uploadState = document.getElementById('company_profile_upload_state');
+            // Update submit button text based on activity type selection
+            const activityTypeSelect = document.getElementById('activity_type');
+            const submitBtn = document.getElementById('submitBtn');
 
-            const updateCompanyProfileMode = () => {
-                const isUploadMode = sourceSelect.value === 'upload';
-                uploadField.style.display = isUploadMode ? 'block' : 'none';
-                uploadInput.required = isUploadMode;
-
-                if (isUploadMode) {
-                    uploadState.textContent = 'Upload a fresh company profile file for this request.';
+            const updateButtonText = () => {
+                const selectedValue = activityTypeSelect.value.toUpperCase();
+                if (selectedValue === 'LRA' || selectedValue === 'SRA') {
+                    submitBtn.textContent = `Submit ${selectedValue} Request`;
                 } else {
-                    uploadState.textContent = 'This request will reuse only your company logo and establishment details.';
+                    submitBtn.textContent = 'Submit LRA/SRA Request';
                 }
             };
 
-            sourceSelect.addEventListener('change', updateCompanyProfileMode);
-            updateCompanyProfileMode();
+            activityTypeSelect.addEventListener('change', updateButtonText);
+            updateButtonText(); // Initial call in case there's a default value
         });
     </script>
 @endsection
