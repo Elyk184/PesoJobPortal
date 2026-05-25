@@ -346,38 +346,8 @@
 
             <section class="docs-card">
                 <h2>Request Requirements</h2>
-                <div class="submission-list">
-                    @php
-                        $letterOfIntent = $REQUEST_FILES['letter_of_intent'] ?? false;
-                        $requirements = [
-                            ['name' => 'Letter of Intent', 'completed' => $letterOfIntent],
-                            ['name' => 'Activity Type Selected', 'completed' => !empty(old('activity_type', $defaultActivityType))],
-                        ];
-                        $completedCount = collect($requirements)->filter(fn($req) => $req['completed'])->count();
-                        $totalCount = count($requirements);
-                        $percentage = round(($completedCount / $totalCount) * 100);
-                    @endphp
-
-                    <div style="margin-bottom: 1.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <span style="font-weight: 700; color: #12243f;">Submission Progress</span>
-                            <span style="font-weight: 800; color: #1f4f97; font-size: 1.1rem;">{{ $percentage }}%</span>
-                        </div>
-                        <div style="width: 100%; height: 12px; border-radius: 999px; background: #e1e9f5; overflow: hidden;">
-                            <div style="height: 100%; width: {{ $percentage }}%; background: linear-gradient(135deg, #1f4f97 0%, #2f6ec8 100%); transition: width 0.3s ease;"></div>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; gap: 0.7rem;">
-                        @foreach($requirements as $requirement)
-                            <div style="display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem; border-radius: 8px; background: {{ $requirement['completed'] ? '#eaf2ff' : '#f5f7fb' }};">
-                                <div style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; {{ $requirement['completed'] ? 'background: #2f6ec8; color: #fff;' : 'background: #d8e2f1; color: #64748b;' }}">
-                                    {{ $requirement['completed'] ? '✓' : '○' }}
-                                </div>
-                                <span style="color: {{ $requirement['completed'] ? '#12243f' : '#5f6f86' }}; font-weight: {{ $requirement['completed'] ? '700' : '500' }};">{{ $requirement['name'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
+                <div class="submission-list" id="requirementsList">
+                    <!-- Requirements will be populated by JavaScript -->
                 </div>
             </section>
         </div>
@@ -388,6 +358,80 @@
             // Update submit button text based on activity type selection
             const activityTypeSelect = document.getElementById('activity_type');
             const submitBtn = document.getElementById('submitBtn');
+            const letterOfIntentInput = document.getElementById('letter_of_intent');
+            const requirementsList = document.getElementById('requirementsList');
+
+            const sraRequirements = [
+                { name: 'Letter of Intent (Addressed to ROGELIO N. QUIÑO, MUNICIPAL MAYOR, MANOLO FORTICH, THRU: LORRAINE A. REQUINTON - PESO MANAGER)', field: 'letter_of_intent' },
+                { name: 'DMW CERTIFICATE', field: null },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: null },
+                { name: 'UPDATED JOB ORDER BALANCE', field: null },
+                { name: 'LATEST DEPLOYMENT REPORT', field: null },
+                { name: 'AFFIDAVIT OF UNDERTAKING (TO FOLLOW)', field: null },
+                { name: 'SRA AUTHORITY (TO FOLLOW)', field: null },
+            ];
+
+            const lraRequirements = [
+                { name: 'Letter of Intent', field: 'letter_of_intent' },
+                { name: 'Company Profile/Business Registration', field: null },
+                { name: 'Job Vacancy List', field: null },
+                { name: 'Company Documents', field: null },
+            ];
+
+            const updateRequirements = () => {
+                const activityType = activityTypeSelect.value;
+                let requirements = [];
+
+                if (activityType === 'sra') {
+                    requirements = sraRequirements;
+                } else if (activityType === 'lra') {
+                    requirements = lraRequirements;
+                } else {
+                    requirements = [
+                        { name: 'Select Activity Type (LRA or SRA)', field: null },
+                        { name: 'Letter of Intent', field: 'letter_of_intent' },
+                    ];
+                }
+
+                const letterOfIntentCompleted = letterOfIntentInput.files.length > 0;
+                const completedCount = requirements.filter(req => {
+                    if (req.field === 'letter_of_intent') {
+                        return letterOfIntentCompleted;
+                    }
+                    return false;
+                }).length;
+                const totalCount = requirements.length;
+                const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+                let html = `
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 700; color: #12243f;">Submission Progress</span>
+                            <span style="font-weight: 800; color: #1f4f97; font-size: 1.1rem;">${percentage}%</span>
+                        </div>
+                        <div style="width: 100%; height: 12px; border-radius: 999px; background: #e1e9f5; overflow: hidden;">
+                            <div style="height: 100%; width: ${percentage}%; background: linear-gradient(135deg, #1f4f97 0%, #2f6ec8 100%); transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; gap: 0.7rem;">
+                `;
+
+                requirements.forEach(req => {
+                    const isCompleted = req.field === 'letter_of_intent' ? letterOfIntentCompleted : false;
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem; border-radius: 8px; background: ${isCompleted ? '#eaf2ff' : '#f5f7fb'};">
+                            <div style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; ${isCompleted ? 'background: #2f6ec8; color: #fff;' : 'background: #d8e2f1; color: #64748b;'}">
+                                ${isCompleted ? '✓' : '○'}
+                            </div>
+                            <span style="color: ${isCompleted ? '#12243f' : '#5f6f86'}; font-weight: ${isCompleted ? '700' : '500'};">${req.name}</span>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                requirementsList.innerHTML = html;
+            };
 
             const updateButtonText = () => {
                 const selectedValue = activityTypeSelect.value.toUpperCase();
@@ -398,8 +442,15 @@
                 }
             };
 
-            activityTypeSelect.addEventListener('change', updateButtonText);
+            activityTypeSelect.addEventListener('change', () => {
+                updateButtonText();
+                updateRequirements();
+            });
+
+            letterOfIntentInput.addEventListener('change', updateRequirements);
+
             updateButtonText(); // Initial call in case there's a default value
+            updateRequirements(); // Initial call to show requirements
         });
     </script>
 @endsection
