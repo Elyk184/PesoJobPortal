@@ -246,28 +246,20 @@
         <!-- Employers Sidebar -->
         <aside class="employers-sidebar">
             <h5 class="employers-sidebar-title">
-                <i class="bi bi-building"></i>
-                All Employers
-                <span class="employers-count">{{ $companyProfiles->total() ?? 0 }}</span>
+                <i class="bi bi-check-circle"></i>
+                All Verified Employers
+                <span class="employers-count">{{ $allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified')->count() ?? 0 }}</span>
             </h5>
             
-            @if($companyProfiles->count() > 0)
+            @if($allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified')->count() > 0)
                 <ul class="employers-list">
-                    @foreach($companyProfiles as $profile)
-                        <a href="{{ route('admin.employer-verification.detail', $profile->id) }}" class="employer-item" title="{{ $profile->company_name }}">
-                            <div class="employer-avatar">{{ strtoupper(substr($profile->company_name, 0, 1)) }}</div>
+                    @foreach($allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified') as $employer)
+                        <a href="{{ route('admin.employer-verification.detail', $employer->companyProfile->id) }}" class="employer-item" title="{{ $employer->companyProfile->company_name }}">
+                            <div class="employer-avatar">{{ strtoupper(substr($employer->companyProfile->company_name, 0, 1)) }}</div>
                             <div class="employer-item-content">
-                                <div class="employer-item-name">{{ Str::limit($profile->company_name, 22) }}</div>
+                                <div class="employer-item-name">{{ Str::limit($employer->companyProfile->company_name, 22) }}</div>
                                 <div class="employer-item-status">
-                                    @if($profile->verification_status === 'verified')
-                                        <span style="color: #10b981;">Verified</span>
-                                    @elseif($profile->verification_status === 'pending')
-                                        <span style="color: #f59e0b;">Pending</span>
-                                    @elseif($profile->verification_status === 'under_review')
-                                        <span style="color: #3b82f6;">Reviewing</span>
-                                    @else
-                                        <span style="color: #ef4444;">Rejected</span>
-                                    @endif
+                                    <span style="color: #10b981;">Verified</span>
                                 </div>
                             </div>
                         </a>
@@ -276,12 +268,81 @@
             @else
                 <div style="text-align: center; padding: 2rem 0; color: #9ca3af;">
                     <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
-                    <small>No employers yet</small>
+                    <small>No verified employers</small>
                 </div>
             @endif
         </aside>
     </div><!-- End verification-container -->
-</div>
 
+    <!-- All Employers Table -->
+    <div style="margin-top: 2rem;">
+        <div style="margin-bottom: 1rem;">
+            <h5 style="font-size: 16px; font-weight: 700; color: #0d1f3c; margin: 0;">
+                <i class="bi bi-table" style="margin-right: 0.5rem;"></i>All Employer Accounts
+            </h5>
+            <p style="font-size: 13px; color: #6b7280; margin: 0.5rem 0 0;">Complete list of all employer accounts regardless of verification status</p>
+        </div>
+
+        <div class="verification-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Contact Email</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($allEmployers as $employer)
+                        <tr>
+                            <td>
+                                <div class="company-info">
+                                    <div class="company-logo">{{ strtoupper(substr($employer->companyProfile?->company_name ?? $employer->name, 0, 1)) }}</div>
+                                    <div class="company-details">
+                                        <h6>{{ $employer->companyProfile?->company_name ?? $employer->name }}</h6>
+                                        <p>{{ $employer->name }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ $employer->companyProfile?->establishment_email ?? $employer->email }}</td>
+                            <td>{{ $employer->companyProfile?->created_at?->format('d M Y') ?? $employer->created_at->format('d M Y') }}</td>
+                            <td>
+                                @if($employer->companyProfile === null)
+                                    <span class="status-badge" style="background-color: #e5e7eb; color: #6b7280;">No Profile</span>
+                                @elseif($employer->companyProfile->verification_status === 'verified')
+                                    <span class="status-badge status-verified">✓ Verified</span>
+                                @elseif($employer->companyProfile->verification_status === 'pending')
+                                    <span class="status-badge status-pending">Pending</span>
+                                @elseif($employer->companyProfile->verification_status === 'under_review')
+                                    <span class="status-badge status-under-review">Reviewing</span>
+                                @else
+                                    <span class="status-badge status-rejected">✗ Rejected</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($employer->companyProfile)
+                                    <a href="{{ route('admin.employer-verification.detail', $employer->companyProfile->id) }}" class="btn-small btn-view">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                @else
+                                    <span style="color: #9ca3af; font-size: 0.875rem;">No Profile</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: #9ca3af;">
+                                <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                                No employers found
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @endsection

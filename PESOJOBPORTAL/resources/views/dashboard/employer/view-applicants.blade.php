@@ -76,7 +76,7 @@
     }
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
     }
     .stat-card::before {
@@ -98,6 +98,16 @@
     .stat-card:hover::before {
         top: -20%;
         right: -20%;
+    }
+    .stat-card.clickable-stat {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-card.clickable-stat:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 16px 32px rgba(15, 49, 96, 0.22);
+        border-color: #2b67b1;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f6ff 100%);
+    }
     }
     .stat-icon {
         width: 60px;
@@ -684,7 +694,7 @@
     <!-- Quick Overview Section -->
     <div class="stats-grid mb-4">
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="reset" style="cursor: pointer;" title="Click to show all applicants">
                 <div class="stat-icon bg-primary text-white"><i class="bi bi-people-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $totalApplicants }}</h3>
@@ -693,7 +703,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="pending" style="cursor: pointer;" title="Click to show pending applicants">
                 <div class="stat-icon bg-warning text-white"><i class="bi bi-clock-history"></i></div>
                 <div class="stat-info">
                     <h3>{{ $pendingReview }}</h3>
@@ -702,7 +712,16 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="recommended" style="cursor: pointer;" title="Click to show recommended applicants">
+                <div class="stat-icon bg-info text-white"><i class="bi bi-star-fill"></i></div>
+                <div class="stat-info">
+                    <h3>{{ $recommended ?? 0 }}</h3>
+                    <p>Recommended</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="hired" style="cursor: pointer;" title="Click to show approved applicants">
                 <div class="stat-icon bg-success text-white"><i class="bi bi-check-circle-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $approved }}</h3>
@@ -711,7 +730,7 @@
             </div>
         </div>
         <div>
-            <div class="stat-card">
+            <div class="stat-card clickable-stat" data-filter-type="status" data-filter-value="rejected" style="cursor: pointer;" title="Click to show rejected applicants">
                 <div class="stat-icon bg-danger text-white"><i class="bi bi-x-circle-fill"></i></div>
                 <div class="stat-info">
                     <h3>{{ $rejected }}</h3>
@@ -747,8 +766,8 @@
                             <option value="">All Status</option>
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="reviewing" {{ request('status') == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                            <option value="shortlisted" {{ request('status') == 'shortlisted' ? 'selected' : '' }}>Shortlisted</option>
-                            <option value="interview" {{ request('status') == 'interview' ? 'selected' : '' }}>Interview</option>
+                            <option value="recommended" {{ request('status') == 'recommended' ? 'selected' : '' }}>Recommended</option>
+                            <option value="interviewed" {{ request('status') == 'interviewed' ? 'selected' : '' }}>Interviewed</option>
                             <option value="hired" {{ request('status') == 'hired' ? 'selected' : '' }}>Hired</option>
                             <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
                         </select>
@@ -800,31 +819,51 @@
                         </thead>
                         <tbody>
                             @foreach($referredApplications as $application)
+                            @php
+                                // Handle both job applications and recommendations
+                                $isRecommendation = $application->applicant_type === 'recommendation';
+                                $applicant = $isRecommendation ? $application->jobseeker : $application->user;
+                                $job = $isRecommendation ? $application->job : $application->jobPost;
+                                $dateApplied = $isRecommendation ? $application->created_at : $application->applied_at;
+                                $applicantName = $isRecommendation ? $application->user_name : $application->applicant->name;
+                                $applicantEmail = $isRecommendation ? $application->user_email : $application->applicant->email;
+                                $applicantAvatar = $isRecommendation ? ($applicant->avatar ?? null) : ($application->applicant->avatar ?? null);
+                            @endphp
                             <tr>
+<<<<<<< HEAD
                                 <td>
                                     <div class="d-flex align-items-start gap-3">
                                         @if($application->applicant->avatar)
                                         <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}" class="user-avatar">
+=======
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        @if($applicantAvatar)
+                                        <img src="{{ Storage::url($applicantAvatar) }}" alt="{{ $applicantName }}" class="user-avatar">
+>>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
                                         @else
                                         <div class="user-initials" style="background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);">
-                                            {{ strtoupper(substr($application->applicant->name, 0, 1)) }}
+                                            {{ strtoupper(substr($applicantName, 0, 1)) }}
                                         </div>
                                         @endif
                                         <div class="user-info">
-                                            <span class="name">{{ $application->applicant->name }}</span>
-                                            <span class="email">{{ $application->applicant->email }}</span>
+                                            <span class="name">{{ $applicantName }}</span>
+                                            <span class="email">{{ $applicantEmail }}</span>
+                                            @if($isRecommendation)
+                                            <span class="badge bg-info-subtle text-info ms-2" style="font-size: 0.75rem;">Recommended</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $application->jobPost->title }}</td>
-                                <td>{{ $application->applied_at->format('M d, Y') }}</td>
+                                <td>{{ $job->title ?? 'N/A' }}</td>
+                                <td>{{ $dateApplied->format('M d, Y') }}</td>
                                 <td>
                                     @php
                                         $statusClasses = [
                                             'pending' => 'bg-light text-dark',
                                             'reviewing' => 'bg-info bg-opacity-25 text-info-emphasis',
-                                            'shortlisted' => 'bg-primary bg-opacity-25 text-primary-emphasis',
-                                            'interview' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
+                                            'recommended' => 'bg-primary bg-opacity-25 text-primary-emphasis',
+                                            'interviewed' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
                                             'hired' => 'bg-success bg-opacity-25 text-success-emphasis',
                                             'rejected' => 'bg-danger bg-opacity-25 text-danger-emphasis',
                                         ];
@@ -836,31 +875,38 @@
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
-                                            <i class="bi bi-eye-fill"></i>
-                                            <span class="action-text">View</span>
-                                        </a>
-                                        @if($application->status != 'hired')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="hired">
-                                            <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
-                                                <i class="bi bi-check-lg"></i>
-                                                <span class="action-text">Hire</span>
+                                        @if($isRecommendation)
+                                            <button type="button" class="btn btn-sm btn-outline-primary action-btn" title="View Details" onclick="alert('Recommendation Details\n\nFrom: {{ $application->recommendedBy->name ?? 'Admin' }}\n\nMessage: {{ $application->recommendation_reason ?? 'No message provided' }}')">
+                                                <i class="bi bi-eye-fill"></i>
+                                                <span class="action-text">View</span>
                                             </button>
-                                        </form>
-                                        @endif
-                                        @if($application->status != 'rejected')
-                                        <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="rejected">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
-                                                <i class="bi bi-x-lg"></i>
-                                                <span class="action-text">Reject</span>
-                                            </button>
-                                        </form>
+                                        @else
+                                            <a href="{{ route('employer.applications.show', $application->id) }}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                                <span class="action-text">View</span>
+                                            </a>
+                                            @if($application->status != 'hired')
+                                            <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="hired">
+                                                <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
+                                                    <i class="bi bi-check-lg"></i>
+                                                    <span class="action-text">Hire</span>
+                                                </button>
+                                            </form>
+                                            @endif
+                                            @if($application->status != 'rejected')
+                                            <form method="POST" action="{{ route('employer.applications.update', $application->id) }}" class="ajax-status-form" data-application-id="{{ $application->id }}" data-action="{{ route('employer.applications.update', $application->id) }}" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
+                                                    <i class="bi bi-x-lg"></i>
+                                                    <span class="action-text">Reject</span>
+                                                </button>
+                                            </form>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
@@ -883,8 +929,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const map = {
             pending: 'bg-light text-dark',
             reviewing: 'bg-info bg-opacity-25 text-info-emphasis',
-            shortlisted: 'bg-primary bg-opacity-25 text-primary-emphasis',
-            interview: 'bg-secondary bg-opacity-25 text-secondary-emphasis',
+            recommended: 'bg-primary bg-opacity-25 text-primary-emphasis',
+            interviewed: 'bg-secondary bg-opacity-25 text-secondary-emphasis',
             hired: 'bg-success bg-opacity-25 text-success-emphasis',
             rejected: 'bg-danger bg-opacity-25 text-danger-emphasis'
         };
@@ -932,6 +978,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error(err);
                 alert('An error occurred while updating status');
             });
+        });
+    });
+
+    // Handle clickable stat cards
+    document.querySelectorAll('.stat-card.clickable-stat').forEach(card => {
+        card.addEventListener('click', function() {
+            const filterType = this.dataset.filterType;
+            const filterValue = this.dataset.filterValue;
+            const statusSelect = document.querySelector('select[name="status"]');
+            const filterForm = document.querySelector('form.filters-grid');
+            
+            if (filterType === 'reset') {
+                // Reset all filters
+                document.querySelector('select[name="job_id"]').value = '';
+                statusSelect.value = '';
+                document.querySelector('input[name="search"]').value = '';
+            } else if (filterType === 'status') {
+                // Set the status filter and submit
+                statusSelect.value = filterValue;
+            }
+            
+            // Scroll to filter section
+            document.querySelector('.filter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Highlight the status dropdown briefly to show it's selected
+            statusSelect.style.borderColor = '#2b67b1';
+            statusSelect.style.boxShadow = '0 0 0 4px rgba(43, 103, 177, 0.2)';
+            setTimeout(() => {
+                statusSelect.style.borderColor = '';
+                statusSelect.style.boxShadow = '';
+            }, 2000);
+            
+            // Auto-submit the form after a brief delay
+            setTimeout(() => {
+                filterForm.submit();
+            }, 400);
         });
     });
 });

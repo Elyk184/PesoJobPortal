@@ -56,6 +56,30 @@ class JobApplication extends Model
         return $this->belongsTo(User::class, 'admin_approved_by');
     }
 
+    /**
+     * Get all recommendations for this application
+     */
+    public function recommendations()
+    {
+        return $this->hasMany(RecommendedApplicant::class);
+    }
+
+    /**
+     * Get pending recommendations for this application
+     */
+    public function pendingRecommendations()
+    {
+        return $this->recommendations()->where('status', 'pending');
+    }
+
+    /**
+     * Check if this application has been recommended
+     */
+    public function isRecommended(): bool
+    {
+        return $this->recommendations()->where('status', '!=', 'rejected')->exists();
+    }
+
     // Compatibility alias used by some views: `$application->applicant`
     public function getApplicantAttribute()
     {

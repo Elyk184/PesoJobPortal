@@ -10,6 +10,23 @@
 
 @section('content')
 <div class="admin-dashboard">
+    {{-- Success/Error Messages --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #10b981;">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong>Success!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <style>
         .profile-header {
             display: grid;
@@ -428,13 +445,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border: none; border-radius: 12px;">
                 <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: none; border-radius: 12px 12px 0 0; padding: 1.5rem;">
-                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Job to Applicant</h5>
+                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Applicant to Employer</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="recommendForm" method="POST">
                     @csrf
                     <div class="modal-body" style="padding: 2.5rem; background: #ffffff;">
-                        <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending to: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
+                        <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
                         
                         <div class="row mb-3">
                             <!-- Step 1: Select Employer -->
@@ -442,18 +459,21 @@
                                 <label for="employerSelect" class="form-label" style="font-weight: 700; color: #0d1f3c; margin-bottom: 0.5rem; font-size: 1rem;">
                                     Employer <span class="text-danger">*</span>
                                 </label>
-                                <select id="employerSelect" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
+                                <select id="employerSelect" name="employer_id" class="form-control" required style="border-radius: 8px; border: 2px solid #d72638; padding: 0.75rem; font-size: 1rem; color: #0d1f3c;">
                                     <option value="" style="color: #999;">-- Select Employer --</option>
                                     @php
-                                        $employers = $availableJobs->groupBy(function($job) {
-                                            return $job->employer_id ?? 0;
-                                        })->map(function($jobs) {
-                                            return [
-                                                'id' => $jobs->first()->employer_id,
-                                                'name' => $jobs->first()->employer?->name ?? 'Unknown',
-                                                'company_name' => $jobs->first()->employer?->companyProfile?->company_name ?? $jobs->first()->employer?->name ?? 'Unknown Company'
-                                            ];
-                                        });
+                                        // Get all employers, not just those with active jobs
+                                        $employers = \App\Models\User::where('role', 'employer')
+                                            ->with('companyProfile')
+                                            ->orderBy('name')
+                                            ->get()
+                                            ->map(function($user) {
+                                                return [
+                                                    'id' => $user->id,
+                                                    'name' => $user->name,
+                                                    'company_name' => $user->companyProfile?->company_name ?? $user->name
+                                                ];
+                                            });
                                     @endphp
                                     @foreach($employers as $employer)
                                         <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
@@ -519,10 +539,13 @@
                             <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e5e7eb;">
                             
                             <!-- Job Description -->
-                            <div>
+                            <div style="margin-bottom: 1.5rem;">
                                 <div style="font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem;">About This Job</div>
                                 <div style="font-size: 1rem; color: #1f2937; line-height: 1.6; background: white; padding: 1rem; border-radius: 8px; border-left: 3px solid #d72638;" id="displayJobDescription">No description provided</div>
                             </div>
+                            
+                            <!-- More Details Button -->
+                            <button type="button" id="moreDetailsBtn" class="btn" style="width: 100%; border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none; color: white; cursor: pointer; margin-bottom: 1.5rem;"><i class="bi bi-info-circle me-2"></i>More Details</button>
                         </div>
                         
                         <!-- Message/Note Section -->
@@ -535,11 +558,8 @@
                                       style="border-radius: 8px; border: 2px solid #d72638; padding: 1rem; font-size: 1rem; color: #0d1f3c; font-family: inherit;"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: space-between;">
-                        <div style="display: flex; gap: 0.75rem;">
-                            <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
-                            <button type="button" id="moreDetailsBtn" class="btn" style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-info-circle me-2"></i>More Details</button>
-                        </div>
+                    <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
                         <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Applicant</button>
                     </div>
                 </form>
@@ -906,8 +926,10 @@
                     currentJobseekerId = jobseekerId;
                     jobseekerNameSpan.textContent = jobseekerName;
 
-                    // Update form action
-                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-job';
+                    // Update form action for applicant recommendation
+                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
+                    console.log('Form action set to:', recommendForm.action);
+                    console.log('Jobseeker:', jobseekerId, jobseekerName);
                     
                     // Reset form fields
                     employerSelect.value = '';
@@ -1060,6 +1082,17 @@
                 const detailModal = new bootstrap.Modal(document.getElementById('jobDetailModal'));
                 detailModal.show();
             }
+        });
+
+        // Debug: Form submission listener
+        recommendForm.addEventListener('submit', function(e) {
+            console.log('✅ FORM SUBMIT EVENT FIRED!');
+            console.log('Form Action:', this.action);
+            console.log('Employer ID:', document.getElementById('employerSelect').value);
+            console.log('Job ID:', document.getElementById('jobSelect').value);
+            console.log('Message:', document.getElementById('messageInput').value);
+            console.log('CSRF Token:', document.querySelector('[name="_token"]')?.value);
+            console.log('Full form data:', new FormData(this));
         });
     </script>
 </div>

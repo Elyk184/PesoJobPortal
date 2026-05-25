@@ -7,6 +7,7 @@ use App\Models\EmployerNotification;
 use App\Models\JobApplication;
 use App\Models\PesoJob;
 use App\Models\PortalNotification;
+use App\Models\RecommendedApplicant;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\User;
 use App\Models\UserNotification;
@@ -14,6 +15,7 @@ use App\Models\UserProfile;
 use App\Models\CompanyProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -125,6 +127,7 @@ class EmployerController extends Controller
             $employer->forceFill(['is_employer_verified' => true])->save();
         }
 
+<<<<<<< HEAD
         $referredApplications = $this->getReferredApplications($employer->id, $request);
 
         $filteredApplications = collect($referredApplications); // For stats
@@ -135,6 +138,63 @@ class EmployerController extends Controller
             'pendingReview' => $filteredApplications->whereNull('employer_status')->count(),
             'approved' => $filteredApplications->where('employer_status', 'hired')->count(),
             'rejected' => $filteredApplications->where('employer_status', 'not_selected')->count(),
+=======
+        // Get all referred applications and recommended applicants
+        $referredApplications = $this->getReferredApplications($employer->id);
+        $recommendedApplicants = $this->getRecommendedApplicants($employer->id);
+        
+        // Combine both collections
+        $allApplicants = collect();
+        
+        // Add job applications with type indicator
+        foreach ($referredApplications as $app) {
+            $app->applicant_type = 'application';
+            $app->user_name = $app->user->name ?? 'N/A';
+            $app->user_email = $app->user->email ?? 'N/A';
+            $allApplicants->push($app);
+        }
+        
+        // Add recommended applicants with type indicator
+        foreach ($recommendedApplicants as $rec) {
+            $rec->applicant_type = 'recommendation';
+            $rec->user_name = $rec->jobseeker->name ?? 'N/A';
+            $rec->user_email = $rec->jobseeker->email ?? 'N/A';
+            $rec->peso_job_id = $rec->peso_job_id;
+            $rec->status = $rec->status;
+            $allApplicants->push($rec);
+        }
+
+        // Apply filters based on request parameters
+        if ($request->has('job_id') && $request->get('job_id') !== '') {
+            $allApplicants = $allApplicants->where('peso_job_id', $request->get('job_id'));
+        }
+
+        if ($request->has('status') && $request->get('status') !== '') {
+            $allApplicants = $allApplicants->where('status', $request->get('status'));
+        }
+
+        if ($request->has('search') && $request->get('search') !== '') {
+            $searchTerm = strtolower($request->get('search'));
+            $allApplicants = $allApplicants->filter(function ($app) use ($searchTerm) {
+                $name = strtolower($app->user_name ?? '');
+                $email = strtolower($app->user_email ?? '');
+                return str_contains($name, $searchTerm) || str_contains($email, $searchTerm);
+            });
+        }
+
+        // Calculate stats including both types
+        $totalCount = $referredApplications->count() + $recommendedApplicants->count();
+        $recommendedCount = $referredApplications->where('status', 'recommended')->count() + 
+                           $recommendedApplicants->where('status', 'pending')->count();
+
+        return view('dashboard.employer.view-applicants', [
+            'referredApplications' => $allApplicants->values(),
+            'totalApplicants' => $totalCount,
+            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
+            'recommended' => $recommendedCount,
+            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
+            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
+>>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -983,6 +1043,17 @@ class EmployerController extends Controller
         return $query->latest()->get();
     }
 
+    private function getRecommendedApplicants(int $employerId)
+    {
+        return \App\Models\RecommendedApplicant::query()
+            ->with(['jobseeker' => function ($query) {
+                $query->select('id', 'name', 'email', 'role');
+            }, 'job', 'recommendedBy'])
+            ->where('recommended_to_user_id', $employerId)
+            ->latest()
+            ->get();
+    }
+
     private function getNotifications(int $employerId, int $limit = 20)
     {
         return EmployerNotification::query()
@@ -1077,11 +1148,461 @@ class EmployerController extends Controller
         return match ($status) {
             'pending' => 'Pending',
             'reviewing' => 'Under Review',
-            'shortlisted' => 'Shortlisted',
-            'interview' => 'Interview Scheduled',
+            'recommended' => 'Recommended by Admin',
+            'interviewed' => 'Interviewed',
             'hired' => 'Hired',
             'rejected' => 'Rejected',
             default => ucfirst($status),
         };
+    }
+
+    /**
+     * Recommend an applicant for another job or to PESO/other employers
+     * IMPORTANT: Recommendations MUST be sent to a specific employer
+     */
+    public function recommendApplicant(Request $request, JobApplication $application): RedirectResponse
+    {
+        $employer = $request->user();
+        $this->authorize('create', RecommendedApplicant::class);
+        
+        // Verify the application belongs to a job this employer can recommend
+        if ($application->job->employer_id !== $employer->id) {
+            return redirect()->back()->with('error', 'You can only recommend applicants from your own job postings.');
+        }
+
+        $validated = $request->validate([
+            'recommended_to_user_id' => ['required', 'exists:users,id'], // Must specify who to recommend to
+            'recommendation_reason' => ['nullable', 'string', 'max:1000'],
+            'recommendation_type' => ['required', 'in:employer_to_employer,employer_to_peso'],
+        ]);
+
+        try {
+            DB::transaction(function () use ($application, $employer, $validated) {
+                // Check if already recommended to this person
+                $existing = RecommendedApplicant::where('job_application_id', $application->id)
+                    ->where('recommended_by_user_id', $employer->id)
+                    ->where('recommended_to_user_id', $validated['recommended_to_user_id'])
+                    ->where('status', '!=', 'rejected')
+                    ->first();
+
+                if ($existing) {
+                    throw new \Exception('You have already recommended this applicant to ' . 
+                        User::find($validated['recommended_to_user_id'])->name . '.');
+                }
+
+                // Verify recipient exists and is either an employer or admin
+                $recipient = User::find($validated['recommended_to_user_id']);
+                if (!$recipient || !in_array($recipient->role, ['employer', 'admin'])) {
+                    throw new \Exception('Invalid recipient. Can only recommend to employers or PESO staff.');
+                }
+
+                // Create recommendation record
+                RecommendedApplicant::create([
+                    'job_application_id' => $application->id,
+                    'peso_job_id' => $application->peso_job_id,
+                    'recommended_by_user_id' => $employer->id,
+                    'recommended_to_user_id' => $validated['recommended_to_user_id'],
+                    'recommendation_reason' => $validated['recommendation_reason'] ?? null,
+                    'recommendation_type' => $validated['recommendation_type'],
+                ]);
+
+                // Create notification for recipient
+                UserNotification::create([
+                    'user_id' => $validated['recommended_to_user_id'],
+                    'type' => 'applicant_recommended',
+                    'title' => 'New Applicant Recommendation',
+                    'message' => $employer->name . ' recommended an applicant for ' . $application->job->title,
+                    'related_id' => $application->id,
+                ]);
+            });
+
+            return redirect()->back()->with('success', 'Applicant recommended successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * View all recommendations made by this employer
+     */
+    public function viewMyRecommendations(Request $request): View
+    {
+        $employer = $request->user();
+        $this->authorize('viewSent', RecommendedApplicant::class);
+        
+        $recommendations = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+            ->where('recommendation_type', '!=', 'general') // Only show specific recommendations sent
+            ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedTo'])
+            ->latest()
+            ->paginate(15);
+
+        return view('dashboard.employer.my-recommendations', [
+            'recommendations' => $recommendations,
+        ]);
+    }
+
+    /**
+     * View recommendations received by this employer
+     * Only show recommendations specifically sent to THIS employer
+     */
+    public function viewReceivedRecommendations(Request $request): View
+    {
+        $employer = $request->user();
+        $this->authorize('viewReceived', RecommendedApplicant::class);
+        
+        // Only show recommendations specifically addressed to this employer
+        $recommendations = RecommendedApplicant::where('recommended_to_user_id', $employer->id)
+            ->whereNotNull('recommended_to_user_id') // Must be specifically addressed to someone
+            ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedBy'])
+            ->latest()
+            ->paginate(15);
+
+        $pendingCount = $recommendations->where('status', 'pending')->count();
+        $acceptedCount = $recommendations->where('status', 'accepted')->count();
+        $rejectedCount = $recommendations->where('status', 'rejected')->count();
+        $hiredCount = $recommendations->where('status', 'hired')->count();
+
+        return view('dashboard.employer.received-recommendations', [
+            'recommendations' => $recommendations,
+            'pendingCount' => $pendingCount,
+            'acceptedCount' => $acceptedCount,
+            'rejectedCount' => $rejectedCount,
+            'hiredCount' => $hiredCount,
+        ]);
+    }
+
+    /**
+     * Accept a recommendation
+     */
+    public function acceptRecommendation(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+        $this->authorize('accept', $recommendation);
+
+        $validated = $request->validate([
+            'response_notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $recommendation->accept($validated['response_notes'] ?? null);
+
+        // Notify the recommender
+        UserNotification::create([
+            'user_id' => $recommendation->recommended_by_user_id,
+            'type' => 'recommendation_accepted',
+            'title' => 'Recommendation Accepted',
+            'message' => $employer->name . ' accepted your applicant recommendation',
+            'related_id' => $recommendation->id,
+        ]);
+
+        return redirect()->back()->with('success', 'Recommendation accepted!');
+    }
+
+    /**
+     * Reject a recommendation
+     */
+    public function rejectRecommendation(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+        $this->authorize('reject', $recommendation);
+
+        $validated = $request->validate([
+            'response_notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $recommendation->reject($validated['response_notes'] ?? null);
+
+        // Notify the recommender
+        UserNotification::create([
+            'user_id' => $recommendation->recommended_by_user_id,
+            'type' => 'recommendation_rejected',
+            'title' => 'Recommendation Declined',
+            'message' => $employer->name . ' declined your applicant recommendation',
+            'related_id' => $recommendation->id,
+        ]);
+
+        return redirect()->back()->with('success', 'Recommendation rejected.');
+    }
+
+    /**
+     * Mark recommendation as hired
+     */
+    public function hireFromRecommendation(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+        $this->authorize('hire', $recommendation);
+
+        DB::transaction(function () use ($recommendation, $employer) {
+            $recommendation->markAsHired('Hired through recommendation');
+            
+            // Update the job application status
+            $recommendation->jobApplication->update(['status' => 'hired']);
+
+            // Notify all parties
+            UserNotification::create([
+                'user_id' => $recommendation->recommended_by_user_id,
+                'type' => 'recommendation_hired',
+                'title' => 'Applicant Hired',
+                'message' => $employer->name . ' hired the recommended applicant!',
+                'related_id' => $recommendation->id,
+            ]);
+
+            UserNotification::create([
+                'user_id' => $recommendation->jobApplication->user_id,
+                'type' => 'job_hired',
+                'title' => 'Job Offer',
+                'message' => $employer->name . ' has hired you!',
+                'related_id' => $recommendation->jobApplication->id,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Applicant marked as hired!');
+    }
+
+    /**
+     * Get dashboard stats for recommendations
+     */
+    private function getRecommendationStats(int $employerId): array
+    {
+        return [
+            'sent' => RecommendedApplicant::where('recommended_by_user_id', $employerId)->count(),
+            'sent_pending' => RecommendedApplicant::where('recommended_by_user_id', $employerId)
+                ->where('status', 'pending')
+                ->count(),
+            'sent_accepted' => RecommendedApplicant::where('recommended_by_user_id', $employerId)
+                ->where('status', 'accepted')
+                ->count(),
+            'sent_hired' => RecommendedApplicant::where('recommended_by_user_id', $employerId)
+                ->where('status', 'hired')
+                ->count(),
+            'received' => RecommendedApplicant::where('recommended_to_user_id', $employerId)->count(),
+            'received_pending' => RecommendedApplicant::where('recommended_to_user_id', $employerId)
+                ->where('status', 'pending')
+                ->count(),
+        ];
+    }
+
+    /**
+     * Mark a recommendation as viewed by employer
+     */
+    public function viewRecommendation(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+        $this->authorize('view', $recommendation);
+
+        $recommendation->markAsViewed();
+
+        return redirect()->back()->with('success', 'Recommendation viewed');
+    }
+
+    /**
+     * Send follow-up for a pending recommendation
+     */
+    public function sendFollowup(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+
+        if ($recommendation->recommended_by_user_id !== $employer->id) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        if ($recommendation->status !== 'pending') {
+            return redirect()->back()->with('error', 'Can only send follow-up for pending recommendations.');
+        }
+
+        if (!$recommendation->canSendAnotherFollowup()) {
+            return redirect()->back()->with('error', 'Cannot send follow-up at this time. Wait at least 3 days between follow-ups, or maximum 2 follow-ups allowed.');
+        }
+
+        try {
+            DB::transaction(function () use ($recommendation, $employer) {
+                $recommendation->recordFollowup();
+
+                // Send notification to recipient
+                $recipient = User::find($recommendation->recommended_to_user_id);
+                if ($recipient) {
+                    UserNotification::create([
+                        'user_id' => $recipient->id,
+                        'type' => 'recommendation_followup',
+                        'title' => 'Applicant Recommendation Follow-up',
+                        'message' => $employer->name . ' is following up on a recommended applicant for ' . 
+                            $recommendation->job->title,
+                        'related_id' => $recommendation->id,
+                    ]);
+                }
+            });
+
+            return redirect()->back()->with('success', 'Follow-up sent successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to send follow-up: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get pending recommendations due for follow-up
+     */
+    public function getPendingFollowups(Request $request): array
+    {
+        $employer = $request->user();
+
+        $followups = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+            ->where('status', 'pending')
+            ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedTo'])
+            ->get()
+            ->filter(fn ($rec) => $rec->isDueForFollowup() && $rec->canSendAnotherFollowup())
+            ->values();
+
+        return [
+            'pending_count' => $followups->count(),
+            'followups' => $followups,
+            'stats' => [
+                'total_pending' => RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+                    ->where('status', 'pending')
+                    ->count(),
+                'due_for_followup' => $followups->count(),
+                'can_send_followup' => $followups->filter(fn ($rec) => $rec->canSendAnotherFollowup())->count(),
+                'max_followups_reached' => RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+                    ->where('status', 'pending')
+                    ->where('followup_count', '>=', 2)
+                    ->count(),
+            ],
+        ];
+    }
+
+    /**
+     * View all pending follow-ups
+     */
+    public function viewPendingFollowups(Request $request): View
+    {
+        $employer = $request->user();
+        $this->authorize('viewSent', RecommendedApplicant::class);
+
+        $allPending = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+            ->where('status', 'pending')
+            ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedTo'])
+            ->latest()
+            ->get();
+
+        $dueForFollowup = $allPending->filter(fn ($rec) => $rec->isDueForFollowup());
+        $canFollowup = $allPending->filter(fn ($rec) => $rec->canSendAnotherFollowup());
+        $noResponse = $allPending->filter(fn ($rec) => is_null($rec->viewed_at));
+
+        return view('dashboard.employer.pending-followups', [
+            'allPending' => $allPending,
+            'dueForFollowup' => $dueForFollowup,
+            'canFollowup' => $canFollowup,
+            'noResponse' => $noResponse,
+            'stats' => [
+                'total_pending' => $allPending->count(),
+                'due_for_followup' => $dueForFollowup->count(),
+                'can_send_followup' => $canFollowup->count(),
+                'not_viewed' => $noResponse->count(),
+            ],
+        ]);
+    }
+
+    /**
+     * Mark recommendation as reviewed
+     */
+    public function markRecommendationReviewed(Request $request, RecommendedApplicant $recommendation): RedirectResponse
+    {
+        $employer = $request->user();
+        
+        if ($recommendation->recommended_to_user_id !== $employer->id) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $recommendation->markAsReviewed();
+
+        return redirect()->back()->with('success', 'Marked as reviewed');
+    }
+
+    /**
+     * Share recommendation with team members
+     */
+    public function shareRecommendation(Request $request, RecommendedApplicant $recommendation): JsonResponse
+    {
+        $employer = $request->user();
+        
+        if ($recommendation->recommended_to_user_id !== $employer->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'emails' => ['required', 'array'],
+            'emails.*' => ['email'],
+            'message' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        try {
+            $recommendation->markAsShared();
+
+            // Create notifications for shared users
+            foreach ($validated['emails'] as $email) {
+                $user = User::where('email', $email)->first();
+                if ($user) {
+                    UserNotification::create([
+                        'user_id' => $user->id,
+                        'type' => 'recommendation_shared',
+                        'title' => 'Shared Applicant Recommendation',
+                        'message' => $employer->name . ' shared an applicant recommendation: ' . 
+                            $recommendation->job->title,
+                        'related_id' => $recommendation->id,
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Recommendation shared successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get recommendation analytics for employer
+     */
+    public function getRecommendationAnalytics(Request $request): JsonResponse
+    {
+        $employer = $request->user();
+
+        $recommendations = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
+            ->orWhere('recommended_to_user_id', $employer->id)
+            ->get();
+
+        $sentRecommendations = $recommendations->where('recommended_by_user_id', $employer->id);
+        $receivedRecommendations = $recommendations->where('recommended_to_user_id', $employer->id);
+
+        return response()->json([
+            'sent' => [
+                'total' => $sentRecommendations->count(),
+                'pending' => $sentRecommendations->where('status', 'pending')->count(),
+                'accepted' => $sentRecommendations->where('status', 'accepted')->count(),
+                'rejected' => $sentRecommendations->where('status', 'rejected')->count(),
+                'hired' => $sentRecommendations->where('status', 'hired')->count(),
+                'viewed' => $sentRecommendations->whereNotNull('viewed_at')->count(),
+                'not_viewed' => $sentRecommendations->whereNull('viewed_at')->count(),
+                'avg_days_to_response' => $sentRecommendations
+                    ->whereNotNull('responded_at')
+                    ->avg(fn ($rec) => $rec->created_at->diffInDays($rec->responded_at)),
+            ],
+            'received' => [
+                'total' => $receivedRecommendations->count(),
+                'pending' => $receivedRecommendations->where('status', 'pending')->count(),
+                'accepted' => $receivedRecommendations->where('status', 'accepted')->count(),
+                'rejected' => $receivedRecommendations->where('status', 'rejected')->count(),
+                'hired' => $receivedRecommendations->where('status', 'hired')->count(),
+            ],
+            'followup' => [
+                'total_sent' => $sentRecommendations->sum('followup_count'),
+                'due_for_followup' => $sentRecommendations
+                    ->filter(fn ($rec) => $rec->isDueForFollowup())
+                    ->count(),
+                'can_send_followup' => $sentRecommendations
+                    ->filter(fn ($rec) => $rec->canSendAnotherFollowup())
+                    ->count(),
+            ],
+        ]);
     }
 }

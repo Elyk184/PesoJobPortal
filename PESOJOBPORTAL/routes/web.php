@@ -104,6 +104,44 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
     Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
         ->name('notifications.read');
+
+    // Applicant recommendation routes
+    Route::post('/applications/{application}/recommend', [EmployerController::class, 'recommendApplicant'])
+        ->name('applications.recommend');
+    
+    Route::get('/recommendations/sent', [EmployerController::class, 'viewMyRecommendations'])
+        ->name('recommendations.sent');
+    
+    Route::get('/recommendations/received', [EmployerController::class, 'viewReceivedRecommendations'])
+        ->name('recommendations.received');
+    
+    Route::post('/recommendations/{recommendation}/accept', [EmployerController::class, 'acceptRecommendation'])
+        ->name('recommendations.accept');
+    
+    Route::post('/recommendations/{recommendation}/reject', [EmployerController::class, 'rejectRecommendation'])
+        ->name('recommendations.reject');
+    
+    Route::post('/recommendations/{recommendation}/hire', [EmployerController::class, 'hireFromRecommendation'])
+        ->name('recommendations.hire');
+
+    // Follow-up and tracking routes
+    Route::post('/recommendations/{recommendation}/view', [EmployerController::class, 'viewRecommendation'])
+        ->name('recommendations.view');
+
+    Route::post('/recommendations/{recommendation}/followup', [EmployerController::class, 'sendFollowup'])
+        ->name('recommendations.followup');
+
+    Route::get('/recommendations/pending-followups', [EmployerController::class, 'viewPendingFollowups'])
+        ->name('recommendations.pending-followups');
+
+    Route::post('/recommendations/{recommendation}/reviewed', [EmployerController::class, 'markRecommendationReviewed'])
+        ->name('recommendations.reviewed');
+
+    Route::post('/recommendations/{recommendation}/share', [EmployerController::class, 'shareRecommendation'])
+        ->name('recommendations.share');
+
+    Route::get('/api/recommendations/analytics', [EmployerController::class, 'getRecommendationAnalytics'])
+        ->name('recommendations.analytics');
 });
 
 // Public jobs route
@@ -122,6 +160,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
         Route::get('/{jobseeker}', [JobseekerApprovalController::class, 'show'])->name('show');
         Route::post('/{jobseeker}/recommend-job', [JobseekerApprovalController::class, 'recommendJob'])->name('recommend-job');
+        Route::post('/{jobseeker}/recommend-applicant', [JobseekerApprovalController::class, 'recommendApplicant'])->name('recommend-applicant');
     });
 
     // Approvals & Verification Section

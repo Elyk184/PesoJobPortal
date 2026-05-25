@@ -184,6 +184,7 @@
 </div>
 @endif
 
+<<<<<<< HEAD
 <div class="row">
     <div class="col-lg-8">
         <div class="profile-header">
@@ -197,6 +198,48 @@
                     <div class="meta-card">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Applied for: {{ $application->jobPost->title }}</span>
+=======
+    <div class="applicant-card">
+        <!-- Applicant Info Section -->
+        <div class="applicant-info-section">
+            <div class="applicant-header">
+                @if($application->user->avatar)
+                    <img src="{{ Storage::url($application->user->avatar) }}" alt="{{ $application->user->name }}" class="user-avatar">
+                @else
+                    <div class="user-initials">{{ strtoupper(substr($application->user->name, 0, 1)) }}</div>
+                @endif
+                <div class="applicant-header-content">
+                    <div class="user-info">
+                        <h4>{{ $application->user->name }}</h4>
+                        <span class="email">{{ $application->user->email }}</span>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label"><i class="bi bi-briefcase"></i>Applied For</span>
+                            <span class="info-value">{{ $application->jobPost->title ?? 'N/A' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="bi bi-calendar-event"></i>Application Date</span>
+                            <span class="info-value">{{ $application->applied_at?->format('M d, Y H:i') ?? $application->created_at->format('M d, Y H:i') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="bi bi-activity"></i>Current Status</span>
+                            @php
+                                $statusClasses = [
+                                    'pending' => 'bg-light text-dark',
+                                    'reviewing' => 'bg-info bg-opacity-25 text-info-emphasis',
+                                    'recommended' => 'bg-primary bg-opacity-25 text-primary-emphasis',
+                                    'interviewed' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
+                                    'hired' => 'bg-success bg-opacity-25 text-success-emphasis',
+                                    'rejected' => 'bg-danger bg-opacity-25 text-danger-emphasis',
+                                ];
+                            @endphp
+                            <span class="status-badge-large {{ $statusClasses[$application->status] ?? 'bg-light text-dark' }}">
+                                <i class="bi bi-circle-fill"></i>
+                                {{ $application->status }}
+                            </span>
+                        </div>
+>>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
                     </div>
                 </div>
             </div>
@@ -270,6 +313,7 @@
 
             <form id="feedbackForm" action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
                 @csrf
+<<<<<<< HEAD
                 <div class="mb-4">
                     <label class="form-label">Feedback Type</label>
                     <select id="feedbackType" name="feedback_type" class="form-select" required>
@@ -288,6 +332,41 @@
                         <i class="bi bi-star" data-value="3" onclick="setRating(3)"></i>
                         <i class="bi bi-star" data-value="4" onclick="setRating(4)"></i>
                         <i class="bi bi-star" data-value="5" onclick="setRating(5)"></i>
+=======
+                @method('PATCH')
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select" id="applicationStatusSelect">
+                            @php $s = $application->status; @endphp
+                            <option value="pending" {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="reviewing" {{ $s === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
+                            <option value="recommended" {{ $s === 'recommended' ? 'selected' : '' }}>Recommended</option>
+                            <option value="interviewed" {{ $s === 'interviewed' ? 'selected' : '' }}>Interviewed</option>
+                            <option value="hired" {{ $s === 'hired' ? 'selected' : '' }}>Hired</option>
+                            <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interviewed' ? '' : 'display:none;' }}">
+                        <label class="form-label">Interview Schedule</label>
+                        <input
+                            type="datetime-local"
+                            name="interview_scheduled_at"
+                            id="interviewScheduledAt"
+                            class="form-control"
+                            value="{{ optional($application->interview_scheduled_at)->format('Y-m-d\\TH:i') }}"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Feedback (optional)</label>
+                        <textarea name="employer_feedback" rows="2" class="form-control" placeholder="Add any feedback for this applicant...">{{ $application->employer_feedback ?? '' }}</textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            Save Changes
+                        </button>
+>>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
                     </div>
                     <input type="hidden" name="rating" id="ratingInput" value="">
                 </div>
@@ -347,6 +426,58 @@
     </div>
 </div>
 </div>
+<<<<<<< HEAD
+=======
+
+<script>
+// Preview toggle and lazy-load
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-preview-resume');
+    if (!btn) return;
+    const resumeSection = btn.closest('.resume-section');
+    if (!resumeSection) return;
+    const preview = resumeSection.querySelector('.resume-preview');
+    if (!preview) return;
+
+    const span = btn.querySelector('span');
+    if (!span) return;
+
+    // Check if this is an uploaded resume (has iframe/image) or builder resume (plain div)
+    const iframe = preview.querySelector('iframe');
+
+    if (preview.style.display === 'none' || preview.style.display === '') {
+        preview.style.display = 'block';
+        span.textContent = iframe ? 'Hide Preview' : 'Hide Resume';
+    } else {
+        preview.style.display = 'none';
+        span.textContent = iframe ? 'Preview' : 'Show Resume';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const statusSelect = document.getElementById('applicationStatusSelect');
+    const scheduleGroup = document.getElementById('interviewScheduleGroup');
+    const scheduledAtInput = document.getElementById('interviewScheduledAt');
+
+    if (!statusSelect || !scheduleGroup || !scheduledAtInput) {
+        return;
+    }
+
+    const syncInterviewScheduleVisibility = () => {
+        const shouldShow = statusSelect.value === 'interviewed';
+        scheduleGroup.style.display = shouldShow ? '' : 'none';
+        scheduledAtInput.required = shouldShow;
+        if (!shouldShow) {
+            scheduledAtInput.value = '';
+        }
+    };
+
+    statusSelect.addEventListener('change', syncInterviewScheduleVisibility);
+    syncInterviewScheduleVisibility();
+});
+</script>
+
+>>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
 @endsection
 
 @push('scripts')
