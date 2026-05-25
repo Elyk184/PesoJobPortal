@@ -277,7 +277,7 @@
                 <div class="header-line">Province of Bukidnon</div>
                 <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
                 <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-image.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin-top: 0.05rem;">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin: 0;">
             </div>
             
             <div class="title">PESO CLEARANCE</div>
