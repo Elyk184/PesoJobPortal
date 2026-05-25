@@ -18,332 +18,359 @@
 
         body {
             font-family: 'Times New Roman', Times, serif;
-            line-height: 1.3;
+            line-height: 1.4;
             color: #000;
             background: white;
         }
 
         .container {
-            width: 8.27in;
-            padding: 0.2in;
+            width: 100%;
+            padding: 0.2in 0.25in;
             position: relative;
             display: flex;
             flex-direction: column;
-            page-break-after: avoid;
-            overflow: hidden;
         }
 
-        /* Header Section */
-        .header {
-            text-align: center;
-            margin-bottom: 0.15in;
-            padding-bottom: 0.1in;
-            border-bottom: 2px solid #000;
-        }
-
+        /* ── HEADER ── */
         .header-top {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 0.08in;
+            display: table;
             width: 100%;
-            gap: 0.1in;
+            margin-bottom: 4px;
+            border-collapse: collapse;
         }
 
-        .header-logo {
-            width: 1.2in;
-            height: 1.2in;
-            object-fit: contain;
-            flex: 0 0 1.2in;
+        .header-logo-cell {
+            display: table-cell;
+            width: 1.1in;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .header-center-cell {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 0.1in;
         }
 
         .header-logo-left {
-            width: 1.2in;
-            height: 1.2in;
+            width: 1.0in;
+            height: 1.0in;
             object-fit: contain;
-            flex: 0 0 1.2in;
+            display: block;
+            margin: 0 auto;
         }
 
-        .header-center {
-            flex: 1 1 auto;
-            text-align: center;
-            padding: 0 0.15in;
-            min-width: 0;
-        }
-
-        .seal {
-            width: 28px;
-            height: 28px;
-            border: 2px solid #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .header-text {
-            flex: 1;
-            text-align: center;
-            margin: 0 0.1in;
+        .header-logo {
+            width: 1.0in;
+            height: 1.0in;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
         }
 
         .gov-line {
-            font-size: 11px;
-            line-height: 1.2;
-            letter-spacing: 0.04em;
-            font-weight: 500;
+            font-size: 10.5px;
+            line-height: 1.3;
         }
 
         .gov-main {
             font-size: 13px;
             font-weight: bold;
-            letter-spacing: 0.08em;
-            line-height: 1.3;
+            letter-spacing: 0.04em;
+            line-height: 1.35;
             text-transform: uppercase;
         }
 
-        .decorative-line {
-            text-align: center;
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            margin: 0.05in 0;
-            color: #333;
+        .gov-peso {
+            font-size: 17px;
+            font-weight: bold;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            margin-top: 2px;
+            line-height: 1.2;
         }
 
+        /* ── DECORATIVE IMAGE STRIP ── */
+        .decor-top {
+            width: 100%;
+            height: 0.22in;
+            object-fit: cover;
+            display: block;
+            margin: 6px 0 4px 0;
+        }
+
+        .decor-bottom {
+            width: 100%;
+            height: 0.22in;
+            object-fit: cover;
+            display: block;
+            margin-top: 8px;
+        }
+
+        /* ── TITLE ── */
         .title {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
-            letter-spacing: 0.1em;
-            margin: 0.08in 0 0.06in 0;
+            letter-spacing: 0.15em;
+            margin: 8px 0 10px 0;
             text-align: center;
             text-transform: uppercase;
             color: #000;
         }
 
-        /* Content Section */
+        /* ── CONTENT ── */
         .content {
-            margin: 0.12in 0.3in;
+            margin: 0 0.15in;
             font-size: 12px;
             line-height: 1.5;
-            flex-grow: 1;
         }
 
         .salutation {
             font-weight: bold;
-            margin-bottom: 0.08in;
-            text-align: left;
+            margin-bottom: 8px;
             font-size: 12px;
         }
 
         .cert-paragraph {
             text-align: justify;
-            margin-bottom: 0.06in;
-            text-indent: 0.3in;
-            line-height: 1.5;
+            text-indent: 0.4in;
+            margin-bottom: 7px;
+            line-height: 1.55;
             font-size: 12px;
-        }
-
-        .cert-paragraph:first-of-type {
-            text-indent: 0.3in;
         }
 
         .location-block {
-            margin: 0.08in 0;
+            margin: 8px 0 0 0;
             font-size: 12px;
+            line-height: 1.55;
             text-align: justify;
-            line-height: 1.5;
         }
 
-        /* Signature Section */
+        /* ── SIGNATURES ── */
         .signature-container {
             position: relative;
-            margin: 0.08in 0 0 0;
-            min-height: 1.2in;
+            margin: 10px 0.15in 0 0.15in;
+            min-height: 1.4in;
         }
 
         .sig-block {
             position: absolute;
-            width: 48%;
+            width: 46%;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .sig-block:first-child {
+        .sig-block.left {
             left: 0;
             top: 0;
+            align-items: flex-start;
         }
 
-        .sig-block:last-child {
+        .sig-block.right {
             right: 0;
-            top: 0.5in;
+            top: 0.55in;
+            align-items: center;
         }
 
         .sig-label {
             font-size: 12px;
             font-weight: bold;
-            margin-bottom: 0.08in;
-            min-height: 0.15in;
+            margin-bottom: 0.45in; /* space for signature */
+            text-align: left;
+        }
+
+        .sig-block.right .sig-label {
+            text-align: center;
+            align-self: center;
         }
 
         .sig-line {
             border-top: 1px solid #000;
-            height: 0;
-            margin: 0.15in 0 0.02in 0;
+            width: 80%;
+            margin-bottom: 3px;
+        }
+
+        .sig-block.left .sig-line {
+            width: 100%;
         }
 
         .sig-name {
             font-size: 12px;
             font-weight: bold;
+            text-align: center;
         }
 
         .sig-title {
             font-size: 12px;
-        }
-
-        /* Footer */
-        .footer {
             text-align: center;
-            margin-top: 0.08in;
-            padding-top: 0.08in;
-            border-top: 2px solid #000;
-            font-size: 11px;
-            line-height: 1.4;
         }
 
-        .footer-top-line {
-            border-top: 1px solid #000;
-            margin: 0 0 0.05in 0;
-        }
-
+        /* ── TAGLINE ── */
         .tagline {
-            font-style: italic;
-            margin: 0.1in 0 0.08in 0;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
             text-align: center;
+            font-style: italic;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 6px 0 2px 0;
+            letter-spacing: 0.02em;
         }
 
-        .contact-info {
+        .tagline-sub {
+            text-align: center;
+            font-size: 8.5px;
+            letter-spacing: 0.18em;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            margin-top: 4px;
+        }
+
+        .contact-row {
             display: flex;
             flex-direction: row;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.1in;
-            margin-top: 0.05in;
             font-size: 10px;
-            padding: 0 0.1in;
-            width: 100%;
             flex-wrap: nowrap;
+            padding: 2px 0.05in;
         }
 
         .contact-item {
             display: flex;
-            flex-direction: row;
             align-items: center;
-            gap: 0.05in;
-            flex: 0 1 auto;
+            gap: 5px;
             white-space: nowrap;
         }
 
         .contact-icon {
-            font-size: 13px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-
-        .contact {
-            font-size: 10px;
+            font-size: 14px;
+            width: 18px;
+            text-align: center;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-top">
-                <img src="{{ public_path('images/manolo fortich seal.png') }}" alt="Manolo Fortich Seal" class="header-logo-left">
-                <div class="header-center">
-                    <div class="gov-line">Republic of the Philippines</div>
-                    <div class="gov-line">Province of Bukidnon</div>
-                    <div class="gov-main">MUNICIPALITY OF MANOLO FORTICH</div>
-                    <div class="gov-main" style="font-size: 12px;">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
-                </div>
-                <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}" alt="Bagong Pilipinas" class="header-logo">
-            </div>
+<div class="container">
 
+    <!-- ── HEADER ── -->
+    <div class="header-top">
+        <div class="header-logo-cell">
+            <img src="{{ public_path('images/manolo fortich seal.png') }}"
+                 alt="Manolo Fortich Seal"
+                 class="header-logo-left">
         </div>
 
-        <!-- Title -->
-        <div class="title">CERTIFICATION</div>
-
-        <!-- Content -->
-        <div class="content">
-            <div class="salutation">TO WHOM IT MAY CONCERN:</div>
-
-            <div class="cert-paragraph">
-                THIS IS TO CERTIFY THAT <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
-                a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines, has been granted
-                the permit and authority to conduct recruitment of applicants for local employment for <strong>ONE (1) day(s)</strong>
-                valid on <strong>{{ $activity_request->activity_date?->format('M d, Y') ?? 'TBD' }}</strong> at Lobby area in Ground floor of Manolo Fortich PESO Office.
-                Located in, Gen. Andres Bonifacio St. Cor. Albarces St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
-            </div>
-
-            <div class="cert-paragraph">
-                This certifies that the office of the undersigned poses no objection's whatsoever relative to the conduct of said activities.
-            </div>
-
-            <div class="cert-paragraph">
-                This certification is issued upon the request of the above agency for whatever legal intent or purpose this may serve.
-            </div>
-
-            <div class="location-block">
-                Given this <strong>{{ $activity_request->created_at?->format('jS \d\a\y \o\f F') ?? now()->format('jS \d\a\y \o\f F') }} 2026</strong>
-                at Lobby area in Ground floor of Manolo Fortich PESO Office.<br>
-                Located in, Gen. Andres Bonifacio St. Cor. Albarces St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
-            </div>
+        <div class="header-center-cell">
+            <div class="gov-line">Republic of the Philippines</div>
+            <div class="gov-line">Province of Bukidnon</div>
+            <div class="gov-main">MUNICIPALITY OF MANOLO FORTICH</div>
+            <div class="gov-peso">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
         </div>
 
-        <!-- Signatures -->
-    <div> </div>
-        <div class="signature-container">
-            <div class="sig-block">
-                <div class="sig-label">ATTESTED BY:</div>
-                <div class="sig-name">LORRAINE A. REQUINTON</div>
-                <div class="sig-title">PESO Manager</div>
-            </div>
-            <div class="sig-block">
-                <div class="sig-label">NOTED BY:</div>
-                <div class="sig-name">ROGELIO S. QUINO</div>
-                <div class="sig-title">Municipal Mayor</div>
-            </div>
+        <div class="header-logo-cell">
+            <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}"
+                 alt="Bagong Pilipinas"
+                 class="header-logo">
+        </div>
+    </div>
+
+    <!-- ── DECORATIVE STRIP (top) ── -->
+    <img src="{{ public_path('images/decor.png') }}"
+         alt="Decorative Pattern"
+         class="decor-top">
+
+    <!-- ── TITLE ── -->
+    <div class="title">CERTIFICATION</div>
+
+    <!-- ── CONTENT ── -->
+    <div class="content">
+
+        <div class="salutation">TO WHOM IT MAY CONCERN:</div>
+
+        <div class="cert-paragraph">
+            THIS IS TO CERTIFY THAT <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
+            a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines
+            established in {{ $company_profile?->established_year ?? '' }}, has been granted
+            the permit and authority to conduct recruitment of applicants for local employment for
+            <strong>ONE (1) day(s)</strong> valid on
+            <strong>{{ $activity_request->activity_date?->format('M d, Y') ?? 'TBD' }}</strong>
+            at Lobby area in Ground floor of Manolo Fortich PESO office, Located in,
+            Gen. Andres Bonifacio St. Cor. Albarece St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
+            8703. (in front of Tankulan Flea Market - Taboan).
         </div>
 
-        <!-- Tagline -->
-        <div class="tagline">"Lupad Manolo Fortich"</div>
+        <div class="cert-paragraph">
+            This certifies that the office of the undersigned poses no objection's whatsoever relative to conduct
+            of said activities.
+        </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <span class="contact-icon">[E]</span>
-                    <span class="contact">peso@manolofortich.gov.ph</span>
-                </div>
-                <div class="contact-item">
-                    <span class="contact-icon">[T]</span>
-                    <span class="contact">0917-808-676</span>
-                </div>
-                <div class="contact-item">
-                    <span class="contact-icon">[F]</span>
-                    <span class="contact">www.facebook.com/LGU Manolo Fortich</span>
-                </div>
+        <div class="cert-paragraph">
+            This certification is issued upon the request of the above agency for whatever legal intent or purpose
+            this may serve.
+        </div>
+
+        <div class="location-block">
+            Given this <strong>{{ $activity_request->created_at?->format('jS') ?? now()->format('jS') }}</strong>
+            day of <strong>{{ $activity_request->created_at?->format('F Y') ?? now()->format('F Y') }}</strong>
+            at Lobby area in Ground floor of Manolo Fortich PESO Office,
+            Located in, Gen. Andres Bonifacio St. Cor. Albarece St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
+        </div>
+
+    </div>
+
+    <!-- ── SIGNATURES ── -->
+    <div class="signature-container">
+
+        <div class="sig-block left">
+            <div class="sig-label">ATTESTED BY:</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">LORRAINE A. REQUINTON</div>
+            <div class="sig-title">PESO Manager</div>
+        </div>
+
+        <div class="sig-block right">
+            <div class="sig-label">NOTED BY:</div>
+            <div class="sig-line"></div>
+            <div class="sig-name">ROGELIO S. QUIÑO</div>
+            <div class="sig-title">Municipal Mayor</div>
+        </div>
+
+    </div>
+
+    <!-- ── TAGLINE ── -->
+    <div class="tagline">"Lupad Manolo Fortich"</div>
+    <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
+
+    <!-- ── FOOTER ── -->
+    <div class="footer">
+        <div class="contact-row">
+            <div class="contact-item">
+                <span class="contact-icon">&#9993;</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">&#9723;</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon"><strong>f</strong></span>
+                <span>www.facebook.com/LGU Manolo Fortich</span>
             </div>
         </div>
     </div>
+
+    <!-- ── DECORATIVE STRIP (bottom) ── -->
+    <img src="{{ public_path('images/decor.png') }}"
+         alt="Decorative Pattern"
+         class="decor-bottom">
+
+</div>
 </body>
 </html>
