@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\JobApplication;
 use App\Models\EmployerNotification;
+use App\Models\JobseekerProfile;
 use App\Models\PesoJob;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\UserProfile;
@@ -77,6 +78,16 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    public function jobseekerProfile()
+    {
+        return $this->hasOne(JobseekerProfile::class);
+    }
+
+    public function userProfile()
+    {
+        return $this->jobseekerProfile();
     }
 
     public function companyProfile()

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\JobApplication;
 use App\Models\PesoJob;
+use App\Models\RecommendedJob;
 use App\Models\SavedJob;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -18,7 +19,7 @@ class JobMatchingService
 
     public function recommendForUser(User $user, int $limit = 12): Collection
     {
-        $profile = $user->profile;
+        $profile = $user->jobseekerProfile ?? $user->userProfile ?? $user->profile;
 
         if (! $profile instanceof UserProfile) {
             return collect();
@@ -29,7 +30,7 @@ class JobMatchingService
             ->pluck('peso_job_id')
             ->all();
 
-        return PesoJob::query()
+        $matches = PesoJob::query()
             ->activeApproved()
             ->whereNotIn('id', $appliedJobIds)
             ->latest('id')
@@ -39,6 +40,10 @@ class JobMatchingService
             ->sortByDesc('match_score')
             ->take($limit)
             ->values();
+
+        $this->syncRecommendedJobs($user, $matches);
+
+        return $matches;
     }
 
     public function matchJob(PesoJob $job, ?UserProfile $profile = null, ?User $user = null): array
@@ -690,5 +695,44 @@ class JobMatchingService
         }
 
         return ucwords($skill);
+    }
+
+    /**
+     * @param Collection<int,array<string,mixed>> $matches
+     */
+    private function syncRecommendedJobs(User $user, Collection $matches): void
+    {
+        if ($matches->isEmpty()) {
+            RecommendedJob::query()->where('user_id', $user->id)->delete();
+            return;
+        }
+
+        $keepJobIds = [];
+
+        foreach ($matches as $match) {
+            $job = $match['job'] ?? null;
+
+            if (! $job instanceof PesoJob) {
+                continue;
+            }
+
+            $keepJobIds[] = $job->id;
+
+            RecommendedJob::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'job_id' => $job->id,
+                ],
+                [
+                    'match_score' => $match['match_score'] ?? 0,
+                    'reason' => collect($match['match_reasons'] ?? [])->first() ?: 'Profile-based recommendation',
+                ]
+            );
+        }
+
+        RecommendedJob::query()
+            ->where('user_id', $user->id)
+            ->whereNotIn('job_id', $keepJobIds)
+            ->delete();
     }
 }

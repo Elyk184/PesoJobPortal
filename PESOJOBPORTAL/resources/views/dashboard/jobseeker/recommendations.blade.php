@@ -78,8 +78,13 @@
 				@foreach ($recommendations as $item)
 					@php
 						$job = $item['job'];
-						$score = (int) ($item['score'] ?? 0);
-						$badgeClass = $score >= 80 ? 'success' : ($score >= 60 ? 'primary' : 'warning');
+							$detailsId = 'match-details-' . $job->id;
+							$matchScore = (int) data_get($item, 'match_score', 0);
+							$matchLevel = data_get($item, 'match_level', 'Profile Fit');
+							$reasons = data_get($item, 'match_reasons', []);
+							$matchedSkills = data_get($item, 'matching_skills', []);
+							$missingSkills = data_get($item, 'missing_skills', []);
+							$requirementsList = data_get($item, 'requirements_list', []);
 					@endphp
 
 					<div class="col-12 col-xl-6">
@@ -93,7 +98,9 @@
 										<i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
 									</div>
 								</div>
-								<span class="badge text-bg-{{ $badgeClass }}">{{ $score }}% Match</span>
+								<button type="button" class="btn btn-sm btn-outline-primary" data-match-toggle="{{ $detailsId }}" aria-expanded="false" aria-controls="{{ $detailsId }}">
+									View Match
+								</button>
 							</div>
 
 							@if (! empty($job->salary_range))
@@ -104,21 +111,84 @@
 
 							<p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($job->description, 150) }}</p>
 
-							@if (! empty($item['matched_skills']))
+							@if (! empty($matchedSkills))
 								<div class="d-flex flex-wrap gap-2">
-									@foreach ($item['matched_skills'] as $skill)
+									@foreach ($matchedSkills as $skill)
 										<span class="badge rounded-pill text-bg-light border">{{ $skill }}</span>
 									@endforeach
 								</div>
 							@endif
 
-							@if (! empty($item['reasons']))
-								<ul class="small text-muted mb-0 ps-3">
-									@foreach ($item['reasons'] as $reason)
-										<li>{{ $reason }}</li>
-									@endforeach
-								</ul>
-							@endif
+							<div class="small text-muted border-top pt-3 d-none" id="{{ $detailsId }}">
+								<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
+									<div>
+										<div class="fw-semibold text-dark mb-1">Match summary</div>
+										<div class="small text-secondary">Based on your profile, experience, skills, and preferences.</div>
+									</div>
+									<div class="text-md-end">
+										<div class="fw-bold text-dark">{{ $matchLevel }}</div>
+										<div class="small text-secondary">{{ $matchScore }}% overall fit</div>
+									</div>
+								</div>
+
+								<div class="progress mb-3" style="height: 8px;">
+									<div class="progress-bar" role="progressbar" style="width: {{ $matchScore }}%;" aria-valuenow="{{ $matchScore }}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+
+								<div class="row g-3">
+									<div class="col-12 col-lg-6">
+										<div class="fw-semibold text-dark mb-2">Why this was recommended</div>
+										<ul class="mb-0 ps-3">
+											@forelse ($reasons as $reason)
+												<li>{{ $reason }}</li>
+											@empty
+												<li>General profile fit based on your current details.</li>
+											@endforelse
+										</ul>
+									</div>
+
+									<div class="col-12 col-lg-6">
+										<div class="fw-semibold text-dark mb-2">Job requirements snapshot</div>
+										@if (! empty($requirementsList))
+											<div class="d-flex flex-wrap gap-2">
+												@foreach (array_slice($requirementsList, 0, 6) as $requirement)
+													<span class="badge rounded-pill text-bg-light border">{{ $requirement }}</span>
+												@endforeach
+											</div>
+										@else
+											<div class="small text-secondary">No specific requirements listed.</div>
+										@endif
+									</div>
+								</div>
+
+								<div class="row g-3 mt-0">
+									<div class="col-12 col-lg-6">
+										<div class="fw-semibold text-dark mb-2">Matched Skills</div>
+										@if (! empty($matchedSkills))
+											<div class="d-flex flex-wrap gap-2">
+												@foreach ($matchedSkills as $skill)
+													<span class="badge rounded-pill text-bg-light border">{{ $skill }}</span>
+												@endforeach
+											</div>
+										@else
+											<div class="small text-secondary">No direct skill overlaps found yet.</div>
+										@endif
+									</div>
+
+									<div class="col-12 col-lg-6">
+										<div class="fw-semibold text-dark mb-2">Missing Skills</div>
+										@if (! empty($missingSkills))
+											<div class="d-flex flex-wrap gap-2">
+												@foreach ($missingSkills as $skill)
+													<span class="badge rounded-pill text-bg-warning-subtle border">{{ $skill }}</span>
+												@endforeach
+											</div>
+										@else
+											<div class="small text-secondary">Nothing missing from the current top signals.</div>
+										@endif
+									</div>
+								</div>
+							</div>
 						</article>
 					</div>
 				@endforeach
@@ -126,4 +196,28 @@
 		@endif
 	</div>
 </section>
+
+@push('scripts')
+<script>
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-match-toggle]');
+
+        if (!button) {
+            return;
+        }
+
+        const detailsId = button.getAttribute('data-match-toggle');
+        const details = document.getElementById(detailsId);
+
+        if (!details) {
+            return;
+        }
+
+        const shouldShow = details.classList.contains('d-none');
+        details.classList.toggle('d-none', !shouldShow);
+        button.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
+        button.textContent = shouldShow ? 'Hide Match' : 'View Match';
+    });
+</script>
+@endpush
 @endsection

@@ -1998,7 +1998,7 @@ class JobseekerController extends Controller
 
         return view('dashboard.jobseeker.apply-job', [
             'job' => $job->load(['employer', 'employer.companyProfile']),
-            'jobMatch' => $this->jobMatchingService->matchJob($job, $user?->profile, $user),
+            'jobMatch' => $this->jobMatchingService->matchJob($job, $user?->jobseekerProfile ?? $user?->userProfile ?? $user?->profile, $user),
         ]);
     }
 
