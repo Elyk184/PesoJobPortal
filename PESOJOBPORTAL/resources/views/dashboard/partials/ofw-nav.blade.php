@@ -35,7 +35,7 @@
         </div>
         <div>
             <div class="dashboard-user-name">{{ $user->name ?? 'OFW' }}</div>
-            <div class="dashboard-user-role">{{ ucfirst($user->role ?? 'ofw') }}</div>
+            <div class="dashboard-user-role">{{ strtoupper($user->role ?? 'OFW') }}</div>
         </div>
     </div>
 
