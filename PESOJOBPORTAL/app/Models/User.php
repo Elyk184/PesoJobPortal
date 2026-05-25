@@ -33,6 +33,7 @@ class User extends Authenticatable
         return match($this->role) {
             'admin'    => route('admin.dashboard'),
             'employer' => route('employer.dashboard'),
+            'ofw'      => route('ofw.preview'),
             default    => route('jobseeker.dashboard'),
         };
     }
