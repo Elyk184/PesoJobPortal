@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Services\PesoClearanceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +34,12 @@ class RegisterController extends Controller
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Auto-generate PESO clearance for new jobseekers
+        if ($user->role === 'jobseeker') {
+            $pesoClearanceService = new PesoClearanceService();
+            $pesoClearanceService->createAutoForJobseeker($user);
+        }
 
         return redirect()
             ->route('login')

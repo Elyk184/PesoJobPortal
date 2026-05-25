@@ -10,6 +10,7 @@ use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
+use App\Services\PesoClearanceService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -589,6 +590,59 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'PESO clearance has been issued successfully.');
+    }
+
+    /**
+     * Auto-generate PESO clearances for jobseekers without one
+     */
+    public function autoGenerateClearances(Request $request): RedirectResponse
+    {
+        $service = new PesoClearanceService();
+        $result = $service->generateForAllJobseekers();
+
+        $message = sprintf(
+            'Successfully created %d auto-generated PESO clearances. %d jobseekers already have clearances.',
+            $result['count'],
+            count($result['skipped'])
+        );
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Auto-generate clearance for specific users
+     */
+    public function autoGenerateClearancesForUsers(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'user_ids' => 'required|array|min:1',
+            'user_ids.*' => 'required|integer|exists:users,id',
+        ]);
+
+        $service = new PesoClearanceService();
+        $result = $service->generateForMultipleJobseekers($validated['user_ids']);
+
+        $message = sprintf(
+            'Successfully created %d auto-generated PESO clearances.',
+            $result['count']
+        );
+
+        if (!empty($result['skipped'])) {
+            $message .= sprintf(' %d users skipped (already have clearances or not jobseekers).', count($result['skipped']));
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Show PESO clearance management dashboard with statistics
+     */
+    public function pesoClearanceManagement(): View
+    {
+        $service = new PesoClearanceService();
+        $stats = $service->getStatistics();
+
+        return view('admin.peso-clearance-management', compact('stats'));
     }
 
     public function approveDocument(Request $request, int $documentId): RedirectResponse

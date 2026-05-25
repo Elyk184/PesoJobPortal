@@ -38,6 +38,22 @@
     </style>
 
     <div class="clearance-shell">
+        <!-- Auto-generation Section -->
+        <div style="background: white; border-radius: 18px; padding: 1.5rem; box-shadow: 0 6px 18px rgba(13,31,60,0.06); border: 1px solid #e7edf5; border-left: 5px solid #3b82f6;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <h4 style="margin: 0 0 0.5rem 0; color: #0d1f3c; font-weight: 800;">Auto-Generate PESO Clearances</h4>
+                    <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Automatically create pending clearances for jobseekers who don't have one yet.</p>
+                </div>
+                <form method="POST" action="{{ route('admin.peso-clearances.auto-generate') }}" style="display: flex; gap: 0.5rem;">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.55rem 1.2rem; border-radius: 999px; font-weight: 700;">
+                        <i class="bi bi-lightning-charge"></i> Generate For All Jobseekers
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <div class="clearance-summary">
             <div class="clearance-stat">
                 <div class="clearance-stat-label">Pending</div>
