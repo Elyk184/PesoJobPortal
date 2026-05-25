@@ -731,7 +731,9 @@ class JobseekerController extends Controller
             'other_skills.by_experience' => ['nullable', 'boolean'],
 
             'employment_status.wage_employed' => ['nullable', 'boolean'],
+            'employment_status.wage_employed_specify' => ['nullable', 'string', 'max:255'],
             'employment_status.self_employed' => ['nullable', 'boolean'],
+            'employment_status.self_employed_specify' => ['nullable', 'string', 'max:255'],
             'employment_status.unemployed' => ['nullable', 'boolean'],
 
             'job_preferences.part_time' => ['nullable', 'boolean'],
@@ -777,7 +779,9 @@ class JobseekerController extends Controller
 
         $employmentStatus = [
             'wage_employed' => (bool) ($validated['employment_status']['wage_employed'] ?? false),
+            'wage_employed_specify' => trim((string) ($validated['employment_status']['wage_employed_specify'] ?? '')),
             'self_employed' => (bool) ($validated['employment_status']['self_employed'] ?? false),
+            'self_employed_specify' => trim((string) ($validated['employment_status']['self_employed_specify'] ?? '')),
             'unemployed' => (bool) ($validated['employment_status']['unemployed'] ?? false),
             'has_work_experience' => (bool) ($validated['work_experience_has'] ?? false),
         ];
@@ -1256,7 +1260,9 @@ class JobseekerController extends Controller
     {
         return [
             'wage_employed' => false,
+            'wage_employed_specify' => '',
             'self_employed' => false,
+            'self_employed_specify' => '',
             'unemployed' => false,
             'has_work_experience' => null,
         ];
