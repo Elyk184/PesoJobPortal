@@ -19,8 +19,20 @@ class RecruitmentActivityRequest extends Model
         'notes',
         'approved_at',
         'approved_by',
+        // SRA specific fields
+        'dmw_certificate_path',
+        'recruitment_officer_id_path',
+        'job_order_balance_path',
+        'deployment_report_path',
+        'affidavit_undertaking_path',
+        'sra_authority_file_path',
+        // LRA specific fields
+        'business_permit_path',
+        'lra_recruitment_officer_id_path',
+        'job_vacancies_path',
+        'job_vacancies_text',
     ];
-    
+
     protected $attributes = [
         'status' => 'pending', // Default status for admin approval
     ];

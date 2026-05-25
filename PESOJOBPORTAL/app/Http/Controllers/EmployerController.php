@@ -721,59 +721,52 @@ class EmployerController extends Controller
     {
         $validated = $request->validate([
             'activity_type' => ['required', 'in:lra,sra'],
-            'company_profile_source' => ['nullable', 'in:upload,profile_details'],
             'letter_of_intent' => ['required', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'company_profile' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'job_advertisement' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+
+            // SRA specific validations
+            'dmw_certificate' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'recruitment_officer_id' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_order_balance' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'deployment_report' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'affidavit_undertaking' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'sra_authority_file' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+
+            // LRA specific validations
+            'business_permit' => ['nullable', 'required_if:activity_type,lra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'lra_recruitment_officer_id' => ['nullable', 'required_if:activity_type,lra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_vacancies' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_vacancies_text' => ['nullable', 'string'],
         ]);
 
         $employer = $request->user()->loadMissing('companyProfile');
-        $companyProfile = $employer->companyProfile;
 
-        $companyProfileSource = $validated['company_profile_source'] ?? 'upload';
-        $companyProfilePath = null;
-
-        if ($request->hasFile('company_profile')) {
-            $companyProfilePath = $request->file('company_profile')->store('recruitment-documents');
-        } elseif ($companyProfileSource === 'profile_details' && $companyProfile) {
-            $summaryLines = [
-                'COMPANY PROFILE',
-                '================',
-                'Company Name: '.($companyProfile->company_name ?? $employer->name),
-                'Logo Path: '.($companyProfile->logo_path ?? 'N/A'),
-                'Establishment Contact Person: '.($companyProfile->establishment_contact_person ?? 'N/A'),
-                'Establishment Contact Position: '.($companyProfile->establishment_contact_position ?? 'N/A'),
-                'Establishment Phone: '.($companyProfile->establishment_phone ?? 'N/A'),
-                'Establishment Email: '.($companyProfile->establishment_email ?? 'N/A'),
-                'Address: '.trim(implode(', ', array_filter([
-                    $companyProfile->street_village ?? null,
-                    $companyProfile->barangay ?? null,
-                    $companyProfile->city_municipality ?? null,
-                    $companyProfile->province ?? null,
-                ]))),
-            ];
-
-            $companyProfilePath = 'recruitment-documents/company-profile-'.now()->format('YmdHis').'.txt';
-            Storage::disk('public')->put($companyProfilePath, implode("\n", $summaryLines));
-        }
-
-        if (! $companyProfilePath) {
-            return back()
-                ->withErrors(['company_profile' => 'Please upload a company profile file or choose the saved company profile details source.'])
-                ->withInput();
-        }
-
-        $jobAdvertisementPath = $request->hasFile('job_advertisement')
-            ? $request->file('job_advertisement')->store('recruitment-documents')
-            : '';
-
-        RecruitmentActivityRequest::create([
+        $dataToCreate = [
             'employer_id' => $employer->id,
             'activity_type' => $validated['activity_type'],
             'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
-            'company_profile_path' => $companyProfilePath,
-            'job_advertisement_path' => $jobAdvertisementPath,
-        ]);
+            'company_profile_path' => 'recruitment-documents/legacy',
+            'job_advertisement_path' => 'recruitment-documents/legacy',
+        ];
+
+        // Handle SRA specific files
+        if ($validated['activity_type'] === 'sra') {
+            $dataToCreate['dmw_certificate_path'] = $request->file('dmw_certificate')?->store('recruitment-documents');
+            $dataToCreate['recruitment_officer_id_path'] = $request->file('recruitment_officer_id')?->store('recruitment-documents');
+            $dataToCreate['job_order_balance_path'] = $request->file('job_order_balance')?->store('recruitment-documents');
+            $dataToCreate['deployment_report_path'] = $request->file('deployment_report')?->store('recruitment-documents');
+            $dataToCreate['affidavit_undertaking_path'] = $request->file('affidavit_undertaking')?->store('recruitment-documents');
+            $dataToCreate['sra_authority_file_path'] = $request->file('sra_authority_file')?->store('recruitment-documents');
+        }
+
+        // Handle LRA specific files and text
+        if ($validated['activity_type'] === 'lra') {
+            $dataToCreate['business_permit_path'] = $request->file('business_permit')?->store('recruitment-documents');
+            $dataToCreate['lra_recruitment_officer_id_path'] = $request->file('lra_recruitment_officer_id')?->store('recruitment-documents');
+            $dataToCreate['job_vacancies_path'] = $request->file('job_vacancies')?->store('recruitment-documents');
+            $dataToCreate['job_vacancies_text'] = $validated['job_vacancies_text'] ?? null;
+        }
+
+        RecruitmentActivityRequest::create($dataToCreate);
 
         return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
     }

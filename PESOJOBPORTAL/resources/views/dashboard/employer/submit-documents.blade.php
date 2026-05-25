@@ -334,10 +334,57 @@
                         <input id="letter_of_intent" type="file" name="letter_of_intent" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
 
+                    <!-- SRA Specific Fields -->
+                    <div id="sra_dmw_certificate" class="docs-field" style="display: none;">
+                        <label for="dmw_certificate">DMW CERTIFICATE</label>
+                        <input id="dmw_certificate" type="file" name="dmw_certificate" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
 
+                    <div id="sra_recruitment_officer" class="docs-field" style="display: none;">
+                        <label for="recruitment_officer_id">APPOINTMENT OF RECRUITMENT OFFICER AND ID</label>
+                        <input id="recruitment_officer_id" type="file" name="recruitment_officer_id" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
 
+                    <div id="sra_job_order_balance" class="docs-field" style="display: none;">
+                        <label for="job_order_balance">UPDATED JOB ORDER BALANCE</label>
+                        <input id="job_order_balance" type="file" name="job_order_balance" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
 
+                    <div id="sra_deployment_report" class="docs-field" style="display: none;">
+                        <label for="deployment_report">LATEST DEPLOYMENT REPORT</label>
+                        <input id="deployment_report" type="file" name="deployment_report" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
 
+                    <div id="sra_affidavit" class="docs-field" style="display: none;">
+                        <label for="affidavit_undertaking">AFFIDAVIT OF UNDERTAKING (TO FOLLOW)</label>
+                        <input id="affidavit_undertaking" type="file" name="affidavit_undertaking" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="sra_authority" class="docs-field" style="display: none;">
+                        <label for="sra_authority_file">SRA AUTHORITY (TO FOLLOW)</label>
+                        <input id="sra_authority_file" type="file" name="sra_authority_file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <!-- LRA Specific Fields -->
+                    <div id="lra_business_permit" class="docs-field" style="display: none;">
+                        <label for="business_permit">Business Permit</label>
+                        <input id="business_permit" type="file" name="business_permit" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_recruitment_officer" class="docs-field" style="display: none;">
+                        <label for="lra_recruitment_officer_id">APPOINTMENT OF RECRUITMENT OFFICER AND ID</label>
+                        <input id="lra_recruitment_officer_id" type="file" name="lra_recruitment_officer_id" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_job_vacancies" class="docs-field" style="display: none;">
+                        <label for="job_vacancies">Job Vacancies - Upload File</label>
+                        <input id="job_vacancies" type="file" name="job_vacancies" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_job_vacancies_text" class="docs-field" style="display: none;">
+                        <label for="job_vacancies_text">Job Vacancies - Text Details</label>
+                        <textarea id="job_vacancies_text" name="job_vacancies_text" rows="6" style="width: 100%; border: 1px solid #c8d6ea; border-radius: 10px; background: #fff; padding: 0.6rem 0.7rem; font-size: 0.92rem; font-family: inherit;" placeholder="Enter job vacancy details here..."></textarea>
+                    </div>
                     <button id="submitBtn" class="docs-submit" type="submit">Submit LRA/SRA Request</button>
                 </form>
 
@@ -363,20 +410,53 @@
 
             const sraRequirements = [
                 { name: 'Letter of Intent (Addressed to ROGELIO N. QUIÑO, MUNICIPAL MAYOR, MANOLO FORTICH, THRU: LORRAINE A. REQUINTON - PESO MANAGER)', field: 'letter_of_intent' },
-                { name: 'DMW CERTIFICATE', field: null },
-                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: null },
-                { name: 'UPDATED JOB ORDER BALANCE', field: null },
-                { name: 'LATEST DEPLOYMENT REPORT', field: null },
-                { name: 'AFFIDAVIT OF UNDERTAKING (TO FOLLOW)', field: null },
-                { name: 'SRA AUTHORITY (TO FOLLOW)', field: null },
+                { name: 'DMW CERTIFICATE', field: 'dmw_certificate' },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: 'recruitment_officer_id' },
+                { name: 'UPDATED JOB ORDER BALANCE', field: 'job_order_balance' },
+                { name: 'LATEST DEPLOYMENT REPORT', field: 'deployment_report' },
+                { name: 'AFFIDAVIT OF UNDERTAKING (TO FOLLOW)', field: 'affidavit_undertaking' },
+                { name: 'SRA AUTHORITY (TO FOLLOW)', field: 'sra_authority_file' },
             ];
 
             const lraRequirements = [
                 { name: 'Letter of Intent', field: 'letter_of_intent' },
-                { name: 'Business Permit', field: null },
-                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: null },
-                { name: 'Job Vacancies', field: null },
+                { name: 'Business Permit', field: 'business_permit' },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: 'lra_recruitment_officer_id' },
+                { name: 'Job Vacancies', field: 'job_vacancies' },
             ];
+
+            const updateVisibleFields = () => {
+                const activityType = activityTypeSelect.value;
+
+                // Hide all SRA fields
+                document.getElementById('sra_dmw_certificate').style.display = 'none';
+                document.getElementById('sra_recruitment_officer').style.display = 'none';
+                document.getElementById('sra_job_order_balance').style.display = 'none';
+                document.getElementById('sra_deployment_report').style.display = 'none';
+                document.getElementById('sra_affidavit').style.display = 'none';
+                document.getElementById('sra_authority').style.display = 'none';
+
+                // Hide all LRA fields
+                document.getElementById('lra_business_permit').style.display = 'none';
+                document.getElementById('lra_recruitment_officer').style.display = 'none';
+                document.getElementById('lra_job_vacancies').style.display = 'none';
+                document.getElementById('lra_job_vacancies_text').style.display = 'none';
+
+                // Show relevant fields
+                if (activityType === 'sra') {
+                    document.getElementById('sra_dmw_certificate').style.display = 'block';
+                    document.getElementById('sra_recruitment_officer').style.display = 'block';
+                    document.getElementById('sra_job_order_balance').style.display = 'block';
+                    document.getElementById('sra_deployment_report').style.display = 'block';
+                    document.getElementById('sra_affidavit').style.display = 'block';
+                    document.getElementById('sra_authority').style.display = 'block';
+                } else if (activityType === 'lra') {
+                    document.getElementById('lra_business_permit').style.display = 'block';
+                    document.getElementById('lra_recruitment_officer').style.display = 'block';
+                    document.getElementById('lra_job_vacancies').style.display = 'block';
+                    document.getElementById('lra_job_vacancies_text').style.display = 'block';
+                }
+            };
 
             const updateRequirements = () => {
                 const activityType = activityTypeSelect.value;
@@ -387,16 +467,25 @@
                 } else if (activityType === 'lra') {
                     requirements = lraRequirements;
                 } else {
-                    requirements = [
-                        { name: 'Select Activity Type (LRA or SRA)', field: null },
-                        { name: 'Letter of Intent', field: 'letter_of_intent' },
-                    ];
+                    // Default: show SRA requirements as template
+                    requirements = sraRequirements;
                 }
 
-                const letterOfIntentCompleted = letterOfIntentInput.files.length > 0;
                 const completedCount = requirements.filter(req => {
-                    if (req.field === 'letter_of_intent') {
-                        return letterOfIntentCompleted;
+                    if (req.field) {
+                        // Special handling for job_vacancies - can be either file OR text
+                        if (req.field === 'job_vacancies') {
+                            const fileInput = document.getElementById('job_vacancies');
+                            const textInput = document.getElementById('job_vacancies_text');
+                            const hasFile = fileInput && fileInput.files.length > 0;
+                            const hasText = textInput && textInput.value.trim().length > 0;
+                            return hasFile || hasText;
+                        } else {
+                            const input = document.getElementById(req.field);
+                            if (input && input.type === 'file') {
+                                return input.files.length > 0;
+                            }
+                        }
                     }
                     return false;
                 }).length;
@@ -418,7 +507,23 @@
                 `;
 
                 requirements.forEach(req => {
-                    const isCompleted = req.field === 'letter_of_intent' ? letterOfIntentCompleted : false;
+                    let isCompleted = false;
+                    if (req.field) {
+                        // Special handling for job_vacancies - can be either file OR text
+                        if (req.field === 'job_vacancies') {
+                            const fileInput = document.getElementById('job_vacancies');
+                            const textInput = document.getElementById('job_vacancies_text');
+                            const hasFile = fileInput && fileInput.files.length > 0;
+                            const hasText = textInput && textInput.value.trim().length > 0;
+                            isCompleted = hasFile || hasText;
+                        } else {
+                            const input = document.getElementById(req.field);
+                            if (input && input.type === 'file') {
+                                isCompleted = input.files.length > 0;
+                            }
+                        }
+                    }
+
                     html += `
                         <div style="display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem; border-radius: 8px; background: ${isCompleted ? '#eaf2ff' : '#f5f7fb'};">
                             <div style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; ${isCompleted ? 'background: #2f6ec8; color: #fff;' : 'background: #d8e2f1; color: #64748b;'}">
@@ -442,14 +547,27 @@
                 }
             };
 
+            // Get all file inputs for tracking
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+
             activityTypeSelect.addEventListener('change', () => {
                 updateButtonText();
+                updateVisibleFields();
                 updateRequirements();
             });
 
-            letterOfIntentInput.addEventListener('change', updateRequirements);
+            fileInputs.forEach(input => {
+                input.addEventListener('change', updateRequirements);
+            });
+
+            // Add listener for job_vacancies_text textarea
+            const jobVacanciesText = document.getElementById('job_vacancies_text');
+            if (jobVacanciesText) {
+                jobVacanciesText.addEventListener('input', updateRequirements);
+            }
 
             updateButtonText(); // Initial call in case there's a default value
+            updateVisibleFields(); // Initial call to hide/show fields
             updateRequirements(); // Initial call to show requirements
         });
     </script>
