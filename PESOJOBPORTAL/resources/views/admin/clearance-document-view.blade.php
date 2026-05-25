@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             background: #f5f5f5;
             padding: 1rem;
         }
@@ -58,8 +58,8 @@
         }
         
         .title {
-            font-size: 32px;
-            font-weight: 900;
+            font-size: 42px;
+            font-weight: 560;
             color: #000;
             margin: 0.8rem 0;
             letter-spacing: 2px;
@@ -85,21 +85,26 @@
         }
         
         .info-label {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #000;
+            margin-bottom: 0.3rem;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .info-value {
-            font-size: 18px;
-            font-weight: 900;
+            font-size: 30px;
+            font-weight: 600;
             color: #000;
+            text-decoration: underline;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            padding-bottom: 0.5rem;
         }
         
         .subject-line {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
             margin: 0.8rem 0 0.5rem 0;
             text-transform: uppercase;
@@ -107,23 +112,24 @@
         }
         
         .body-text {
-            font-size: 12px;
-            line-height: 1.7;
+            font-size: 13px;
+            line-height: 1.8;
             text-align: justify;
-            margin: 0.8rem 0;
+            margin: 1rem 0;
             color: #000;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .clearance-statement {
-            background: #f9f9f9;
-            padding: 1rem;
+            background: transparent;
+            padding: 0.5rem 0;
             margin: 1rem auto;
-            border-left: 3px solid #000;
-            font-size: 11px;
-            line-height: 1.6;
-            font-weight: 500;
-            max-width: 90%;
+            border-left: none;
+            font-size: 13px;
+            line-height: 1.8;
+            font-weight: 400
             text-align: justify;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .footer-section {
@@ -139,20 +145,22 @@
         }
         
         .signature-line {
-            border-top: 1px solid #000;
+            border-top: none;
             margin-top: 2rem;
             padding-top: 0.3rem;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .office-info {
             margin-top: 1.5rem;
-            font-size: 9px;
-            line-height: 1.5;
+            font-size: 12px;
+            line-height: 1.6;
             color: #000;
-            border-top: 1px solid #ccc;
-            padding-top: 0.5rem;
+            border-top: none;
+            padding-top: 0;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .logo {
@@ -172,10 +180,11 @@
         }
         
         .clearance-number {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             margin: 0.5rem 0;
             letter-spacing: 1px;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         .print-button {
@@ -220,10 +229,19 @@
             background: #4b5563;
         }
         
+        .approved-by {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+        
         .or-number {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
             margin: 0.3rem 0;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
         
         @media print {
@@ -266,21 +284,22 @@
             
             <div class="info-section">
                 <div>
-                    <div class="info-label">Name</div>
+                    
                     <div class="info-value">{{ strtoupper($clearance->user?->name ?? 'APPLICANT NAME') }}</div>
+                <div class="info-label">Name</div>
                 </div>
             </div>
             
             <div class="info-section">
                 <div style="width: 100%;">
-                    <div class="info-label">Address</div>
-                    <div style="font-size: 13px; font-weight: 600; margin-top: 0.3rem;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
+                    {{--  <div class="info-label">Address</div>  --}}
+                    <div style="font-size: 24px; font-weight: 600; margin-top: 0.3rem;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
             </div>
             
             
             <div class="clearance-statement">
-                <strong>THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No. 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
+                <strong>REGISTRY THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No. 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
             </div>
             
             <div class="body-text">
@@ -291,15 +310,20 @@
                 This EMPLOYMENT CLEARANCE is issued in connection with the desire to work and pursue lawful employment as per Presidential Decree No. 442 and in accordance with Municipal Ordinance No. 2005-394, Dated July 2005.
             </div>
             
+            <div class="approved-by">Approved by:</div>
             <div class="footer-section">
                 <div class="signature-block">
                     <div class="signature-line">LORRAINE A. REQUINTON</div>
-                    <div style="font-size: 9px; margin-top: 0.2rem;">PESO MANAGER</div>
+                    <div style="font-size: 10px; margin-top: 0.2rem;">PESO MANAGER</div>
                 </div>
                 <div style="text-align: right;">
-                    <div class="or-number">OR NO.: {{ sprintf('%07d', $clearance->id * 12345 % 9999999) }}</div>
+                    <?php $orNumber = sprintf('%07d', $clearance->id * 12345 % 9999999); ?>
+                    <div class="or-number">OR NO.: {{ $orNumber }}</div>
                     <div class="or-number">DATE ISSUED: {{ now()->format('m/d/Y') }}</div>
-                </div>
+                    <div style="margin-top: 0.5rem; text-align: center;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode('OR:' . $orNumber . ' - ' . $clearance->clearance_number) }}" alt="QR Code" style="width: 80px; height: 80px; border: 1px solid #000;">
+                    </div>
+                </?php>
             </div>
             
             <div class="office-info">
