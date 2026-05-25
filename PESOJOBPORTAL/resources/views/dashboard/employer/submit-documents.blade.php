@@ -324,63 +324,19 @@
                             </select>
                         </div>
 
-                        <div class="docs-field">
-                            <label for="company_profile_source">Company Profile Source</label>
-                            <select id="company_profile_source" name="company_profile_source">
-                                <option value="upload" @selected(old('company_profile_source', 'upload') === 'upload')>Upload a file</option>
-                                <option value="profile_details" @selected(old('company_profile_source') === 'profile_details')>Reuse Company Logo + Establishment Details</option>
-                            </select>
-                            <div class="docs-upload-state" id="company_profile_upload_state">You can reuse the logo and establishment details or upload a fresh company profile file.</div>
-                        </div>
+
                     </div>
 
-                    <div class="docs-field" id="company_profile_upload_field">
-                        <label for="company_profile">Company Profile File</label>
-                        <input id="company_profile" type="file" name="company_profile" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                        @error('company_profile')
-                            <div class="text-danger small mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
+
 
                     <div class="docs-field">
                         <label for="letter_of_intent">Letter of Intent</label>
                         <input id="letter_of_intent" type="file" name="letter_of_intent" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="docs-field">
-                        <label for="job_advertisement">Job Advertisement (Facebook/Social Media Ready)</label>
-                        <input id="job_advertisement" type="file" name="job_advertisement" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                    </div>
 
-                    <div class="docs-field docs-preview">
-                        <label>Company Profile Preview</label>
-                        <div class="docs-preview-panel">
-                            <div class="docs-preview-header">
-                                @if($companyProfile && $companyProfile->logo_path)
-                                    <img class="docs-preview-logo" src="{{ asset('storage/' . $companyProfile->logo_path) }}" alt="Company logo preview">
-                                @else
-                                    <div class="docs-preview-logo placeholder">{{ strtoupper(substr($companyProfilePreview['company_name'] ?? auth()->user()->name ?? 'P', 0, 1)) }}</div>
-                                @endif
-                                <div>
-                                    <div class="docs-preview-badge"><i class="bi bi-building"></i> Company Profile</div>
-                                    <h3 class="docs-preview-title">{{ $companyProfilePreview['company_name'] ?? auth()->user()->name }}</h3>
-                                    <p class="docs-preview-text">{{ $companyProfilePreview['establishment_contact_person'] ?? 'Establishment details will be used here.' }}</p>
-                                </div>
-                            </div>
 
-                            <div class="mt-3">
-                                <p class="docs-preview-text"><strong>Position:</strong> {{ $companyProfilePreview['establishment_contact_position'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Phone:</strong> {{ $companyProfilePreview['establishment_phone'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Email:</strong> {{ $companyProfilePreview['establishment_email'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Address:</strong> {{ trim(implode(', ', array_filter([
-                                    $companyProfilePreview['street_village'] ?? null,
-                                    $companyProfilePreview['barangay'] ?? null,
-                                    $companyProfilePreview['city_municipality'] ?? null,
-                                    $companyProfilePreview['province'] ?? null,
-                                ]))) ?: 'N/A' }}</p>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <button class="docs-submit" type="submit">Submit LRA/SRA Request</button>
                 </form>
