@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'OFW Dashboard | Link Job Resource Portal')
+@section('title', 'OFW | Dashboard')
 
 @section('dashboard-mobile-brand')
     <div class="dashboard-mobile-brand">
