@@ -21,7 +21,7 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-Route::middleware('auth')->get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.preview');
+Route::middleware('auth')->get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.dashboard');
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

@@ -64,7 +64,7 @@
                 <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                     <div class="dashboard-stat-icon"><i class="bi bi-inbox"></i></div>
                     <div>
-                        <div class="dashboard-stat-number">2</div>
+                        <div class="dashboard-stat-number">{{ $requestStats['open'] ?? 0 }}</div>
                         <div class="dashboard-stat-label">Open Requests</div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                 <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                     <div class="dashboard-stat-icon" style="background: rgba(47, 157, 98, 0.12); color: var(--dash-success);"><i class="bi bi-clock-history"></i></div>
                     <div>
-                        <div class="dashboard-stat-number">1</div>
+                        <div class="dashboard-stat-number">{{ $requestStats['under_review'] ?? 0 }}</div>
                         <div class="dashboard-stat-label">Under Review</div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                 <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                     <div class="dashboard-stat-icon" style="background: rgba(220, 164, 42, 0.12); color: var(--dash-warning);"><i class="bi bi-check2-circle"></i></div>
                     <div>
-                        <div class="dashboard-stat-number">3</div>
+                        <div class="dashboard-stat-number">{{ $requestStats['resolved'] ?? 0 }}</div>
                         <div class="dashboard-stat-label">Resolved Cases</div>
                     </div>
                 </div>

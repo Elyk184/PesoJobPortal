@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\JobApplication;
+use App\Models\OfwRequest;
 use App\Models\PortalNotification;
 use App\Models\UserProfile;
 use App\Models\UserNotification;
@@ -33,7 +34,7 @@ class User extends Authenticatable
         return match($this->role) {
             'admin'    => route('admin.dashboard'),
             'employer' => route('employer.dashboard'),
-            'ofw'      => route('ofw.preview'),
+            'ofw'      => route('ofw.dashboard'),
             default    => route('jobseeker.dashboard'),
         };
     }
@@ -69,6 +70,11 @@ class User extends Authenticatable
     public function applications()
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    public function ofwRequests()
+    {
+        return $this->hasMany(OfwRequest::class);
     }
 
     public function sentPortalNotifications()
