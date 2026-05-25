@@ -21,6 +21,7 @@ class PesoClearance extends Model
         'barangay_clearance_path',
         'is_first_time_jobseeker',
         'first_time_jobseeker_document_path',
+        'document_path',
     ];
 
     protected $casts = [

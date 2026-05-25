@@ -11,6 +11,7 @@ use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Services\PesoClearanceService;
+use App\Services\PesoClearanceDocumentService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -575,19 +576,60 @@ class AdminController extends Controller
         return view('admin.peso-clearances', compact('clearances'));
     }
 
+    public function generateClearanceDocument(PesoClearance $clearance)
+    {
+        $documentService = new PesoClearanceDocumentService();
+        $documentPath = $documentService->generateClearanceDocument($clearance);
+        
+        if ($documentPath) {
+            $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+            return back()->with('success', 'Clearance document generated!');
+        }
+
+        return back()->with('error', 'Failed to generate clearance document.');
+    }
+
+    public function viewClearanceDocument(PesoClearance $clearance)
+    {
+        if (!$clearance->document_path || !Storage::disk('local')->exists($clearance->document_path)) {
+            return back()->with('error', 'Document not found.');
+        }
+
+        return view('admin.clearance-document-view', compact('clearance'));
+    }
+
+    public function downloadClearanceDocument(PesoClearance $clearance)
+    {
+        if (!$clearance->document_path || !Storage::disk('local')->exists($clearance->document_path)) {
+            return back()->with('error', 'Document not found.');
+        }
+
+        return Storage::download($clearance->document_path, 'clearance-' . $clearance->clearance_number . '.txt');
+    }
+
     public function issuePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
     {
         if ($clearance->status !== 'pending') {
             return back()->with('warning', 'Only pending clearance requests can be issued.');
         }
 
+        $clearanceNumber = 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id;
+
         $clearance->update([
             'status' => 'active',
-            'clearance_number' => 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id,
+            'clearance_number' => $clearanceNumber,
             'issue_date' => now(),
             'expiry_date' => now()->addYear(),
             'remarks' => $clearance->remarks,
         ]);
+
+        // Generate and store clearance document
+        $documentService = new PesoClearanceDocumentService();
+        $documentPath = $documentService->generateClearanceDocument($clearance);
+        
+        if ($documentPath) {
+            $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+        }
 
         return back()->with('success', 'PESO clearance has been issued successfully.');
     }

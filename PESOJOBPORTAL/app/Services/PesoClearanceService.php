@@ -24,14 +24,13 @@ class PesoClearanceService
             return null;
         }
 
-        $clearanceCount = PesoClearance::query()
-            ->where('user_id', $user->id)
-            ->count();
+        // Generate unique clearance number using user ID and random string
+        $uniqueSuffix = str_pad((string) $user->id, 4, '0', STR_PAD_LEFT) . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
 
         return PesoClearance::create([
             'user_id' => $user->id,
             'request_date' => now(),
-            'clearance_number' => 'AUTO-' . now()->format('YmdHis') . '-' . str_pad((string) ($clearanceCount + 1), 3, '0', STR_PAD_LEFT),
+            'clearance_number' => 'AUTO-' . $uniqueSuffix,
             'issue_date' => null,
             'expiry_date' => null,
             'status' => 'pending',
@@ -104,6 +103,14 @@ class PesoClearanceService
             'expiry_date' => now()->addYear(),
             'remarks' => $remarks ?? 'PESO clearance auto-issued by admin',
         ]);
+
+        // Generate and store clearance document
+        $documentService = new PesoClearanceDocumentService();
+        $documentPath = $documentService->generateClearanceDocument($clearance);
+        
+        if ($documentPath) {
+            $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+        }
 
         return true;
     }

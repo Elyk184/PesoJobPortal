@@ -195,6 +195,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/peso-clearances/auto-generate', [AdminController::class, 'autoGenerateClearances'])->name('peso-clearances.auto-generate');
     Route::post('/peso-clearances/auto-generate-users', [AdminController::class, 'autoGenerateClearancesForUsers'])->name('peso-clearances.auto-generate-users');
     Route::get('/peso-clearance-management', [AdminController::class, 'pesoClearanceManagement'])->name('peso-clearance-management');
+    Route::post('/peso-clearances/{clearance}/generate-document', [AdminController::class, 'generateClearanceDocument'])->name('peso-clearances.generate-document');
+    Route::get('/peso-clearances/{clearance}/document', [AdminController::class, 'viewClearanceDocument'])->name('peso-clearances.view-document');
+    Route::get('/peso-clearances/{clearance}/download', [AdminController::class, 'downloadClearanceDocument'])->name('peso-clearances.download-document');
 
     // Admin Profile
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
