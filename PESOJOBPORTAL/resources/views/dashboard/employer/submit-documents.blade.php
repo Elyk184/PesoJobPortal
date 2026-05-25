@@ -373,9 +373,9 @@
 
             const lraRequirements = [
                 { name: 'Letter of Intent', field: 'letter_of_intent' },
-                { name: 'Company Profile/Business Registration', field: null },
-                { name: 'Job Vacancy List', field: null },
-                { name: 'Company Documents', field: null },
+                { name: 'Business Permit', field: null },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID', field: null },
+                { name: 'Job Vacancies', field: null },
             ];
 
             const updateRequirements = () => {
