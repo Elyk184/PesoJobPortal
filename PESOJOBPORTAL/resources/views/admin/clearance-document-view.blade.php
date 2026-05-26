@@ -75,7 +75,7 @@
         }
         
         .info-section {
-            margin: 1rem 0;
+            margin: 0.1rem 0;
             display: flex;
             justify-content: center;
             align-items: center;
