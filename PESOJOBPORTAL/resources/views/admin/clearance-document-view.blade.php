@@ -155,28 +155,31 @@
         .office-info {
             margin-top: 1.5rem;
             font-size: 12px;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #000;
             border-top: 2px solid #000;
             padding-top: 0.75rem;
-            padding-bottom: 1.25rem;
+            padding-bottom: 2.5rem;
             font-family: 'Georgia', 'Times New Roman', serif;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
         
         .office-info::after {
             content: '';
             position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            height: 25px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
             background-image: url('/images/ip-img.png');
-            background-size: contain;
+            background-size: auto 100%;
             background-repeat: repeat-x;
-            background-position: center;
+            background-position: center bottom;
         }
         
         .logo {
