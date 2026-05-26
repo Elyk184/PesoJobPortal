@@ -126,7 +126,7 @@
             border-left: none;
             font-size: 13px;
             line-height: 1.8;
-            font-weight: 400
+            font-weight: 400;
             text-align: justify;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
@@ -153,16 +153,16 @@
         }
         
         .office-info {
-            margin-top: 1.5rem;
+            margin-top: 0.5rem;
             margin-left: -1.2in;
             margin-right: -1.2in;
             margin-bottom: 0;
             font-size: 12px;
-            line-height: 1.8;
+            line-height: 1.4;
             color: #000;
             border-top: 2px solid #000;
-            padding-top: 0.75rem;
-            padding-bottom: 2.5rem;
+            padding-top: 0.3rem;
+            padding-bottom: 0.2rem;
             padding-left: 1.2in;
             padding-right: 1.2in;
             font-family: 'Georgia', 'Times New Roman', serif;
@@ -170,18 +170,30 @@
             position: relative;
             width: calc(100% + 2.4in);
         }
-        
-        .office-info::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 25px;
-            background-image: url('/images/ip-img.png');
-            background-size: contain;
-            background-repeat: repeat-x;
-            background-position: left bottom;
+
+        .office-info .contact-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 11.5px;
+            margin-bottom: 0.2rem;
+            flex-wrap: wrap;
+        }
+
+        .office-info .contact-line .contact-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .office-info .divider-img {
+            display: block;
+            margin: 0.3rem auto;
+            width: 70%;
+            max-width: 70%;
+            height: auto;
+            max-height: 20px;
         }
         
         .logo {
@@ -280,7 +292,7 @@
                 padding: 1in;
             }
             
-            .print-button {
+            .print-button, .back-button {
                 display: none;
             }
         }
@@ -293,6 +305,7 @@
     <div class="document-container">
         <img src="{{ asset('images/logo.png') }}" alt="Manolo Fortich Seal" class="logo-left">
         <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/BAGONG-PILIPINAS-LOGO-1-1.png'))) }}" alt="Bagong Pilipinas Logo" class="logo">
+
         <div class="content">
             <div class="header">
                 <div class="header-line">Republic of the Philippines</div>
@@ -306,19 +319,16 @@
             
             <div class="info-section">
                 <div>
-                    
                     <div class="info-value">{{ strtoupper($clearance->user?->name ?? 'APPLICANT NAME') }}</div>
-                <div class="info-label">Name</div>
+                    <div class="info-label">Name</div>
                 </div>
             </div>
             
             <div class="info-section">
                 <div style="width: 100%; margin-top: 0.2rem;">
-                    {{--  <div class="info-label">Address</div>  --}}
                     <div style="font-size: 24px; font-weight: 600; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
             </div>
-            
             
             <div class="clearance-statement">
                 <strong>REGISTRY THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No. 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
@@ -345,12 +355,22 @@
                     <div style="margin-top: 0.5rem; text-align: right;">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode('OR:' . $orNumber . ' - ' . $clearance->clearance_number) }}" alt="QR Code" style="width: 80px; height: 80px; border: 1px solid #000;">
                     </div>
-                </?php>
+                </div>
             </div>
             
             <div class="office-info">
-                <div style="margin-bottom: 0.5rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
-                <div style="margin-bottom: 0.25rem;">peso@manolofortich.gov.ph | 0955-9546-049 | www.facebook.com/LGUManoloFortich</div>
+                <div style="margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
+                <div class="contact-line">
+                    <span class="contact-item">✉ peso@manolofortich.gov.ph</span>
+                    <span>|</span>
+                    <span class="contact-item">📱 0955-9546-049</span>
+                    <span>|</span>
+                    <span class="contact-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#1877F2" style="vertical-align:middle;margin-right:2px;"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                        www.facebook.com/LGU Manolo Fortich
+                    </span>
+                </div>
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" class="divider-img">
             </div>
         </div>
     </div>
