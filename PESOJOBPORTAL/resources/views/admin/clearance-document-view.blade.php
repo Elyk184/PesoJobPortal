@@ -189,11 +189,11 @@
 
         .office-info .divider-img {
             display: block;
-            margin: 0.3rem auto;
+            margin: 0.1rem auto;
             width: 85%;
             max-width: 85%;
             height: auto;
-            max-height: 25px;
+            max-height:290px;
         }
         
         .logo {
