@@ -177,11 +177,11 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 30px;
+            height: 28px;
             background-image: url('/images/ip-img.png');
-            background-size: auto 100%;
+            background-size: 60px 28px;
             background-repeat: repeat-x;
-            background-position: center bottom;
+            background-position: left bottom;
         }
         
         .logo {
