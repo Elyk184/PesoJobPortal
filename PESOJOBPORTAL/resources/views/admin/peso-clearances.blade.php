@@ -9,7 +9,7 @@
 ?>
 
 @section('content')
-<div style="padding: 2rem; display: flex; gap: 1rem;">
+<div style="padding: 2rem; display: flex; gap: 1rem; margin-bottom: 2rem;">
     <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearances->first()) }}" style="display: inline;">
         @csrf
         <button type="submit" style="padding: 0.75rem 1.5rem; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">
@@ -19,5 +19,47 @@
     <a href="{{ route('admin.peso-clearances.view-document', $clearances->first()) }}" style="padding: 0.75rem 1.5rem; background: #06b6d4; color: white; text-decoration: none; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem;">
         <i class="bi bi-eye"></i> View
     </a>
+</div>
+
+<div style="padding: 0 2rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700;">User Requests</h3>
+    <div style="background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f3f4f6; border-bottom: 1px solid #e5e7eb;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Applicant Name</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Address</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">OR Number</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Date Issued</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Status</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($clearances as $clearance)
+                <tr style="border-bottom: 1px solid #e5e7eb; transition: background 0.2s;">
+                    <td style="padding: 1rem; color: #374151;">{{ $clearance->user?->name ?? 'N/A' }}</td>
+                    <td style="padding: 1rem; color: #374151;">{{ $clearance->user?->address ?? 'N/A' }}</td>
+                    <td style="padding: 1rem; color: #374151;">{{ sprintf('%07d', $clearance->id * 12345 % 9999999) }}</td>
+                    <td style="padding: 1rem; color: #374151;">{{ $clearance->created_at?->format('m/d/Y') ?? 'N/A' }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.875rem; font-weight: 600;">Issued</span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 600; display: inline-block; transition: background 0.2s;">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6b7280;">
+                        No clearance requests found.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @endsection
