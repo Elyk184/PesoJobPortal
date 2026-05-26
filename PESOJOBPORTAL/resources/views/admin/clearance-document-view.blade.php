@@ -160,6 +160,7 @@
             border-top: none;
             padding-top: 0;
             font-family: 'Georgia', 'Times New Roman', serif;
+            text-align: center;
         }
         
         .logo {
