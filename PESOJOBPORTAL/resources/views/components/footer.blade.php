@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="text-center mt-4 pt-3" style="border-top: 1px solid #1f4b8f; color: #b3c6e0;">
-            <p class="mb-0">&copy; {{ date('Y') }} Link Job Resource Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
+            <p class="mb-0">&copy; {{ date('Y') }} Link Job Resource Portal — Manolo Fortich, Bukidnon. All rights reserved.</p>
         </div>
     </div>
 </footer>
