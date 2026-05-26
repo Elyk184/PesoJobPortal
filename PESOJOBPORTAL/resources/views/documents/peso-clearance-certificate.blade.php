@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             margin: 0;
@@ -9,23 +10,67 @@
             box-sizing: border-box;
         }
 
+        @page {
+            size: A4;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Times New Roman', serif;
             background: white;
-            padding: 40px;
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: 297mm;
+        }
+
+        @media print {
+            * {
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box;
+            }
+
+            html {
+                margin: 0;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+                background: white;
+            }
+
+            .certificate-container {
+                page-break-inside: avoid;
+                width: 100%;
+                height: 297mm;
+            }
         }
 
         .certificate-container {
             background: #faf8f3;
             border: 3px solid #2d5016;
-            padding: 60px 50px;
-            max-width: 800px;
-            margin: 0 auto;
+            padding: 40px 30px;
+            width: 100%;
+            height: 297mm;
+            margin: 0;
             text-align: center;
-            min-height: 1000px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            page-break-inside: avoid;
         }
 
         .header {

@@ -60,7 +60,7 @@
             font-size: 42px;
             font-weight: 560;
             color: #000;
-            margin: 0.8rem 0;
+            margin: -2.5rem 0 0.15rem 0;
             letter-spacing: 2px;
             text-transform: uppercase;
             text-align: center;
@@ -277,7 +277,7 @@
                 <div class="header-line">Province of Bukidnon</div>
                 <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
                 <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin-top: -0.2rem;">
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin-top: -0.5rem;">
             </div>
             
             <div class="title">PESO CLEARANCE</div>
@@ -291,9 +291,9 @@
             </div>
             
             <div class="info-section">
-                <div style="width: 100%;">
+                <div style="width: 100%; margin-top: -0.7rem;">
                     {{--  <div class="info-label">Address</div>  --}}
-                    <div style="font-size: 24px; font-weight: 600; margin-top: 0.3rem; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
+                    <div style="font-size: 24px; font-weight: 600; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
             </div>
             
