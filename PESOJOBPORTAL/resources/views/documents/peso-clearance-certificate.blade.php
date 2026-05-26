@@ -231,6 +231,7 @@
             color: #333;
             margin-bottom: 12px;
             font-style: italic;
+            text-align: center;
         }
 
         .footer-contact {
@@ -238,6 +239,8 @@
             color: #000;
             margin: 5px 0;
             letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -300,7 +303,7 @@
         <div class="footer-info">
             <div class="footer-quote">"Lupad Manolo Fortich"</div>
             <div class="footer-contact">
-                📧 peso@manolofortich.gov.ph | 📞 0955-9546-049 | 🌐 www.facebook.com/LGU.Manolo.Fortich
+                peso@manolofortich.gov.ph | 0955-9546-049 <br> www.facebook.com/LGUManoloFortich
             </div>
         </div>
     </div>
