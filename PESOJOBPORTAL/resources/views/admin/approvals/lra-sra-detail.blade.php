@@ -62,9 +62,9 @@
                     <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #fef2f2 0%, #ffe4e6 100%); border-bottom: 2px solid #fee2e2;">
                         <h5 class="mb-0"><i class="bi bi-file-earmark-pdf me-2" style="color: #ef4444;"></i><span style="color: #991b1b;">Documents</span></h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="row g-0">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="border rounded p-4 text-center h-100 transition-all" style="background: linear-gradient(135deg, #fef2f2 0%, #fffbfa 100%); border: 2px solid #fee2e2; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
                                     <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #ef4444 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
                                     <i class="bi bi-file-pdf" style="font-size: 3rem; color: #ef4444; position: relative; z-index: 1;"></i>
@@ -89,8 +89,8 @@
                 <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%); border-bottom: 2px solid #e9d5ff;">
                     <h5 class="mb-0"><i class="bi bi-file-earmark me-2" style="color: #8b5cf6;"></i><span style="color: #6d28d9;">SRA Specific Documents</span></h5>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3">
+                <div class="card-body" style="padding: 0;">
+                    <div class="row g-0">
                         @php $sraDocuments = [
                             ['name' => 'DMW Certificate', 'field' => 'dmw_certificate_path', 'icon' => 'bi-file-pdf'],
                             ['name' => 'Recruitment Officer ID', 'field' => 'recruitment_officer_id_path', 'icon' => 'bi-file-pdf'],
@@ -101,7 +101,7 @@
                         ]; @endphp
 
                         @foreach($sraDocuments as $doc)
-                        <div class="col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); border: 2px solid #e9d5ff; transition: all 0.3s ease; position: relative; overflow: hidden;">
                                 <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #8b5cf6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
                                 <i class="bi {{ $doc['icon'] }}" style="font-size: 2.5rem; color: #8b5cf6; position: relative; z-index: 1;"></i>
@@ -128,9 +128,9 @@
                 <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border-bottom: 2px solid #ccfbf1;">
                     <h5 class="mb-0"><i class="bi bi-file-earmark me-2" style="color: #06b6d4;"></i><span style="color: #0369a1;">LRA Specific Documents</span></h5>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
+                <div class="card-body" style="padding: 0;">
+                    <div class="row g-0">
+                        <div class="col-lg-3 col-md-6">
                             <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border: 2px solid #ccfbf1; position: relative; overflow: hidden;">
                                 <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #06b6d4 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
                                 <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #06b6d4; position: relative; z-index: 1;"></i>
@@ -145,7 +145,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%); border: 2px solid #ccfbf1; position: relative; overflow: hidden;">
                                 <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #06b6d4 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
                                 <i class="bi bi-file-pdf" style="font-size: 2.5rem; color: #06b6d4; position: relative; z-index: 1;"></i>
@@ -169,9 +169,9 @@
                 <div class="card-header bg-light border-0 py-3" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border-bottom: 2px solid #bfdbfe;">
                     <h5 class="mb-0"><i class="bi bi-briefcase me-2" style="color: #3b82f6;"></i><span style="color: #1e40af;">Job Vacancies</span></h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 0;">
                     @if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text)
-                        <div class="row g-3">
+                        <div class="row g-0">
                             <div class="col-md-6">
                                 <div class="border rounded p-4 text-center h-100" style="background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%); border: 2px solid #bfdbfe; position: relative; overflow: hidden;">
                                     <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6 0%, transparent 100%); opacity: 0.05; border-radius: 50%; transform: translate(30px, -30px);"></div>
