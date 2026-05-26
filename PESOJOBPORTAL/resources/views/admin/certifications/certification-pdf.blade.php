@@ -20,12 +20,11 @@
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 12px;
-            line-height: 1.5;
+            line-height:1;
             color: #000;
             background: #fff;
-            /* 1.5 inch margins on all sides via padding */
-            padding: 1.5in 1.5in 1.5in 1.5in;
-            width: 210mm;
+            /* 1s inch margins on all sides via padding */
+            padding: 1in 1in 1in 1in;
             min-height: 297mm;
             margin: 0 auto;
         }
@@ -33,9 +32,9 @@
         /* ── FIXED FOOTER PINNED TO BOTTOM OF PAGE ── */
         .page-footer {
             position: fixed;
-            bottom: 1.5in;
-            left: 1.5in;
-            right: 1.5in;
+            bottom: 1in;
+            left: 1in;
+            right: 1in;
         }
 
         /* ── TAGLINE ── */
@@ -50,7 +49,7 @@
 
         .tagline-sub {
             text-align: center;
-            font-size: 7.5px;
+            font-size: 8px;
             letter-spacing: 0.2em;
             color: #333;
             margin-bottom: 3px;
@@ -101,7 +100,8 @@
 
         /* ── MAIN CONTENT AREA ── */
         .container {
-            width: 100%;
+            width: calc(210mm - 3in);
+            margin: 0 auto;
         }
 
         /* ── HEADER ── */
@@ -139,7 +139,7 @@
 
         /* ── DECORATIVE TOP ── */
         .decor-wrapper {
-            margin: 5px 0 0 0;
+            margin: 5px 0 65px 0;
             text-align: center;
         }
 
@@ -153,28 +153,35 @@
 
         /* ── TITLE ── */
         .title {
-            font-size: 20px;
+            font-size: 26px;
             font-weight: bold;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.20em;
             text-align: center;
             text-transform: uppercase;
             margin: 14px 0 14px 0;
         }
 
-         /* ── CONTENT ── */
-        .content { font-size: 12px; line-height: 1.55; text-align: center; }
+        /* ── CONTENT ── */
+        .content {
+            font-size: 12px;
+            line-height: 1;
+            width: 86%;
+            margin: 0 auto;
+            text-align: left;
+        }
 
-        .salutation { font-weight: bold; margin-bottom: 10px; text-align: center; }
+        .salutation { font-weight: bold; margin: 45px 0 35px; text-align: left; }
 
         .cert-paragraph {
-            text-align: center;
-            margin-bottom: 8px;
-            line-height: 1.55;
+            text-align: justify;
+            text-indent: 0.5in;
+            margin-bottom: 12px;
+            line-height: 1;
         }
 
         .location-block {
-            text-align: center;
-            line-height: 1.55;
+            text-align: justify;
+            line-height: 1;
             margin-top: 10px;
         }
 
@@ -182,7 +189,7 @@
         .signature-container {
             display: table;
             width: 100%;
-            margin-top: 18px;
+            margin-top: 85px;
             border-collapse: collapse;
         }
 
@@ -193,7 +200,7 @@
             padding-top: 0;
         }
 
-        .sig-col.right { padding-top: 60px; text-align: center; }
+        .sig-col.right { padding-top: 70px; text-align: right; }
         .sig-col.left  { text-align: left; }
 
         .sig-label {
@@ -209,13 +216,15 @@
         }
 
         .sig-col.left  .sig-line { width: 75%; }
-        .sig-col.right .sig-line { width: 80%; margin: 0 auto 3px auto; }
+        .sig-col.right .sig-line { width: 75%; margin-left: auto; }
 
-        .sig-name  { font-size: 12px; font-weight: bold; text-align: center; }
-        .sig-title { font-size: 12px; text-align: center; }
+        .sig-name  { font-size: 12px; font-weight: bold; }
+        .sig-title { font-size: 12px; }
 
         .sig-col.left .sig-name,
-        .sig-col.left .sig-title { text-align: center; padding-left: 0; max-width: 75%; }
+        .sig-col.left .sig-title { text-align: left; max-width: 75%; }
+        .sig-col.right .sig-name,
+        .sig-col.right .sig-title { text-align: right; }
     </style>
 </head>
 <body>
