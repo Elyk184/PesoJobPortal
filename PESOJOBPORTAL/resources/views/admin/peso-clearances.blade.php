@@ -29,9 +29,7 @@
                 <tr style="background: #f3f4f6; border-bottom: 1px solid #e5e7eb;">
                     <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Applicant Name</th>
                     <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Address</th>
-                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">OR Number</th>
-                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Date Issued</th>
-                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Status</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Date Requested</th>
                     <th style="padding: 1rem; text-align: left; font-weight: 700; color: #374151;">Actions</th>
                 </tr>
             </thead>
@@ -40,20 +38,19 @@
                 <tr style="border-bottom: 1px solid #e5e7eb; transition: background 0.2s;">
                     <td style="padding: 1rem; color: #374151;">{{ $clearance->user?->name ?? 'N/A' }}</td>
                     <td style="padding: 1rem; color: #374151;">{{ $clearance->user?->address ?? 'N/A' }}</td>
-                    <td style="padding: 1rem; color: #374151;">{{ sprintf('%07d', $clearance->id * 12345 % 9999999) }}</td>
                     <td style="padding: 1rem; color: #374151;">{{ $clearance->created_at?->format('m/d/Y') ?? 'N/A' }}</td>
-                    <td style="padding: 1rem;">
-                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.875rem; font-weight: 600;">Issued</span>
-                    </td>
-                    <td style="padding: 1rem;">
-                        <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.875rem; font-weight: 600; display: inline-block; transition: background 0.2s;">
-                            View
-                        </a>
+                    <td style="padding: 1rem; display: flex; gap: 0.5rem;">
+                        <button onclick="issueRequest({{ $clearance->id }})" style="background: #10b981; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                            Issue
+                        </button>
+                        <button onclick="declineRequest({{ $clearance->id }})" style="background: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                            Decline
+                        </button>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="padding: 2rem; text-align: center; color: #6b7280;">
+                    <td colspan="4" style="padding: 2rem; text-align: center; color: #6b7280;">
                         No clearance requests found.
                     </td>
                 </tr>
@@ -62,4 +59,20 @@
         </table>
     </div>
 </div>
+
+<script>
+function issueRequest(clearanceId) {
+    if (confirm('Issue clearance for this request?')) {
+        console.log('Issuing clearance:', clearanceId);
+        alert('Clearance issued successfully!');
+    }
+}
+
+function declineRequest(clearanceId) {
+    if (confirm('Decline this clearance request?')) {
+        console.log('Declining clearance:', clearanceId);
+        alert('Clearance request declined!');
+    }
+}
+</script>
 @endsection
