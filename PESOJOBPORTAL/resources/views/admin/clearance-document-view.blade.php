@@ -25,8 +25,6 @@
             width: 8.5in;
             height: 11in;
             padding: 1.2in;
-            position: relative;
-            overflow: hidden;
         }
         
         .content {
@@ -39,8 +37,8 @@
         
         .header {
             text-align: center;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.6rem;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         
         .header-line {
@@ -48,19 +46,21 @@
             font-weight: 600;
             color: #000;
             letter-spacing: 0.5px;
-            line-height: 1.3;
+            line-height: 1.4;
+            white-space: nowrap;
         }
         
         .header-line.peso-office {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
+            white-space: nowrap;
         }
         
         .title {
             font-size: 44px;
             font-weight: 560;
             color: #000;
-            margin: -2.5rem 0 0.5rem 0;
+            margin: 0.6rem 0 0.5rem 0;
             letter-spacing: 2px;
             text-transform: uppercase;
             text-align: center;
@@ -197,19 +197,30 @@
         }
         
         .logo {
-            position: absolute;
-            top: 0.75in;
-            right: 1.2in;
-            width: 120px;
+            width: 90px;
             height: auto;
+            flex-shrink: 0;
         }
         
         .logo-left {
-            position: absolute;
-            top: 0.95in;
-            left: 1.2in;
-            width: 100px;
+            width: 90px;
             height: auto;
+            flex-shrink: 0;
+        }
+
+        .header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.3rem;
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        .header-wrapper .header {
+            flex: 1;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         
         .clearance-number {
@@ -303,16 +314,17 @@
     <button class="print-button" onclick="window.print()">🖨️ Print</button>
     
     <div class="document-container">
-        <img src="{{ asset('images/logo.png') }}" alt="Manolo Fortich Seal" class="logo-left">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/BAGONG-PILIPINAS-LOGO-1-1.png'))) }}" alt="Bagong Pilipinas Logo" class="logo">
-
         <div class="content">
-            <div class="header">
-                <div class="header-line">Republic of the Philippines</div>
-                <div class="header-line">Province of Bukidnon</div>
-                <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
-                <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
-                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; max-width: 400px; height: auto; margin-top: -1rem;">
+            <div class="header-wrapper">
+                <img src="{{ asset('images/logo.png') }}" alt="Manolo Fortich Seal" class="logo-left">
+                <div class="header">
+                    <div class="header-line">Republic of the Philippines</div>
+                    <div class="header-line">Province of Bukidnon</div>
+                    <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
+                    <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; height: auto; margin-top: -0.3rem; display: block;">
+                </div>
+                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/BAGONG-PILIPINAS-LOGO-1-1.png'))) }}" alt="Bagong Pilipinas Logo" class="logo">
             </div>
             
             <div class="title">PESO CLEARANCE</div>
@@ -358,9 +370,8 @@
                 </div>
             </div>
             
-            <div style="padding-top: 0.8rem; margin-bottom: 0.1rem; font-style: italic; font-weight: bold; font-size: 14px; text-align: center;">"Lupad Manolo Fortich"</div>
-            
             <div class="office-info">
+                <div style="margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
                 <div class="contact-line">
                     <span class="contact-item">✉ peso@manolofortich.gov.ph</span>
                     <span>|</span>
