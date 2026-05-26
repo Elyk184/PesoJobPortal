@@ -203,23 +203,41 @@
             color: #000;
             text-align: center;
             padding: 15px 0;
-            border-top: 2px solid #2d5016;
+            border-top: 2px solid #333;
             border-bottom: 3px solid #2d5016;
+            position: relative;
+        }
+
+        .footer-info::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: repeating-linear-gradient(
+                45deg,
+                #2d5016,
+                #2d5016 10px,
+                #fff 10px,
+                #fff 15px
+            );
+            background-size: 30px 8px;
         }
 
         .footer-quote {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            color: #2d5016;
-            margin-bottom: 10px;
+            color: #333;
+            margin-bottom: 12px;
             font-style: italic;
         }
 
         .footer-contact {
             font-size: 10px;
             color: #000;
-            margin: 8px 0;
-            letter-spacing: 0.5px;
+            margin: 5px 0;
+            letter-spacing: 0.3px;
         }
     </style>
 </head>
