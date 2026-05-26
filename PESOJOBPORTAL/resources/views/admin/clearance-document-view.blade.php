@@ -291,7 +291,7 @@
             </div>
             
             <div class="info-section">
-                <div style="width: 100%; margin-top: -0.7rem;">
+                <div style="width: 100%; margin-top: -0.4rem;">
                     {{--  <div class="info-label">Address</div>  --}}
                     <div style="font-size: 24px; font-weight: 600; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
