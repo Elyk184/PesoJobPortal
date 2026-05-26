@@ -114,7 +114,7 @@
             font-size: 13px;
             line-height: 1.8;
             text-align: justify;
-            margin: 1rem 0;
+            margin: 0.25rem 0;
             color: #000;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
@@ -122,7 +122,7 @@
         .clearance-statement {
             background: transparent;
             padding: 0.5rem 0;
-            margin: 1rem auto;
+            margin: 0.25rem auto;
             border-left: none;
             font-size: 13px;
             line-height: 1.8;
