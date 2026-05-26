@@ -57,10 +57,10 @@
         }
         
         .title {
-            font-size: 42px;
+            font-size: 44px;
             font-weight: 560;
             color: #000;
-            margin: -2.5rem 0 0.15rem 0;
+            margin: -2.5rem 0 0.5rem 0;
             letter-spacing: 2px;
             text-transform: uppercase;
             text-align: center;
@@ -94,7 +94,7 @@
         }
         
         .info-value {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 600;
             color: #000;
             text-decoration: underline;
