@@ -154,20 +154,21 @@
         
         .office-info {
             margin-top: 1.5rem;
-            margin-left: 0;
-            margin-right: 0;
+            margin-left: -1.2in;
+            margin-right: -1.2in;
+            margin-bottom: 0;
             font-size: 12px;
             line-height: 1.8;
             color: #000;
             border-top: 2px solid #000;
             padding-top: 0.75rem;
             padding-bottom: 2.5rem;
-            padding-left: 0;
-            padding-right: 0;
+            padding-left: 1.2in;
+            padding-right: 1.2in;
             font-family: 'Georgia', 'Times New Roman', serif;
             text-align: center;
             position: relative;
-            width: 100%;
+            width: calc(100% + 2.4in);
         }
         
         .office-info::after {
