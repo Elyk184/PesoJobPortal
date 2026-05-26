@@ -158,11 +158,11 @@
             margin-right: -1.2in;
             margin-bottom: 0;
             font-size: 12px;
-            line-height: 1.4;
+            line-height: 1.2;
             color: #000;
             border-top: 2px solid #000;
-            padding-top: 0.3rem;
-            padding-bottom: 0.2rem;
+            padding-top: 0.15rem;
+            padding-bottom: 0.1rem;
             padding-left: 1.2in;
             padding-right: 1.2in;
             font-family: 'Georgia', 'Times New Roman', serif;
@@ -177,7 +177,7 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 11.5px;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
             flex-wrap: wrap;
         }
 
@@ -189,11 +189,11 @@
 
         .office-info .divider-img {
             display: block;
-            margin: 0 auto;
+            margin: 0.1rem auto 0;
             width: 85%;
             max-width: 85%;
-            height: auto;
-            max-height:290px;
+            height: 25px;
+            object-fit: cover;
         }
         
         .logo {
@@ -359,7 +359,6 @@
             </div>
             
             <div class="office-info">
-                <div style="margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
                 <div class="contact-line">
                     <span class="contact-item">✉ peso@manolofortich.gov.ph</span>
                     <span>|</span>
@@ -370,6 +369,7 @@
                         www.facebook.com/LGU Manolo Fortich
                     </span>
                 </div>
+                <div style="margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" class="divider-img">
             </div>
         </div>
