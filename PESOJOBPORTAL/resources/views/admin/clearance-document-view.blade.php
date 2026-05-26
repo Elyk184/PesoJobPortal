@@ -157,10 +157,24 @@
             font-size: 12px;
             line-height: 1.6;
             color: #000;
-            border-top: none;
-            padding-top: 0;
+            border-top: 2px solid #000;
+            padding-top: 0.75rem;
+            padding-bottom: 1.25rem;
             font-family: 'Georgia', 'Times New Roman', serif;
             text-align: center;
+            position: relative;
+        }
+        
+        .office-info::after {
+            content: '▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 14px;
+            color: #2d5016;
+            letter-spacing: 8px;
+            line-height: 1;
         }
         
         .logo {
@@ -325,6 +339,11 @@
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode('OR:' . $orNumber . ' - ' . $clearance->clearance_number) }}" alt="QR Code" style="width: 80px; height: 80px; border: 1px solid #000;">
                     </div>
                 </?php>
+            </div>
+            
+            <div class="office-info">
+                <div style="margin-bottom: 0.5rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
+                <div style="margin-bottom: 0.25rem;">peso@manolofortich.gov.ph | 0955-9546-049 | www.facebook.com/LGUManoloFortich</div>
             </div>
         </div>
     </div>
