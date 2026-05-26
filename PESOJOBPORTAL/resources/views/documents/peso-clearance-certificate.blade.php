@@ -206,25 +206,12 @@
             border-top: 2px solid #333;
             border-bottom: 3px solid #2d5016;
             position: relative;
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
         }
 
-        .footer-info::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: repeating-linear-gradient(
-                45deg,
-                #2d5016,
-                #2d5016 10px,
-                #fff 10px,
-                #fff 15px
-            );
-            background-size: 30px 8px;
-        }
-
+   
         .footer-quote {
             font-size: 12px;
             font-weight: bold;
