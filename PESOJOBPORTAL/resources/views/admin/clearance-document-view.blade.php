@@ -166,15 +166,17 @@
         }
         
         .office-info::after {
-            content: '▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼ ▼';
+            content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            font-size: 14px;
-            color: #2d5016;
-            letter-spacing: 8px;
-            line-height: 1;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 25px;
+            background-image: url('/images/ip-img.png');
+            background-size: contain;
+            background-repeat: repeat-x;
+            background-position: center;
         }
         
         .logo {
