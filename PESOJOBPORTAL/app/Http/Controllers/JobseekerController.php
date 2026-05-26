@@ -788,6 +788,15 @@ class JobseekerController extends Controller
     {
         $user = $request->user();
 
+        // Debug: Log what we're receiving
+        \Illuminate\Support\Facades\Log::info('Profile Save Debug', [
+            'user_id' => $user->id,
+            'received_keys' => array_keys($request->all()),
+            'education_rows' => $request->input('education'),
+            'training_rows' => $request->input('training'),
+            'experience_rows' => $request->input('experience'),
+        ]);
+
         $validated = $request->validate([
             'personal_information.surname' => ['required', 'string', 'max:255'],
             'personal_information.first_name' => ['required', 'string', 'max:255'],
@@ -939,6 +948,18 @@ class JobseekerController extends Controller
             'training' => $trainingRows,
             'experience' => $experienceRows,
             'languages' => $languages,
+        ]);
+
+        // Debug: Log what we're about to save
+        \Illuminate\Support\Facades\Log::info('Profile Data to Save', [
+            'user_id' => $user->id,
+            'personal_information_keys' => array_keys($personal),
+            'present_address_keys' => array_keys($presentAddress),
+            'education_count' => count($educationRows),
+            'training_count' => count($trainingRows),
+            'experience_count' => count($experienceRows),
+            'eligibility_count' => count($eligibilityRows),
+            'completion_percentage' => $completionPercentage,
         ]);
 
         $profile = JobseekerProfile::updateOrCreate(
