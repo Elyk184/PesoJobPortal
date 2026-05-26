@@ -182,7 +182,7 @@
         }
     </style>
 </head>
-<body data-auto-open-consent="{{ $errors->any() ? '0' : '1' }}">
+<body>
     <main class="register-card" aria-label="Registration form">
         <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="brand-logo">
         <h1 class="register-title">Create Account</h1>
@@ -405,8 +405,6 @@
             }
 
             window.__privacyConsentAccepted = hiddenConsent.value === '1';
-            const shouldAutoOpenConsent = document.body.dataset.autoOpenConsent === '1';
-
             form.addEventListener('submit', function (event) {
                 if (hiddenConsent.value === '1') {
                     return;
@@ -415,10 +413,6 @@
                 event.preventDefault();
                 openPrivacyConsent();
             });
-
-            if (shouldAutoOpenConsent && hiddenConsent.value !== '1') {
-                openPrivacyConsent();
-            }
         });
     </script>
 </body>
