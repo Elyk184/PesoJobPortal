@@ -154,18 +154,19 @@
         
         .office-info {
             margin-top: 1.5rem;
+            margin-left: 0;
+            margin-right: 0;
             font-size: 12px;
             line-height: 1.8;
             color: #000;
             border-top: 2px solid #000;
             padding-top: 0.75rem;
             padding-bottom: 2.5rem;
+            padding-left: 0;
+            padding-right: 0;
             font-family: 'Georgia', 'Times New Roman', serif;
             text-align: center;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             width: 100%;
         }
         
