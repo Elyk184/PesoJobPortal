@@ -190,10 +190,10 @@
         .office-info .divider-img {
             display: block;
             margin: 0.3rem auto;
-            width: 70%;
-            max-width: 70%;
+            width: 85%;
+            max-width: 85%;
             height: auto;
-            max-height: 20px;
+            max-height: 25px;
         }
         
         .logo {
