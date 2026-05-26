@@ -201,7 +201,7 @@
             margin-top: 40px;
             font-size: 10px;
             color: #000;
-            text-align: center;
+            text-align: right;
             padding: 15px 0;
             border-top: 2px solid #333;
             border-bottom: 3px solid #2d5016;
@@ -218,7 +218,7 @@
             color: #333;
             margin-bottom: 12px;
             font-style: italic;
-            text-align: center;
+            text-align: right;
         }
 
         .footer-contact {
@@ -226,7 +226,7 @@
             color: #000;
             margin: 5px 0;
             letter-spacing: 0.3px;
-            text-align: center;
+            text-align: right;
             line-height: 1.6;
         }
     </style>
