@@ -188,7 +188,7 @@
                 <div class="profile-section-header">
                     <div class="profile-section-icon"><i class="bi bi-geo-alt"></i></div>
                     <div>
-                        <div class="profile-section-kicker">II.</div>
+                        <div class="profile-section-kicker">II.</div>   
                         <h2 class="profile-section-title">Address</h2>
                     </div>
                 </div>
@@ -475,6 +475,13 @@
                                     <input type="checkbox" name="employment_status[{{ $key }}]" value="1" @checked((bool) data_get($employmentStatus, $key, false))>
                                     <span>{{ $label }}</span>
                                 </label>
+                                <input
+                                    type="text"
+                                    class="form-control profile-input ms-4 mb-3"
+                                    name="employment_status[{{ $key }}_specify]"
+                                    value="{{ old('employment_status.' . $key . '_specify', data_get($employmentStatus, $key . '_specify', '')) }}"
+                                    placeholder="Please specify"
+                                >
                             @endif
                         @endforeach
                     </div>

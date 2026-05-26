@@ -16,7 +16,7 @@ class JobseekerApprovalController extends Controller
     public function index(): View
     {
         $jobseekers = User::where('role', 'jobseeker')
-            ->with('profile')
+            ->with('jobseekerProfile')
             ->withCount('applications')
             ->latest()
             ->paginate(15);
@@ -38,7 +38,7 @@ class JobseekerApprovalController extends Controller
      */
     public function show(User $jobseeker): View
     {
-        $jobseeker->load('profile', 'applications.job');
+        $jobseeker->load('jobseekerProfile', 'applications.job');
         
         // Get available jobs from employers (active/approved jobs)
         $availableJobs = \App\Models\PesoJob::where('status', 'active')

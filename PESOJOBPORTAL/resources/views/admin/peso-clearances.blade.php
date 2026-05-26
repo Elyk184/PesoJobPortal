@@ -9,66 +9,452 @@
 ?>
 
 @section('content')
-<div style="padding: 2rem;">
-    <!-- Card Section -->
-    <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #3b82f6;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">PESO Clearance Management</h2>
-                <p style="margin: 0; color: #6b7280; font-size: 0.95rem;">Generate new clearances or view existing documents</p>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+    .peso-wrap {
+        padding: 2rem 2.5rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #0f172a;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .page-header-left h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 0.25rem;
+        letter-spacing: -0.02em;
+    }
+    .page-header-left p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        text-decoration: none;
+        transition: all 0.18s ease;
+        white-space: nowrap;
+    }
+    .btn-primary {
+        background: #0f172a;
+        color: #fff;
+    }
+    .btn-primary:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,23,42,0.2); }
+    .btn-outline {
+        background: #fff;
+        color: #0f172a;
+        border: 1.5px solid #e2e8f0;
+    }
+    .btn-outline:hover { border-color: #94a3b8; background: #f8fafc; }
+
+    .btn-issue {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1.5px solid #bbf7d0;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.8rem;
+    }
+    .btn-issue:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
+
+    .btn-decline {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1.5px solid #fecaca;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.8rem;
+    }
+    .btn-decline:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    .btn-view {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1.5px solid #bfdbfe;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.8rem;
+    }
+    .btn-view:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* ── Stats Row ── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: box-shadow 0.2s;
+    }
+    .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .stat-icon.yellow { background: #fef9c3; color: #ca8a04; }
+    .stat-icon.green  { background: #dcfce7; color: #16a34a; }
+    .stat-icon.red    { background: #fef2f2; color: #dc2626; }
+    .stat-icon.blue   { background: #eff6ff; color: #2563eb; }
+    .stat-info .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 0.2rem;
+    }
+    .stat-info .stat-label {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* ── Table Card ── */
+    .table-card {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    .table-card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .table-card-header h3 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .badge-count {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.15rem 0.55rem;
+        border-radius: 20px;
+    }
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.85rem;
+        color: #64748b;
+        min-width: 220px;
+    }
+    .search-box input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 0.85rem;
+        color: #0f172a;
+        width: 100%;
+        font-family: 'DM Sans', sans-serif;
+    }
+    .search-box input::placeholder { color: #94a3b8; }
+
+    /* ── Table ── */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .data-table thead tr {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .data-table th {
+        padding: 0.75rem 1.5rem;
+        text-align: left;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+    }
+    .data-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { background: #fafbff; }
+    .data-table td {
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        color: #374151;
+        vertical-align: middle;
+    }
+
+    .applicant-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .applicant-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+    }
+    .applicant-name {
+        font-weight: 600;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+
+    .address-text {
+        color: #64748b;
+        font-size: 0.85rem;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .address-text.na { color: #cbd5e1; font-style: italic; }
+
+    .date-text {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.8rem;
+        color: #64748b;
+        background: #f8fafc;
+        padding: 0.2rem 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #e2e8f0;
+        display: inline-block;
+    }
+
+    .action-cell {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        color: #94a3b8;
+    }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; opacity: 0.4; }
+    .empty-state p { margin: 0; font-size: 0.9rem; }
+
+    /* ── Confirm Modal ── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.45);
+        backdrop-filter: blur(3px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-icon {
+        width: 52px; height: 52px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    .modal-icon.issue { background: #dcfce7; color: #16a34a; }
+    .modal-icon.decline { background: #fef2f2; color: #dc2626; }
+    .modal-box h4 { margin: 0 0 0.4rem; font-size: 1.05rem; font-weight: 700; }
+    .modal-box p { margin: 0 0 1.5rem; color: #64748b; font-size: 0.88rem; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+    .btn-cancel { background: #f1f5f9; color: #475569; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+    .btn-cancel:hover { background: #e2e8f0; }
+    .btn-confirm-issue { background: #16a34a; color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+    .btn-confirm-issue:hover { background: #15803d; }
+    .btn-confirm-decline { background: #dc2626; color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; }
+    .btn-confirm-decline:hover { background: #b91c1c; }
+</style>
+
+<div class="peso-wrap">
+
+    {{-- Page Header --}}
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1>PESO Clearances</h1>
+            <p>Review, issue, and manage employment clearance requests</p>
+        </div>
+        <div class="header-actions">
+            <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearances->first()) }}" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-lightning-charge-fill"></i> Generate Document
+                </button>
+            </form>
+            <a href="{{ route('admin.peso-clearances.view-document', $clearances->first()) }}" class="btn btn-outline">
+                <i class="bi bi-eye"></i> View Latest
+            </a>
+        </div>
+    </div>
+
+    {{-- Stats Row --}}
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon yellow"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ $clearances->count() }}</div>
+                <div class="stat-label">Pending</div>
             </div>
-            <div style="display: flex; gap: 1rem;">
-                <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearances->first()) }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);">
-                        <i class="bi bi-lightning-charge"></i> Generate
-                    </button>
-                </form>
-                <a href="{{ route('admin.peso-clearances.view-document', $clearances->first()) }}" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);">
-                    <i class="bi bi-eye"></i> View Latest
-                </a>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">—</div>
+                <div class="stat-label">Issued</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="bi bi-x-circle"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">—</div>
+                <div class="stat-label">Declined</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="bi bi-files"></i></div>
+            <div class="stat-info">
+                <div class="stat-value">—</div>
+                <div class="stat-label">Total</div>
             </div>
         </div>
     </div>
 
-    <!-- Requests Table -->
-    <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
-        <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
-            <h3 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: #1f2937;">Pending Requests</h3>
+    {{-- Table Card --}}
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>
+                <i class="bi bi-clock-history" style="color:#f59e0b;"></i>
+                Pending Requests
+                <span class="badge-count">{{ $clearances->count() }}</span>
+            </h3>
+            <div class="search-box">
+                <i class="bi bi-search" style="color:#94a3b8; font-size:0.85rem;"></i>
+                <input type="text" id="searchInput" placeholder="Search applicant..." oninput="filterTable()">
+            </div>
         </div>
-    <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
-        <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
-            <h3 style="margin: 0; font-size: 1.125rem; font-weight: 700; color: #1f2937;">Pending Requests</h3>
-        </div>
-        <table style="width: 100%; border-collapse: collapse;">
+
+        <table class="data-table" id="clearanceTable">
             <thead>
-                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Applicant Name</th>
-                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Address</th>
-                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Date Requested</th>
-                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #374151; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Actions</th>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Address</th>
+                    <th>Date Requested</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($clearances as $clearance)
-                <tr style="border-bottom: 1px solid #e5e7eb; transition: background 0.2s; hover: {background: #f9fafb;}">
-                    <td style="padding: 1.25rem 1.5rem; color: #374151; font-weight: 500;">{{ $clearance->user?->name ?? 'N/A' }}</td>
-                    <td style="padding: 1.25rem 1.5rem; color: #6b7280;">{{ $clearance->user?->address ?? 'N/A' }}</td>
-                    <td style="padding: 1.25rem 1.5rem; color: #6b7280;">{{ $clearance->created_at?->format('m/d/Y') ?? 'N/A' }}</td>
-                    <td style="padding: 1.25rem 1.5rem; display: flex; gap: 0.75rem;">
-                        <button onclick="issueRequest({{ $clearance->id }})" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);">
-                            ✓ Issue
-                        </button>
-                        <button onclick="declineRequest({{ $clearance->id }})" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 0.5rem 1rem; border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);">
-                            ✕ Decline
-                        </button>
+                <tr data-name="{{ strtolower($clearance->user?->name ?? '') }}">
+                    <td>
+                        <div class="applicant-cell">
+                            <div class="applicant-avatar">
+                                {{ strtoupper(substr($clearance->user?->name ?? 'N', 0, 1)) }}{{ strtoupper(substr(strstr($clearance->user?->name ?? '', ' '), 1, 1)) }}
+                            </div>
+                            <div class="applicant-name">{{ $clearance->user?->name ?? 'N/A' }}</div>
+                        </div>
+                    </td>
+                    <td>
+                        @if($clearance->user?->address)
+                            <span class="address-text">{{ $clearance->user->address }}</span>
+                        @else
+                            <span class="address-text na">Not provided</span>
+                        @endif
+                    </td>
+                    <td>
+                        <span class="date-text">{{ $clearance->created_at?->format('m/d/Y') ?? 'N/A' }}</span>
+                    </td>
+                    <td>
+                        <div class="action-cell">
+                            <button class="btn btn-issue" onclick="confirmAction('issue', {{ $clearance->id }})">
+                                <i class="bi bi-check-lg"></i> Issue
+                            </button>
+                            <button class="btn btn-decline" onclick="confirmAction('decline', {{ $clearance->id }})">
+                                <i class="bi bi-x-lg"></i> Decline
+                            </button>
+                            <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" class="btn btn-view">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" style="padding: 2rem; text-align: center; color: #6b7280;">
-                        <i class="bi bi-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: #d1d5db;"></i>
-                        No clearance requests found.
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>No pending clearance requests at the moment.</p>
+                        </div>
                     </td>
                 </tr>
                 @endforelse
@@ -77,19 +463,74 @@
     </div>
 </div>
 
+{{-- Confirm Modal --}}
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <div class="modal-icon" id="modalIcon"></div>
+        <h4 id="modalTitle"></h4>
+        <p id="modalDesc"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button id="modalConfirmBtn"></button>
+        </div>
+    </div>
+</div>
+
 <script>
-function issueRequest(clearanceId) {
-    if (confirm('Issue clearance for this request?')) {
-        console.log('Issuing clearance:', clearanceId);
-        alert('Clearance issued successfully!');
+let pendingAction = null;
+let pendingId = null;
+
+function confirmAction(action, id) {
+    pendingAction = action;
+    pendingId = id;
+    const modal = document.getElementById('confirmModal');
+    const icon = document.getElementById('modalIcon');
+    const title = document.getElementById('modalTitle');
+    const desc = document.getElementById('modalDesc');
+    const btn = document.getElementById('modalConfirmBtn');
+
+    if (action === 'issue') {
+        icon.className = 'modal-icon issue';
+        icon.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+        title.textContent = 'Issue Clearance?';
+        desc.textContent = 'This will mark the clearance as issued and generate the official document for the applicant.';
+        btn.className = 'btn-confirm-issue';
+        btn.textContent = 'Yes, Issue';
+        btn.onclick = () => executeAction('issue', id);
+    } else {
+        icon.className = 'modal-icon decline';
+        icon.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+        title.textContent = 'Decline Request?';
+        desc.textContent = 'This will decline the clearance request. The applicant will be notified of the decision.';
+        btn.className = 'btn-confirm-decline';
+        btn.textContent = 'Yes, Decline';
+        btn.onclick = () => executeAction('decline', id);
     }
+
+    modal.classList.add('active');
 }
 
-function declineRequest(clearanceId) {
-    if (confirm('Decline this clearance request?')) {
-        console.log('Declining clearance:', clearanceId);
-        alert('Clearance request declined!');
-    }
+function closeModal() {
+    document.getElementById('confirmModal').classList.remove('active');
 }
+
+function executeAction(action, id) {
+    closeModal();
+    console.log(`${action} clearance:`, id);
+    // TODO: wire to actual route
+    alert(`Clearance ${action === 'issue' ? 'issued' : 'declined'} successfully!`);
+}
+
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#clearanceTable tbody tr[data-name]').forEach(row => {
+        row.style.display = row.dataset.name.includes(q) ? '' : 'none';
+    });
+}
+
+// Close modal on backdrop click
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
 </script>
 @endsection

@@ -12,6 +12,7 @@ use App\Models\PortalNotification;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
+use App\Models\JobseekerProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -930,7 +931,17 @@ class JobseekerController extends Controller
             $personal['suffix'] ?? '',
         ])->filter()->join(' ');
 
-        $profile = UserProfile::updateOrCreate(
+        // Calculate profile completion percentage
+        $completionPercentage = $this->calculateJobseekerProfileCompletion([
+            'personal' => $personal,
+            'presentAddress' => $presentAddress,
+            'education' => $educationRows,
+            'training' => $trainingRows,
+            'experience' => $experienceRows,
+            'languages' => $languages,
+        ]);
+
+        $profile = JobseekerProfile::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'user_id' => $user->id,
@@ -951,6 +962,8 @@ class JobseekerController extends Controller
                 'job_preferences' => $jobPreferences,
                 'languages' => $languages,
                 'disability' => $disability,
+                'profile_completed' => $completionPercentage >= 100,
+                'completion_percentage' => $completionPercentage,
             ]
         );
 
@@ -1220,7 +1233,7 @@ class JobseekerController extends Controller
 
     private function profileFormData(?User $user): array
     {
-        $profile = $user?->profile;
+        $profile = $user?->jobseekerProfile;
         $displayName = trim((string) ($user?->name ?? ''));
         $nameParts = $this->splitDisplayName($displayName);
 
@@ -2054,5 +2067,61 @@ class JobseekerController extends Controller
         return redirect()
             ->route('jobseeker.applications')
             ->with('status', 'Application submitted successfully!');
+    }
+
+    /**
+     * Calculate jobseeker profile completion percentage
+     */
+    private function calculateJobseekerProfileCompletion(array $profileData): int
+    {
+        $completionFields = 0;
+        $totalFields = 0;
+
+        // Personal Information (6 main fields: first_name, surname, date_of_birth, sex, contact_number, email)
+        $totalFields += 6;
+        if (!empty($profileData['personal']['first_name'])) $completionFields++;
+        if (!empty($profileData['personal']['surname'])) $completionFields++;
+        if (!empty($profileData['personal']['date_of_birth'])) $completionFields++;
+        if (!empty($profileData['personal']['sex'])) $completionFields++;
+        if (!empty($profileData['personal']['contact_number'])) $completionFields++;
+        if (!empty($profileData['personal']['email_address'])) $completionFields++;
+
+        // Address (4 fields: house_no, barangay, municipality, province)
+        $totalFields += 4;
+        $address = $profileData['presentAddress'] ?? [];
+        if (!empty($address['house_no'])) $completionFields++;
+        if (!empty($address['barangay'])) $completionFields++;
+        if (!empty($address['municipality'])) $completionFields++;
+        if (!empty($address['province'])) $completionFields++;
+
+        // Education (at least 1 entry)
+        $totalFields += 1;
+        $education = $profileData['education'] ?? [];
+        if (!empty($education) && count($education) > 0) {
+            $completionFields++;
+        }
+
+        // Training (at least 1 entry)
+        $totalFields += 1;
+        $training = $profileData['training'] ?? [];
+        if (!empty($training) && count($training) > 0) {
+            $completionFields++;
+        }
+
+        // Work Experience (at least 1 entry)
+        $totalFields += 1;
+        $experience = $profileData['experience'] ?? [];
+        if (!empty($experience) && count($experience) > 0) {
+            $completionFields++;
+        }
+
+        // Languages (at least 1 language)
+        $totalFields += 1;
+        $languages = $profileData['languages'] ?? [];
+        if (!empty($languages) && count($languages) > 0) {
+            $completionFields++;
+        }
+
+        return $totalFields > 0 ? (int) round(($completionFields / $totalFields) * 100) : 0;
     }
 }
