@@ -177,9 +177,9 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 28px;
+            height: 25px;
             background-image: url('/images/ip-img.png');
-            background-size: 60px 28px;
+            background-size: contain;
             background-repeat: repeat-x;
             background-position: left bottom;
         }
