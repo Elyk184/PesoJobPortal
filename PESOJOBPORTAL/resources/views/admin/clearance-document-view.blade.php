@@ -322,7 +322,7 @@
                     <div class="header-line">Province of Bukidnon</div>
                     <div class="header-line">MUNICIPALITY OF MANOLO FORTICH</div>
                     <div class="header-line peso-office">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; height: auto; margin-top: -0.3rem; display: block;">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/ip-img.png'))) }}" alt="Divider" style="width: 100%; height: auto; margin-top: -0.7rem; display: block;">
                 </div>
                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents(resource_path('logos/BAGONG-PILIPINAS-LOGO-1-1.png'))) }}" alt="Bagong Pilipinas Logo" class="logo">
             </div>
