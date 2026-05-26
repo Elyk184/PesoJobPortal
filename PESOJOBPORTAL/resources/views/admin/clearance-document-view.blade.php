@@ -153,7 +153,7 @@
         }
         
         .office-info {
-            margin-top: 0.5rem;
+            margin-top: 1.2rem;
             margin-left: -1.2in;
             margin-right: -1.2in;
             margin-bottom: 0;
