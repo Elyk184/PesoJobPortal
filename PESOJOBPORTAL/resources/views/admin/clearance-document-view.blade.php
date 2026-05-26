@@ -371,7 +371,7 @@
             </div>
             
 
-<div style="text-align: center; margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
+<div style="padding-top: 0.6rem; text-align: center; margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
 
             <div class="office-info">
                
