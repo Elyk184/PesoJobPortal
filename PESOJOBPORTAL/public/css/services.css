@@ -148,6 +148,10 @@
     border-color: rgba(215, 38, 56, 0.34);
 }
 
+.service-card.service-gold:hover {
+    border-color: rgba(245, 200, 75, 0.48);
+}
+
 .service-card-top {
     display: flex;
     align-items: flex-start;
@@ -179,6 +183,10 @@
     background: linear-gradient(180deg, #fde7e9, #ffd9dd);
 }
 
+.service-icon-wrap.service-gold {
+    background: linear-gradient(180deg, #fff2c9, #fde9a6);
+}
+
 .service-icon-wrap svg {
     width: 24px;
     height: 24px;
@@ -191,6 +199,10 @@
 
 .service-icon-wrap.service-green svg {
     stroke: var(--service-red);
+}
+
+.service-icon-wrap.service-gold svg {
+    stroke: #b98300;
 }
 
 .service-badge {
@@ -216,6 +228,12 @@
     background: rgba(215, 38, 56, 0.1);
 }
 
+.service-badge-gold {
+    color: #946800;
+    border-color: rgba(245, 200, 75, 0.35);
+    background: rgba(245, 200, 75, 0.18);
+}
+
 .service-card-title {
     font-size: 1.22rem;
     font-weight: 800;
@@ -230,6 +248,10 @@
 
 .service-card.service-green:hover .service-card-title {
     color: var(--service-red);
+}
+
+.service-card.service-gold:hover .service-card-title {
+    color: #9a7200;
 }
 
 .service-card-subtitle {
@@ -291,6 +313,14 @@
     stroke: var(--service-red);
 }
 
+.service-dot.service-gold {
+    background: #fff0bf;
+}
+
+.service-dot.service-gold svg {
+    stroke: #b98300;
+}
+
 .service-divider {
     height: 2px;
     width: 56px;
@@ -344,6 +374,16 @@
 
 .service-btn.service-green:hover {
     box-shadow: 0 10px 20px rgba(215, 38, 56, 0.3);
+    transform: translateY(-1px);
+}
+
+.service-btn.service-gold {
+    background: linear-gradient(90deg, #f5c84b, #e8b63a);
+    color: #4f3600;
+}
+
+.service-btn.service-gold:hover {
+    box-shadow: 0 10px 20px rgba(245, 200, 75, 0.34);
     transform: translateY(-1px);
 }
 

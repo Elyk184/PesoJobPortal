@@ -56,5 +56,29 @@
                 <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>
         </div>
+
+        <div class="service-card service-gold">
+            <div class="service-card-top">
+                <div class="service-icon-wrap service-gold">
+                    <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2l3 6 6 .9-4.5 4.4 1.1 6.2L12 16.8 6.4 19.5l1.1-6.2L3 8.9 9 8l3-6z" />
+                    </svg>
+                </div>
+                <span class="service-badge service-badge-gold">For OFWs</span>
+            </div>
+            <div class="service-card-title">OFW Assistance</div>
+            <p class="service-card-subtitle">Request help, submit OFW support cases, and track the status of your requests.</p>
+            <ul class="service-features">
+                <li class="service-feature"><span class="service-dot service-gold"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Request Assistance &amp; Support</span></li>
+                <li class="service-feature"><span class="service-dot service-gold"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Submit an OFW Case</span></li>
+                <li class="service-feature"><span class="service-dot service-gold"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Track Request Status</span></li>
+                <li class="service-feature"><span class="service-dot service-gold"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg></span><span>Receive Alerts &amp; Notifications</span></li>
+            </ul>
+            <div class="service-divider"></div>
+            <a href="{{ route('login') }}" class="service-btn service-gold">
+                <span>Access OFW Assistance</span>
+                <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </a>
+        </div>
     </div>
 </section>
