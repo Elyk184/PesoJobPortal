@@ -327,7 +327,6 @@
             </div>
             
             <div class="office-info">
-                <div class="clearance-number">Clearance #: {{ $clearance->clearance_number }}</div>
                 <div>"Lupad Manolo Fortich"</div>
                 <div>peso@manolofortich.gov.ph | 0955-9546-049</div>
                 <div>www.facebook.com/LGUManoloFortich</div>
