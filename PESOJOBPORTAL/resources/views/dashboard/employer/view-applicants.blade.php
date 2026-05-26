@@ -830,17 +830,10 @@
                                 $applicantAvatar = $isRecommendation ? ($applicant->avatar ?? null) : ($application->applicant->avatar ?? null);
                             @endphp
                             <tr>
-<<<<<<< HEAD
-                                <td>
-                                    <div class="d-flex align-items-start gap-3">
-                                        @if($application->applicant->avatar)
-                                        <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}" class="user-avatar">
-=======
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center gap-3">
                                         @if($applicantAvatar)
                                         <img src="{{ Storage::url($applicantAvatar) }}" alt="{{ $applicantName }}" class="user-avatar">
->>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
                                         @else
                                         <div class="user-initials" style="background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);">
                                             {{ strtoupper(substr($applicantName, 0, 1)) }}
@@ -988,7 +981,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const filterValue = this.dataset.filterValue;
             const statusSelect = document.querySelector('select[name="status"]');
             const filterForm = document.querySelector('form.filters-grid');
-            
+
             if (filterType === 'reset') {
                 // Reset all filters
                 document.querySelector('select[name="job_id"]').value = '';
@@ -998,10 +991,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set the status filter and submit
                 statusSelect.value = filterValue;
             }
-            
+
             // Scroll to filter section
             document.querySelector('.filter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
+
             // Highlight the status dropdown briefly to show it's selected
             statusSelect.style.borderColor = '#2b67b1';
             statusSelect.style.boxShadow = '0 0 0 4px rgba(43, 103, 177, 0.2)';
@@ -1009,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusSelect.style.borderColor = '';
                 statusSelect.style.boxShadow = '';
             }, 2000);
-            
+
             // Auto-submit the form after a brief delay
             setTimeout(() => {
                 filterForm.submit();
