@@ -189,7 +189,7 @@
 
         .office-info .divider-img {
             display: block;
-            margin: 0.1rem auto;
+            margin: 0 auto;
             width: 85%;
             max-width: 85%;
             height: auto;
