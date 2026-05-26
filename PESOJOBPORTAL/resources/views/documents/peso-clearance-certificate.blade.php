@@ -199,15 +199,27 @@
 
         .footer-info {
             margin-top: 40px;
-            font-size: 9px;
-            color: #666;
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
+            font-size: 10px;
+            color: #000;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 2px solid #2d5016;
+            border-bottom: 3px solid #2d5016;
         }
 
-        .divider {
-            border-top: 3px solid #2d5016;
-            margin: 20px 0;
+        .footer-quote {
+            font-size: 11px;
+            font-weight: bold;
+            color: #2d5016;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .footer-contact {
+            font-size: 10px;
+            color: #000;
+            margin: 8px 0;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -268,9 +280,10 @@
 
         <!-- Footer -->
         <div class="footer-info">
-            "Lupad Manolo Fortich"
-            <br>
-            📧 peso@manolofortich.gov.ph | 📞 0955-9546-049 | 🌐 www.facebook.com/GLG.Manolo.Fortich
+            <div class="footer-quote">"Lupad Manolo Fortich"</div>
+            <div class="footer-contact">
+                📧 peso@manolofortich.gov.ph | 📞 0955-9546-049 | 🌐 www.facebook.com/LGU.Manolo.Fortich
+            </div>
         </div>
     </div>
 </body>
