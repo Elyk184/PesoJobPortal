@@ -197,19 +197,6 @@
             font-weight: bold;
         }
 
-        .footer-info {
-            margin-top: 40px;
-            font-size: 10px;
-            color: #000;
-            text-align: right;
-            padding: 15px 0;
-            border-top: 2px solid #333;
-            border-bottom: 3px solid #2d5016;
-            position: relative;
-            width: 100%;
-            margin-left: 0;
-            margin-right: 0;
-        }
 
    
         .footer-quote {
@@ -286,13 +273,5 @@
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="footer-info">
-            <div class="footer-quote">"Lupad Manolo Fortich"</div>
-            <div class="footer-contact">
-                peso@manolofortich.gov.ph | 0955-9546-049 <br> www.facebook.com/LGUManoloFortich
-            </div>
-        </div>
-    </div>
 </body>
 </html>

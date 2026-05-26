@@ -326,12 +326,6 @@
                     </div>
                 </?php>
             </div>
-            
-            <div class="office-info">
-                <div>"Lupad Manolo Fortich"</div>
-                <div>peso@manolofortich.gov.ph | 0955-9546-049</div>
-                <div>www.facebook.com/LGUManoloFortich</div>
-            </div>
         </div>
     </div>
 </body>
