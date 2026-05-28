@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\PesoClearance;
+use App\Models\JobseekerAddress;
+use App\Models\JobseekerPersonalInformation;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
@@ -567,22 +569,40 @@ class AdminController extends Controller
 
     public function pesoClearances(): View
     {
-        $clearances = PesoClearance::query()
-            ->with('user')
+        $baseQuery = PesoClearance::query()->with('user');
+
+        $stats = [
+            'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
+            'active' => (clone $baseQuery)->where('status', 'active')->count(),
+            'declined' => (clone $baseQuery)->where('status', 'declined')->count(),
+            'total' => (clone $baseQuery)->count(),
+        ];
+
+        $clearances = (clone $baseQuery)
             ->orderByRaw("CASE WHEN status = 'pending' THEN 0 WHEN status = 'active' THEN 1 ELSE 2 END")
-            ->orderByDesc('created_at')
+            ->orderByDesc('request_date')
             ->paginate(15);
 
-        return view('admin.peso-clearances', compact('clearances'));
+        $latestClearance = (clone $baseQuery)
+            ->orderByDesc('request_date')
+            ->first();
+
+        return view('admin.peso-clearances', compact('clearances', 'stats', 'latestClearance'));
     }
 
-    public function generateClearanceDocument(PesoClearance $clearance)
+    public function generateClearanceDocument(Request $request, PesoClearance $clearance)
     {
         $documentService = new PesoClearanceDocumentService();
         $documentPath = $documentService->generateClearanceDocument($clearance);
         
         if ($documentPath) {
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+
+            if ($request->boolean('preview')) {
+                return redirect()->route('admin.peso-clearances.view-document', $clearance)
+                    ->with('success', 'Clearance certificate is ready for review.');
+            }
+
             return back()->with('success', 'Clearance document generated!');
         }
 
@@ -591,11 +611,40 @@ class AdminController extends Controller
 
     public function viewClearanceDocument(PesoClearance $clearance)
     {
+        $clearance->loadMissing('user');
+
         if (!$clearance->document_path || !Storage::disk('local')->exists($clearance->document_path)) {
             return back()->with('error', 'Document not found.');
         }
 
-        return view('admin.clearance-document-view', compact('clearance'));
+        // Prefer explicit personal information (sex) if available
+        $sexRecord = JobseekerPersonalInformation::query()
+            ->where('user_id', $clearance->user_id)
+            ->first();
+
+        $sex = $sexRecord?->sex ?? $clearance->user?->jobseekerProfile?->gender ?? null;
+
+        $possessivePronoun = 'their';
+        $objectivePronoun = 'him/her';
+
+        if ($sex) {
+            $s = strtolower($sex);
+            if (in_array($s, ['male', 'm', 'man'])) {
+                $possessivePronoun = 'his';
+                $objectivePronoun = 'him';
+            } elseif (in_array($s, ['female', 'f', 'woman'])) {
+                $possessivePronoun = 'her';
+                $objectivePronoun = 'her';
+            }
+        }
+
+        return view('admin.clearance-document-view', [
+            'clearance' => $clearance,
+            'autoResidenceAddress' => $this->formatAutoResidenceAddress($clearance),
+            'residenceAddress' => $clearance->residence_address ?? '',
+            'possessivePronoun' => $possessivePronoun,
+            'objectivePronoun' => $objectivePronoun,
+        ]);
     }
 
     public function downloadClearanceDocument(PesoClearance $clearance)
@@ -613,6 +662,10 @@ class AdminController extends Controller
             return back()->with('warning', 'Only pending clearance requests can be issued.');
         }
 
+        $validated = $request->validate([
+            'residence_address' => 'required|string|max:255',
+        ]);
+
         $clearanceNumber = 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id;
 
         $clearance->update([
@@ -621,6 +674,7 @@ class AdminController extends Controller
             'issue_date' => now(),
             'expiry_date' => now()->addYear(),
             'remarks' => $clearance->remarks,
+            'residence_address' => $validated['residence_address'],
         ]);
 
         // Generate and store clearance document
@@ -631,7 +685,26 @@ class AdminController extends Controller
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
         }
 
-        return back()->with('success', 'PESO clearance has been issued successfully.');
+        return redirect()
+            ->route('admin.peso-clearances.view-document', $clearance)
+            ->with('success', 'PESO clearance has been issued successfully.');
+    }
+
+    private function formatAutoResidenceAddress(PesoClearance $clearance): string
+    {
+        $presentAddress = JobseekerAddress::query()
+            ->where('user_id', $clearance->user_id)
+            ->where('type', 'present')
+            ->first();
+
+        $parts = array_filter([
+            $presentAddress?->house_no,
+            $presentAddress?->barangay,
+            $presentAddress?->municipality,
+            $presentAddress?->province,
+        ], fn ($value) => filled($value));
+
+        return $parts ? ucwords(strtolower(implode(', ', $parts))) : 'Manolo Fortich, Bukidnon';
     }
 
     /**
@@ -760,4 +833,5 @@ class AdminController extends Controller
 
         return back()->with('success', 'Profile updated successfully!');
     }
+
 }

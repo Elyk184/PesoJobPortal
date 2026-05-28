@@ -338,6 +338,10 @@
 </style>
 
 <div class="peso-wrap">
+    @php
+        $latestClearance = $latestClearance ?? null;
+        $latestDocumentClearance = $latestClearance && !empty($latestClearance->document_path) ? $latestClearance : null;
+    @endphp
 
     {{-- Page Header --}}
     <div class="page-header">
@@ -346,15 +350,30 @@
             <p>Review, issue, and manage employment clearance requests</p>
         </div>
         <div class="header-actions">
-            <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearances->first()) }}" style="display:inline;">
-                @csrf
-                <button type="submit" class="btn btn-primary">
+                @if($latestClearance)
+                <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $latestClearance) }}" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-lightning-charge-fill"></i> Generate Document
+                    </button>
+                </form>
+                    @if($latestDocumentClearance)
+                        <a href="{{ route('admin.peso-clearances.view-document', $latestDocumentClearance) }}" class="btn btn-outline">
+                            <i class="bi bi-eye"></i> View Latest
+                        </a>
+                    @else
+                        <button type="button" class="btn btn-outline" disabled>
+                            <i class="bi bi-eye"></i> View Latest
+                        </button>
+                    @endif
+            @else
+                <button type="button" class="btn btn-primary" disabled>
                     <i class="bi bi-lightning-charge-fill"></i> Generate Document
                 </button>
-            </form>
-            <a href="{{ route('admin.peso-clearances.view-document', $clearances->first()) }}" class="btn btn-outline">
-                <i class="bi bi-eye"></i> View Latest
-            </a>
+                <button type="button" class="btn btn-outline" disabled>
+                    <i class="bi bi-eye"></i> View Latest
+                </button>
+            @endif
         </div>
     </div>
 
@@ -363,28 +382,28 @@
         <div class="stat-card">
             <div class="stat-icon yellow"><i class="bi bi-hourglass-split"></i></div>
             <div class="stat-info">
-                <div class="stat-value">{{ $clearances->count() }}</div>
+                <div class="stat-value">{{ $stats['pending'] }}</div>
                 <div class="stat-label">Pending</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
             <div class="stat-info">
-                <div class="stat-value">—</div>
+                <div class="stat-value">{{ $stats['active'] }}</div>
                 <div class="stat-label">Issued</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon red"><i class="bi bi-x-circle"></i></div>
             <div class="stat-info">
-                <div class="stat-value">—</div>
+                <div class="stat-value">{{ $stats['declined'] }}</div>
                 <div class="stat-label">Declined</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon blue"><i class="bi bi-files"></i></div>
             <div class="stat-info">
-                <div class="stat-value">—</div>
+                <div class="stat-value">{{ $stats['total'] }}</div>
                 <div class="stat-label">Total</div>
             </div>
         </div>
@@ -395,8 +414,8 @@
         <div class="table-card-header">
             <h3>
                 <i class="bi bi-clock-history" style="color:#f59e0b;"></i>
-                Pending Requests
-                <span class="badge-count">{{ $clearances->count() }}</span>
+                Clearance Requests
+                <span class="badge-count">{{ $clearances->total() }}</span>
             </h3>
             <div class="search-box">
                 <i class="bi bi-search" style="color:#94a3b8; font-size:0.85rem;"></i>
@@ -415,36 +434,82 @@
             </thead>
             <tbody>
                 @forelse($clearances as $clearance)
-                <tr data-name="{{ strtolower($clearance->user?->name ?? '') }}">
+                @php
+                    $applicantName = $clearance->user?->name ?? 'N/A';
+                    $applicantEmail = $clearance->user?->email ?? 'N/A';
+                    $requestDate = $clearance->request_date?->format('m/d/Y') ?? $clearance->created_at?->format('m/d/Y') ?? 'N/A';
+                    $statusLabel = ucfirst($clearance->status ?? 'pending');
+                    $statusClass = match ($clearance->status) {
+                        'active' => 'background:#dcfce7;color:#15803d;',
+                        'declined', 'rejected' => 'background:#fee2e2;color:#dc2626;',
+                        default => 'background:#fef9c3;color:#a16207;',
+                    };
+                    $hasDocument = !empty($clearance->document_path);
+                    $fullNameParts = collect(preg_split('/\s+/', trim($applicantName)) ?: [])->filter()->values();
+                    $avatar = $fullNameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->join('');
+                @endphp
+                <tr data-name="{{ strtolower($applicantName) }}" data-status="{{ strtolower($clearance->status ?? '') }}">
                     <td>
                         <div class="applicant-cell">
                             <div class="applicant-avatar">
-                                {{ strtoupper(substr($clearance->user?->name ?? 'N', 0, 1)) }}{{ strtoupper(substr(strstr($clearance->user?->name ?? '', ' '), 1, 1)) }}
+                                {{ $avatar !== '' ? $avatar : strtoupper(substr($applicantName, 0, 1)) }}
                             </div>
                             <div class="applicant-name">{{ $clearance->user?->name ?? 'N/A' }}</div>
                         </div>
                     </td>
                     <td>
-                        @if($clearance->user?->address)
-                            <span class="address-text">{{ $clearance->user->address }}</span>
+                        @if($clearance->request_date || $clearance->issue_date || $clearance->expiry_date)
+                            <div style="display:flex;flex-direction:column;gap:0.2rem;">
+                                <span class="address-text" style="white-space:normal;max-width:none;">{{ $clearance->clearance_number }}</span>
+                                <span class="small text-muted">{{ $clearance->remarks ?: 'No remarks provided' }}</span>
+                                <span class="small" style="color: {{ $hasDocument ? '#15803d' : '#94a3b8' }};">
+                                    {{ $hasDocument ? 'Document available' : 'Document not generated yet' }}
+                                </span>
+                                @if($clearance->is_first_time_jobseeker)
+                                    <span class="badge text-bg-info" style="width:max-content;">First-time jobseeker</span>
+                                @endif
+                            </div>
                         @else
                             <span class="address-text na">Not provided</span>
                         @endif
                     </td>
                     <td>
-                        <span class="date-text">{{ $clearance->created_at?->format('m/d/Y') ?? 'N/A' }}</span>
+                        <span class="date-text">{{ $requestDate }}</span>
+                        <div class="small text-muted mt-1">
+                            @if($clearance->issue_date)
+                                Issued {{ $clearance->issue_date->format('m/d/Y') }}
+                            @elseif($clearance->status === 'pending')
+                                Awaiting review
+                            @endif
+                        </div>
                     </td>
                     <td>
                         <div class="action-cell">
-                            <button class="btn btn-issue" onclick="confirmAction('issue', {{ $clearance->id }})">
-                                <i class="bi bi-check-lg"></i> Issue
-                            </button>
-                            <button class="btn btn-decline" onclick="confirmAction('decline', {{ $clearance->id }})">
+                            @if($clearance->status === 'pending')
+                                <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearance) }}" style="display:inline;">
+                                    @csrf
+                                    <input type="hidden" name="preview" value="1">
+                                    <button type="submit" class="btn btn-issue" onclick="return confirm('Preview the certificate before issuing?')">
+                                        <i class="bi bi-check-lg"></i> Issue
+                                    </button>
+                                </form>
+                            @else
+                                <button class="btn btn-issue" type="button" disabled style="opacity:0.7;cursor:not-allowed;">
+                                    <i class="bi bi-check-lg"></i> Issued
+                                </button>
+                            @endif
+                            @if($hasDocument)
+                                <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" class="btn btn-view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            @else
+                                <button type="button" class="btn btn-view" disabled style="opacity:0.45;cursor:not-allowed;">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            @endif
+                            <button class="btn btn-decline" type="button" disabled title="Decline action is not wired yet">
                                 <i class="bi bi-x-lg"></i> Decline
                             </button>
-                            <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" class="btn btn-view">
-                                <i class="bi bi-eye"></i>
-                            </a>
                         </div>
                     </td>
                 </tr>
@@ -453,7 +518,7 @@
                     <td colspan="4">
                         <div class="empty-state">
                             <i class="bi bi-inbox"></i>
-                            <p>No pending clearance requests at the moment.</p>
+                            <p>No PESO clearance requests at the moment.</p>
                         </div>
                     </td>
                 </tr>
@@ -492,10 +557,10 @@ function confirmAction(action, id) {
     if (action === 'issue') {
         icon.className = 'modal-icon issue';
         icon.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
-        title.textContent = 'Issue Clearance?';
-        desc.textContent = 'This will mark the clearance as issued and generate the official document for the applicant.';
+        title.textContent = 'Preview Certificate?';
+        desc.textContent = 'This will generate the certificate first so you can review it before issuing the clearance.';
         btn.className = 'btn-confirm-issue';
-        btn.textContent = 'Yes, Issue';
+        btn.textContent = 'Yes, Preview';
         btn.onclick = () => executeAction('issue', id);
     } else {
         icon.className = 'modal-icon decline';
@@ -517,8 +582,7 @@ function closeModal() {
 function executeAction(action, id) {
     closeModal();
     console.log(`${action} clearance:`, id);
-    // TODO: wire to actual route
-    alert(`Clearance ${action === 'issue' ? 'issued' : 'declined'} successfully!`);
+    alert('This action is now handled directly from the table buttons.');
 }
 
 function filterTable() {

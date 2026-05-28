@@ -16,6 +16,9 @@
             background: #f5f5f5;
             padding: 1rem;
         }
+        :root {
+            --org-gap: 1rem; /* vertical gap above organization line — adjust as needed */
+        }
         
         .document-container {
             max-width: 850px;
@@ -287,7 +290,46 @@
             margin: 0.3rem 0;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
+
+        .capitalize-words {
+            text-transform: capitalize;
+        }
+
+        .spaced-paragraph {
+            margin-top: 0.75rem;
+            margin-bottom: 0 !important;
+        }
         
+        .placeholder-uppercase {
+            text-transform: uppercase;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .typed-style {
+            text-transform: uppercase;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .org-line {
+            display: block;
+            text-align: center;
+            font-weight: 700;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-top: var(--org-gap) !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            font-size: 20px;
+        }
+        /* Keep ordinance paragraph snug below the org-line, but add a configurable gap above the org-line */
+        .body-text.spaced-paragraph + .org-line {
+            margin-top: var(--org-gap) !important;
+            margin-bottom: 0 !important;
+        }
+        .org-line + .body-text.spaced-paragraph {
+            margin-top: 0 !important;
+        }
         @media print {
             body {
                 background: white;
@@ -312,6 +354,17 @@
 <body>
     <a href="{{ route('admin.peso-clearances') }}" class="back-button">← Back</a>
     <button class="print-button" onclick="window.print()">🖨️ Print</button>
+    @if($clearance->status === 'pending')
+        <form method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}" style="position:fixed;top:1rem;right:8.5rem;z-index:100;display:flex;flex-direction:column;gap:0.35rem;background:#fff;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);width:360px;max-width:calc(100vw - 11rem);">
+            @csrf
+            <label for="residence_address_input" style="font-size:12px;font-weight:700;color:#111827;">Residence address</label>
+            <textarea id="residence_address_input" name="residence_address" rows="3" placeholder="Type the jobseeker residence here" style="width:100%;padding:0.65rem;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;line-height:1.5;resize:vertical;">{{ old('residence_address', $residenceAddress) }}</textarea>
+            @error('residence_address')
+                <div style="font-size:12px;color:#dc2626;">{{ $message }}</div>
+            @enderror
+            <button type="submit" class="print-button" style="background:#16a34a;position:static;right:auto;top:auto;width:100%;">✔ Issue Clearance</button>
+        </form>
+    @endif
     
     <div class="document-container">
         <div class="content">
@@ -338,22 +391,27 @@
             
             <div class="info-section">
                 <div style="width: 100%; margin-top: 0.2rem;">
-                    <div style="font-size: 24px; font-weight: 600; text-decoration: underline;">{{ $clearance->user?->address ?? 'Manolo Fortich, Bukidnon' }}</div>
+                    <div id="residence-address-preview" class="capitalize-words" style="font-size: 24px; font-weight: 600; text-decoration: underline;">{{ $autoResidenceAddress ?? 'Manolo Fortich, Bukidnon' }}</div>
                 </div>
             </div>
             
             <div class="clearance-statement">
-                <strong>REGISTRY THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No. 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
+                <strong>REGISTRY THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No.: 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
             </div>
             
             <div class="body-text">
-                <strong>THIS CERTIFIES FURTHER THAT</strong> based on the clearances issued by the BARANGAY AUTHORITIES and LOCAL GOVERNMENT UNIT, the herein subject person has <strong>NO DEROGATORY RECORD</strong> and is cleared for employment purposes.
+                <strong>THIS CERTIFIES FURTHER THAT</strong> based on the clearances issued by the BARANGAY <span id="residence-address-body" class="capitalize-words{{ $residenceAddress ? ' typed-style' : '' }}">{!! $residenceAddress ? e($residenceAddress) : '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>' !!}</span> herein subject person has <strong>NO DEROGATORY RECORD.</strong>
             </div>
             
-            <div class="body-text">
-                This EMPLOYMENT CLEARANCE is issued in connection with the desire to work and pursue lawful employment as per Presidential Decree No. 442 and in accordance with Municipal Ordinance No. 2005-394, Dated July 2005.
+            <div class="body-text spaced-paragraph">
+                This EMPLOYMENT CLEARANCE is issued in connection with the desire of {{ $objectivePronoun }} to work at:
             </div>
-            
+
+            <div id="organization-line" class="body-text org-line">COMPANY / ORGANIZATION NAME</div>
+
+            <div class="body-text spaced-paragraph">
+                 Municipal Ordinance No. 2005-394, Dated July 2005
+            </div>
             <div class="approved-by">Approved by:</div>
             <div class="footer-section">
                 <div class="signature-block">
@@ -390,4 +448,29 @@
         </div>
     </div>
 </body>
+<script>
+    (function () {
+        const input = document.getElementById('residence_address_input');
+        const preview = document.getElementById('residence-address-preview');
+        const body = document.getElementById('residence-address-body');
+
+        if (!input || !preview || !body) {
+            return;
+        }
+
+        const updatePreview = () => {
+            const value = input.value.trim();
+            if (value) {
+                body.textContent = value;
+                body.classList.add('typed-style');
+            } else {
+                body.innerHTML = '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>';
+                body.classList.remove('typed-style');
+            }
+        };
+
+        input.addEventListener('input', updatePreview);
+        updatePreview();
+    })();
+</script>
 </html>
