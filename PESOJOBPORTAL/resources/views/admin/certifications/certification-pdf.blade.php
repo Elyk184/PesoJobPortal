@@ -200,8 +200,10 @@
             padding-top: 0;
         }
 
-        .sig-col.right { padding-top: 70px; text-align: right; }
         .sig-col.left  { text-align: left; }
+
+        /* ── MOVED LOWER: increased padding-top from 70px to 160px ── */
+        .sig-col.right { padding-top: 185px; text-align: right; }
 
         .sig-label {
             font-weight: bold;
