@@ -202,7 +202,6 @@
 
         .sig-col.left  { text-align: left; }
 
-        /* ── MOVED LOWER: increased padding-top from 70px to 160px ── */
         .sig-col.right { padding-top: 200px; text-align: right; }
 
         .sig-label {
