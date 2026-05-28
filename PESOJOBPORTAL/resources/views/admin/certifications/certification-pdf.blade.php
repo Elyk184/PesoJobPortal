@@ -285,13 +285,57 @@
 
             <div class="salutation">TO WHOM IT MAY CONCERN:</div>
 
+            {{--
+                Compute display values for recruitment days and date range.
+                Priority:
+                  1. recruitment_start_date / recruitment_end_date / recruitment_days (from employer submission)
+                  2. activity_date (legacy fallback)
+                  3. 'TBD'
+            --}}
+            @php
+                $startDate  = $activity_request->recruitment_start_date
+                                ? \Carbon\Carbon::parse($activity_request->recruitment_start_date)
+                                : null;
+
+                $endDate    = $activity_request->recruitment_end_date
+                                ? \Carbon\Carbon::parse($activity_request->recruitment_end_date)
+                                : null;
+
+                // Use stored recruitment_days; if missing, compute from date range
+                $numDays    = $activity_request->recruitment_days
+                                ?? ($startDate && $endDate
+                                    ? $startDate->diffInDays($endDate) + 1
+                                    : 1);
+
+                // Convert number to words for the written form  e.g. 3 → "THREE"
+                $numberWords = [
+                    1 => 'ONE', 2 => 'TWO', 3 => 'THREE', 4 => 'FOUR', 5 => 'FIVE',
+                    6 => 'SIX', 7 => 'SEVEN', 8 => 'EIGHT', 9 => 'NINE', 10 => 'TEN',
+                ];
+                $numDaysWord = $numberWords[$numDays] ?? strtoupper((string) $numDays);
+
+                // Build the date string
+                if ($startDate && $endDate && $startDate->ne($endDate)) {
+                    // Multi-day: "Jun 02, 2025 to Jun 04, 2025"
+                    $dateDisplay = $startDate->format('M d, Y') . ' to ' . $endDate->format('M d, Y');
+                } elseif ($startDate) {
+                    // Single day from recruitment_start_date
+                    $dateDisplay = $startDate->format('M d, Y');
+                } elseif ($activity_request->activity_date) {
+                    // Legacy fallback
+                    $dateDisplay = $activity_request->activity_date->format('M d, Y');
+                } else {
+                    $dateDisplay = 'TBD';
+                }
+            @endphp
+
             <div class="cert-paragraph">
                 THIS IS TO CERTIFY THAT <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
                 a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines
                 established in {{ $company_profile?->established_year ?? '' }}, has been granted
                 the permit and authority to conduct recruitment of applicants for local employment for
-                <strong>ONE (1) day(s)</strong> valid on
-                <strong>{{ $activity_request->activity_date?->format('M d, Y') ?? 'TBD' }}</strong>
+                <strong>{{ $numDaysWord }} ({{ $numDays }}) day(s)</strong> valid on
+                <strong>{{ $dateDisplay }}</strong>
                 at Lobby area in Ground floor of Manolo Fortich PESO office, Located in,
                 Gen. Andres Bonifacio St. Cor. Albarece St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
                 8703. (in front of Tankulan Flea Market - Taboan).

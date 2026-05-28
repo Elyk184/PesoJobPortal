@@ -760,13 +760,14 @@ class EmployerController extends Controller
     public function requestRecruitmentActivity(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'activity_type' => ['required', 'in:lra,sra'],
+'activity_type' => ['required', 'in:lra,sra'],
             'letter_of_intent' => ['required', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
 
             // Confirm & Submit modal fields
             'recruitment_start_date' => ['nullable', 'date'],
             'recruitment_end_date' => ['nullable', 'date', 'after_or_equal:recruitment_start_date'],
             'recruitment_days' => ['nullable', 'integer', 'min:1'],
+            'confirm_clicked_at' => ['nullable', 'date'],
 
 
 
@@ -794,9 +795,12 @@ class EmployerController extends Controller
             'company_profile_path' => 'recruitment-documents/legacy',
             'job_advertisement_path' => 'recruitment-documents/legacy',
             // From Confirm & Submit modal (submit-documents.blade.php)
-            'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
+'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
             'recruitment_end_date' => $validated['recruitment_end_date'] ?? null,
             'recruitment_days' => $validated['recruitment_days'] ?? null,
+            'confirm_clicked_at' => $validated['confirm_clicked_at'] ?? null,
+            'submitted_at' => now(),
+            'submitted_via' => $request->header('User-Agent') ? 'web' : 'unknown',
             'submitted_by_employer_at' => now(),
         ];
 
