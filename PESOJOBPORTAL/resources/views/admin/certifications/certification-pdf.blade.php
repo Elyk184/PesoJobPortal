@@ -203,7 +203,7 @@
         .sig-col.left  { text-align: left; }
 
         /* ── MOVED LOWER: increased padding-top from 70px to 160px ── */
-        .sig-col.right { padding-top: 185px; text-align: right; }
+        .sig-col.right { padding-top: 200px; text-align: right; }
 
         .sig-label {
             font-weight: bold;
@@ -366,13 +366,11 @@
         <div class="signature-container">
             <div class="sig-col left">
                 <span class="sig-label">ATTESTED BY:</span>
-                <div class="sig-line"></div>
                 <div class="sig-name">LORRAINE A. REQUINTON</div>
                 <div class="sig-title">PESO Manager</div>
             </div>
             <div class="sig-col right">
                 <span class="sig-label">NOTED BY:</span>
-                <div class="sig-line"></div>
                 <div class="sig-name">ROGELIO S. QUIÑO</div>
                 <div class="sig-title">Municipal Mayor</div>
             </div>
