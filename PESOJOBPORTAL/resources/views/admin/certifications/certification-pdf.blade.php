@@ -113,7 +113,7 @@
 
         .header-logo-cell {
             display: table-cell;
-            width: 90px;
+            width: 110px;
             vertical-align: middle;
             text-align: center;
         }
@@ -126,16 +126,16 @@
 
         .header-logo-left,
         .header-logo {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
         }
 
-        .gov-line  { font-size: 10px; line-height: 1.3; }
-        .gov-main  { font-size: 12.5px; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.35; }
-        .gov-peso  { font-size: 15px; font-weight: bold; letter-spacing: 0.03em; text-transform: uppercase; margin-top: 2px; }
+        .gov-line  { font-size: 12px; line-height: 1.3; }
+        .gov-main  { font-size: 16px; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.35; }
+        .gov-peso  { font-size: 22px; font-weight: bold; letter-spacing: 0.03em; text-transform: uppercase; margin-top: 2px; }
 
         /* ── DECORATIVE TOP ── */
         .decor-wrapper {
