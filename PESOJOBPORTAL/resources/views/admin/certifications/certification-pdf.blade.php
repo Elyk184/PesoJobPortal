@@ -23,7 +23,6 @@
             line-height:1;
             color: #000;
             background: #fff;
-            /* 0.5 inch margins on all sides via padding */
             padding: 0.5in 0.5in 0.5in 0.5in;
             min-height: 297mm;
             margin: 0 auto;
@@ -57,31 +56,25 @@
 
         /* ── FOOTER CONTACT ROW ── */
         .footer {
-            border-top: 1px solid #000;
-            padding-top: 5px;
-            margin-top: 5px;
-        }
+    border-top: 1px solid #000;
+    padding-top: 4px;
+    margin-top: 5px;
+    text-align: center;
+}
 
-        .contact-row {
-            display: table;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .contact-item {
-            display: table-cell;
+        .contact-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
             font-size: 10px;
             white-space: nowrap;
-            vertical-align: middle;
-            text-align: center;
         }
 
-        .contact-item:first-child { text-align: left; }
-        .contact-item:last-child  { text-align: right; }
-
-        .contact-icon {
-            font-size: 12px;
-            margin-right: 3px;
+        .contact-line span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
         }
 
         /* ── DECORATIVE BOTTOM ── */
@@ -133,7 +126,7 @@
             margin: 0 auto;
         }
 
-        .gov-line  { font-size: 12px; line-height: 1.3; }
+        .gov-line  { font-size: 14px; line-height: 1.3; }
         .gov-main  { font-size: 16px; font-weight: bold; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.35; }
         .gov-peso  { font-size: 22px; font-weight: bold; letter-spacing: 0.03em; text-transform: uppercase; margin-top: 2px; }
 
@@ -153,7 +146,7 @@
 
         /* ── TITLE ── */
         .title {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: bold;
             letter-spacing: 0.20em;
             text-align: center;
@@ -220,7 +213,8 @@
         .sig-col.right .sig-line { width: 75%; margin-left: auto; }
 
         .sig-name  { font-size: 12px; font-weight: bold; }
-        .sig-title { font-size: 12px; }
+
+    <!-- ─      .sig-title { font-size: 12px; }
 
         .sig-col.left .sig-name,
         .sig-col.left .sig-title { text-align: left; max-width: 75%; }
@@ -230,27 +224,32 @@
 </head>
 <body>
 
-    <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->
-    <div class="page-footer">
-        <div class="tagline">"Lupad Manolo Fortich"</div>
-        <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
-        <div class="footer">
-            <div class="contact-row">
-                <div class="contact-item">
-                    <span class="contact-icon">&#9993;</span>peso@manolofortich.gov.ph
-                </div>
-                <div class="contact-item">
-                    <span class="contact-icon">&#9723;</span>0917-808-4796
-                </div>
-                <div class="contact-item">
-                    <span class="contact-icon"><strong>f</strong></span>www.facebook.com/LGU Manolo Fortich
-                </div>
-            </div>
-        </div>
-        <div class="decor-bottom-wrapper">
-            <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-bottom">
+    <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->─ FIXED FOOTER (always pinned to bottom of A4) ── -->
+<div class="page-footer">
+    <div class="tagline">"Lupad Manolo Fortich"</div>
+    <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
+    <div class="footer">
+        <div class="contact-line">
+            <span>
+                <img src="{{ public_path('images/email.png') }}" alt="Email" style="width:11px;height:11px;vertical-align:middle;">
+                peso@manolofortich.gov.ph
+            </span>
+            <span>|</span>
+            <span>
+                <img src="{{ public_path('images/phone.png') }}" alt="Phone" style="width:11px;height:11px;vertical-align:middle;">
+                0955-9546-049
+            </span>
+            <span>|</span>
+            <span>
+                <img src="{{ public_path('images/facebook.png') }}" alt="Facebook" style="width:11px;height:11px;vertical-align:middle;">
+                www.facebook.com/LGU Manolo Fortich
+            </span>
         </div>
     </div>
+    <div class="decor-bottom-wrapper">
+        <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-bottom">
+    </div>
+</div>
 
     <!-- ── MAIN CONTENT ── -->
     <div class="container">
@@ -286,13 +285,6 @@
 
             <div class="salutation">TO WHOM IT MAY CONCERN:</div>
 
-            {{--
-                Compute display values for recruitment days and date range.
-                Priority:
-                  1. recruitment_start_date / recruitment_end_date / recruitment_days (from employer submission)
-                  2. activity_date (legacy fallback)
-                  3. 'TBD'
-            --}}
             @php
                 $startDate  = $activity_request->recruitment_start_date
                                 ? \Carbon\Carbon::parse($activity_request->recruitment_start_date)
@@ -302,28 +294,22 @@
                                 ? \Carbon\Carbon::parse($activity_request->recruitment_end_date)
                                 : null;
 
-                // Use stored recruitment_days; if missing, compute from date range
                 $numDays    = $activity_request->recruitment_days
                                 ?? ($startDate && $endDate
                                     ? $startDate->diffInDays($endDate) + 1
                                     : 1);
 
-                // Convert number to words for the written form  e.g. 3 → "THREE"
                 $numberWords = [
                     1 => 'ONE', 2 => 'TWO', 3 => 'THREE', 4 => 'FOUR', 5 => 'FIVE',
                     6 => 'SIX', 7 => 'SEVEN', 8 => 'EIGHT', 9 => 'NINE', 10 => 'TEN',
                 ];
                 $numDaysWord = $numberWords[$numDays] ?? strtoupper((string) $numDays);
 
-                // Build the date string
                 if ($startDate && $endDate && $startDate->ne($endDate)) {
-                    // Multi-day: "Jun 02, 2025 to Jun 04, 2025"
                     $dateDisplay = $startDate->format('M d, Y') . ' to ' . $endDate->format('M d, Y');
                 } elseif ($startDate) {
-                    // Single day from recruitment_start_date
                     $dateDisplay = $startDate->format('M d, Y');
                 } elseif ($activity_request->activity_date) {
-                    // Legacy fallback
                     $dateDisplay = $activity_request->activity_date->format('M d, Y');
                 } else {
                     $dateDisplay = 'TBD';
