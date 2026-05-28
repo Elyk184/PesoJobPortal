@@ -23,8 +23,8 @@
             line-height:1;
             color: #000;
             background: #fff;
-            /* 1s inch margins on all sides via padding */
-            padding: 1in 1in 1in 1in;
+            /* 0.5 inch margins on all sides via padding */
+            padding: 0.5in 0.5in 0.5in 0.5in;
             min-height: 297mm;
             margin: 0 auto;
         }
@@ -32,9 +32,9 @@
         /* ── FIXED FOOTER PINNED TO BOTTOM OF PAGE ── */
         .page-footer {
             position: fixed;
-            bottom: 1in;
-            left: 1in;
-            right: 1in;
+            bottom: 0.5in;
+            left: 0.5in;
+            right: 0.5in;
         }
 
         /* ── TAGLINE ── */
@@ -100,7 +100,7 @@
 
         /* ── MAIN CONTENT AREA ── */
         .container {
-            width: calc(210mm - 3in);
+            width: calc(210mm - 1in);
             margin: 0 auto;
         }
 
