@@ -13,42 +13,42 @@ return new class extends Migration
             $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             
             // Personal Information
-            $table->json('personal_information')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('middle_initial')->nullable();
+            $table->string('suffix')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('date_of_birth')->nullable();
+            $table->string('religion')->nullable();
+            $table->string('civil_status')->nullable();
+            $table->string('height')->nullable();
+            $table->string('tin')->nullable();
+            $table->string('email_address')->nullable();
+            $table->string('gender')->nullable();
             
             // Address Information
-            $table->json('present_address')->nullable();
-            $table->json('permanent_address')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('postal_code')->nullable();
             
-            // Formatted display fields
-            $table->string('resume_name')->nullable();
-            $table->string('resume_email')->nullable();
-            $table->string('phone')->nullable();
-            $table->text('address')->nullable();
-            
-            // Resume/Document Storage
-            $table->string('resume_path')->nullable();
-            $table->string('photo_path')->nullable();
-            
-            // Skills and Qualifications (JSON stored)
-            $table->json('skills')->nullable();
-            $table->json('education')->nullable();
+            // Professional Information
+            $table->string('skills')->nullable();
+            $table->integer('years_of_experience')->nullable();
+            $table->text('education')->nullable();
             $table->json('training')->nullable();
-            $table->json('experience')->nullable();
-            $table->json('eligibility')->nullable();
-            $table->json('other_skills')->nullable();
-            $table->json('languages')->nullable();
+            $table->json('work_experience')->nullable();
             
-            // Employment Information
+            // Employment & Preferences
             $table->json('employment_status')->nullable();
-            $table->json('job_preferences')->nullable();
+            $table->json('job_preference')->nullable();
             
-            // Accessibility Information
+            // Additional Information
             $table->json('disability')->nullable();
-            
-            // Profile Metadata
-            $table->text('objective')->nullable();
-            $table->boolean('profile_completed')->default(false);
-            $table->integer('completion_percentage')->default(0);
+            $table->string('avatar_path')->nullable();
+            $table->text('certifications')->nullable();
+            $table->json('languages')->nullable();
             
             $table->timestamps();
         });
