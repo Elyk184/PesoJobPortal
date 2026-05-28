@@ -353,11 +353,60 @@
                     <p><i class="bi bi-telephone me-2"></i>{{ $jobseeker->profile->phone }}</p>
                 @endif
                 <p><i class="bi bi-calendar me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
+    @php
+        $displayName = $personalInformation?->first_name
+            ? trim(implode(' ', array_filter([
+                $personalInformation?->first_name,
+                $personalInformation?->middle_initial,
+                $personalInformation?->surname,
+                $personalInformation?->suffix,
+            ])))
+            : $jobseeker->name;
+
+        $avatarLetter = strtoupper(substr($displayName ?: 'U', 0, 1));
+        $presentAddressLine = trim(implode(', ', array_filter([
+            $presentAddress?->house_no,
+            $presentAddress?->barangay,
+            $presentAddress?->municipality,
+            $presentAddress?->province,
+        ]))) ?: 'Not provided';
+
+        $permanentAddressLine = trim(implode(', ', array_filter([
+            $permanentAddress?->house_no,
+            $permanentAddress?->barangay,
+            $permanentAddress?->municipality,
+            $permanentAddress?->province,
+        ]))) ?: 'Not provided';
+
+        $skillsCount = collect([
+            $otherSkills['trade_manual'] ?? [],
+            $otherSkills['it_technical'] ?? [],
+            $otherSkills['soft_skills'] ?? [],
+            [$otherSkills['other_text'] ?? ''],
+        ])->flatten()->filter()->count();
+    @endphp
+
+    <div class="profile-header">
+        <div class="profile-card">
+            <div class="profile-avatar">{{ $avatarLetter }}</div>
+            <div class="profile-info">
+                <h3>{{ $displayName }}</h3>
+                <p><i class="bi bi-envelope me-2"></i>{{ $jobseeker->email }}</p>
+                <p><i class="bi bi-calendar me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
+                <p><i class="bi bi-geo-alt me-2"></i>{{ $presentAddressLine }}</p>
 
                 <div class="profile-stats">
                     <div class="stat-item">
                         <div class="stat-value">{{ $jobseeker->applications->count() }}</div>
                         <div class="stat-label">Applications</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $educationRows->count() }}</div>
+                        <div class="stat-label">Education Records</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $skillsCount }}</div>
+                        <div class="stat-label">Skills Listed</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ $availableJobs->count() }}</div>
@@ -371,60 +420,189 @@
             <a href="{{ route('admin.jobseekers.index') }}" class="btn btn-action btn-back">
                 <i class="bi bi-arrow-left"></i> Back to List
             </a>
-            <button type="button" class="btn btn-action btn-recommend open-recommend-modal" 
+            <button type="button" class="btn btn-action btn-recommend open-recommend-modal"
                     data-jobseeker-id="{{ $jobseeker->id }}"
-                    data-jobseeker-name="{{ $jobseeker->name }}">
+                    data-jobseeker-name="{{ $displayName }}">
                 <i class="bi bi-star"></i> Recommend Job
             </button>
         </div>
     </div>
 
-    @if($jobseeker->profile)
     <div class="dashboard-card">
-        <h5><i class="bi bi-person-lines-fill me-2"></i>Profile Information</h5>
-        
-        @if($jobseeker->profile->about)
-            <div class="info-row">
-                <div class="info-label">About</div>
-                <div class="info-value">{{ $jobseeker->profile->about }}</div>
-            </div>
-        @endif
-
-        @if($jobseeker->profile->skills)
-            <div class="info-row">
-                <div class="info-label">Skills</div>
-                <div class="info-value">{{ $jobseeker->profile->skills }}</div>
-            </div>
-        @endif
-
-        @if($jobseeker->profile->location)
-            <div class="info-row">
-                <div class="info-label">Location</div>
-                <div class="info-value">{{ $jobseeker->profile->location }}</div>
-            </div>
-        @endif
-
-        @if($jobseeker->profile->preferred_job_title)
-            <div class="info-row">
-                <div class="info-label">Preferred Title</div>
-                <div class="info-value">{{ $jobseeker->profile->preferred_job_title }}</div>
-            </div>
-        @endif
+        <h5><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h5>
+        <div class="row g-3">
+            <div class="col-md-4"><div class="info-row"><div class="info-label">First Name</div><div class="info-value">{{ $personalInformation?->first_name ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Middle Initial</div><div class="info-value">{{ $personalInformation?->middle_initial ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Surname</div><div class="info-value">{{ $personalInformation?->surname ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Suffix</div><div class="info-value">{{ $personalInformation?->suffix ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Date of Birth</div><div class="info-value">{{ $personalInformation?->date_of_birth ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Sex</div><div class="info-value">{{ $personalInformation?->sex ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Civil Status</div><div class="info-value">{{ $personalInformation?->civil_status ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Religion</div><div class="info-value">{{ $personalInformation?->religion ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Height</div><div class="info-value">{{ $personalInformation?->height ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">TIN</div><div class="info-value">{{ $personalInformation?->tin ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Contact Number</div><div class="info-value">{{ $personalInformation?->contact_number ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Email Address</div><div class="info-value">{{ $personalInformation?->email_address ?: $jobseeker->email }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">In School</div><div class="info-value">{{ ($personalInformation?->currently_in_school ?? false) ? 'Yes' : 'No' }}</div></div></div>
+        </div>
     </div>
-    @endif
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-geo-alt-fill me-2"></i>Address Information</h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="info-row">
+                    <div class="info-label">Present Address</div>
+                    <div class="info-value">{{ $presentAddressLine }}</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-row">
+                    <div class="info-label">Permanent Address</div>
+                    <div class="info-value">{{ $permanentAddressLine }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-mortarboard me-2"></i>Education</h5>
+        @forelse($educationRows as $education)
+            <div class="info-row">
+                <div class="info-label">{{ $education->school ?: 'Record ' . $loop->iteration }}</div>
+                <div class="info-value">
+                    {{ $education->course ?: 'N/A' }} @if($education->year) | {{ $education->year }} @endif
+                </div>
+            </div>
+        @empty
+            <div class="empty-state"><p>No education records available.</p></div>
+        @endforelse
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-journal-bookmark me-2"></i>Training</h5>
+        @forelse($trainingRows as $training)
+            <div class="info-row">
+                <div class="info-label">{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
+                <div class="info-value">
+                    {{ collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A' }}
+                </div>
+            </div>
+        @empty
+            <div class="empty-state"><p>No training records available.</p></div>
+        @endforelse
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-briefcase me-2"></i>Work Experience</h5>
+        @forelse($experienceRows as $experience)
+            <div class="info-row">
+                <div class="info-label">{{ $experience->company ?: 'Experience ' . $loop->iteration }}</div>
+                <div class="info-value">
+                    {{ collect([$experience->title, $experience->location, $experience->status, $experience->from_date . ($experience->to_date ? ' - ' . $experience->to_date : ''), $experience->salary_amount ? 'Salary: ' . $experience->salary_amount : null, $experience->salary_type, $experience->details])->filter()->join(' | ') ?: 'N/A' }}
+                </div>
+            </div>
+        @empty
+            <div class="empty-state"><p>No work experience records available.</p></div>
+        @endforelse
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-patch-check me-2"></i>Eligibility</h5>
+        @forelse($eligibilityRows as $eligibility)
+            <div class="info-row">
+                <div class="info-label">{{ $eligibility->eligibility ?: 'Eligibility ' . $loop->iteration }}</div>
+                <div class="info-value">
+                    {{ collect([$eligibility->date_taken, $eligibility->license, $eligibility->valid_until])->filter()->join(' | ') ?: 'N/A' }}
+                </div>
+            </div>
+        @empty
+            <div class="empty-state"><p>No eligibility records available.</p></div>
+        @endforelse
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-stars me-2"></i>Skills</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">Trade / Manual</div><div class="info-value">{{ collect($otherSkills['trade_manual'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">IT / Technical</div><div class="info-value">{{ collect($otherSkills['it_technical'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">Soft Skills</div><div class="info-value">{{ collect($otherSkills['soft_skills'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">Other Skill</div><div class="info-value">{{ $otherSkills['other_text'] ?? 'N/A' }}</div></div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">With Certificate</div><div class="info-value">{{ !is_null($otherSkills['with_certificate'] ?? null) ? (($otherSkills['with_certificate'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-row"><div class="info-label">By Experience</div><div class="info-value">{{ !is_null($otherSkills['by_experience'] ?? null) ? (($otherSkills['by_experience'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-person-check me-2"></i>Employment & Preferences</h5>
+        <div class="row g-3">
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Has Work Experience</div><div class="info-value">{{ !is_null($employmentStatus?->has_work_experience) ? ($employmentStatus->has_work_experience ? 'Yes' : 'No') : 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Wage Employed</div><div class="info-value">{{ $employmentStatus?->wage_employed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Self Employed</div><div class="info-value">{{ $employmentStatus?->self_employed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Unemployed</div><div class="info-value">{{ $employmentStatus?->unemployed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Occupation</div><div class="info-value">{{ $jobPreferences?->occupation_text ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Work Preference</div><div class="info-value">{{ collect([$jobPreferences?->part_time ? 'Part Time' : null, $jobPreferences?->full_time ? 'Full Time' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Location Preference</div><div class="info-value">{{ collect([$jobPreferences?->local ? 'Local' : null, $jobPreferences?->overseas ? 'Overseas' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-translate me-2"></i>Languages</h5>
+        @forelse($languages as $language)
+            <div class="info-row">
+                <div class="info-label">{{ $language->language ?: 'Language ' . $loop->iteration }}</div>
+                <div class="info-value">
+                    {{ collect([
+                        $language->can_read ? 'Read' : null,
+                        $language->can_write ? 'Write' : null,
+                        $language->can_speak ? 'Speak' : null,
+                        $language->can_understand ? 'Understand' : null,
+                        $language->other_specify ?: null,
+                    ])->filter()->join(', ') ?: 'N/A' }}
+                </div>
+            </div>
+        @empty
+            <div class="empty-state"><p>No language records available.</p></div>
+        @endforelse
+    </div>
+
+    <div class="dashboard-card">
+        <h5><i class="bi bi-universal-access me-2"></i>Disability</h5>
+        <div class="row g-3">
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Visual</div><div class="info-value">{{ $disability?->visual ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Speech</div><div class="info-value">{{ $disability?->speech ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Mental</div><div class="info-value">{{ $disability?->mental ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Hearing</div><div class="info-value">{{ $disability?->hearing ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Physical</div><div class="info-value">{{ $disability?->physical ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label">Other</div><div class="info-value">{{ $disability?->other ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-12"><div class="info-row"><div class="info-label">Other Text</div><div class="info-value">{{ $disability?->other_text ?: 'N/A' }}</div></div></div>
+        </div>
+    </div>
 
     <div class="dashboard-card">
         <h5><i class="bi bi-file-earmark-text me-2"></i>Applications History</h5>
-        
+
         @if($jobseeker->applications->count() > 0)
             @foreach($jobseeker->applications as $application)
                 <div class="application-item">
                     <div class="application-title">{{ $application->job->title ?? 'N/A' }}</div>
                     <div class="application-company">
-                        <i class="bi bi-building me-1"></i>{{ $application->job->company->company_name ?? 'Unknown Company' }}
+                        <i class="bi bi-building me-1"></i>{{ $application->job->employer->companyProfile->company_name ?? $application->job->employer->name ?? 'Unknown Company' }}
                     </div>
                     <div>
-                        <span class="application-status status-applied">{{ ucfirst($application->status) }}</span>
+                        <span class="application-status status-applied">{{ ucfirst($application->status ?? 'pending') }}</span>
                         <span style="font-size: 12px; color: #9ca3af; margin-left: 1rem;">
                             Applied on {{ $application->created_at->format('M d, Y') }}
                         </span>
@@ -439,15 +617,6 @@
             </div>
         @endif
     </div>
-
-    <!-- Single Reusable Recommendation Modal -->
-    <div class="modal fade" id="recommendModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border: none; border-radius: 12px;">
-                <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: none; border-radius: 12px 12px 0 0; padding: 1.5rem;">
-                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Applicant to Employer</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
                 <form id="recommendForm" method="POST">
                     @csrf
                     <div class="modal-body" style="padding: 2.5rem; background: #ffffff;">

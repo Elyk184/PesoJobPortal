@@ -4,6 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\JobApplication;
+use App\Models\JobseekerAddress;
+use App\Models\JobseekerDisability;
+use App\Models\JobseekerEducation;
+use App\Models\JobseekerEmploymentStatus;
+use App\Models\JobseekerEligibility;
+use App\Models\JobseekerExperience;
+use App\Models\JobseekerJobPreference;
+use App\Models\JobseekerLanguage;
+use App\Models\JobseekerPersonalInformation;
+use App\Models\JobseekerSkill;
+use App\Models\JobseekerSkillsMeta;
+use App\Models\JobseekerTraining;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -38,7 +50,61 @@ class JobseekerApprovalController extends Controller
      */
     public function show(User $jobseeker): View
     {
-        $jobseeker->load('jobseekerProfile', 'applications.job');
+        $jobseeker->load('applications.job.employer.companyProfile');
+
+        $userId = $jobseeker->id;
+
+        $personalInformation = JobseekerPersonalInformation::where('user_id', $userId)->first();
+
+        $addresses = JobseekerAddress::where('user_id', $userId)
+            ->get()
+            ->keyBy('type');
+
+        $presentAddress = $addresses->get('present');
+        $permanentAddress = $addresses->get('permanent');
+
+        $educationRows = JobseekerEducation::where('user_id', $userId)
+            ->orderBy('sort_order')
+            ->get(['school', 'course', 'year']);
+
+        $trainingRows = JobseekerTraining::where('user_id', $userId)
+            ->orderBy('sort_order')
+            ->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates']);
+
+        $experienceRows = JobseekerExperience::where('user_id', $userId)
+            ->orderBy('sort_order')
+            ->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']);
+
+        $eligibilityRows = JobseekerEligibility::where('user_id', $userId)
+            ->orderBy('sort_order')
+            ->get(['eligibility', 'date_taken', 'license', 'valid_until']);
+
+        $skillRows = JobseekerSkill::where('user_id', $userId)->get();
+        $skillsMeta = JobseekerSkillsMeta::where('user_id', $userId)->first();
+
+        $otherSkills = [
+            'trade_manual' => $skillRows->where('category', 'trade_manual')->pluck('skill')->all(),
+            'it_technical' => $skillRows->where('category', 'it_technical')->pluck('skill')->all(),
+            'soft_skills' => $skillRows->where('category', 'soft_skills')->pluck('skill')->all(),
+            'other_enabled' => (bool) ($skillsMeta?->other_enabled ?? false),
+            'other_text' => $skillRows->where('category', 'other')->pluck('skill')->first() ?? ($skillsMeta?->other_text ?? ''),
+            'with_certificate' => $skillsMeta?->with_certificate,
+            'by_experience' => $skillsMeta?->by_experience,
+        ];
+
+        $employmentStatusRow = JobseekerEmploymentStatus::where('user_id', $userId)->first();
+        $jobPreferenceRow = JobseekerJobPreference::where('user_id', $userId)->first();
+        $languages = JobseekerLanguage::where('user_id', $userId)
+            ->orderBy('sort_order')
+            ->get();
+        $disabilityRow = JobseekerDisability::where('user_id', $userId)->first();
+
+        $fullAddress = trim(implode(', ', array_filter([
+            $presentAddress?->house_no,
+            $presentAddress?->barangay,
+            $presentAddress?->municipality,
+            $presentAddress?->province,
+        ])));
         
         // Get available jobs from employers (active/approved jobs)
         $availableJobs = \App\Models\PesoJob::where('status', 'active')
@@ -49,6 +115,19 @@ class JobseekerApprovalController extends Controller
         return view('admin.jobseekers.profile', [
             'jobseeker' => $jobseeker,
             'availableJobs' => $availableJobs,
+            'personalInformation' => $personalInformation,
+            'presentAddress' => $presentAddress,
+            'permanentAddress' => $permanentAddress,
+            'educationRows' => $educationRows,
+            'trainingRows' => $trainingRows,
+            'experienceRows' => $experienceRows,
+            'eligibilityRows' => $eligibilityRows,
+            'otherSkills' => $otherSkills,
+            'employmentStatus' => $employmentStatusRow,
+            'jobPreferences' => $jobPreferenceRow,
+            'languages' => $languages,
+            'disability' => $disabilityRow,
+            'fullAddress' => $fullAddress,
         ]);
     }
 
