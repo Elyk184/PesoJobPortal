@@ -763,6 +763,13 @@ class EmployerController extends Controller
             'activity_type' => ['required', 'in:lra,sra'],
             'letter_of_intent' => ['required', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
 
+            // Confirm & Submit modal fields
+            'recruitment_start_date' => ['nullable', 'date'],
+            'recruitment_end_date' => ['nullable', 'date', 'after_or_equal:recruitment_start_date'],
+            'recruitment_days' => ['nullable', 'integer', 'min:1'],
+
+
+
             // SRA specific validations
             'dmw_certificate' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
             'recruitment_officer_id' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
@@ -786,7 +793,13 @@ class EmployerController extends Controller
             'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
             'company_profile_path' => 'recruitment-documents/legacy',
             'job_advertisement_path' => 'recruitment-documents/legacy',
+            // From Confirm & Submit modal (submit-documents.blade.php)
+            'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
+            'recruitment_end_date' => $validated['recruitment_end_date'] ?? null,
+            'recruitment_days' => $validated['recruitment_days'] ?? null,
+            'submitted_by_employer_at' => now(),
         ];
+
 
         // Handle SRA specific files
         if ($validated['activity_type'] === 'sra') {

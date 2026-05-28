@@ -30,9 +30,15 @@ class RecruitmentActivityRequest extends Model
         'business_permit_path',
         'lra_recruitment_officer_id_path',
         'job_vacancies_path',
-        'job_vacancies_text',
+'job_vacancies_text',
+        // Recruitment schedule fields (Confirm & Submit modal)
+        'recruitment_start_date',
+        'recruitment_end_date',
+        'recruitment_days',
+        'submitted_by_employer_at',
         // Certification fields
         'certification_path',
+
         'certification_generated_at',
         'certification_generated_by',
     ];
