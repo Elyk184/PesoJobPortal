@@ -28,6 +28,7 @@ Route::middleware('auth')->get('/ofw/dmw-download', [OfwController::class, 'down
 Route::middleware('auth')->post('/ofw/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('ofw.attachments.upload');
 Route::middleware('auth')->post('/ofw/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('ofw.attachments.delete');
 Route::middleware('auth')->post('/ofw/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('ofw.dmw-submit');
+Route::middleware('auth')->post('/ofw/dmw-calibrate', [OfwController::class, 'saveDmwCoords'])->name('ofw.dmw-calibrate');
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

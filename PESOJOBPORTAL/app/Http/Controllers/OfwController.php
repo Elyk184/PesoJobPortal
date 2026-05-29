@@ -53,9 +53,12 @@ class OfwController extends Controller
         $ofwUser = $request->user()->loadMissing('profile');
         $ofwProfile = $ofwUser->profile;
 
+        $fieldCoords = $this->readFieldCoords();
+
         return view('ofw.dmwbuilder', [
             'ofwUser' => $ofwUser,
             'ofwProfile' => $ofwProfile,
+            'dmwFieldCoords' => $fieldCoords,
         ]);
     }
 
@@ -144,6 +147,54 @@ class OfwController extends Controller
     protected function attachmentsMetaPath(int $userId): string
     {
         return storage_path("app/ofw_attachments/{$userId}.json");
+    }
+
+    protected function fieldCoordsPath(): string
+    {
+        return storage_path('app/ofw_field_coords.json');
+    }
+
+    protected function readFieldCoords(): array
+    {
+        $path = $this->fieldCoordsPath();
+        if (! file_exists($path)) {
+            return [];
+        }
+
+        $json = file_get_contents($path);
+        $data = json_decode($json, true);
+        return is_array($data) ? $data : [];
+    }
+
+    protected function writeFieldCoords(array $data): void
+    {
+        $dir = dirname($this->fieldCoordsPath());
+        if (! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        file_put_contents($this->fieldCoordsPath(), json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    public function saveDmwCoords(Request $request)
+    {
+        // only admin users should calibrate in production
+        $user = $request->user();
+        if ($user->role !== 'admin' && app()->environment() !== 'local') {
+            abort(403);
+        }
+
+        $payload = $request->validate([
+            'coords' => ['required', 'array'],
+        ]);
+
+        $coords = $payload['coords'];
+        // merge with existing to avoid overwriting other keys
+        $existing = $this->readFieldCoords();
+        $merged = array_merge($existing, $coords);
+        $this->writeFieldCoords($merged);
+
+        return response()->json(['status' => 'ok', 'coords' => $merged]);
     }
 
     protected function readAttachments(int $userId): array

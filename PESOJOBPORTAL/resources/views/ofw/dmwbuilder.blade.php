@@ -40,7 +40,7 @@
 
     <div class="row g-3">
         <div class="col-12 col-xl-5">
-            <form method="POST" action="{{ route('ofw.dmw-builder.save') }}" enctype="multipart/form-data" class="dashboard-section-card p-3 p-lg-4 h-100">
+            <form id="dmwbuilder-form" method="POST" action="{{ route('ofw.dmw-builder.save') }}" enctype="multipart/form-data" class="dashboard-section-card p-3 p-lg-4 h-100">
                 @csrf
 
                 <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
@@ -146,12 +146,34 @@
                     <h3 class="h5 mb-0 fw-bold">Live Preview</h3>
                     <div class="d-flex gap-2">
                         <small class="text-muted">This preview shows the main fields that will be placed on the DMW form PDF.</small>
+                        @if(auth()->user()?->role === 'admin' || app()->environment() === 'local')
+                            <button id="calibrate-toggle" class="btn btn-sm btn-outline-secondary ms-2">Calibrate overlay</button>
+                        @endif
                     </div>
                 </div>
 
-                <div class="dmw-preview mx-auto">
-                    <iframe src="{{ asset('forms/DMW REQUEST FOR ASSISTANCE FORM.pdf') }}" style="width:100%; height:800px; border:0;" title="DMW form preview"></iframe>
-                    
+                <div class="dmw-preview mx-auto position-relative" style="height:820px;" data-calibrate-url="{{ route('ofw.dmw-calibrate') }}" data-csrf="{{ csrf_token() }}">
+                    <iframe id="dmw-preview-iframe" src="{{ asset('forms/DMW REQUEST FOR ASSISTANCE FORM.pdf') }}" style="width:100%; height:100%; border:0; display:block;" title="DMW form preview"></iframe>
+
+                    <!-- HTML overlay: absolute-positioned elements that mirror form inputs -->
+                    <div id="dmw-overlay" style="position:absolute; inset:0; pointer-events:none;">
+                        <div class="overlay-text" id="ov-name" style="position:absolute; left:10%; top:12%; font-size:14px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-birthdate" style="position:absolute; left:10%; top:18%; font-size:12px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-sex" style="position:absolute; left:60%; top:18%; font-size:12px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-passport" style="position:absolute; left:10%; top:24%; font-size:12px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-contact" style="position:absolute; left:10%; top:30%; font-size:12px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-email" style="position:absolute; left:10%; top:34%; font-size:12px; color:#000;"></div>
+
+                        <div class="overlay-text" id="ov-employer" style="position:absolute; left:10%; top:46%; font-size:12px; color:#000;"></div>
+                        <div class="overlay-text" id="ov-contract" style="position:absolute; left:10%; top:50%; font-size:12px; color:#000;"></div>
+
+                        <div class="overlay-text" id="ov-narrative" style="position:absolute; left:6%; top:60%; width:88%; font-size:12px; color:#000; white-space:pre-wrap;"></div>
+
+                        <div class="overlay-check" id="ov-help-repatriation" style="position:absolute; left:10%; top:52%; width:12px; height:12px; color:#000;"></div>
+                        <div class="overlay-check" id="ov-help-legal" style="position:absolute; left:28%; top:52%; width:12px; height:12px; color:#000;"></div>
+                        <div class="overlay-check" id="ov-help-medical" style="position:absolute; left:46%; top:52%; width:12px; height:12px; color:#000;"></div>
+                    </div>
+                    <script id="dmw-field-coords" type="application/json">{!! json_encode($dmwFieldCoords ?? []) !!}</script>
                 </div>
             </div>
         </div>
@@ -176,13 +198,147 @@
 
 @push('scripts')
     <script>
-        document.getElementById('download-pdf').addEventListener('click', function () {
-            // Simple client-side action: submit form to download route
-            // Replace with actual download route when available
-            const form = this.closest('form');
-            // For now, submit the form (POST) — backend must handle PDF generation and merging
-            form.submit();
-        });
+        // embed saved coords from server (read from JSON script node)
+        (function(){
+            const el = document.getElementById('dmw-field-coords');
+            try { window.dmwFieldCoords = el ? JSON.parse(el.textContent || '{}') : {}; } catch(e) { window.dmwFieldCoords = {}; }
+        })();
+
+        function applyFieldCoords(coords) {
+            Object.entries(coords || {}).forEach(([key, pos]) => {
+                const el = document.getElementById('ov-' + key);
+                if (! el) return;
+                if (pos.left !== undefined) el.style.left = (pos.left) + '%';
+                if (pos.top !== undefined) el.style.top = (pos.top) + '%';
+                if (pos.width !== undefined) el.style.width = (pos.width) + '%';
+                if (pos.fontSize !== undefined) el.style.fontSize = (pos.fontSize) + 'px';
+            });
+        }
+
+        // Realtime overlay: update overlay elements from form inputs
+        (function () {
+            const debounce = (fn, ms = 250) => { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; };
+
+            const mappings = [
+                { sel: '#applicant_name', ov: 'ov-name' },
+                { sel: '#contract_start', ov: 'ov-contract' },
+                { sel: '#contract_end', ov: 'ov-contract' },
+                { sel: '#passport_number', ov: 'ov-passport' },
+                { sel: '#phone', ov: 'ov-contact' },
+                { sel: '#email', ov: 'ov-email' },
+                { sel: '#employer', ov: 'ov-employer' },
+                { sel: '#request_details', ov: 'ov-narrative' },
+            ];
+
+            function updateOverlay() {
+                mappings.forEach(m => {
+                    const el = document.querySelector(m.sel);
+                    const target = document.getElementById(m.ov);
+                    if (!target) return;
+                    if (!el) { target.textContent = ''; return; }
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                        target.textContent = el.value || '';
+                    }
+                });
+
+                // sex radio
+                const male = document.getElementById('sex_male');
+                const female = document.getElementById('sex_female');
+                const ovSex = document.getElementById('ov-sex');
+                if (ovSex) {
+                    if (male && male.checked) ovSex.textContent = 'Male';
+                    else if (female && female.checked) ovSex.textContent = 'Female';
+                    else ovSex.textContent = '';
+                }
+
+                // assistance checkboxes
+                ['repatriation','legal','medical'].forEach((k, idx) => {
+                    const cb = document.getElementById('assistance_' + k);
+                    const ov = document.getElementById('ov-help-' + k);
+                    if (!ov) return;
+                    ov.textContent = cb && cb.checked ? '✔' : '';
+                });
+            }
+
+            const debouncedUpdate = debounce(updateOverlay, 120);
+
+            // attach listeners
+            document.querySelectorAll('#dmwbuilder-form input, #dmwbuilder-form textarea, #dmwbuilder-form select').forEach(i => {
+                i.addEventListener('input', debouncedUpdate);
+                i.addEventListener('change', debouncedUpdate);
+            });
+
+            // initial sync after DOM ready
+            document.addEventListener('DOMContentLoaded', () => {
+                // apply any stored coords first
+                applyFieldCoords(window.dmwFieldCoords || {});
+                setTimeout(updateOverlay, 200);
+            });
+            // also run now
+            updateOverlay();
+
+            // Calibration UI (admin/local only)
+            const calibrateToggle = document.getElementById('calibrate-toggle');
+            if (calibrateToggle) {
+                let calibrating = false;
+                const preview = document.querySelector('.dmw-preview');
+                calibrateToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    calibrating = !calibrating;
+                    calibrateToggle.classList.toggle('active', calibrating);
+                    calibrateToggle.textContent = calibrating ? 'Exit calibration' : 'Calibrate overlay';
+                    if (calibrating) {
+                        preview.style.cursor = 'crosshair';
+                        document.getElementById('dmw-overlay').style.pointerEvents = 'auto';
+                        alert('Click on the preview where you want to place a field, then enter the field key (for example: name, passport, employer, contract, narrative, help-repatriation, help-legal, help-medical).');
+                    } else {
+                        preview.style.cursor = '';
+                        document.getElementById('dmw-overlay').style.pointerEvents = 'none';
+                    }
+                });
+
+                preview.addEventListener('click', async function (ev) {
+                    if (!calibrating) return;
+                    const rect = preview.getBoundingClientRect();
+                    const x = ev.clientX - rect.left;
+                    const y = ev.clientY - rect.top;
+                    const leftPct = Math.round((x / rect.width) * 10000) / 100; // two decimals
+                    const topPct = Math.round((y / rect.height) * 10000) / 100;
+                    const key = prompt('Enter field key to save at this position (e.g. name, passport, employer, contract, narrative, help-repatriation):');
+                    if (!key) return alert('No key entered — cancelled');
+
+                    // normalize hyphen fields to match element ids
+                    const normalized = key.replace(/[^a-z0-9\-_]/gi, '').replace(/\s+/g, '-');
+
+                    // update local coords
+                    window.dmwFieldCoords = window.dmwFieldCoords || {};
+                    window.dmwFieldCoords[normalized] = window.dmwFieldCoords[normalized] || {};
+                    window.dmwFieldCoords[normalized].left = leftPct;
+                    window.dmwFieldCoords[normalized].top = topPct;
+
+                    applyFieldCoords(window.dmwFieldCoords);
+
+                    // send to server
+                    try {
+                        const calibrateUrl = preview?.dataset?.calibrateUrl;
+                        const csrfToken = preview?.dataset?.csrf;
+                        const res = await fetch(calibrateUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken || ''
+                            },
+                            body: JSON.stringify({ coords: window.dmwFieldCoords })
+                        });
+                        if (!res.ok) throw new Error('Save failed');
+                        alert('Coordinates saved. You can continue calibrating or exit.');
+                    } catch (err) {
+                        console.error(err);
+                        alert('Failed to save coordinates to server');
+                    }
+                });
+            }
+        })();
     </script>
 @endpush
 
