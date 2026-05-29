@@ -21,14 +21,16 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-Route::middleware('auth')->get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.dashboard');
-Route::middleware('auth')->get('/ofw/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('ofw.dmw-builder');
-Route::middleware('auth')->post('/ofw/dmw-builder', [OfwController::class, 'saveDmwBuilder'])->name('ofw.dmw-builder.save');
-Route::middleware('auth')->get('/ofw/dmw-download', [OfwController::class, 'downloadDmwForm'])->name('ofw.dmw-download');
-Route::middleware('auth')->post('/ofw/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('ofw.attachments.upload');
-Route::middleware('auth')->post('/ofw/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('ofw.attachments.delete');
-Route::middleware('auth')->post('/ofw/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('ofw.dmw-submit');
-Route::middleware('auth')->post('/ofw/dmw-calibrate', [OfwController::class, 'saveDmwCoords'])->name('ofw.dmw-calibrate');
+Route::middleware(['auth', 'role:ofw'])->group(function () {
+    Route::get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.dashboard');
+    Route::get('/ofw/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('ofw.dmw-builder');
+    Route::post('/ofw/dmw-builder', [OfwController::class, 'saveDmwBuilder'])->name('ofw.dmw-builder.save');
+    Route::post('/ofw/dmw-download', [OfwController::class, 'downloadDmwForm'])->name('ofw.dmw-download');
+    Route::post('/ofw/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('ofw.attachments.upload');
+    Route::post('/ofw/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('ofw.attachments.delete');
+    Route::post('/ofw/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('ofw.dmw-submit');
+    Route::post('/ofw/dmw-calibrate', [OfwController::class, 'saveDmwCoords'])->name('ofw.dmw-calibrate');
+});
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

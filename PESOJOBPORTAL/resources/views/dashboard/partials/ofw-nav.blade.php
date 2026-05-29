@@ -58,10 +58,12 @@
                 <i class="bi bi-file-earmark-text"></i>
                 <span>OWWA Form</span>
             </a>
+            @if(optional($user)->role === 'ofw')
             <a href="{{ route('ofw.dmw-builder') }}" class="dashboard-nav-link">
                 <i class="bi bi-journal-text"></i>
                 <span>DMW Form</span>
             </a>
+            @endif
         </div>
 
         <div class="dashboard-nav-section">

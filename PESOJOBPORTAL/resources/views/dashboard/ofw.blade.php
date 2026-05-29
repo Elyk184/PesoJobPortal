@@ -52,9 +52,11 @@
                     <a href="#owwa-request" class="btn btn-danger px-3 shadow-sm">
                         <i class="bi bi-file-earmark-plus me-2"></i>Open OWWA Form
                     </a>
+                    @if(optional(auth()->user())->role === 'ofw')
                     <a href="#dmw-request" class="btn btn-outline-primary px-3">
                         <i class="bi bi-journal-text me-2"></i>Open DMW Form
                     </a>
+                    @endif
                 </div>
             </div>
         </div>
