@@ -357,6 +357,11 @@
     @if($clearance->status === 'pending')
         <form method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}" style="position:fixed;top:1rem;right:8.5rem;z-index:100;display:flex;flex-direction:column;gap:0.35rem;background:#fff;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);width:360px;max-width:calc(100vw - 11rem);">
             @csrf
+            <label for="company_name_input" style="font-size:12px;font-weight:700;color:#111827;">Company / Organization</label>
+            <input id="company_name_input" name="company_name" type="text" placeholder="Type company or organization" value="{{ old('company_name', $clearance->company_name ?? '') }}" style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;line-height:1.5;">
+            @error('company_name')
+                <div style="font-size:12px;color:#dc2626;">{{ $message }}</div>
+            @enderror
             <label for="residence_address_input" style="font-size:12px;font-weight:700;color:#111827;">Residence address</label>
             <textarea id="residence_address_input" name="residence_address" rows="3" placeholder="Type the jobseeker residence here" style="width:100%;padding:0.65rem;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;line-height:1.5;resize:vertical;">{{ old('residence_address', $residenceAddress) }}</textarea>
             @error('residence_address')
@@ -407,7 +412,7 @@
                 This EMPLOYMENT CLEARANCE is issued in connection with the desire of {{ $objectivePronoun }} to work at:
             </div>
 
-            <div id="organization-line" class="body-text org-line">COMPANY / ORGANIZATION NAME</div>
+            <div id="organization-line" class="body-text org-line">{{ $clearance->company_name ? strtoupper($clearance->company_name) : 'COMPANY / ORGANIZATION NAME' }}</div>
 
             <div class="body-text spaced-paragraph">
                  Municipal Ordinance No. 2005-394, Dated July 2005
@@ -447,19 +452,34 @@
             </div>
         </div>
     </div>
+    <!-- Floating edit pens (one for organization, one for barangay/residence) -->
+    <button id="edit-pen" title="Edit organization" aria-label="Edit organization" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="#fff"/>
+            <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="#fff"/>
+        </svg>
+    </button>
+    <button id="edit-pen-barangay" title="Edit barangay" aria-label="Edit barangay" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="#fff"/>
+            <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="#fff"/>
+        </svg>
+    </button>
 </body>
 <script>
     (function () {
-        const input = document.getElementById('residence_address_input');
+        const residenceInput = document.getElementById('residence_address_input');
         const preview = document.getElementById('residence-address-preview');
         const body = document.getElementById('residence-address-body');
+        const companyInput = document.getElementById('company_name_input');
+        const orgLine = document.getElementById('organization-line');
 
-        if (!input || !preview || !body) {
+        if (!residenceInput || !preview || !body) {
             return;
         }
 
-        const updatePreview = () => {
-            const value = input.value.trim();
+        const updateResidencePreview = () => {
+            const value = residenceInput.value.trim();
             if (value) {
                 body.textContent = value;
                 body.classList.add('typed-style');
@@ -469,8 +489,163 @@
             }
         };
 
-        input.addEventListener('input', updatePreview);
-        updatePreview();
+        const updateOrgPreview = () => {
+            if (!orgLine || !companyInput) return;
+            const v = companyInput.value.trim();
+            if (v) {
+                orgLine.textContent = v.toUpperCase();
+                orgLine.classList.add('typed-style');
+            } else {
+                orgLine.textContent = 'COMPANY / ORGANIZATION NAME';
+                orgLine.classList.remove('typed-style');
+            }
+        };
+
+        residenceInput.addEventListener('input', updateResidencePreview);
+        if (companyInput) companyInput.addEventListener('input', updateOrgPreview);
+        updateResidencePreview();
+        updateOrgPreview();
+    })();
+
+    // Floating edit pen logic (organization + barangay)
+    (function () {
+        const container = document.querySelector('.document-container');
+        const orgLine = document.getElementById('organization-line');
+        const penOrg = document.getElementById('edit-pen');
+        const penBarangay = document.getElementById('edit-pen-barangay');
+        const companyInput = document.getElementById('company_name_input');
+        const residenceInput = document.getElementById('residence_address_input');
+        const residenceBody = document.getElementById('residence-address-body');
+
+        if (!container) return;
+
+        // shared styling for pens (use fixed so positions are viewport-based)
+        const pens = [penOrg, penBarangay].filter(Boolean);
+        pens.forEach(p => {
+            Object.assign(p.style, {
+                position: 'fixed',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: '#0ea5a4',
+                border: '2px solid #fff',
+                boxShadow: '0 6px 18px rgba(0,0,0,0.16)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 120,
+                transition: 'transform .12s ease',
+            });
+            p.style.display = 'block';
+        });
+
+        // pulse animation class and highlight style
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes pulsePen { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+            .pen-pulse { animation: pulsePen .9s ease-in-out; }
+            .org-highlight { box-shadow: 0 0 0 4px rgba(14,165,164,0.12) inset; }
+            .barangay-highlight { box-shadow: 0 0 0 4px rgba(59,130,246,0.12) inset; }
+        `;
+        document.head.appendChild(style);
+
+        function positionPens() {
+            // use viewport coordinates from getBoundingClientRect directly
+            if (orgLine && penOrg) {
+                const orgRect = orgLine.getBoundingClientRect();
+                // center the pen horizontally above the organization text
+                const top = orgRect.top + (orgRect.height / 2) - 18;
+                const left = orgRect.left + (orgRect.width / 2) - 18;
+                // clamp inside viewport
+                const clampedTop = Math.max(8, Math.min(top, window.innerHeight - 44));
+                const clampedLeft = Math.max(8, Math.min(left, window.innerWidth - 44));
+                penOrg.style.top = `${clampedTop}px`;
+                penOrg.style.left = `${clampedLeft}px`;
+                // hide when target is offscreen
+                penOrg.style.display = (orgRect.top > window.innerHeight || orgRect.bottom < 0) ? 'none' : 'block';
+            }
+
+            if (residenceBody && penBarangay) {
+                const resRect = residenceBody.getBoundingClientRect();
+                // place pen slightly to the left of the barangay text center
+                const top = resRect.top + (resRect.height / 2) - 18;
+                const left = resRect.left - 48;
+                const clampedTop = Math.max(8, Math.min(top, window.innerHeight - 44));
+                const clampedLeft = Math.max(8, Math.min(left, window.innerWidth - 44));
+                penBarangay.style.top = `${clampedTop}px`;
+                penBarangay.style.left = `${clampedLeft}px`;
+                penBarangay.style.display = (resRect.top > window.innerHeight || resRect.bottom < 0) ? 'none' : 'block';
+            }
+        }
+
+        // reposition a few times during initial load in case fonts or images change layout
+        positionPens();
+        let tries = 0;
+        const interval = setInterval(() => {
+            positionPens();
+            tries += 1;
+            if (tries > 8) clearInterval(interval);
+        }, 250);
+
+        window.addEventListener('resize', positionPens);
+        window.addEventListener('scroll', positionPens);
+        setTimeout(positionPens, 120);
+
+        pens.forEach(p => {
+            p.addEventListener('mouseenter', () => p.classList.add('pen-pulse'));
+            p.addEventListener('mouseleave', () => p.classList.remove('pen-pulse'));
+        });
+
+        // org pen click
+        if (penOrg) {
+            penOrg.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (orgLine) {
+                    orgLine.classList.add('org-highlight');
+                    setTimeout(() => orgLine.classList.remove('org-highlight'), 900);
+                }
+                if (companyInput) {
+                    companyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    companyInput.focus();
+                    const val = companyInput.value || '';
+                    companyInput.setSelectionRange(val.length, val.length);
+                } else {
+                    const msg = document.createElement('div');
+                    msg.textContent = 'Open issuance form to edit organization';
+                    Object.assign(msg.style, {
+                        position: 'fixed', right: '1rem', top: '4rem', background: '#111827', color: '#fff', padding: '0.5rem 0.75rem', borderRadius: '6px', zIndex: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.18)'
+                    });
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 1800);
+                }
+            });
+        }
+
+        // barangay pen click
+        if (penBarangay) {
+            penBarangay.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (residenceBody) {
+                    residenceBody.classList.add('barangay-highlight');
+                    setTimeout(() => residenceBody.classList.remove('barangay-highlight'), 900);
+                }
+                if (residenceInput) {
+                    residenceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    residenceInput.focus();
+                    const val = residenceInput.value || '';
+                    residenceInput.setSelectionRange(val.length, val.length);
+                } else {
+                    const msg = document.createElement('div');
+                    msg.textContent = 'Open issuance form to edit barangay';
+                    Object.assign(msg.style, {
+                        position: 'fixed', right: '1rem', top: '4rem', background: '#111827', color: '#fff', padding: '0.5rem 0.75rem', borderRadius: '6px', zIndex: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.18)'
+                    });
+                    document.body.appendChild(msg);
+                    setTimeout(() => msg.remove(), 1800);
+                }
+            });
+        }
     })();
 </script>
 </html>

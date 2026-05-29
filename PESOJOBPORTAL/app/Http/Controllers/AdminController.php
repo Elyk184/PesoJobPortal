@@ -664,6 +664,7 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'residence_address' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
         ]);
 
         $clearanceNumber = 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id;
@@ -675,6 +676,7 @@ class AdminController extends Controller
             'expiry_date' => now()->addYear(),
             'remarks' => $clearance->remarks,
             'residence_address' => $validated['residence_address'],
+            'company_name' => $validated['company_name'] ?? null,
         ]);
 
         // Generate and store clearance document

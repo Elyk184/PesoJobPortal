@@ -58,6 +58,7 @@ class PesoClearanceDocumentService
                     $content .= "Issue Date: " . $clearance->issue_date->format('F d, Y') . "\n";
                 }
                 $content .= "Validity: " . ($clearance->validity_period ?? '1 Year') . "\n";
+                $content .= "Company/Organization: " . ($clearance->company_name ?? 'N/A') . "\n";
                 $content .= "\n";
                 $content .= "================================================================================\n";
                 $content .= "This is an official PESO Clearance document.\n";

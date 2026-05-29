@@ -17,6 +17,7 @@ class PesoClearance extends Model
         'expiry_date',
         'status',
         'remarks',
+        'company_name',
         'residence_address',
         'peso_clearance_assurance_receipt_path',
         'barangay_clearance_path',
