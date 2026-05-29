@@ -378,7 +378,10 @@
             <div class="cert-paragraph">
                 <strong>THIS IS TO CERTIFY THAT</strong> <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
                 a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines
-                established in {{ $company_profile?->established_year ?? '' }}, has been granted
+                @if(!empty($company_profile?->established_year))
+                    established in {{ $company_profile->established_year }},
+                @endif
+                has been granted
                 the permit and authority to conduct recruitment of applicants for local employment for
                 <strong>{{ $numDaysWord }} ({{ $numDays }}) day(s)</strong> valid on
                 <strong>{{ $dateDisplay }}</strong>

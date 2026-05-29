@@ -19,6 +19,7 @@ class CompanyProfile extends Model
         'business_name',
         'trade_name',
         'acronym_abbreviation',
+        'established_year',
 
         // Company Type & Classification
         'office_type',
@@ -58,6 +59,7 @@ class CompanyProfile extends Model
     ];
 
     protected $casts = [
+        'established_year' => 'integer',
         'verified_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
