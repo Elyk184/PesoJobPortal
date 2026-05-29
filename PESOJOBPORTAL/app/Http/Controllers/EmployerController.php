@@ -795,7 +795,6 @@ class EmployerController extends Controller
             'activity_type' => $validated['activity_type'],
             'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
             'company_profile_path' => 'recruitment-documents/legacy',
-            'job_advertisement_path' => 'recruitment-documents/legacy',
             // From Confirm & Submit modal (submit-documents.blade.php)
 'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
             'recruitment_end_date' => $validated['recruitment_end_date'] ?? null,

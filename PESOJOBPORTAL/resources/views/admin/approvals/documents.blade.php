@@ -47,11 +47,11 @@
                                 <td class="text-center">
                                     <form method="POST" class="d-inline-flex gap-2">
                                         @csrf
-                                        <button type="submit" formaction="{{ route('admin.documents.approve', $doc->id) }}" 
+                                        <button type="submit" formaction="{{ route('admin.documents.approve', $doc->id) }}"
                                                 class="btn btn-sm btn-success" title="Approve this document">
                                             <i class="bi bi-check-circle"></i> Approve
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                                 data-bs-target="#rejectModal{{ $doc->id }}" title="Reject this document">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
@@ -75,11 +75,11 @@
                                                     <label for="rejection_note_{{ $doc->id }}" class="form-label">
                                                         Rejection Note <span class="text-danger">*</span>
                                                     </label>
-                                                    <textarea 
+                                                    <textarea
                                                         id="rejection_note_{{ $doc->id }}"
-                                                        name="notes" 
-                                                        class="form-control" 
-                                                        rows="4" 
+                                                        name="notes"
+                                                        class="form-control"
+                                                        rows="4"
                                                         placeholder="Explain why this document is being rejected..."
                                                         required></textarea>
                                                 </div>

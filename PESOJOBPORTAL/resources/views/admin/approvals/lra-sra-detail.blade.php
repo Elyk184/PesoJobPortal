@@ -160,7 +160,7 @@
                 </div>
 
                 {{-- Job Vacancies --}}
-                <div class="lra-card mb-card">
+                <div id="job-vacancies" class="lra-card mb-card">
                     <div class="lra-card-head">
                         <i class="bi bi-briefcase"></i>
                         <span class="lra-card-head-label">Job vacancies</span>

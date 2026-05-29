@@ -30,14 +30,14 @@ INSERT INTO peso_jobs (employer_id, title, description, location, job_type, vaca
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- Insert LRA/SRA requests (pending approval)
-INSERT INTO recruitment_activity_requests (employer_id, activity_type, letter_of_intent_path, company_profile_path, job_advertisement_path, status, created_at, updated_at) VALUES
-(9, 'lra', 'files/loi1.pdf', 'files/cp1.pdf', 'files/ja1.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY)),
-(9, 'sra', 'files/loi2.pdf', 'files/cp1.pdf', 'files/ja2.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY)),
-(10, 'lra', 'files/loi3.pdf', 'files/cp2.pdf', 'files/ja3.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY))
+INSERT INTO recruitment_activity_requests (employer_id, activity_type, letter_of_intent_path, company_profile_path, status, created_at, updated_at) VALUES
+(9, 'lra', 'files/loi1.pdf', 'files/cp1.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(9, 'sra', 'files/loi2.pdf', 'files/cp1.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(10, 'lra', 'files/loi3.pdf', 'files/cp2.pdf', 'pending', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY))
 ON DUPLICATE KEY UPDATE updated_at = NOW();
 
 -- Verification Query
-SELECT 
+SELECT
     (SELECT COUNT(*) FROM job_applications WHERE status = 'pending' AND admin_status IS NULL) as pending_applications,
     (SELECT COUNT(*) FROM peso_jobs WHERE status = 'pending') as pending_jobs,
     (SELECT COUNT(*) FROM recruitment_activity_requests WHERE status = 'pending') as pending_lra_sra;

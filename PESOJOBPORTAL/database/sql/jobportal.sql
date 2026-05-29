@@ -467,7 +467,6 @@ CREATE TABLE `recruitment_activity_requests` (
   `activity_type` enum('lra','sra') NOT NULL,
   `letter_of_intent_path` varchar(255) NOT NULL,
   `company_profile_path` varchar(255) NOT NULL,
-  `job_advertisement_path` varchar(255) NOT NULL,
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `approved_at` timestamp NULL DEFAULT NULL,
   `approved_by` bigint(20) UNSIGNED DEFAULT NULL,

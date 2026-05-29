@@ -14,7 +14,6 @@ class RecruitmentActivityRequest extends Model
         'activity_type',
         'letter_of_intent_path',
         'company_profile_path',
-        'job_advertisement_path',
         'status',
         'notes',
         'approved_at',
