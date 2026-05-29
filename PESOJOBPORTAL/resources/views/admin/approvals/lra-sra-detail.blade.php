@@ -243,7 +243,8 @@
                                         <i class="bi bi-check-circle-fill me-1"></i>Certification generated
                                     </div>
                                     <div class="lra-cert-sub">
-                                        {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->format('M d, Y H:i') }}
+                                        {{-- ✅ FIXED: Convert UTC timestamp to Asia/Manila (UTC+8) --}}
+                                        {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
                                         &mdash; {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
                                     </div>
                                 </div>

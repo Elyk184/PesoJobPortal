@@ -20,7 +20,7 @@
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 12px;
-            line-height:1;
+            line-height: 1;
             color: #000;
             background: #fff;
             padding: 0.5in 0.5in 0.5in 0.5in;
@@ -31,24 +31,25 @@
         /* ── FIXED FOOTER PINNED TO BOTTOM OF PAGE ── */
         .page-footer {
             position: fixed;
-            bottom: 0.5in;
-            left: 0.5in;
-            right: 0.5in;
+            bottom: 1in;
+            left: 1in;
+            right: 1in;
+            text-align: center;
         }
 
         /* ── TAGLINE ── */
         .tagline {
             text-align: center;
             font-style: italic;
-            font-size: 13px;
+            font-size: 28px;
             font-weight: 600;
-            margin: 0 0 1px 0;
+            margin: 0 0 5px 0;
             letter-spacing: 0.02em;
         }
 
         .tagline-sub {
             text-align: center;
-            font-size: 8px;
+            font-size: 10px;
             letter-spacing: 0.2em;
             color: #333;
             margin-bottom: 3px;
@@ -56,35 +57,70 @@
 
         /* ── FOOTER CONTACT ROW ── */
         .footer {
-    border-top: 1px solid #000;
-    padding-top: 4px;
-    margin-top: 5px;
-    text-align: center;
-}
-
-        .contact-line {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            font-size: 10px;
-            white-space: nowrap;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+            margin-top: 5px;
         }
 
-        .contact-line span {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
+        .contact-table {
+            width: auto;
+            margin: 0 auto;
+            border-collapse: collapse;
+            table-layout: auto;
+            display: inline-table;
+        }
+
+        .contact-table td {
+            font-size: 10px;
+            white-space: nowrap;
+            vertical-align: middle;
+            padding: 0;
+        }
+
+        .contact-item {
+            padding: 0 6px;
+        }
+
+        .contact-item-table {
+            border-collapse: collapse;
+            display: inline-table;
+        }
+
+        .contact-item-table td {
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        .contact-item-table td.icon-cell {
+            width: 20px;
+            padding-right: 4px;
+            text-align: center;
+        }
+
+        .contact-item-table td.icon-cell img {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .contact-item-text {
+            line-height: 1;
+        }
+
+        .contact-table td.sep-cell {
+            padding: 0 6px;
+            color: #000;
         }
 
         /* ── DECORATIVE BOTTOM ── */
         .decor-bottom-wrapper {
             text-align: center;
-            margin-top: 4px;
+            margin-top: 12px;
         }
 
         .decor-bottom {
-            width: 50%;
+            width: 92.3mm;
             height: 18px;
             object-fit: cover;
             display: block;
@@ -137,7 +173,7 @@
         }
 
         .decor-top {
-            width: 50%;
+            width: 92.3mm;
             height: 18px;
             object-fit: cover;
             display: block;
@@ -195,7 +231,7 @@
 
         .sig-col.left  { text-align: left; }
 
-        .sig-col.right { padding-top: 200px; text-align: right; }
+        .sig-col.right { padding-top: 160px; text-align: right; }
 
         .sig-label {
             font-weight: bold;
@@ -213,8 +249,7 @@
         .sig-col.right .sig-line { width: 75%; margin-left: auto; }
 
         .sig-name  { font-size: 12px; font-weight: bold; }
-
-    <!-- ─      .sig-title { font-size: 12px; }
+        .sig-title { font-size: 12px; }
 
         .sig-col.left .sig-name,
         .sig-col.left .sig-title { text-align: left; max-width: 75%; }
@@ -224,32 +259,56 @@
 </head>
 <body>
 
-    <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->─ FIXED FOOTER (always pinned to bottom of A4) ── -->
-<div class="page-footer">
-    <div class="tagline">"Lupad Manolo Fortich"</div>
-    <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
-    <div class="footer">
-        <div class="contact-line">
-            <span>
-                <img src="{{ public_path('images/email.png') }}" alt="Email" style="width:11px;height:11px;vertical-align:middle;">
-                peso@manolofortich.gov.ph
-            </span>
-            <span>|</span>
-            <span>
-                <img src="{{ public_path('images/phone.png') }}" alt="Phone" style="width:11px;height:11px;vertical-align:middle;">
-                0955-9546-049
-            </span>
-            <span>|</span>
-            <span>
-                <img src="{{ public_path('images/facebook.png') }}" alt="Facebook" style="width:11px;height:11px;vertical-align:middle;">
-                www.facebook.com/LGU Manolo Fortich
-            </span>
+    <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->
+    <div class="page-footer">
+        <div class="tagline">"Lupad Manolo Fortich"</div>
+        <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
+        <div class="footer">
+            <table class="contact-table">
+                <tr>
+                    <td class="contact-item">
+                        <table class="contact-item-table">
+                            <tr>
+                                <td class="icon-cell">
+                                    <img src="{{ public_path('images/email.png') }}" alt="Email">
+                                </td>
+                                <td class="contact-item-text">peso@manolofortich.gov.ph</td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td class="sep-cell">|</td>
+
+                    <td class="contact-item">
+                        <table class="contact-item-table">
+                            <tr>
+                                <td class="icon-cell">
+                                    <img src="{{ public_path('images/phone.png') }}" alt="Phone">
+                                </td>
+                                <td class="contact-item-text">0955-9546-049</td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td class="sep-cell">|</td>
+
+                    <td class="contact-item">
+                        <table class="contact-item-table">
+                            <tr>
+                                <td class="icon-cell">
+                                    <img src="{{ public_path('images/facebook.png') }}" alt="Facebook">
+                                </td>
+                                <td class="contact-item-text">www.facebook.com/LGU Manolo Fortich</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="decor-bottom-wrapper">
+            <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-bottom">
         </div>
     </div>
-    <div class="decor-bottom-wrapper">
-        <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-bottom">
-    </div>
-</div>
 
     <!-- ── MAIN CONTENT ── -->
     <div class="container">
@@ -317,7 +376,7 @@
             @endphp
 
             <div class="cert-paragraph">
-                THIS IS TO CERTIFY THAT <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
+                <strong>THIS IS TO CERTIFY THAT</strong> <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
                 a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines
                 established in {{ $company_profile?->established_year ?? '' }}, has been granted
                 the permit and authority to conduct recruitment of applicants for local employment for
