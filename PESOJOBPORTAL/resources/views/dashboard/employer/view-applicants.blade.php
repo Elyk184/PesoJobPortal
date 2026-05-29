@@ -108,7 +108,6 @@
         border-color: #2b67b1;
         background: linear-gradient(135deg, #ffffff 0%, #f0f6ff 100%);
     }
-    }
     .stat-icon {
         width: 60px;
         height: 60px;
@@ -468,6 +467,22 @@
         color: #7a8a9a;
         word-break: break-all;
     }
+    .applicant-link {
+        color: #0f172a;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        max-width: 320px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .applicant-link:hover { color: #2b67b1; text-decoration: underline; }
+    .applicant-link:focus { outline: 3px solid rgba(43,103,177,0.18); border-radius: 6px; }
+
+    .job-title { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .action-btn:focus { outline: 3px solid rgba(43,103,177,0.18); }
     .status-badge {
         padding: 0.5em 0.9em;
         border-radius: 999px;
@@ -670,6 +685,24 @@
             font-size: 0.8rem;
         }
     }
+
+    /* Improve table usability: sticky header and scroll for large result sets */
+    .table-responsive {
+        max-height: 56vh;
+        overflow: auto;
+    }
+    .table-responsive .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: linear-gradient(90deg, #f0f6ff 0%, #f3f8ff 100%);
+    }
+
+    /* On smaller screens show icon-only action buttons for compactness */
+    @media (max-width: 768px) {
+        .action-text { display: none; }
+        .action-btn { width: 36px; height: 36px; padding: 0; }
+    }
 </style>
 
 <div class="applicants-page">
@@ -840,7 +873,11 @@
                                         </div>
                                         @endif
                                         <div class="user-info">
-                                            <span class="name">{{ $applicantName }}</span>
+                                            @if(!$isRecommendation)
+                                                <a href="{{ route('employer.applications.show', $application->id) }}" class="applicant-link name">{{ $applicantName }}</a>
+                                            @else
+                                                <span class="name">{{ $applicantName }}</span>
+                                            @endif
                                             <span class="email">{{ $applicantEmail }}</span>
                                             @if($isRecommendation)
                                             <span class="badge bg-info-subtle text-info ms-2" style="font-size: 0.75rem;">Recommended</span>
@@ -848,7 +885,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $job->title ?? 'N/A' }}</td>
+                                <td class="job-title" title="{{ $job->title ?? 'N/A' }}">{{ \Illuminate\Support\Str::limit($job->title ?? 'N/A', 60) }}</td>
                                 <td>{{ $dateApplied->format('M d, Y') }}</td>
                                 <td>
                                     @php

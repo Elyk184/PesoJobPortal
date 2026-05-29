@@ -20,6 +20,21 @@
         margin-bottom: 2rem;
         box-shadow: 0 16px 30px rgba(30, 70, 180, 0.28);
     }
+    .user-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#6ea8ff,#2b67b1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 800;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+    }
+    .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .user-initials { font-size: 1.25rem; }
     .info-card {
         background: white;
         border-radius: 14px;
@@ -92,6 +107,7 @@
         color: #ddd;
         transition: color 0.2s;
     }
+    .star-rating i:focus { outline: 3px solid rgba(255,193,7,0.18); border-radius:4px; }
     .star-rating i.active,
     .star-rating i:hover {
         color: #ffc107;
@@ -158,6 +174,7 @@
             border-radius: 14px;
             margin-bottom: 1.5rem;
         }
+        .user-avatar { width:72px; height:72px; }
         .profile-header .d-flex {
             align-items: flex-start !important;
             gap: 1rem;
@@ -170,6 +187,10 @@
             position: static;
             gap: 1rem;
         }
+    }
+    @media (max-width: 575.98px) {
+        .right-sticky { position: static; }
+        .profile-header { padding-bottom: 1.25rem; }
     }
 </style>
 @endpush
@@ -184,62 +205,39 @@
 </div>
 @endif
 
-<<<<<<< HEAD
 <div class="row">
     <div class="col-lg-8">
         <div class="profile-header">
             <div class="d-flex align-items-center gap-3">
-                <div class="user-avatar" style="width: 90px; height: 90px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i class="bi bi-person text-white" style="font-size: 2.75rem;"></i>
-                </div>
+                @if(!empty($application->applicant->avatar))
+                    <div class="user-avatar">
+                        <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}">
+                    </div>
+                @else
+                    <div class="user-avatar user-initials" aria-hidden="true">{{ strtoupper(substr($application->applicant->name ?? '', 0, 1)) }}</div>
+                @endif
                 <div style="flex: 1;">
                     <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;">{{ $application->applicant->name }}</h3>
                     <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;">{{ $application->applicant->email ?? 'No email on file' }}</p>
-                    <div class="meta-card">
-                        <i class="bi bi-briefcase-fill"></i>
-                        <span>Applied for: {{ $application->jobPost->title }}</span>
-=======
-    <div class="applicant-card">
-        <!-- Applicant Info Section -->
-        <div class="applicant-info-section">
-            <div class="applicant-header">
-                @if($application->user->avatar)
-                    <img src="{{ Storage::url($application->user->avatar) }}" alt="{{ $application->user->name }}" class="user-avatar">
-                @else
-                    <div class="user-initials">{{ strtoupper(substr($application->user->name, 0, 1)) }}</div>
-                @endif
-                <div class="applicant-header-content">
-                    <div class="user-info">
-                        <h4>{{ $application->user->name }}</h4>
-                        <span class="email">{{ $application->user->email }}</span>
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-briefcase"></i>Applied For</span>
-                            <span class="info-value">{{ $application->jobPost->title ?? 'N/A' }}</span>
+                    <div style="display:flex; gap:0.75rem; align-items:center; margin-top:0.6rem;">
+                        <div class="meta-card" aria-hidden="true">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <span>Applied for: {{ $application->jobPost->title }}</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-calendar-event"></i>Application Date</span>
-                            <span class="info-value">{{ $application->applied_at?->format('M d, Y H:i') ?? $application->created_at->format('M d, Y H:i') }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-activity"></i>Current Status</span>
+                        <div>
                             @php
-                                $statusClasses = [
-                                    'pending' => 'bg-light text-dark',
-                                    'reviewing' => 'bg-info bg-opacity-25 text-info-emphasis',
-                                    'recommended' => 'bg-primary bg-opacity-25 text-primary-emphasis',
-                                    'interviewed' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
-                                    'hired' => 'bg-success bg-opacity-25 text-success-emphasis',
-                                    'rejected' => 'bg-danger bg-opacity-25 text-danger-emphasis',
-                                ];
+                                $sclass = match($application->status) {
+                                    'pending' => 'status-pending',
+                                    'reviewing' => 'status-reviewing',
+                                    'shortlisted' => 'status-shortlisted',
+                                    'interview' => 'status-interview',
+                                    'hired' => 'status-hired',
+                                    'rejected' => 'status-rejected',
+                                    default => 'status-pending'
+                                };
                             @endphp
-                            <span class="status-badge-large {{ $statusClasses[$application->status] ?? 'bg-light text-dark' }}">
-                                <i class="bi bi-circle-fill"></i>
-                                {{ $application->status }}
-                            </span>
+                            <span class="status-chip {{ $sclass }}" aria-label="Application status: {{ $application->status }}">{{ ucfirst($application->status) }}</span>
                         </div>
->>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
                     </div>
                 </div>
             </div>
@@ -250,7 +248,7 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <span class="label-muted">Applied Date</span>
-                    <p class="mb-0" style="font-weight: 600; font-size: 0.95rem;">{{ $application->applied_at->format('F d, Y') }}</p>
+                    <p class="mb-0" style="font-weight: 600; font-size: 0.95rem;">{{ optional($application->applied_at)->format('F d, Y') }}</p>
                 </div>
                 <div class="col-md-6">
                     <span class="label-muted">Current Status</span>
@@ -278,12 +276,14 @@
                     </div>
                 </div>
             </div>
+
             @if($application->cover_letter)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <span class="label-muted">Cover Letter / Notes</span>
                 <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;">{{ $application->cover_letter }}</p>
             </div>
             @endif
+
             @if($application->resume_path)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
@@ -313,10 +313,9 @@
 
             <form id="feedbackForm" action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
                 @csrf
-<<<<<<< HEAD
                 <div class="mb-4">
                     <label class="form-label">Feedback Type</label>
-                    <select id="feedbackType" name="feedback_type" class="form-select" required>
+                    <select id="feedbackType" name="feedback_type" class="form-select">
                         <option value="">Select feedback type</option>
                         <option value="interview_experience">Interview Experience</option>
                         <option value="job_performance">Job Performance</option>
@@ -326,53 +325,24 @@
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Rating (Optional)</label>
-                    <div class="star-rating" id="starRating">
-                        <i class="bi bi-star" data-value="1" onclick="setRating(1)"></i>
-                        <i class="bi bi-star" data-value="2" onclick="setRating(2)"></i>
-                        <i class="bi bi-star" data-value="3" onclick="setRating(3)"></i>
-                        <i class="bi bi-star" data-value="4" onclick="setRating(4)"></i>
-                        <i class="bi bi-star" data-value="5" onclick="setRating(5)"></i>
-=======
-                @method('PATCH')
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select" id="applicationStatusSelect">
-                            @php $s = $application->status; @endphp
-                            <option value="pending" {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="reviewing" {{ $s === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                            <option value="recommended" {{ $s === 'recommended' ? 'selected' : '' }}>Recommended</option>
-                            <option value="interviewed" {{ $s === 'interviewed' ? 'selected' : '' }}>Interviewed</option>
-                            <option value="hired" {{ $s === 'hired' ? 'selected' : '' }}>Hired</option>
-                            <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interviewed' ? '' : 'display:none;' }}">
-                        <label class="form-label">Interview Schedule</label>
-                        <input
-                            type="datetime-local"
-                            name="interview_scheduled_at"
-                            id="interviewScheduledAt"
-                            class="form-control"
-                            value="{{ optional($application->interview_scheduled_at)->format('Y-m-d\\TH:i') }}"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Feedback (optional)</label>
-                        <textarea name="employer_feedback" rows="2" class="form-control" placeholder="Add any feedback for this applicant...">{{ $application->employer_feedback ?? '' }}</textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg"></i>
-                            Save Changes
-                        </button>
->>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
+                    <div class="star-rating" id="starRating" role="radiogroup" aria-label="Rating">
+                        <i class="bi bi-star" data-value="1" role="radio" tabindex="0" aria-checked="false" aria-label="1 star" onclick="setRating(1)"></i>
+                        <i class="bi bi-star" data-value="2" role="radio" tabindex="0" aria-checked="false" aria-label="2 stars" onclick="setRating(2)"></i>
+                        <i class="bi bi-star" data-value="3" role="radio" tabindex="0" aria-checked="false" aria-label="3 stars" onclick="setRating(3)"></i>
+                        <i class="bi bi-star" data-value="4" role="radio" tabindex="0" aria-checked="false" aria-label="4 stars" onclick="setRating(4)"></i>
+                        <i class="bi bi-star" data-value="5" role="radio" tabindex="0" aria-checked="false" aria-label="5 stars" onclick="setRating(5)"></i>
                     </div>
                     <input type="hidden" name="rating" id="ratingInput" value="">
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Feedback</label>
-                    <textarea id="feedbackText" name="feedback" class="form-control" rows="4" placeholder="Write your feedback about this applicant..." required style="resize: vertical;"></textarea>
+                    <textarea id="feedbackText" name="feedback" class="form-control" rows="4" placeholder="Write your feedback about this applicant..." style="resize: vertical;"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    @if($application->resume_path)
+                        <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-outline-primary">Download Resume</a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -398,7 +368,7 @@
                 </div>
                 <div class="mb-4" id="interviewDateField" style="display: {{ $application->status == 'interview' ? 'block' : 'none' }};">
                     <label class="form-label">Interview Date & Time</label>
-                    <input type="datetime-local" name="interview_scheduled_at" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\TH:i') : '' }}">
+                    <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}">
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Notes (Optional)</label>
@@ -426,120 +396,84 @@
     </div>
 </div>
 </div>
-<<<<<<< HEAD
-=======
-
-<script>
-// Preview toggle and lazy-load
-document.addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-preview-resume');
-    if (!btn) return;
-    const resumeSection = btn.closest('.resume-section');
-    if (!resumeSection) return;
-    const preview = resumeSection.querySelector('.resume-preview');
-    if (!preview) return;
-
-    const span = btn.querySelector('span');
-    if (!span) return;
-
-    // Check if this is an uploaded resume (has iframe/image) or builder resume (plain div)
-    const iframe = preview.querySelector('iframe');
-
-    if (preview.style.display === 'none' || preview.style.display === '') {
-        preview.style.display = 'block';
-        span.textContent = iframe ? 'Hide Preview' : 'Hide Resume';
-    } else {
-        preview.style.display = 'none';
-        span.textContent = iframe ? 'Preview' : 'Show Resume';
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const statusSelect = document.getElementById('applicationStatusSelect');
-    const scheduleGroup = document.getElementById('interviewScheduleGroup');
-    const scheduledAtInput = document.getElementById('interviewScheduledAt');
-
-    if (!statusSelect || !scheduleGroup || !scheduledAtInput) {
-        return;
-    }
-
-    const syncInterviewScheduleVisibility = () => {
-        const shouldShow = statusSelect.value === 'interviewed';
-        scheduleGroup.style.display = shouldShow ? '' : 'none';
-        scheduledAtInput.required = shouldShow;
-        if (!shouldShow) {
-            scheduledAtInput.value = '';
-        }
-    };
-
-    statusSelect.addEventListener('change', syncInterviewScheduleVisibility);
-    syncInterviewScheduleVisibility();
-});
-</script>
-
->>>>>>> 4c1b10f7917f5f74f5f74f58d2bd187f69cb4e99
 @endsection
 
 @push('scripts')
 <script>
     function toggleInterviewDate() {
-        const status = document.getElementById('statusSelect').value;
+        const status = document.getElementById('statusSelect')?.value;
         const interviewField = document.getElementById('interviewDateField');
-        if (status === 'interview') {
-            interviewField.style.display = 'block';
-        } else {
-            interviewField.style.display = 'none';
-        }
+        if (!interviewField) return;
+        interviewField.style.display = status === 'interview' ? 'block' : 'none';
     }
 
     function setRating(value) {
-        document.getElementById('ratingInput').value = value;
-        const stars = document.querySelectorAll('#starRating i');
+        const input = document.getElementById('ratingInput');
+        if (input) input.value = value;
+        const stars = Array.from(document.querySelectorAll('#starRating i'));
         stars.forEach((star, index) => {
-            if (index < value) {
-                star.classList.add('bi-star-fill');
-                star.classList.remove('bi-star');
-                star.style.color = '#ffc107';
-            } else {
-                star.classList.remove('bi-star-fill');
-                star.classList.add('bi-star');
-                star.style.color = '#ddd';
-            }
+            const active = index < value;
+            star.classList.toggle('bi-star-fill', active);
+            star.classList.toggle('bi-star', !active);
+            star.style.color = active ? '#ffc107' : '#ddd';
+            star.setAttribute('aria-checked', active ? 'true' : 'false');
         });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        // initialize interview field visibility
+        toggleInterviewDate();
+
         const feedbackForm = document.getElementById('feedbackForm');
         const statusForm = document.getElementById('statusForm');
 
-        if (!statusForm) return;
+        if (statusForm && feedbackForm) {
+            statusForm.addEventListener('submit', async function (e) {
+                const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
+                const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
+                const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
 
-        statusForm.addEventListener('submit', async function (e) {
-            if (!feedbackForm) return; // nothing to copy
-
-            const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
-            const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
-            const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
-
-            // If there's feedback or rating or type selected, attempt to save it first
-            if (feedbackText.trim().length > 0 || rating || feedbackType) {
-                e.preventDefault();
-                const data = new FormData(feedbackForm);
-                try {
-                    await fetch(feedbackForm.action, {
-                        method: 'POST',
-                        body: data,
-                        credentials: 'same-origin',
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                    });
-                } catch (err) {
-                    console.error('Failed to save feedback before status update', err);
+                if (feedbackText.trim().length > 0 || rating || feedbackType) {
+                    e.preventDefault();
+                    const data = new FormData(feedbackForm);
+                    try {
+                        await fetch(feedbackForm.action, {
+                            method: 'POST',
+                            body: data,
+                            credentials: 'same-origin',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                    } catch (err) {
+                        console.error('Failed to save feedback before status update', err);
+                    }
+                    statusForm.submit();
                 }
-                // continue with status update regardless of result
-                statusForm.submit();
-            }
-        });
+            });
+        }
+
+        // keyboard support for star-rating
+        const stars = document.querySelectorAll('#starRating i[role="radio"]');
+        stars.forEach(st => {
+            st.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault();
+                    const v = Number(this.getAttribute('data-value')) || 0;
+                    setRating(v);
+                }
+                if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') {
+                    ev.preventDefault();
+                    const prev = this.previousElementSibling;
+                    if (prev) prev.focus();
+                }
+                if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') {
+                    ev.preventDefault();
+                    const next = this.nextElementSibling;
+                    if (next) next.focus();
+                }
+            });
+            st.addEventListener('focus', function () { this.classList.add('focus-visible'); });
+            st.addEventListener('blur', function () { this.classList.remove('focus-visible'); });
+        }
     });
 </script>
 @endpush
-
