@@ -36,6 +36,38 @@ class OfwController extends Controller
         ]);
     }
 
+    public function dmwBuilder(Request $request): View
+    {
+        $ofwUser = $request->user()->loadMissing('profile');
+        $ofwProfile = $ofwUser->profile;
+
+        return view('ofw.dmwbuilder', [
+            'ofwUser' => $ofwUser,
+            'ofwProfile' => $ofwProfile,
+        ]);
+    }
+
+    public function saveDmwBuilder(Request $request)
+    {
+        $validated = $request->validate([
+            'applicant_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:50'],
+            'passport_number' => ['required', 'string', 'max:100'],
+            'employer' => ['required', 'string', 'max:255'],
+            'contract_start' => ['nullable', 'date'],
+            'contract_end' => ['nullable', 'date'],
+            'request_details' => ['required', 'string', 'max:2000'],
+            'assistance' => ['nullable', 'array'],
+            'signature_date' => ['required', 'date'],
+        ]);
+
+        // Save draft to session for now. Integration with persistent storage can be added later.
+        $request->session()->put('dmw_form_draft', $validated);
+
+        return redirect()->route('ofw.dmw-builder')->with('status', 'Form draft saved. Use Download PDF to generate the document.');
+    }
+
     /**
      * Download the DMW form PDF with user's attachments appended (resume if present).
      * Requires: public/forms/DMW REQUEST FOR ASSISTANCE FORM.pdf to exist.
