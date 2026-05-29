@@ -3,6 +3,7 @@
 @endphp
 
 <aside class="dashboard-sidebar">
+    @php($portalAcceptsUrl = route('ofw.dashboard') . '#portal-accepts')
     <div class="d-flex align-items-center justify-content-between d-lg-none">
         <div class="dashboard-brand">
             <div class="dashboard-brand-mark">
@@ -42,11 +43,11 @@
     <nav class="dashboard-nav" aria-label="OFW dashboard navigation">
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Overview</div>
-            <a href="#portal-accepts" class="dashboard-nav-link">
+            <a href="{{ $portalAcceptsUrl }}" class="dashboard-nav-link">
                 <i class="bi bi-info-circle"></i>
                 <span>Accepted Requests</span>
             </a>
-            <a href="#submitted-requests" class="dashboard-nav-link">
+            <a href="{{ route('ofw.dashboard') . '#submitted-requests' }}" class="dashboard-nav-link">
                 <i class="bi bi-list-check"></i>
                 <span>Submitted Requests</span>
             </a>
@@ -54,7 +55,7 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Forms</div>
-            <a href="#owwa-request" class="dashboard-nav-link">
+            <a href="{{ route('ofw.dashboard') . '#owwa-request' }}" class="dashboard-nav-link">
                 <i class="bi bi-file-earmark-text"></i>
                 <span>OWWA Form</span>
             </a>
@@ -68,11 +69,11 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Support</div>
-            <a href="#portal-accepts" class="dashboard-nav-link">
+            <a href="{{ $portalAcceptsUrl }}" class="dashboard-nav-link">
                 <i class="bi bi-shield-check"></i>
                 <span>Portal Guidelines</span>
             </a>
-            <a href="#submitted-requests" class="dashboard-nav-link">
+            <a href="{{ route('ofw.dashboard') . '#submitted-requests' }}" class="dashboard-nav-link">
                 <i class="bi bi-clock-history"></i>
                 <span>Case Tracking</span>
             </a>
