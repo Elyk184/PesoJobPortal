@@ -58,7 +58,7 @@
                 <i class="bi bi-file-earmark-text"></i>
                 <span>OWWA Form</span>
             </a>
-            <a href="#dmw-request" class="dashboard-nav-link">
+            <a href="{{ route('ofw.dmw-builder') }}" class="dashboard-nav-link">
                 <i class="bi bi-journal-text"></i>
                 <span>DMW Form</span>
             </a>

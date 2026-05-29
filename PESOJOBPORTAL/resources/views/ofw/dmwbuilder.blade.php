@@ -5,8 +5,9 @@
 @section('content')
 @php
     $profile = $ofwProfile ?? null;
-    $applicantName = old('applicant_name', $profile?->personal_information['first_name'] ?? $request->user()->name ?? '');
-    $email = old('email', $profile?->personal_information['email_address'] ?? $request->user()->email ?? '');
+    $user = $ofwUser ?? auth()->user();
+    $applicantName = old('applicant_name', $profile?->personal_information['first_name'] ?? $user->name ?? '');
+    $email = old('email', $profile?->personal_information['email_address'] ?? $user->email ?? '');
     $phone = old('phone', $profile?->phone ?? '');
     $passportNumber = old('passport_number', $profile?->personal_information['passport_number'] ?? '');
     $contractEmployer = old('employer', '');
@@ -21,7 +22,7 @@
             <div class="dashboard-topbar-title">DMW Request for Assistance - Builder</div>
             <div class="dashboard-topbar-subtitle">Fill the official form fields below. Required fields are marked *</div>
         </div>
-        <a href="{{ route('dashboard') }}" class="btn btn-outline-primary btn-sm">
+        <a href="{{ route('ofw.dashboard') }}" class="btn btn-outline-primary btn-sm">
             <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
         </a>
     </div>
@@ -39,7 +40,7 @@
 
     <div class="row g-3">
         <div class="col-12 col-xl-5">
-            <form method="POST" action="#" enctype="multipart/form-data" class="dashboard-section-card p-3 p-lg-4 h-100">
+            <form method="POST" action="{{ route('ofw.dmw-builder.save') }}" enctype="multipart/form-data" class="dashboard-section-card p-3 p-lg-4 h-100">
                 @csrf
 
                 <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
@@ -127,9 +128,14 @@
                     <button type="submit" class="btn btn-primary flex-fill">
                         <i class="bi bi-save me-2"></i>Save Form (Draft)
                     </button>
-                    <button type="button" id="download-pdf" class="btn btn-outline-secondary flex-fill">
-                        <i class="bi bi-download me-2"></i>Download PDF (with attachments)
+
+                    <button type="submit" formaction="{{ route('ofw.dmw-submit') }}" class="btn btn-success flex-fill">
+                        <i class="bi bi-send me-2"></i>Submit to Admin
                     </button>
+
+                    <a href="{{ route('ofw.dmw-download') }}" class="btn btn-outline-secondary flex-fill">
+                        <i class="bi bi-download me-2"></i>Download PDF (with attachments)
+                    </a>
                 </div>
             </form>
         </div>
@@ -144,32 +150,8 @@
                 </div>
 
                 <div class="dmw-preview mx-auto">
-                    <div class="mb-3">
-                        <div class="fw-semibold">Applicant</div>
-                        <div>{{ $applicantName }}</div>
-                        <div class="small text-muted">{{ $email }} | {{ $phone }}</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="fw-semibold">Passport</div>
-                        <div>{{ $passportNumber }}</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="fw-semibold">Employer / Principal</div>
-                        <div>{{ $contractEmployer }}</div>
-                        <div class="small text-muted">Contract: {{ $contractStart }} — {{ $contractEnd }}</div>
-                    </div>
-
-                    <section class="mb-3">
-                        <h4 class="h6 fw-semibold">Request Details</h4>
-                        <p>{{ $requestDetails }}</p>
-                    </section>
-
-                    <section class="mb-0">
-                        <h4 class="h6 fw-semibold">Attachments</h4>
-                        <p class="small text-muted">Passport copy, contract — these will be appended to the generated PDF in the order uploaded.</p>
-                    </section>
+                    <iframe src="{{ asset('forms/DMW REQUEST FOR ASSISTANCE FORM.pdf') }}" style="width:100%; height:800px; border:0;" title="DMW form preview"></iframe>
+                    
                 </div>
             </div>
         </div>

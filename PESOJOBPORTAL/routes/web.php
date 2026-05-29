@@ -25,6 +25,9 @@ Route::middleware('auth')->get('/ofw', [OfwController::class, 'dashboard'])->nam
 Route::middleware('auth')->get('/ofw/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('ofw.dmw-builder');
 Route::middleware('auth')->post('/ofw/dmw-builder', [OfwController::class, 'saveDmwBuilder'])->name('ofw.dmw-builder.save');
 Route::middleware('auth')->get('/ofw/dmw-download', [OfwController::class, 'downloadDmwForm'])->name('ofw.dmw-download');
+Route::middleware('auth')->post('/ofw/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('ofw.attachments.upload');
+Route::middleware('auth')->post('/ofw/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('ofw.attachments.delete');
+Route::middleware('auth')->post('/ofw/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('ofw.dmw-submit');
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

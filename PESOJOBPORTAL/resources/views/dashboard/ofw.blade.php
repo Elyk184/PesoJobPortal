@@ -136,10 +136,37 @@
                     <p class="text-muted mb-3">
                         Use the DMW form for cases that need Department of Migrant Workers assistance and coordination.
                     </p>
+                    <div class="mb-3">
+                        <a href="{{ route('ofw.dmw-builder') }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form Builder
+                        </a>
 
-                    <a href="#portal-accepts" class="btn btn-outline-primary w-100">
-                        <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form
-                    </a>
+                        <form action="{{ route('ofw.attachments.upload') }}" method="POST" enctype="multipart/form-data" class="d-flex gap-2">
+                            @csrf
+                            <input type="file" name="attachment" accept="application/pdf,image/*" class="form-control form-control-sm" required>
+                            <button class="btn btn-sm btn-secondary">Upload</button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold">Uploaded attachments</div>
+                        @if(! empty($dmwAttachments))
+                            <ul class="list-unstyled small mb-0">
+                                @foreach($dmwAttachments as $idx => $att)
+                                    <li class="d-flex align-items-center justify-content-between py-1">
+                                        <a href="{{ $att }}" target="_blank">Attachment {{ $idx + 1 }}</a>
+                                        <form action="{{ route('ofw.attachments.delete') }}" method="POST" class="mb-0">
+                                            @csrf
+                                            <input type="hidden" name="path" value="{{ ltrim(str_replace(asset('storage').'/', '', $att), '/') }}">
+                                            <button class="btn btn-link btn-sm text-danger p-0">Remove</button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="small text-muted">No attachments uploaded yet. Upload passport and contract copies here to have them appended to the DMW PDF.</div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

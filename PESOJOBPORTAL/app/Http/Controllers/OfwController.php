@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\OfwRequest;
+use App\Models\PortalNotification;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +20,15 @@ class OfwController extends Controller
         $ofwUser = $request->user()->loadMissing('profile');
         $ofwProfile = $ofwUser->profile;
         $requestQuery = OfwRequest::query()->where('user_id', $ofwUser->id);
+        $rawAttachments = [];
+        try {
+            $rawAttachments = $this->readAttachments($ofwUser->id);
+        } catch (\Throwable $e) {
+            Log::warning('Failed to read DMW attachments for user '.$ofwUser->id.': '.$e->getMessage());
+            $rawAttachments = [];
+        }
+
+        $dmwAttachments = collect($rawAttachments)->map(fn($p) => asset('storage/'.$p))->values()->all();
 
         return view('dashboard.ofw', [
             'ofwUser' => $ofwUser,
@@ -33,6 +44,7 @@ class OfwController extends Controller
                 'phone' => $ofwProfile?->phone ?? data_get($ofwProfile, 'personal_information.contact_number'),
                 'address' => $ofwProfile?->address ?? data_get($ofwProfile, 'present_address.municipality'),
             ],
+            'dmwAttachments' => $dmwAttachments,
         ]);
     }
 
@@ -65,7 +77,150 @@ class OfwController extends Controller
         // Save draft to session for now. Integration with persistent storage can be added later.
         $request->session()->put('dmw_form_draft', $validated);
 
+        // Handle attachments if provided
+        if ($request->hasFile('attachments')) {
+            $this->storeOfwAttachments($request, $request->file('attachments'));
+        }
+
         return redirect()->route('ofw.dmw-builder')->with('status', 'Form draft saved. Use Download PDF to generate the document.');
+    }
+
+    public function submitDmwForm(Request $request)
+    {
+        $validated = $request->validate([
+            'applicant_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:50'],
+            'passport_number' => ['required', 'string', 'max:100'],
+            'employer' => ['required', 'string', 'max:255'],
+            'contract_start' => ['nullable', 'date'],
+            'contract_end' => ['nullable', 'date'],
+            'request_details' => ['required', 'string', 'max:2000'],
+            'assistance' => ['nullable', 'array'],
+            'signature_date' => ['required', 'date'],
+        ]);
+
+        $user = $request->user();
+
+        // read attachments metadata for this user
+        $attachments = $this->readAttachments($user->id);
+
+        // create OFW request record
+        $ofw = OfwRequest::create([
+            'user_id' => $user->id,
+            'subject' => 'DMW Request for Assistance',
+            'details' => $validated['request_details'],
+            'status' => 'open',
+            'notes' => json_encode([
+                'form' => $validated,
+                'attachments' => $attachments,
+            ]),
+        ]);
+
+        // notify admins via PortalNotification + UserNotification
+        try {
+            $title = 'New DMW request from ' . ($validated['applicant_name'] ?? $user->name);
+            $message = substr($validated['request_details'], 0, 200);
+            $portal = PortalNotification::create([
+                'title' => $title,
+                'message' => $message,
+                'created_by' => $user->id,
+            ]);
+
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                \App\Models\UserNotification::create([
+                    'user_id' => $admin->id,
+                    'portal_notification_id' => $portal->id,
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Failed to notify admins for DMW submission: ' . $e->getMessage());
+        }
+
+        return redirect()->route('ofw.dashboard')->with('status', 'DMW request submitted to admin.');
+    }
+
+    protected function attachmentsMetaPath(int $userId): string
+    {
+        return storage_path("app/ofw_attachments/{$userId}.json");
+    }
+
+    protected function readAttachments(int $userId): array
+    {
+        $meta = $this->attachmentsMetaPath($userId);
+        if (! file_exists($meta)) {
+            return [];
+        }
+
+        $json = file_get_contents($meta);
+        $data = json_decode($json, true);
+        return is_array($data) ? $data : [];
+    }
+
+    protected function writeAttachments(int $userId, array $data): void
+    {
+        $dir = dirname($this->attachmentsMetaPath($userId));
+        if (! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        file_put_contents($this->attachmentsMetaPath($userId), json_encode(array_values($data)));
+    }
+
+    protected function storeOfwAttachments(Request $request, array $files): array
+    {
+        $user = $request->user();
+        $stored = $this->readAttachments($user->id);
+
+        foreach ($files as $file) {
+            if (! $file || ! $file->isValid()) {
+                continue;
+            }
+
+            $path = $file->store("public/ofw_attachments/{$user->id}");
+            // store relative path (without leading 'public/')
+            $rel = preg_replace('#^public/#', '', $path);
+            $stored[] = $rel;
+        }
+
+        $this->writeAttachments($user->id, $stored);
+        return $stored;
+    }
+
+    public function uploadAttachment(Request $request)
+    {
+        $request->validate([
+            'attachment' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+        ]);
+
+        $files = $this->storeOfwAttachments($request, [$request->file('attachment')]);
+
+        return redirect()->route('ofw.dmw-builder')->with('status', 'Attachment uploaded.');
+    }
+
+    public function deleteAttachment(Request $request)
+    {
+        $request->validate(['path' => ['required', 'string']]);
+        $user = $request->user();
+        $stored = $this->readAttachments($user->id);
+        $path = $request->input('path');
+
+        $index = array_search($path, $stored, true);
+        if ($index === false) {
+            return redirect()->back()->withErrors(['attachment' => 'Attachment not found.']);
+        }
+
+        // delete file from storage
+        $full = storage_path('app/public/' . $path);
+        if (file_exists($full)) {
+            @unlink($full);
+        }
+
+        array_splice($stored, $index, 1);
+        $this->writeAttachments($user->id, $stored);
+
+        return redirect()->back()->with('status', 'Attachment removed.');
     }
 
     /**
