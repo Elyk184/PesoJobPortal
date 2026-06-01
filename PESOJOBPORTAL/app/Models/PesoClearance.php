@@ -17,10 +17,13 @@ class PesoClearance extends Model
         'expiry_date',
         'status',
         'remarks',
+        'company_name',
+        'residence_address',
         'peso_clearance_assurance_receipt_path',
         'barangay_clearance_path',
         'is_first_time_jobseeker',
         'first_time_jobseeker_document_path',
+        'document_path',
     ];
 
     protected $casts = [
@@ -32,6 +35,11 @@ class PesoClearance extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function issuedClearance()
+    {
+        return $this->hasOne(IssuedClearance::class);
     }
 }
 

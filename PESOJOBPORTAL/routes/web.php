@@ -204,6 +204,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
     Route::get('/peso-clearances/{clearance}', [AdminController::class, 'showPesoClearance'])->name('peso-clearances.show');
     Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
+    Route::post('/peso-clearances/{clearance}/decline', [AdminController::class, 'declinePesoClearance'])->name('peso-clearances.decline');
+    Route::post('/peso-clearances/auto-generate', [AdminController::class, 'autoGenerateClearances'])->name('peso-clearances.auto-generate');
+    Route::post('/peso-clearances/auto-generate-users', [AdminController::class, 'autoGenerateClearancesForUsers'])->name('peso-clearances.auto-generate-users');
+    Route::get('/peso-clearance-management', [AdminController::class, 'pesoClearanceManagement'])->name('peso-clearance-management');
+    Route::post('/peso-clearances/{clearance}/generate-document', [AdminController::class, 'generateClearanceDocument'])->name('peso-clearances.generate-document');
+    Route::get('/peso-clearances/{clearance}/document', [AdminController::class, 'viewClearanceDocument'])->name('peso-clearances.view-document');
+    Route::get('/peso-clearances/{clearance}/download', [AdminController::class, 'downloadClearanceDocument'])->name('peso-clearances.download-document');
 
     // Admin Profile
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');

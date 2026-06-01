@@ -6,12 +6,25 @@ use App\Models\User;
 use App\Models\CompanyProfile;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
+use App\Models\JobseekerAddress;
+use App\Models\JobseekerDisability;
+use App\Models\JobseekerEducation;
+use App\Models\JobseekerEmploymentStatus;
+use App\Models\JobseekerEligibility;
+use App\Models\JobseekerExperience;
+use App\Models\JobseekerJobPreference;
+use App\Models\JobseekerLanguage;
+use App\Models\JobseekerPersonalInformation;
+use App\Models\JobseekerSkill;
+use App\Models\JobseekerSkillsMeta;
+use App\Models\JobseekerTraining;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
 use App\Models\PortalNotification;
 use App\Models\EmployerNotification;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
+use App\Models\JobseekerProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -666,25 +679,25 @@ class JobseekerController extends Controller
             'personal_information.middle_initial' => ['nullable', 'string', 'max:10'],
             'personal_information.suffix' => ['nullable', 'string', 'max:50'],
             'personal_information.date_of_birth' => ['nullable', 'date'],
-            'personal_information.sex' => ['nullable', 'in:Male,Female,Prefer not to say'],
-            'personal_information.religion' => ['nullable', 'string', 'max:255'],
-            'personal_information.civil_status' => ['nullable', 'string', 'max:255'],
+            'personal_information.sex' => ['nullable', 'in:Male,Female'],
+            'personal_information.religion' => ['nullable', 'string', 'max:100'],
+            'personal_information.civil_status' => ['nullable', 'string', 'max:50'],
             'personal_information.height' => ['nullable', 'string', 'max:20'],
-            'personal_information.tin' => ['nullable', 'string', 'max:50'],
+            'personal_information.tin' => ['nullable', 'string', 'max:20'],
             'personal_information.contact_number' => ['nullable', 'string', 'max:50'],
             'personal_information.email_address' => ['nullable', 'email', 'max:255'],
             'education_currently_in_school' => ['nullable', 'boolean'],
 
             'present_address.house_no' => ['nullable', 'string', 'max:255'],
-            'present_address.barangay' => ['nullable', 'string', 'max:255'],
-            'present_address.municipality' => ['nullable', 'string', 'max:255'],
-            'present_address.province' => ['nullable', 'string', 'max:255'],
+            'present_address.barangay' => ['nullable', 'string', 'max:100'],
+            'present_address.municipality' => ['nullable', 'string', 'max:100'],
+            'present_address.province' => ['nullable', 'string', 'max:100'],
 
             'permanent_address.same_as_present' => ['nullable', 'boolean'],
             'permanent_address.house_no' => ['nullable', 'string', 'max:255'],
-            'permanent_address.barangay' => ['nullable', 'string', 'max:255'],
-            'permanent_address.municipality' => ['nullable', 'string', 'max:255'],
-            'permanent_address.province' => ['nullable', 'string', 'max:255'],
+            'permanent_address.barangay' => ['nullable', 'string', 'max:100'],
+            'permanent_address.municipality' => ['nullable', 'string', 'max:100'],
+            'permanent_address.province' => ['nullable', 'string', 'max:100'],
 
             'education' => ['nullable', 'array'],
             'education.*.school' => ['nullable', 'string', 'max:255'],
@@ -720,12 +733,15 @@ class JobseekerController extends Controller
             'other_skills.trade_manual' => ['nullable', 'array'],
             'other_skills.it_technical' => ['nullable', 'array'],
             'other_skills.soft_skills' => ['nullable', 'array'],
+            'other_skills.other_enabled' => ['nullable', 'boolean'],
             'other_skills.other_text' => ['nullable', 'string', 'max:255'],
             'other_skills.with_certificate' => ['nullable', 'boolean'],
             'other_skills.by_experience' => ['nullable', 'boolean'],
 
             'employment_status.wage_employed' => ['nullable', 'boolean'],
+            'employment_status.wage_employed_specify' => ['nullable', 'string', 'max:255'],
             'employment_status.self_employed' => ['nullable', 'boolean'],
+            'employment_status.self_employed_specify' => ['nullable', 'string', 'max:255'],
             'employment_status.unemployed' => ['nullable', 'boolean'],
 
             'job_preferences.part_time' => ['nullable', 'boolean'],
@@ -735,12 +751,12 @@ class JobseekerController extends Controller
             'job_preferences.occupation_text' => ['nullable', 'string', 'max:1000'],
 
             'languages' => ['nullable', 'array'],
-            'languages.*.language' => ['nullable', 'string', 'max:255'],
+            'languages.*.language' => ['nullable', 'string', 'max:100'],
             'languages.*.read' => ['nullable', 'boolean'],
             'languages.*.write' => ['nullable', 'boolean'],
             'languages.*.speak' => ['nullable', 'boolean'],
             'languages.*.understand' => ['nullable', 'boolean'],
-            'languages.*.other' => ['nullable', 'string', 'max:255'],
+            'languages.*.other' => ['nullable', 'string', 'max:100'],
 
             'disability.visual' => ['nullable', 'boolean'],
             'disability.speech' => ['nullable', 'boolean'],
@@ -751,50 +767,11 @@ class JobseekerController extends Controller
             'disability.other_text' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $userId = $user->id;
+
         $personal = $validated['personal_information'] ?? [];
-        $presentAddress = $validated['present_address'] ?? [];
-        $permanentAddress = $validated['permanent_address'] ?? [];
         $personal['currently_in_school'] = (bool) ($validated['education_currently_in_school'] ?? false);
-        $educationRows = $this->normalizeResumeSection($validated['education'] ?? [], ['school', 'course', 'year']);
-        $trainingRows = $this->normalizeResumeSection($validated['training'] ?? [], ['course', 'hours', 'institution', 'dates', 'skills', 'certificates']);
-        $experienceRows = $this->normalizeResumeSection($validated['experience'] ?? [], ['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']);
-        $eligibilityRows = $this->normalizeResumeSection($validated['eligibility'] ?? [], ['eligibility', 'date_taken', 'license', 'valid_until']);
-
-        $otherSkills = [
-            'trade_manual' => $this->normalizeList(implode(', ', $validated['other_skills']['trade_manual'] ?? [])),
-            'it_technical' => $this->normalizeList(implode(', ', $validated['other_skills']['it_technical'] ?? [])),
-            'soft_skills' => $this->normalizeList(implode(', ', $validated['other_skills']['soft_skills'] ?? [])),
-            'other_text' => trim((string) ($validated['other_skills']['other_text'] ?? '')),
-            'with_certificate' => (bool) ($validated['other_skills']['with_certificate'] ?? false),
-            'by_experience' => (bool) ($validated['other_skills']['by_experience'] ?? false),
-        ];
-
-        $employmentStatus = [
-            'wage_employed' => (bool) ($validated['employment_status']['wage_employed'] ?? false),
-            'self_employed' => (bool) ($validated['employment_status']['self_employed'] ?? false),
-            'unemployed' => (bool) ($validated['employment_status']['unemployed'] ?? false),
-            'has_work_experience' => (bool) ($validated['work_experience_has'] ?? false),
-        ];
-
-        $jobPreferences = [
-            'part_time' => (bool) ($validated['job_preferences']['part_time'] ?? false),
-            'full_time' => (bool) ($validated['job_preferences']['full_time'] ?? false),
-            'local' => (bool) ($validated['job_preferences']['local'] ?? false),
-            'overseas' => (bool) ($validated['job_preferences']['overseas'] ?? false),
-            'occupation_text' => trim((string) ($validated['job_preferences']['occupation_text'] ?? '')),
-        ];
-
-        $languages = $this->normalizeLanguageRows($validated['languages'] ?? []);
-
-        $disability = [
-            'visual' => (bool) ($validated['disability']['visual'] ?? false),
-            'speech' => (bool) ($validated['disability']['speech'] ?? false),
-            'mental' => (bool) ($validated['disability']['mental'] ?? false),
-            'hearing' => (bool) ($validated['disability']['hearing'] ?? false),
-            'physical' => (bool) ($validated['disability']['physical'] ?? false),
-            'other' => (bool) ($validated['disability']['other'] ?? false),
-            'other_text' => trim((string) ($validated['disability']['other_text'] ?? '')),
-        ];
+        $this->savePersonalInformation($userId, $personal);
 
         $fullName = collect([
             $personal['first_name'] ?? '',
@@ -803,32 +780,81 @@ class JobseekerController extends Controller
             $personal['suffix'] ?? '',
         ])->filter()->join(' ');
 
-        $profile = UserProfile::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'user_id' => $user->id,
-                'personal_information' => $personal,
-                'present_address' => $presentAddress,
-                'permanent_address' => $permanentAddress,
-                'resume_name' => $fullName ?: $user->name,
-                'resume_email' => $personal['email_address'] ?? $user->email,
-                'phone' => $personal['contact_number'] ?? null,
-                'address' => $this->formatAddress($presentAddress),
-                'skills' => $this->buildSkillList($otherSkills),
-                'education' => $educationRows,
-                'training' => $trainingRows,
-                'experience' => $experienceRows,
-                'eligibility' => $eligibilityRows,
-                'other_skills' => $otherSkills,
-                'employment_status' => $employmentStatus,
-                'job_preferences' => $jobPreferences,
-                'languages' => $languages,
-                'disability' => $disability,
-            ]
+        if ($fullName !== '') {
+            $user->name = $fullName;
+            $user->save();
+        }
+
+        $presentAddress = $validated['present_address'] ?? [];
+        $permanentAddress = $validated['permanent_address'] ?? [];
+
+        if ((bool) ($permanentAddress['same_as_present'] ?? false)) {
+            $permanentAddress = array_merge($permanentAddress, [
+                'house_no' => $presentAddress['house_no'] ?? '',
+                'barangay' => $presentAddress['barangay'] ?? '',
+                'municipality' => $presentAddress['municipality'] ?? '',
+                'province' => $presentAddress['province'] ?? '',
+            ]);
+        }
+
+        $this->saveAddresses($userId, $presentAddress, $permanentAddress);
+
+        $this->saveResumeSection(
+            $userId,
+            JobseekerEducation::class,
+            $this->normalizeResumeSection($validated['education'] ?? [], ['school', 'course', 'year'])
         );
 
-        $user->name = $fullName ?: $user->name;
-        $user->save();
+        $trainingRows = $this->normalizeResumeSection(
+            $validated['training'] ?? [],
+            ['course', 'hours', 'institution', 'dates', 'skills', 'certificates']
+        );
+
+        $trainingRows = array_map(function (array $row): array {
+            return [
+                'course' => $row['course'] ?? '',
+                'hours' => is_numeric($row['hours'] ?? '') ? (int) $row['hours'] : null,
+                'institution' => $row['institution'] ?? '',
+                'inclusive_dates' => $row['dates'] ?? '',
+                'skills_acquired' => $row['skills'] ?? '',
+                'certificates' => $row['certificates'] ?? '',
+            ];
+        }, $trainingRows);
+
+        $this->saveResumeSection($userId, JobseekerTraining::class, $trainingRows);
+
+        $experienceRows = $this->normalizeResumeSection(
+            $validated['experience'] ?? [],
+            ['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']
+        );
+
+        $experienceRows = array_map(function (array $row): array {
+            $salaryRaw = trim((string) ($row['salary_amount'] ?? ''));
+            $row['salary_amount'] = is_numeric($salaryRaw) ? (float) $salaryRaw : null;
+            return $row;
+        }, $experienceRows);
+
+        $this->saveResumeSection($userId, JobseekerExperience::class, $experienceRows);
+
+        $this->saveResumeSection(
+            $userId,
+            JobseekerEligibility::class,
+            $this->normalizeResumeSection($validated['eligibility'] ?? [], ['eligibility', 'date_taken', 'license', 'valid_until'])
+        );
+
+        $otherSkills = $validated['other_skills'] ?? [];
+        $this->saveSkills($userId, $otherSkills);
+        $this->saveSkillsMeta($userId, $otherSkills);
+
+        $this->saveEmploymentStatus(
+            $userId,
+            $validated['employment_status'] ?? [],
+            (bool) ($validated['work_experience_has'] ?? false)
+        );
+
+        $this->saveJobPreferences($userId, $validated['job_preferences'] ?? []);
+        $this->saveLanguages($userId, $validated['languages'] ?? []);
+        $this->saveDisability($userId, $validated['disability'] ?? []);
 
         return redirect()
             ->route('jobseeker.profile')
@@ -1060,6 +1086,32 @@ class JobseekerController extends Controller
         ])->filter()->join(', ');
     }
 
+    private function extractYearsOfExperience(array $experienceRows): ?int
+    {
+        if (empty($experienceRows)) {
+            return null;
+        }
+
+        $totalYears = 0;
+        foreach ($experienceRows as $experience) {
+            $fromDate = $experience['from_date'] ?? null;
+            $toDate = $experience['to_date'] ?? null;
+
+            if ($fromDate && $toDate) {
+                try {
+                    $from = \Carbon\Carbon::parse($fromDate);
+                    $to = \Carbon\Carbon::parse($toDate);
+                    $totalYears += $from->diffInYears($to);
+                } catch (\Exception $e) {
+                    // Skip if date parsing fails
+                    continue;
+                }
+            }
+        }
+
+        return $totalYears > 0 ? $totalYears : null;
+    }
+
     private function resumeBuilderData(?\App\Models\User $user): array
     {
         $profile = $user?->profile;
@@ -1105,58 +1157,334 @@ class JobseekerController extends Controller
         ];
     }
 
+    private function savePersonalInformation(int $userId, array $data): void
+    {
+        JobseekerPersonalInformation::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'user_id' => $userId,
+                'first_name' => $data['first_name'] ?? '',
+                'middle_initial' => $data['middle_initial'] ?? null,
+                'surname' => $data['surname'] ?? '',
+                'suffix' => $data['suffix'] ?? null,
+                'date_of_birth' => $data['date_of_birth'] ?? null,
+                'sex' => $data['sex'] ?? null,
+                'religion' => $data['religion'] ?? null,
+                'civil_status' => $data['civil_status'] ?? null,
+                'height' => $data['height'] ?? null,
+                'tin' => $data['tin'] ?? null,
+                'contact_number' => $data['contact_number'] ?? null,
+                'email_address' => $data['email_address'] ?? null,
+                'currently_in_school' => (bool) ($data['currently_in_school'] ?? false),
+            ]
+        );
+    }
+
+    private function saveAddresses(int $userId, array $present, array $permanent): void
+    {
+        foreach (['present' => $present, 'permanent' => $permanent] as $type => $address) {
+            JobseekerAddress::updateOrCreate(
+                ['user_id' => $userId, 'type' => $type],
+                [
+                    'user_id' => $userId,
+                    'type' => $type,
+                    'house_no' => $address['house_no'] ?? null,
+                    'barangay' => $address['barangay'] ?? null,
+                    'municipality' => $address['municipality'] ?? null,
+                    'province' => $address['province'] ?? null,
+                ]
+            );
+        }
+    }
+
+    private function saveResumeSection(int $userId, string $modelClass, array $rows): void
+    {
+        $modelClass::where('user_id', $userId)->delete();
+
+        foreach (array_values($rows) as $sortOrder => $row) {
+            $modelClass::create(array_merge(
+                ['user_id' => $userId, 'sort_order' => $sortOrder],
+                $row
+            ));
+        }
+    }
+
+    private function saveSkills(int $userId, array $otherSkills): void
+    {
+        JobseekerSkill::where('user_id', $userId)->delete();
+
+        $categoryMap = [
+            'trade_manual' => 'trade_manual',
+            'it_technical' => 'it_technical',
+            'soft_skills' => 'soft_skills',
+        ];
+
+        $inserts = [];
+
+        foreach ($categoryMap as $formKey => $category) {
+            foreach ((array) ($otherSkills[$formKey] ?? []) as $skill) {
+                $skill = trim((string) $skill);
+                if ($skill !== '') {
+                    $inserts[] = [
+                        'user_id' => $userId,
+                        'category' => $category,
+                        'skill' => $skill,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        $otherText = trim((string) ($otherSkills['other_text'] ?? ''));
+        if ($otherText !== '') {
+            $inserts[] = [
+                'user_id' => $userId,
+                'category' => 'other',
+                'skill' => $otherText,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if (! empty($inserts)) {
+            JobseekerSkill::insert($inserts);
+        }
+    }
+
+    private function saveSkillsMeta(int $userId, array $otherSkills): void
+    {
+        JobseekerSkillsMeta::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'user_id' => $userId,
+                'other_enabled' => (bool) ($otherSkills['other_enabled'] ?? false),
+                'other_text' => trim((string) ($otherSkills['other_text'] ?? '')),
+                'with_certificate' => (bool) ($otherSkills['with_certificate'] ?? false),
+                'by_experience' => (bool) ($otherSkills['by_experience'] ?? false),
+            ]
+        );
+    }
+
+    private function saveEmploymentStatus(int $userId, array $status, bool $hasWorkExperience): void
+    {
+        JobseekerEmploymentStatus::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'user_id' => $userId,
+                'has_work_experience' => $hasWorkExperience,
+                'wage_employed' => (bool) ($status['wage_employed'] ?? false),
+                'wage_employed_specify' => trim((string) ($status['wage_employed_specify'] ?? '')),
+                'self_employed' => (bool) ($status['self_employed'] ?? false),
+                'self_employed_specify' => trim((string) ($status['self_employed_specify'] ?? '')),
+                'unemployed' => (bool) ($status['unemployed'] ?? false),
+            ]
+        );
+    }
+
+    private function saveJobPreferences(int $userId, array $prefs): void
+    {
+        JobseekerJobPreference::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'user_id' => $userId,
+                'part_time' => (bool) ($prefs['part_time'] ?? false),
+                'full_time' => (bool) ($prefs['full_time'] ?? false),
+                'occupation_text' => trim((string) ($prefs['occupation_text'] ?? '')),
+                'local' => (bool) ($prefs['local'] ?? false),
+                'overseas' => (bool) ($prefs['overseas'] ?? false),
+            ]
+        );
+    }
+
+    private function saveLanguages(int $userId, array $rows): void
+    {
+        JobseekerLanguage::where('user_id', $userId)->delete();
+
+        foreach (array_values($rows) as $sortOrder => $row) {
+            $language = trim((string) ($row['language'] ?? ''));
+            if ($language === '' && trim((string) ($row['other'] ?? '')) === '') {
+                continue;
+            }
+
+            JobseekerLanguage::create([
+                'user_id' => $userId,
+                'language' => $language,
+                'other_specify' => trim((string) ($row['other'] ?? '')),
+                'can_read' => (bool) ($row['read'] ?? false),
+                'can_write' => (bool) ($row['write'] ?? false),
+                'can_speak' => (bool) ($row['speak'] ?? false),
+                'can_understand' => (bool) ($row['understand'] ?? false),
+                'sort_order' => $sortOrder,
+            ]);
+        }
+    }
+
+    private function saveDisability(int $userId, array $data): void
+    {
+        JobseekerDisability::updateOrCreate(
+            ['user_id' => $userId],
+            [
+                'user_id' => $userId,
+                'visual' => (bool) ($data['visual'] ?? false),
+                'speech' => (bool) ($data['speech'] ?? false),
+                'mental' => (bool) ($data['mental'] ?? false),
+                'hearing' => (bool) ($data['hearing'] ?? false),
+                'physical' => (bool) ($data['physical'] ?? false),
+                'other' => (bool) ($data['other'] ?? false),
+                'other_text' => trim((string) ($data['other_text'] ?? '')),
+            ]
+        );
+    }
+
     private function profileFormData(?User $user): array
     {
-        $profile = $user?->profile;
-        $displayName = trim((string) ($user?->name ?? ''));
-        $nameParts = $this->splitDisplayName($displayName);
+        if (! $user) {
+            return $this->blankProfileFormData();
+        }
 
-        $personalInformation = array_merge([
-            'surname' => $nameParts['surname'],
-            'first_name' => $nameParts['first_name'],
-            'middle_initial' => $nameParts['middle_initial'],
-            'suffix' => $nameParts['suffix'],
-            'date_of_birth' => '',
-            'sex' => 'Female',
-            'religion' => '',
-            'civil_status' => '',
-            'height' => '',
-            'tin' => '',
-            'contact_number' => $profile?->phone ?? '',
-            'email_address' => $profile?->resume_email ?? $user?->email ?? '',
-            'currently_in_school' => (bool) data_get($profile, 'personal_information.currently_in_school', false),
-        ], $profile?->personal_information ?? []);
+        $userId = $user->id;
+        $pi = JobseekerPersonalInformation::where('user_id', $userId)->first();
 
-        $presentAddress = array_merge([
-            'house_no' => '',
-            'barangay' => '',
-            'municipality' => '',
-            'province' => '',
-        ], $profile?->present_address ?? $this->splitAddress((string) ($profile?->address ?? '')));
+        $personalInformation = [
+            'first_name' => $pi?->first_name ?? '',
+            'middle_initial' => $pi?->middle_initial ?? '',
+            'surname' => $pi?->surname ?? '',
+            'suffix' => $pi?->suffix ?? '',
+            'date_of_birth' => $pi?->date_of_birth ?? '',
+            'sex' => $pi?->sex ?? '',
+            'religion' => $pi?->religion ?? '',
+            'civil_status' => $pi?->civil_status ?? '',
+            'height' => $pi?->height ?? '',
+            'tin' => $pi?->tin ?? '',
+            'contact_number' => $pi?->contact_number ?? '',
+            'email_address' => $pi?->email_address ?? $user->email ?? '',
+            'currently_in_school' => (bool) ($pi?->currently_in_school ?? false),
+        ];
 
-        $permanentAddress = array_merge([
+        $addresses = JobseekerAddress::where('user_id', $userId)->get()->keyBy('type');
+
+        $presentRow = $addresses->get('present');
+        $permanentRow = $addresses->get('permanent');
+
+        $presentAddress = [
+            'house_no' => $presentRow?->house_no ?? '',
+            'barangay' => $presentRow?->barangay ?? '',
+            'municipality' => $presentRow?->municipality ?? '',
+            'province' => $presentRow?->province ?? '',
+        ];
+
+        $permanentAddress = [
             'same_as_present' => false,
-            'house_no' => '',
-            'barangay' => '',
-            'municipality' => '',
-            'province' => '',
-        ], $profile?->permanent_address ?? []);
+            'house_no' => $permanentRow?->house_no ?? '',
+            'barangay' => $permanentRow?->barangay ?? '',
+            'municipality' => $permanentRow?->municipality ?? '',
+            'province' => $permanentRow?->province ?? '',
+        ];
 
-        $educationRows = $profile?->education ?? [[ 'school' => '', 'course' => '', 'year' => '' ]];
-        $trainingRows = $profile?->training ?? [[ 'course' => '', 'hours' => '', 'institution' => '', 'dates' => '', 'skills' => '', 'certificates' => '' ]];
-        $experienceRows = $profile?->experience ?? [[ 'company' => '', 'title' => '', 'location' => '', 'status' => '', 'from_date' => '', 'to_date' => '', 'salary_amount' => '', 'salary_type' => '', 'details' => '' ]];
-        $eligibilityRows = $profile?->eligibility ?? [[ 'eligibility' => '', 'date_taken' => '', 'license' => '', 'valid_until' => '' ]];
+        $educationRows = JobseekerEducation::where('user_id', $userId)->orderBy('sort_order')->get(['school', 'course', 'year'])->toArray();
 
-        $otherSkills = $profile?->other_skills ?? $this->defaultOtherSkills();
-        $employmentStatus = $profile?->employment_status ?? $this->defaultEmploymentStatus();
-        $employmentStatus['has_work_experience'] = data_get($profile, 'employment_status.has_work_experience', null);
-        $jobPreferences = $profile?->job_preferences ?? $this->defaultJobPreferences();
-        $languages = $profile?->languages ?? $this->defaultLanguages();
-        $disability = $profile?->disability ?? $this->defaultDisability();
+        if (empty($educationRows)) {
+            $educationRows = [['school' => '', 'course' => '', 'year' => '']];
+        }
+
+        $trainingRows = JobseekerTraining::where('user_id', $userId)->orderBy('sort_order')->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates'])->map(fn ($row) => [
+            'course' => $row->course ?? '',
+            'hours' => (string) ($row->hours ?? ''),
+            'institution' => $row->institution ?? '',
+            'dates' => $row->inclusive_dates ?? '',
+            'skills' => $row->skills_acquired ?? '',
+            'certificates' => $row->certificates ?? '',
+        ])->toArray();
+
+        if (empty($trainingRows)) {
+            $trainingRows = [['course' => '', 'hours' => '', 'institution' => '', 'dates' => '', 'skills' => '', 'certificates' => '']];
+        }
+
+        $experienceRows = JobseekerExperience::where('user_id', $userId)->orderBy('sort_order')->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details'])->map(fn ($row) => [
+            'company' => $row->company ?? '',
+            'title' => $row->title ?? '',
+            'location' => $row->location ?? '',
+            'status' => $row->status ?? '',
+            'from_date' => $row->from_date ?? '',
+            'to_date' => $row->to_date ?? '',
+            'salary_amount' => $row->salary_amount !== null ? (string) $row->salary_amount : '',
+            'salary_type' => $row->salary_type ?? '',
+            'details' => $row->details ?? '',
+        ])->toArray();
+
+        if (empty($experienceRows)) {
+            $experienceRows = [['company' => '', 'title' => '', 'location' => '', 'status' => '', 'from_date' => '', 'to_date' => '', 'salary_amount' => '', 'salary_type' => '', 'details' => '']];
+        }
+
+        $eligibilityRows = JobseekerEligibility::where('user_id', $userId)->orderBy('sort_order')->get(['eligibility', 'date_taken', 'license', 'valid_until'])->toArray();
+
+        if (empty($eligibilityRows)) {
+            $eligibilityRows = [['eligibility' => '', 'date_taken' => '', 'license' => '', 'valid_until' => '']];
+        }
+
+        $skillRows = JobseekerSkill::where('user_id', $userId)->get();
+        $meta = JobseekerSkillsMeta::where('user_id', $userId)->first();
+
+        $otherSkills = [
+            'trade_manual' => $skillRows->where('category', 'trade_manual')->pluck('skill')->all(),
+            'it_technical' => $skillRows->where('category', 'it_technical')->pluck('skill')->all(),
+            'soft_skills' => $skillRows->where('category', 'soft_skills')->pluck('skill')->all(),
+            'other_enabled' => (bool) ($meta?->other_enabled ?? false),
+            'other_text' => $skillRows->where('category', 'other')->pluck('skill')->first() ?? ($meta?->other_text ?? ''),
+            'with_certificate' => $meta?->with_certificate,
+            'by_experience' => $meta?->by_experience,
+        ];
+
+        $es = JobseekerEmploymentStatus::where('user_id', $userId)->first();
+
+        $employmentStatus = [
+            'has_work_experience' => $es?->has_work_experience,
+            'wage_employed' => (bool) ($es?->wage_employed ?? false),
+            'wage_employed_specify' => $es?->wage_employed_specify ?? '',
+            'self_employed' => (bool) ($es?->self_employed ?? false),
+            'self_employed_specify' => $es?->self_employed_specify ?? '',
+            'unemployed' => (bool) ($es?->unemployed ?? false),
+        ];
+
+        $jp = JobseekerJobPreference::where('user_id', $userId)->first();
+
+        $jobPreferences = [
+            'part_time' => (bool) ($jp?->part_time ?? false),
+            'full_time' => (bool) ($jp?->full_time ?? false),
+            'local' => (bool) ($jp?->local ?? false),
+            'overseas' => (bool) ($jp?->overseas ?? false),
+            'occupation_text' => $jp?->occupation_text ?? '',
+        ];
+
+        $languages = JobseekerLanguage::where('user_id', $userId)->orderBy('sort_order')->get()->map(fn ($row) => [
+            'language' => $row->language ?? '',
+            'read' => (bool) $row->can_read,
+            'write' => (bool) $row->can_write,
+            'speak' => (bool) $row->can_speak,
+            'understand' => (bool) $row->can_understand,
+            'other' => $row->other_specify ?? '',
+        ])->toArray();
+
+        if (empty($languages)) {
+            $languages = $this->defaultLanguages();
+        }
+
+        $dis = JobseekerDisability::where('user_id', $userId)->first();
+
+        $disability = [
+            'visual' => (bool) ($dis?->visual ?? false),
+            'speech' => (bool) ($dis?->speech ?? false),
+            'mental' => (bool) ($dis?->mental ?? false),
+            'hearing' => (bool) ($dis?->hearing ?? false),
+            'physical' => (bool) ($dis?->physical ?? false),
+            'other' => (bool) ($dis?->other ?? false),
+            'other_text' => $dis?->other_text ?? '',
+        ];
 
         return [
             'user' => $user,
-            'profile' => $profile,
+            'profile' => null,
             'personalInformation' => $personalInformation,
             'presentAddress' => $presentAddress,
             'permanentAddress' => $permanentAddress,
@@ -1169,8 +1497,44 @@ class JobseekerController extends Controller
             'jobPreferences' => $jobPreferences,
             'languages' => $languages,
             'disability' => $disability,
-            'resumeFileName' => $profile?->resume_path ? basename($profile->resume_path) : null,
-            'resumeFileUrl' => $profile?->resume_path ? asset('storage/' . ltrim($profile->resume_path, '/')) : null,
+            'resumeFileName' => null,
+            'resumeFileUrl' => null,
+        ];
+    }
+
+    private function blankProfileFormData(): array
+    {
+        return [
+            'user' => null,
+            'profile' => null,
+            'personalInformation' => [
+                'first_name' => '',
+                'middle_initial' => '',
+                'surname' => '',
+                'suffix' => '',
+                'date_of_birth' => '',
+                'sex' => '',
+                'religion' => '',
+                'civil_status' => '',
+                'height' => '',
+                'tin' => '',
+                'contact_number' => '',
+                'email_address' => '',
+                'currently_in_school' => false,
+            ],
+            'presentAddress' => ['house_no' => '', 'barangay' => '', 'municipality' => '', 'province' => ''],
+            'permanentAddress' => ['same_as_present' => false, 'house_no' => '', 'barangay' => '', 'municipality' => '', 'province' => ''],
+            'educationRows' => [['school' => '', 'course' => '', 'year' => '']],
+            'trainingRows' => [['course' => '', 'hours' => '', 'institution' => '', 'dates' => '', 'skills' => '', 'certificates' => '']],
+            'experienceRows' => [['company' => '', 'title' => '', 'location' => '', 'status' => '', 'from_date' => '', 'to_date' => '', 'salary_amount' => '', 'salary_type' => '', 'details' => '']],
+            'eligibilityRows' => [['eligibility' => '', 'date_taken' => '', 'license' => '', 'valid_until' => '']],
+            'otherSkills' => $this->defaultOtherSkills(),
+            'employmentStatus' => $this->defaultEmploymentStatus(),
+            'jobPreferences' => $this->defaultJobPreferences(),
+            'languages' => $this->defaultLanguages(),
+            'disability' => $this->defaultDisability(),
+            'resumeFileName' => null,
+            'resumeFileUrl' => null,
         ];
     }
 
@@ -2081,5 +2445,61 @@ class JobseekerController extends Controller
         return redirect()
             ->route('jobseeker.applications')
             ->with('status', 'Application submitted successfully!');
+    }
+
+    /**
+     * Calculate jobseeker profile completion percentage
+     */
+    private function calculateJobseekerProfileCompletion(array $profileData): int
+    {
+        $completionFields = 0;
+        $totalFields = 0;
+
+        // Personal Information (6 main fields: first_name, surname, date_of_birth, sex, contact_number, email)
+        $totalFields += 6;
+        if (!empty($profileData['personal']['first_name'])) $completionFields++;
+        if (!empty($profileData['personal']['surname'])) $completionFields++;
+        if (!empty($profileData['personal']['date_of_birth'])) $completionFields++;
+        if (!empty($profileData['personal']['sex'])) $completionFields++;
+        if (!empty($profileData['personal']['contact_number'])) $completionFields++;
+        if (!empty($profileData['personal']['email_address'])) $completionFields++;
+
+        // Address (4 fields: house_no, barangay, municipality, province)
+        $totalFields += 4;
+        $address = $profileData['presentAddress'] ?? [];
+        if (!empty($address['house_no'])) $completionFields++;
+        if (!empty($address['barangay'])) $completionFields++;
+        if (!empty($address['municipality'])) $completionFields++;
+        if (!empty($address['province'])) $completionFields++;
+
+        // Education (at least 1 entry)
+        $totalFields += 1;
+        $education = $profileData['education'] ?? [];
+        if (!empty($education) && count($education) > 0) {
+            $completionFields++;
+        }
+
+        // Training (at least 1 entry)
+        $totalFields += 1;
+        $training = $profileData['training'] ?? [];
+        if (!empty($training) && count($training) > 0) {
+            $completionFields++;
+        }
+
+        // Work Experience (at least 1 entry)
+        $totalFields += 1;
+        $experience = $profileData['experience'] ?? [];
+        if (!empty($experience) && count($experience) > 0) {
+            $completionFields++;
+        }
+
+        // Languages (at least 1 language)
+        $totalFields += 1;
+        $languages = $profileData['languages'] ?? [];
+        if (!empty($languages) && count($languages) > 0) {
+            $completionFields++;
+        }
+
+        return $totalFields > 0 ? (int) round(($completionFields / $totalFields) * 100) : 0;
     }
 }

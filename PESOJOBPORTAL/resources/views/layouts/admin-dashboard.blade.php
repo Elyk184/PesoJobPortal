@@ -17,7 +17,7 @@
     @stack('styles')
 </head>
 <body class="peso-body">
-    <x-admin-wrapper :title="$pageTitle ?? null" :subtitle="$pageSubtitle ?? null" :icon="$pageIcon ?? null">
+    <x-admin-wrapper :title="$pageTitle ?? null" :subtitle="$pageSubtitle ?? null" :icon="$pageIcon ?? null" :hide-admin-topbar="$hideAdminTopbar ?? false">
         @yield('content')
     </x-admin-wrapper>
 

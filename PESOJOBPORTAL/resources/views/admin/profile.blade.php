@@ -61,11 +61,16 @@
             border: 4px solid white;
         }
 
+        .profile-avatar {
+            overflow: hidden;
+        }
+
         .profile-avatar img {
             width: 100%;
             height: 100%;
             border-radius: 12px;
             object-fit: cover;
+            display: block;
         }
 
         .profile-name {
@@ -345,11 +350,7 @@
         <div class="profile-header">
             <div class="profile-avatar-section">
                 <div class="profile-avatar">
-                    @if($admin->profile_photo)
-                        <img src="{{ asset('storage/' . $admin->profile_photo) }}" alt="{{ $admin->name }}">
-                    @else
-                        {{ strtoupper(substr($admin->name, 0, 1)) }}
-                    @endif
+                    <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="{{ $admin->name }}">
                 </div>
             </div>
             <h3 class="profile-name">{{ $admin->name }}</h3>

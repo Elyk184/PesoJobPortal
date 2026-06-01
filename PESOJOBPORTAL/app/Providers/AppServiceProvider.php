@@ -24,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // If DB is unreachable at boot, fall back to file sessions so StartSession middleware
+        // doesn't attempt a DB query and cause an immediate exception (useful for local dev).
+        try {
+            DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            \Log::warning('Database unreachable during boot, falling back session driver to file', ['error' => $e->getMessage()]);
+            config(['session.driver' => 'file']);
+        }
         View::composer([
             'components.admin-wrapper',
             'admin.layouts.sidebar',

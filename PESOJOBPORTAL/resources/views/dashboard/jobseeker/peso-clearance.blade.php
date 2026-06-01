@@ -24,8 +24,8 @@
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		font-weight: 700;
-		color: #c9dcf6;
+				<div class="col-12 col-lg-5" id="request-clearance">
+					<div class="card border-0 shadow-sm h-100 clearance-request-card">
 		margin-bottom: 0.35rem;
 	}
 
@@ -175,6 +175,15 @@
 						<div class="d-flex flex-wrap align-items-center justify-content-lg-end gap-2 ms-lg-auto">
 							<span class="clearance-chip"><i class="bi bi-person"></i>{{ auth()->user()->name ?? 'Jobseeker' }}</span>
 							<span class="clearance-chip"><i class="bi bi-building"></i>Manolo Fortich PESO</span>
+							@if ($canRequestClearance)
+								<a href="#request-clearance" class="clearance-chip text-decoration-none">
+									<i class="bi bi-send"></i>Request Clearance
+								</a>
+							@else
+								<span class="clearance-chip">
+									<i class="bi bi-info-circle"></i>Request Unavailable
+								</span>
+							@endif
 						</div>
 					</div>
 				</div>
@@ -389,8 +398,8 @@
 								</div>
 							</div>
 
-							<div class="col-12 col-lg-5">
-									<div class="card border-0 shadow-sm h-100 clearance-request-card">
+							<div class="col-12 col-lg-5" id="request-clearance">
+								<div class="card border-0 shadow-sm h-100 clearance-request-card">
 									<div class="clearance-request-header">
 										<h3 class="h5 fw-bold mb-1">Request PESO Clearance</h3>
 										<p class="text-muted small mb-0">Send your documents for admin review and issuance.</p>
