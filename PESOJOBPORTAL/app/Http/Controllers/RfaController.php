@@ -62,20 +62,49 @@ class RfaController extends Controller
             'complete_address' => ['nullable', 'string', 'max:200'],
             'phone_email' => ['nullable', 'string', 'max:150'],
             'contract_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
-            'passport_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'passport' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
 
         try {
-            $contractPath = $this->storeOrDefault($request, 'contract_file', self::DEFAULT_CONTRACT_PATH);
-            $passportPath = $this->storeOrDefault($request, 'passport_file', self::DEFAULT_PASSPORT_PATH);
+            $attachments = [];
+
+            foreach (['contract', 'passport'] as $field) {
+                $file = $request->file($field);
+
+                if ($file && $file->isValid()) {
+                    $mime = $file->getMimeType(); // e.g. image/jpeg, application/pdf
+                    $isImage = str_starts_with($mime, 'image/');
+                    $dataUri = null;
+
+                    if ($isImage) {
+                        $binary = file_get_contents($file->getRealPath());
+                        $b64 = base64_encode($binary);
+                        $dataUri = "data:{$mime};base64,{$b64}";
+                    }
+
+                    $attachments[$field] = [
+                        'available' => true,
+                        'is_image' => $isImage,
+                        'filename' => $file->getClientOriginalName(),
+                        'data_uri' => $dataUri, // null for PDFs (can't render inline in DOMPDF)
+                    ];
+                } else {
+                    $attachments[$field] = [
+                        'available' => false,
+                        'is_image' => false,
+                        'filename' => null,
+                        'data_uri' => null,
+                    ];
+                }
+            }
 
             $data = array_merge($validated, [
                 'caseOptions' => $this->caseOptions(),
                 'caseSelections' => $validated['nature_of_case'] ?? [],
                 'page1Background' => public_path('images/rfa.png'),
                 'attachments' => [
-                    'contract' => $this->buildAttachmentData($contractPath, 'Contract Attachment'),
-                    'passport' => $this->buildAttachmentData($passportPath, 'Passport Attachment'),
+                    'contract' => $attachments['contract'],
+                    'passport' => $attachments['passport'],
                 ],
             ]);
 
