@@ -54,6 +54,35 @@
             transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
 
+        .profile-completion-bubble {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            box-shadow: 0 6px 18px rgba(15,23,42,0.08);
+            --p: 0%;
+            background: conic-gradient(#4c7bd9 var(--p), #eef3f8 0deg);
+        }
+
+        .profile-completion-inner {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #123c69;
+            font-size: 0.82rem;
+        }
+
         .profile-card::before {
             content: '';
             position: absolute;
@@ -617,6 +646,9 @@
 
     <div class="profile-header">
         <div class="profile-card">
+            <div class="profile-completion-bubble" style="--p: {{ $profileCompletion }}%;">
+                <div class="profile-completion-inner">{{ $profileCompletion }}%</div>
+            </div>
             <div class="header-stack">
                 <div class="profile-heading">
                     <div class="profile-kicker"><i class="bi bi-person-badge"></i>Jobseeker profile</div>
