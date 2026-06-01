@@ -589,6 +589,24 @@
             $otherSkills['soft_skills'] ?? [],
             [$otherSkills['other_text'] ?? ''],
         ])->flatten()->filter()->count();
+        // Profile completion calculation
+        $completionItems = [
+            !empty($personalInformation?->first_name),
+            !empty($personalInformation?->surname),
+            !empty($personalInformation?->date_of_birth),
+            !empty($personalInformation?->contact_number) || !empty($personalInformation?->email_address) || !empty($jobseeker->email),
+            ($presentAddressLine !== 'Not provided'),
+            ($permanentAddressLine !== 'Not provided'),
+            ($educationRows->count() ?? 0) > 0,
+            ($trainingRows->count() ?? 0) > 0,
+            ($experienceRows->count() ?? 0) > 0,
+            ($eligibilityRows->count() ?? 0) > 0,
+            $skillsCount > 0,
+            count($languages ?? []) > 0,
+        ];
+        $filledCount = collect($completionItems)->filter()->count();
+        $totalCount = count($completionItems);
+        $profileCompletion = $totalCount ? (int) round(($filledCount / $totalCount) * 100) : 0;
     @endphp
 
     <div class="top-action-bar">
@@ -602,16 +620,10 @@
             <div class="header-stack">
                 <div class="profile-heading">
                     <div class="profile-kicker"><i class="bi bi-person-badge"></i>Jobseeker profile</div>
-                    {{--  <div class="profile-avatar">
+                    <div class="profile-avatar">
                         <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="{{ $displayName }}">
-                    </div>  --}}
-                      <div class="profile-avatar">
-
-                      {{--  image pfp here just remove comment  --}}
-
-
-                        <img src="https://i.pinimg.com/originals/84/c4/97/84c49797233cf38289e7961f9930f1e1.gif" alt="{{ $displayName }}">
                     </div>
+                    
                     <div class="profile-info">
                         <h3>{{ $displayName }}</h3>
                         <p><i class="bi bi-envelope-paper me-2"></i>{{ $jobseeker->email }}</p>
@@ -626,6 +638,15 @@
                 <div class="profile-meta-item"><i class="bi bi-mortarboard-fill"></i><span>{{ $educationRows->count() }} Education Records</span></div>
                 <div class="profile-meta-item"><i class="bi bi-stars"></i><span>{{ $skillsCount }} Skills Listed</span></div>
                 <div class="profile-meta-item"><i class="bi bi-briefcase-fill"></i><span>{{ $availableJobs->count() }} Jobs Available</span></div>
+            </div>
+            <div class="profile-progress" style="margin-top:1rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;color:#334155;font-weight:700;">
+                    <span>Profile Completion</span>
+                    <span style="color:#0f172a;">{{ $profileCompletion }}%</span>
+                </div>
+                <div style="background:#eef3f8;border-radius:999px;height:12px;overflow:hidden;">
+                    <div style="width:{{ $profileCompletion }}%;height:100%;background:linear-gradient(90deg,#4c7bd9 0%,#67b7ff 100%);box-shadow:inset 0 -2px 6px rgba(0,0,0,0.06);"></div>
+                </div>
             </div>
         </div>
     </div>
