@@ -153,13 +153,13 @@
             margin-top: 4px;
         }
 
-        /* Pages */
-        .page {
-            page-break-after: always;
-            padding-top: 20px;
+        /* --- Page Breaks --- */
+        .page-break {
+            page-break-before: always;
         }
-        .page:last-child {
-            page-break-after: auto;
+        
+        .doc-container {
+            padding-top: 20px;
         }
         .doc-title {
             font-size: 11px;
@@ -385,7 +385,9 @@
         </table>
     </div>
 
-    <div class="page">
+    <div class="page-break"></div>
+
+    <div class="doc-container">
         <div class="doc-title">Page 2 - Employment Contract</div>
         <div class="doc-frame">
             @php
@@ -409,7 +411,9 @@
         </div>
     </div>
 
-    <div class="page">
+    <div class="page-break"></div>
+
+    <div class="doc-container">
         <div class="doc-title">Page 3 - Passport</div>
         <div class="doc-frame">
             @php

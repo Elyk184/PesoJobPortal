@@ -416,7 +416,6 @@
             </div>
         </div>
 
-        <!-- Section: Attachments -->
         <div class="rfa-section-bar">Attachments</div>
         
         <div class="rfa-g2 mt8">
@@ -430,7 +429,6 @@
             </div>
         </div>
 
-        <!-- Submit Actions -->
         <div class="rfa-actions">
             <button type="submit" class="rfa-btn-submit">
                 Download PDF
