@@ -227,35 +227,51 @@
         }
 
         .info-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.9rem;
-            border-bottom: 1px solid #edf1f5;
+            display: grid;
+            grid-template-columns: minmax(150px, 190px) 1fr;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 0.8rem;
+            padding: 0.8rem 0.95rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fbfcfe;
         }
 
         .info-row:last-child {
-            border-bottom: none;
+            border-bottom: 1px solid #e2e8f0;
             margin-bottom: 0;
-            padding-bottom: 0;
+            padding-bottom: 0.8rem;
         }
 
         .info-label {
-            font-weight: 700;
-            color: #6b7280;
+            font-weight: 800;
+            color: #64748b;
             min-width: 132px;
-            font-size: 13px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.9px;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            line-height: 1.3;
+        }
+
+        .info-label i {
+            color: #718096;
+            font-size: 13px;
         }
 
         .info-value {
-            color: #0f172a;
-            font-weight: 600;
-            line-height: 1.6;
+            color: #0b1a33;
+            font-weight: 700;
+            font-size: 1.12rem;
+            line-height: 1.35;
+            background: #ffffff;
+            border: 1px solid #dbe4ef;
+            border-radius: 10px;
+            padding: 0.45rem 0.7rem;
+            word-break: break-word;
         }
 
         .application-item {
@@ -474,8 +490,8 @@
         }
 
         .compact-section .info-row {
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 0.72rem;
+            padding: 0.72rem 0.85rem;
         }
 
         .header-stack {
@@ -512,6 +528,15 @@
             .profile-card,
             .dashboard-card {
                 border-radius: 16px;
+            }
+
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .info-value {
+                font-size: 1.02rem;
             }
 
             .profile-meta-grid {
