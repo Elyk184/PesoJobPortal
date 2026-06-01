@@ -196,11 +196,11 @@
         .dashboard-card h5 {
             color: #17395c;
             font-weight: 800;
-            margin: 0 0 1.25rem 0;
-            padding-bottom: 0.95rem;
-            border-bottom: 2px solid #c9d6ff;
-            font-size: 2rem;
-            letter-spacing: 0;
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid #e3e8ee;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -233,17 +233,17 @@
         }
 
         .info-label {
-            font-weight: 800;
-            color: #123c69;
+            font-weight: 700;
+            color: #31475a;
             min-width: 0;
-            font-size: 1.08rem;
+            font-size: 0.95rem;
             text-transform: none;
             letter-spacing: 0;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            line-height: 1.3;
-            margin-bottom: 0.2rem;
+            line-height: 1.25;
+            margin-bottom: 0.25rem;
         }
 
         .info-label i {
