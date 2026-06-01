@@ -38,7 +38,7 @@
                         Use the OWWA form for support concerns handled under OWWA assistance workflows.
                     </p>
 
-                    <a href="{{ route('rfa.form') }}" class="btn btn-danger w-100">
+                    <a href="{{ route('ofw.rfa.form') }}" class="btn btn-danger w-100">
                         <i class="bi bi-box-arrow-up-right me-2"></i>Open OWWA Form
                     </a>
                 </div>

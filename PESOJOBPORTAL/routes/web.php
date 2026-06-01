@@ -27,6 +27,8 @@ Route::middleware('auth')->prefix('ofw')->name('ofw.')->group(function () {
     Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
     Route::get('/owwa-request', [OfwController::class, 'owwaRequest'])->name('owwa-request');
     Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
+    Route::get('/rfa', [RfaController::class, 'create'])->name('rfa.form');
+    Route::post('/rfa/download', [RfaController::class, 'download'])->name('rfa.download');
 });
 
 // Auth routes
@@ -62,8 +64,7 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 
-Route::get('/rfa', [RfaController::class, 'create'])->name('rfa.form');
-Route::post('/rfa/download', [RfaController::class, 'download'])->name('rfa.download');
+Route::redirect('/rfa', '/ofw/rfa');
 
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

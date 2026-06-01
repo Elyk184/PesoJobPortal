@@ -18,7 +18,7 @@ class RfaController extends Controller
 
     public function create(): View
     {
-        return view('rfa.form', [
+        return view('dashboard.ofw.rfa.form', [
             'caseOptions' => $this->caseOptions(),
         ]);
     }
@@ -108,7 +108,7 @@ class RfaController extends Controller
                 ],
             ]);
 
-            $pdf = Pdf::loadView('rfa.pdf', $data)
+            $pdf = Pdf::loadView('dashboard.ofw.rfa.pdf', $data)
                 ->setPaper('legal', 'portrait');
 
             return $pdf->download('rfa.pdf');
@@ -118,7 +118,7 @@ class RfaController extends Controller
             ]);
 
             return redirect()
-                ->route('rfa.form')
+                ->route('ofw.rfa.form')
                 ->withErrors(['rfa_export' => 'Unable to export PDF right now. Please try again.']);
         }
     }

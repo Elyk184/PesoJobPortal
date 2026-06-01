@@ -204,7 +204,7 @@
 
     <form class="rfa-sheet"
                 method="POST"
-                action="{{ route('rfa.download') }}"
+                action="{{ route('ofw.rfa.download') }}"
                 enctype="multipart/form-data"
                 id="rfaForm">
         @csrf

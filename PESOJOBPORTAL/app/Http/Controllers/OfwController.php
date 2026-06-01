@@ -10,7 +10,7 @@ class OfwController extends Controller
 {
     public function dashboard(Request $request): View
     {
-        return view('dashboard.ofw', $this->dashboardData($request));
+        return view('dashboard.ofw.dashboard', $this->dashboardData($request));
     }
 
     public function acceptedRequests(Request $request): View
