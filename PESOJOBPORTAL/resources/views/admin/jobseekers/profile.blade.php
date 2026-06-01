@@ -37,7 +37,7 @@
 
         .profile-header {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 280px;
+            grid-template-columns: 1fr;
             gap: 2rem;
             margin-bottom: 3rem;
             align-items: start;
@@ -135,12 +135,6 @@
             align-items: center;
             justify-content: center;
             gap: 0.35rem;
-        }
-
-        .action-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
         }
 
         .btn-action {
@@ -436,22 +430,9 @@
         }
 
         .profile-card,
-        .dashboard-card,
-        .action-sidebar {
+        .dashboard-card {
             border: 1px solid #dce3ea;
             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-        }
-
-        .action-sidebar {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 1.25rem;
-            align-self: start;
-        }
-
-        .action-sidebar .btn-action {
-            width: 100%;
-            justify-content: center;
         }
 
         .profile-meta-grid {
@@ -522,14 +503,6 @@
         }
 
         @media (max-width: 992px) {
-            .profile-header {
-                grid-template-columns: 1fr;
-            }
-
-            .action-sidebar {
-                flex-direction: row;
-            }
-
             .section-span-6 {
                 grid-column: span 12;
             }
@@ -537,8 +510,7 @@
 
         @media (max-width: 768px) {
             .profile-card,
-            .dashboard-card,
-            .action-sidebar {
+            .dashboard-card {
                 border-radius: 16px;
             }
 
@@ -612,14 +584,6 @@
                 <div class="profile-meta-item"><i class="bi bi-stars"></i><span>{{ $skillsCount }} Skills Listed</span></div>
                 <div class="profile-meta-item"><i class="bi bi-briefcase-fill"></i><span>{{ $availableJobs->count() }} Jobs Available</span></div>
             </div>
-        </div>
-
-        <div class="action-sidebar">
-            <button type="button" class="btn btn-action btn-recommend open-recommend-modal"
-                    data-jobseeker-id="{{ $jobseeker->id }}"
-                    data-jobseeker-name="{{ $displayName }}">
-                <i class="bi bi-stars"></i> Recommend Job
-            </button>
         </div>
     </div>
 
