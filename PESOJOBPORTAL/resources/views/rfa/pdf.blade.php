@@ -5,229 +5,433 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Request for Assistance Form</title>
     <style>
-        @page { size: legal portrait; margin: 0; }
+        @page { 
+            size: legal portrait; 
+            margin: 20px; 
+        }
 
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 8.5px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11px;
             color: #111;
-            line-height: 1.1;
+            line-height: 1.2;
             margin: 0;
             padding: 0;
         }
 
-        .page {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            page-break-after: always;
+        /* Form Container */
+        .rfa-sheet {
+            padding: 20px;
+            border: 1.5px solid #111;
         }
 
+        /* Table Resets for Layouts */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+            table-layout: fixed;
+        }
+        td {
+            vertical-align: bottom;
+            padding: 2px 4px;
+        }
+
+        /* Header */
+        .header-table {
+            border: 1.5px solid #111;
+            margin-bottom: 12px;
+        }
+        .header-logo {
+            width: 75px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
+        }
+        .header-logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #555;
+        }
+        .header-center {
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
+        }
+        .header-center p {
+            margin: 2px 0;
+            font-size: 10.5px;
+        }
+        .header-center .bold {
+            font-weight: 700;
+            font-size: 11px;
+        }
+        .header-center .title {
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        .header-stamp {
+            width: 90px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
+        }
+        .stamp-box {
+            border: 2px solid #b91c1c;
+            color: #b91c1c;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 6px 4px;
+            line-height: 1.2;
+        }
+
+        /* Section Bars */
+        .section-bar {
+            font-weight: 700;
+            font-size: 10.5px;
+            text-transform: uppercase;
+            border-top: 1px solid #111;
+            border-bottom: 1px solid #111;
+            padding: 5px 0;
+            margin: 12px 0 8px;
+        }
+
+        /* Fields */
+        .field-label {
+            font-size: 10px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .field-value {
+            border-bottom: 1px solid #555;
+            font-size: 11px;
+            min-height: 14px;
+            word-wrap: break-word;
+        }
+        .field-value-box {
+            border: 1px solid #555;
+            padding: 6px;
+            min-height: 50px;
+            font-size: 11px;
+        }
+
+        /* Checkboxes */
+        .cb-table td {
+            vertical-align: top;
+            font-size: 10.5px;
+            padding: 2px;
+            line-height: 1.4;
+        }
+        /* Uses DejaVu Sans explicitly to fix the "?" DOMPDF issue */
+        .check-icon {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Notice Block */
+        .notice {
+            border: 1px solid #111;
+            padding: 8px 12px;
+            margin: 12px 0;
+            font-size: 10px;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Signatures */
+        .sig-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* Pages */
+        .page {
+            page-break-after: always;
+            padding-top: 20px;
+        }
         .page:last-child {
             page-break-after: auto;
         }
-
-        .page-bg {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: fill;
-        }
-
-        .field {
-            position: absolute;
-            z-index: 1;
-            color: #111;
-            text-shadow: 0 0 0.2px #fff;
-        }
-
-        .field-sm {
-            font-size: 8.5px;
-        }
-
-        .field-wrap {
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .page2,
-        .page3 {
-            box-sizing: border-box;
-            padding: 0;
-        }
-
         .doc-title {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            margin: 0;
             text-align: center;
+            margin-bottom: 10px;
             text-transform: uppercase;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 8px;
-            z-index: 2;
         }
-
         .doc-frame {
-            position: absolute;
-            inset: 24px 18px 18px 18px;
             border: 1px solid #000;
-            box-sizing: border-box;
-            overflow: hidden;
+            padding: 10px;
+            height: 850px;
+            text-align: center;
         }
-
         .doc-image {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 830px;
             object-fit: contain;
         }
-
         .doc-placeholder {
-            position: absolute;
-            inset: 0;
+            padding-top: 400px;
             color: #222;
             font-size: 12px;
-            line-height: 1.5;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 12px;
-        }
-
-        .doc-filename {
-            margin-top: 8px;
-            font-size: 10px;
-            color: #555;
-            word-break: break-word;
         }
     </style>
 </head>
 <body>
-    <div class="page">
-        @if (!empty($page1Background) && file_exists($page1Background))
-            <img class="page-bg" src="{{ $page1Background }}" alt="RFA background">
-        @endif
 
-        @php
-            $selectedCases = collect($caseSelections ?? [])
-                ->map(function ($key) use ($caseOptions) {
-                    return $caseOptions[$key] ?? null;
-                })
-                ->filter()
-                ->values();
-        @endphp
+    <div class="rfa-sheet">
+        
+        <table class="header-table">
+            <tr>
+                <td class="header-logo">
+                    <img src="{{ public_path('images/owwa-logo.png') }}" alt="OWWA Logo">
+                </td>
+                <td class="header-center">
+                    <p>DEPARTMENT OF LABOR AND EMPLOYMENT</p>
+                    <p class="bold">OVERSEAS WORKERS WELFARE ADMINISTRATION</p>
+                    <p>Regional Welfare Office No. 10</p>
+                    <p>Cagayan de Oro City</p>
+                    <p class="title">Request for Assistance Form</p>
+                </td>
+                <td class="header-stamp">
+                    <div class="stamp-box">THIS FORM IS<br>NOT FOR SALE</div>
+                </td>
+            </tr>
+        </table>
 
-        <div class="field field-sm" style="left: 10%; top: 16.5%; width: 32%;">{{ $e_cares_ticket_number ?? '' }}</div>
-        <div class="field field-sm" style="left: 64%; top: 16.5%; width: 26%;">{{ $date ?? '' }}</div>
+        <table>
+            <tr>
+                <td style="width: 50%;">
+                    <span class="field-label">E-Cares Ticket Number:</span>
+                    <div class="field-value">{{ $e_cares_ticket_number ?? '' }}</div>
+                </td>
+                <td style="width: 50%;">
+                    <span class="field-label">Date:</span>
+                    <div class="field-value">{{ $date ?? '' }}</div>
+                </td>
+            </tr>
+        </table>
 
-        <div class="field field-sm" style="left: 9.5%; top: 21.7%; width: 80%;">
-            <table style="width:100%; border-collapse:collapse; table-layout:fixed; font-size:8px;">
-                @php
-                    $caseKeys = array_keys($caseOptions);
-                    $col1 = array_slice($caseKeys, 0, 5);
-                    $col2 = array_slice($caseKeys, 5, 5);
-                    $col3 = array_slice($caseKeys, 10);
-                @endphp
-                <tr>
-                    <td style="width: 33%; vertical-align: top; padding-right: 4px;">
-                        @foreach ($col1 as $key)
-                            <div>[ {!! in_array($key, $caseSelections ?? [], true) ? '&#10003;' : '&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
-                        @endforeach
-                    </td>
-                    <td style="width: 33%; vertical-align: top; padding-right: 4px;">
-                        @foreach ($col2 as $key)
-                            <div>[ {!! in_array($key, $caseSelections ?? [], true) ? '&#10003;' : '&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
-                        @endforeach
-                    </td>
-                    <td style="width: 34%; vertical-align: top;">
-                        @foreach ($col3 as $key)
-                            <div>[ {!! in_array($key, $caseSelections ?? [], true) ? '&#10003;' : '&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
-                        @endforeach
-                        <div>[ {!! !empty($nature_of_case_other) ? '&#10003;' : '&nbsp;' !!} ] Others: {{ $nature_of_case_other ?? '' }}</div>
-                    </td>
-                </tr>
-            </table>
+        <div class="section-bar">Nature of Case / Request</div>
+        <table class="cb-table">
+            @php
+                $selections = $caseSelections ?? [];
+                $otherSelected = in_array('others', $selections, true) || !empty($nature_of_case_other);
+                $caseKeys = array_keys($caseOptions);
+                $col1 = array_slice($caseKeys, 0, 5);
+                $col2 = array_slice($caseKeys, 5, 5);
+                $col3 = array_slice($caseKeys, 10);
+                
+                // Set DOMPDF safe checkmark
+                $checkMark = '<span class="check-icon">&#10003;</span>';
+            @endphp
+            <tr>
+                <td style="width: 33%;">
+                    @foreach ($col1 as $key)
+                        <div>[ {!! in_array($key, $selections, true) ? $checkMark : '&nbsp;&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
+                    @endforeach
+                </td>
+                <td style="width: 33%;">
+                    @foreach ($col2 as $key)
+                        <div>[ {!! in_array($key, $selections, true) ? $checkMark : '&nbsp;&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
+                    @endforeach
+                </td>
+                <td style="width: 34%;">
+                    @foreach ($col3 as $key)
+                        <div>[ {!! in_array($key, $selections, true) ? $checkMark : '&nbsp;&nbsp;' !!} ] {{ $caseOptions[$key] ?? '' }}</div>
+                    @endforeach
+                    <div>
+                        [ {!! $otherSelected ? $checkMark : '&nbsp;&nbsp;' !!} ] Others: 
+                        <span style="border-bottom: 1px solid #555; display: inline-block; width: 65%;">{{ $nature_of_case_other ?? '' }}</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-bar">OFW's Background and Employment Record</div>
+        
+        <table>
+            <tr>
+                <td style="width: 25%;"><span class="field-label">Name of OFW: [ First ]</span><div class="field-value">{{ $ofw_first ?? '' }}</div></td>
+                <td style="width: 25%;"><span class="field-label">[ Middle ]</span><div class="field-value">{{ $ofw_middle ?? '' }}</div></td>
+                <td style="width: 25%;"><span class="field-label">[ Last ]</span><div class="field-value">{{ $ofw_last ?? '' }}</div></td>
+                <td style="width: 25%;"><span class="field-label">Contact No.</span><div class="field-value">{{ $contact_no ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 20%;"><span class="field-label">Position:</span><div class="field-value">{{ $position ?? '' }}</div></td>
+                <td style="width: 20%;"><span class="field-label">Sex:</span><div class="field-value">{{ $sex ?? '' }}</div></td>
+                <td style="width: 20%;"><span class="field-label">Birthdate:</span><div class="field-value">{{ $birthdate ?? '' }}</div></td>
+                <td style="width: 20%;"><span class="field-label">Age:</span><div class="field-value">{{ $age ?? '' }}</div></td>
+                <td style="width: 20%;"><span class="field-label">Civil Status:</span><div class="field-value">{{ $civil_status ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 33%;"><span class="field-label">Facebook Name:</span><div class="field-value">{{ $facebook_name ?? '' }}</div></td>
+                <td style="width: 34%;"><span class="field-label">Highest Educational Attainment:</span><div class="field-value">{{ $highest_education ?? '' }}</div></td>
+                <td style="width: 33%;"><span class="field-label">Religion:</span><div class="field-value">{{ $religion ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 50%;"><span class="field-label">No. of Children:</span><div class="field-value">{{ $children_count ?? '' }}</div></td>
+                <td style="width: 50%;"><span class="field-label">Name of Employer:</span><div class="field-value">{{ $employer_name ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 100%;"><span class="field-label">Jobsite:</span><div class="field-value">{{ $jobsite ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 50%;"><span class="field-label">Tel. No. / Fax No.:</span><div class="field-value">{{ $tel_fax ?? '' }}</div></td>
+                <td style="width: 50%;"><span class="field-label">Monthly Salary:</span><div class="field-value">{{ $monthly_salary ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 100%;"><span class="field-label">Name of Foreign Recruitment Agency:</span><div class="field-value">{{ $foreign_recruitment_agency ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 50%;"><span class="field-label">Address and Tel. No.:</span><div class="field-value">{{ $agency_address_tel ?? '' }}</div></td>
+                <td style="width: 50%;"><span class="field-label">Name of Local Agency:</span><div class="field-value">{{ $local_agency ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 50%;"><span class="field-label">Date of Latest Departure From the Philippines:</span><div class="field-value">{{ $latest_departure ?? '' }}</div></td>
+                <td style="width: 50%;"><span class="field-label">OFW's Previous Employment (Please Specify Country):</span><div class="field-value">{{ $previous_employment_country ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 33%;"><span class="field-label">For Death Case: Date of Death:</span><div class="field-value">{{ $death_date ?? '' }}</div></td>
+                <td style="width: 34%;"><span class="field-label">Cause of Death:</span><div class="field-value">{{ $death_cause ?? '' }}</div></td>
+                <td style="width: 33%;"><span class="field-label">Place of Death:</span><div class="field-value">{{ $death_place ?? '' }}</div></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td style="width: 100%;">
+                    <span class="field-label">Facts of the Case [Isalaysay ang Inyong Request]:</span>
+                    <div class="field-value-box">{!! nl2br(e($facts_of_case ?? '')) !!}</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="notice">
+            In case of my failure to follow up OWWA on development within two (2) months from the date of filing,
+            it is contracted that the case has been resolved already, the same shall be achieved.
         </div>
 
-        <div class="field field-sm" style="left: 18%; top: 33.5%; width: 22%;">{{ $ofw_first ?? '' }}</div>
-        <div class="field field-sm" style="left: 42%; top: 33.5%; width: 18%;">{{ $ofw_middle ?? '' }}</div>
-        <div class="field field-sm" style="left: 66%; top: 33.5%; width: 17%;">{{ $ofw_last ?? '' }}</div>
-        <div class="field field-sm" style="left: 82%; top: 33.5%; width: 13%;">{{ $contact_no ?? '' }}</div>
+        <div class="section-bar">Requesting Party</div>
 
-        <div class="field field-sm" style="left: 10%; top: 38.6%; width: 13%;">{{ $position ?? '' }}</div>
-        <div class="field field-sm" style="left: 25%; top: 38.6%; width: 7%;">{{ $sex ?? '' }}</div>
-        <div class="field field-sm" style="left: 38%; top: 38.6%; width: 12%;">{{ $birthdate ?? '' }}</div>
-        <div class="field field-sm" style="left: 52%; top: 38.6%; width: 6%;">{{ $age ?? '' }}</div>
-        <div class="field field-sm" style="left: 63%; top: 38.6%; width: 16%;">{{ $civil_status ?? '' }}</div>
-        <div class="field field-sm" style="left: 78%; top: 38.6%; width: 17%;">{{ $facebook_name ?? '' }}</div>
+        <table style="margin-top: 15px;">
+            <tr>
+                <td style="width: 50%; padding: 0 10px;">
+                    <div style="border-bottom: 1px solid #111; min-height: 20px; text-align: center; font-size: 11px; padding-bottom: 2px;">
+                        {{ $requesting_party ?? '' }}
+                    </div>
+                    <div class="sig-label">Name &amp; Signature of Requesting Party</div>
+                </td>
+                <td style="width: 50%; padding: 0 10px;">
+                    <div style="border-bottom: 1px solid #111; min-height: 20px; text-align: center; font-size: 11px; padding-bottom: 2px;">
+                        {{ $relationship_to_ofw ?? '' }}
+                    </div>
+                    <div class="sig-label">Relationship to OFW</div>
+                </td>
+            </tr>
+        </table>
 
-        <div class="field field-sm" style="left: 10%; top: 43.5%; width: 38%;">{{ $highest_education ?? '' }}</div>
-        <div class="field field-sm" style="left: 50%; top: 43.5%; width: 26%;">{{ $religion ?? '' }}</div>
-        <div class="field field-sm" style="left: 75%; top: 43.5%; width: 18%;">{{ $children_count ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 48.3%; width: 86%;">{{ $employer_name ?? '' }}</div>
-        <div class="field field-sm" style="left: 10%; top: 52.8%; width: 86%;">{{ $jobsite ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 57.2%; width: 40%;">{{ $tel_fax ?? '' }}</div>
-        <div class="field field-sm" style="left: 56%; top: 57.2%; width: 28%;">{{ $monthly_salary ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 61.7%; width: 41%;">{{ $foreign_recruitment_agency ?? '' }}</div>
-        <div class="field field-sm" style="left: 55%; top: 61.7%; width: 39%;">{{ $agency_address_tel ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 66.3%; width: 86%;">{{ $local_agency ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 70.8%; width: 40%;">{{ $latest_departure ?? '' }}</div>
-        <div class="field field-sm" style="left: 52%; top: 70.8%; width: 40%;">{{ $previous_employment_country ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 10%; top: 73.5%; width: 20%;">{{ $death_date ?? '' }}</div>
-        <div class="field field-sm" style="left: 30%; top: 73.5%; width: 34%;">{{ $death_cause ?? '' }}</div>
-        <div class="field field-sm" style="left: 66%; top: 73.5%; width: 24%;">{{ $death_place ?? '' }}</div>
-
-        <div class="field field-sm field-wrap" style="left: 10%; top: 79%; max-width: 80%; height: 12%; overflow: hidden;">{{ $facts_of_case ?? '' }}</div>
-
-        <div class="field field-sm" style="left: 18%; top: 92.5%; width: 32%; text-align: center;">{{ $requesting_party ?? '' }}</div>
-        <div class="field field-sm" style="left: 68%; top: 92.5%; width: 26%; text-align: center;">{{ $relationship_to_ofw ?? '' }}</div>
-        <div class="field field-sm" style="left: 18%; top: 96.5%; width: 32%; text-align: center;">{{ $complete_address ?? '' }}</div>
-        <div class="field field-sm" style="left: 68%; top: 96.5%; width: 26%; text-align: center;">{{ $phone_email ?? '' }}</div>
+        <table style="margin-top: 15px;">
+            <tr>
+                <td style="width: 50%; padding: 0 10px;">
+                    <div style="border-bottom: 1px solid #111; min-height: 20px; text-align: center; font-size: 11px; padding-bottom: 2px;">
+                        {{ $complete_address ?? '' }}
+                    </div>
+                    <div class="sig-label">Complete Address</div>
+                </td>
+                <td style="width: 50%; padding: 0 10px;">
+                    <div style="border-bottom: 1px solid #111; min-height: 20px; text-align: center; font-size: 11px; padding-bottom: 2px;">
+                        {{ $phone_email ?? '' }}
+                    </div>
+                    <div class="sig-label">Phone No. / Email Address</div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <div class="page page2">
+    <div class="page">
         <div class="doc-title">Page 2 - Employment Contract</div>
         <div class="doc-frame">
-            @if (($attachments['contract']['available'] ?? false) && ($attachments['contract']['is_image'] ?? false) && !empty($attachments['contract']['data_uri']))
-                <img class="doc-image" src="{{ $attachments['contract']['data_uri'] }}" alt="Contract Attachment">
+            @php
+                $contract = $attachments['contract'] ?? [];
+            @endphp
+
+            @if (($contract['available'] ?? false) && ($contract['is_image'] ?? false) && !empty($contract['data_uri']))
+                <img class="doc-image" src="{{ $contract['data_uri'] }}" alt="Contract Attachment">
+            @elseif ($contract['available'] ?? false)
+                <div class="doc-placeholder">
+                    <div>Employment contract attachment added.</div>
+                    <div style="margin-top:8px;">
+                        <span style="font-size:10px;font-weight:700;">{{ $contract['filename'] ?? 'PDF' }}</span>
+                    </div>
+                </div>
             @else
                 <div class="doc-placeholder">
-                    <div>Employment contract preview is not available in this generated PDF.</div>
-                    @if (!empty($attachments['contract']['filename']))
-                        <div class="doc-filename">{{ $attachments['contract']['filename'] }}</div>
-                    @endif
+                    <div>Employment contract not provided.</div>
                 </div>
             @endif
         </div>
     </div>
 
-    <div class="page page3">
+    <div class="page">
         <div class="doc-title">Page 3 - Passport</div>
         <div class="doc-frame">
-            @if (($attachments['passport']['available'] ?? false) && ($attachments['passport']['is_image'] ?? false) && !empty($attachments['passport']['data_uri']))
-                <img class="doc-image" src="{{ $attachments['passport']['data_uri'] }}" alt="Passport Attachment">
+            @php
+                $passport = $attachments['passport'] ?? [];
+            @endphp
+
+            @if (($passport['available'] ?? false) && ($passport['is_image'] ?? false) && !empty($passport['data_uri']))
+                <img class="doc-image" src="{{ $passport['data_uri'] }}" alt="Passport Attachment">
+            @elseif ($passport['available'] ?? false)
+                <div class="doc-placeholder">
+                    <div>Passport attachment added.</div>
+                    <div style="margin-top:8px;">
+                        <span style="font-size:10px;font-weight:700;">{{ $passport['filename'] ?? 'PDF' }}</span>
+                    </div>
+                </div>
             @else
                 <div class="doc-placeholder">
-                    <div>Passport preview is not available in this generated PDF.</div>
-                    @if (!empty($attachments['passport']['filename']))
-                        <div class="doc-filename">{{ $attachments['passport']['filename'] }}</div>
-                    @endif
+                    <div>Passport not provided.</div>
                 </div>
             @endif
         </div>
     </div>
+
 </body>
 </html>

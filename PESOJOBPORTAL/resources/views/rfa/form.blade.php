@@ -394,36 +394,14 @@
 
         <div class="rfa-section-bar">Requesting Party</div>
 
-        <div class="rfa-sig-grid">
-            <div class="rfa-sig-block">
-                <div class="rfa-sig-line"></div>
-                <label>Name &amp; Signature of Requesting Party</label>
-            </div>
-            <div class="rfa-sig-block">
-                <div class="rfa-sig-line"></div>
-                <label>Relationship to OFW</label>
-            </div>
-        </div>
-
         <div class="rfa-g2 mt8">
             <div class="rfa-field">
-                <label>Name of Requesting Party:</label>
+                <label>Name & Signature of Requesting Party:</label>
                 <input type="text" name="requesting_party" value="{{ old('requesting_party') }}">
             </div>
             <div class="rfa-field">
                 <label>Relationship to OFW:</label>
                 <input type="text" name="relationship_to_ofw" value="{{ old('relationship_to_ofw') }}">
-            </div>
-        </div>
-
-        <div class="rfa-sig-grid mt10">
-            <div class="rfa-sig-block">
-                <div class="rfa-sig-line"></div>
-                <label>Complete Address</label>
-            </div>
-            <div class="rfa-sig-block">
-                <div class="rfa-sig-line"></div>
-                <label>Phone No. / Email Address</label>
             </div>
         </div>
 
@@ -438,54 +416,29 @@
             </div>
         </div>
 
-        <div class="rfa-section-bar">Required Documents (will appear as Page 2 &amp; 3 of the PDF)</div>
-
-        <div class="rfa-g2 mt6">
+        <!-- Section: Attachments -->
+        <div class="rfa-section-bar">Attachments</div>
+        
+        <div class="rfa-g2 mt8">
             <div class="rfa-field">
-                <label>Page 2 -- Employment Contract <span style="color:#b91c1c">*</span></label>
-                <input type="file" name="contract_file" id="contract_file"
-                             accept=".pdf,.jpg,.jpeg,.png">
-                <div class="rfa-file-note">Accepted: PDF, JPG, PNG -- max 10 MB</div>
-                @error('contract_file')
-                    <div style="color:#b91c1c;font-size:10px;margin-top:2px">{{ $message }}</div>
-                @enderror
+                <label>Employment Contract (PDF/Image):</label>
+                <input type="file" name="contract" accept=".pdf,image/*">
             </div>
             <div class="rfa-field">
-                <label>Page 3 -- Passport <span style="color:#b91c1c">*</span></label>
-                <input type="file" name="passport_file" id="passport_file"
-                             accept=".pdf,.jpg,.jpeg,.png">
-                <div class="rfa-file-note">Accepted: PDF, JPG, PNG -- max 10 MB</div>
-                @error('passport_file')
-                    <div style="color:#b91c1c;font-size:10px;margin-top:2px">{{ $message }}</div>
-                @enderror
+                <label>Passport (PDF/Image):</label>
+                <input type="file" name="passport" accept=".pdf,image/*">
             </div>
         </div>
 
+        <!-- Submit Actions -->
         <div class="rfa-actions">
-            <button type="submit" class="rfa-btn-submit" id="submitBtn">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
-                         viewBox="0 0 24 24" style="flex-shrink:0">
-                    <path d="M12 15V3m0 12-4-4m4 4 4-4M2 17v2a2 2 0 002 2h16a2 2 0 002-2v-2"/>
-                </svg>
-                Download Filled PDF
+            <button type="submit" class="rfa-btn-submit">
+                Download PDF
             </button>
         </div>
 
     </form>
-</div>
-</div>
 
-<script>
-document.getElementById('rfaForm').addEventListener('submit', function () {
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" style="animation:rfa-spin 1s linear infinite;flex-shrink:0">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83
-                             M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-        Generating PDF...`;
-});
-</script>
+</div>
+</div>
 @endsection
