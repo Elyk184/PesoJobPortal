@@ -932,12 +932,7 @@
                     <span>LRA/SRA Approvals</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.document-verification') }}" class="sidebar-menu-link">
-                    <i class="bi bi-file-earmark"></i>
-                    <span>Document Verification</span>
-                </a>
-            </li>
+     
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
@@ -952,12 +947,7 @@
                     <span>Employment Stats</span>
                 </a>
             </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.skills-gap-analysis') }}" class="sidebar-menu-link">
-                    <i class="bi bi-diagram-3"></i>
-                    <span>Skills Gap Analysis</span>
-                </a>
-            </li>
+
             <li class="sidebar-menu-item">
                 <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link">
                     <i class="bi bi-file-pdf"></i>
@@ -992,12 +982,7 @@
                     @endif
                 </a>
             </li>
-            <li class="sidebar-menu-item">
-                <a href="{{ route('admin.qr-verification') }}" class="sidebar-menu-link">
-                    <i class="bi bi-qr-code"></i>
-                    <span>QR Verification</span>
-                </a>
-            </li>
+
 
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
