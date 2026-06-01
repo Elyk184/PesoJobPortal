@@ -194,36 +194,24 @@
         }
 
         .dashboard-card h5 {
-            color: #0f172a;
+            color: #17395c;
             font-weight: 800;
             margin: 0 0 1.25rem 0;
-            padding-bottom: 0.85rem;
-            border-bottom: 1px solid #e3e8ee;
-            font-size: 16px;
-            letter-spacing: -0.3px;
+            padding-bottom: 0.95rem;
+            border-bottom: 2px solid #c9d6ff;
+            font-size: 2rem;
+            letter-spacing: 0;
             display: flex;
             align-items: center;
             gap: 0.6rem;
         }
 
         .dashboard-card h5 i {
-            color: #475569;
-            font-size: 1rem;
+            display: none;
         }
 
         .section-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 999px;
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            margin-left: auto;
+            display: none;
         }
 
         .info-row {
@@ -248,7 +236,7 @@
             font-weight: 800;
             color: #123c69;
             min-width: 0;
-            font-size: 1.03rem;
+            font-size: 1.08rem;
             text-transform: none;
             letter-spacing: 0;
             display: inline-flex;
@@ -259,14 +247,13 @@
         }
 
         .info-label i {
-            color: #4e6a8c;
-            font-size: 1rem;
+            display: none;
         }
 
         .info-value {
             color: #0b1a33;
             font-weight: 500;
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             line-height: 1.4;
             background: #ffffff;
             border: 1px solid #c9d3df;
