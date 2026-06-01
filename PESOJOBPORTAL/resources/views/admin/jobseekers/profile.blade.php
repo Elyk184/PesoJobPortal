@@ -231,17 +231,17 @@
             grid-template-columns: minmax(150px, 190px) 1fr;
             align-items: center;
             gap: 0.85rem;
-            margin-bottom: 0.8rem;
-            padding: 0.8rem 0.95rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: #fbfcfe;
+            margin-bottom: 0.85rem;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
         }
 
         .info-row:last-child {
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: none;
             margin-bottom: 0;
-            padding-bottom: 0.8rem;
+            padding-bottom: 0;
         }
 
         .info-label {
@@ -271,6 +271,8 @@
             border: 1px solid #dbe4ef;
             border-radius: 10px;
             padding: 0.45rem 0.7rem;
+            display: inline-block;
+            justify-self: start;
             word-break: break-word;
         }
 
@@ -491,7 +493,7 @@
 
         .compact-section .info-row {
             margin-bottom: 0.72rem;
-            padding: 0.72rem 0.85rem;
+            padding: 0;
         }
 
         .header-stack {
