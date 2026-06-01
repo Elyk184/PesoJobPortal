@@ -227,10 +227,10 @@
         }
 
         .info-row {
-            display: grid;
-            grid-template-columns: minmax(150px, 190px) 1fr;
-            align-items: center;
-            gap: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
             margin-bottom: 0.85rem;
             padding: 0;
             border: none;
@@ -247,7 +247,7 @@
         .info-label {
             font-weight: 800;
             color: #64748b;
-            min-width: 132px;
+            min-width: 0;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.9px;
@@ -255,6 +255,7 @@
             align-items: center;
             gap: 0.4rem;
             line-height: 1.3;
+            margin-bottom: 0.05rem;
         }
 
         .info-label i {
@@ -270,9 +271,9 @@
             background: #ffffff;
             border: 1px solid #dbe4ef;
             border-radius: 10px;
-            padding: 0.45rem 0.7rem;
-            display: inline-block;
-            justify-self: start;
+            padding: 0.62rem 0.85rem;
+            display: block;
+            width: 100%;
             word-break: break-word;
         }
 
