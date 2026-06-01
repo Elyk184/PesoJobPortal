@@ -85,6 +85,14 @@
             font-size: 34px;
             box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
             margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .profile-info h3 {
@@ -594,7 +602,9 @@
             <div class="header-stack">
                 <div class="profile-heading">
                     <div class="profile-kicker"><i class="bi bi-person-badge"></i>Jobseeker profile</div>
-                    <div class="profile-avatar">{{ $avatarLetter }}</div>
+                    <div class="profile-avatar">
+                        <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="{{ $displayName }}">
+                    </div>
                     <div class="profile-info">
                         <h3>{{ $displayName }}</h3>
                         <p><i class="bi bi-envelope-paper me-2"></i>{{ $jobseeker->email }}</p>
