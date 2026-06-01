@@ -172,11 +172,11 @@
         }
 
         .dashboard-card {
-            background: #ffffff;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
             border-radius: 18px;
             padding: 1.6rem 1.75rem;
             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-            border: 1px solid #dce3ea;
+            border: 1px solid #cfd8e3;
             position: relative;
             overflow: hidden;
             margin-bottom: 2rem;
@@ -189,7 +189,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: #334155;
+            background: linear-gradient(90deg, #4c7bd9 0%, #c9d6ff 100%);
             border-radius: 18px 18px 0 0;
         }
 
@@ -246,34 +246,35 @@
 
         .info-label {
             font-weight: 800;
-            color: #64748b;
+            color: #123c69;
             min-width: 0;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.9px;
+            font-size: 1.03rem;
+            text-transform: none;
+            letter-spacing: 0;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             line-height: 1.3;
-            margin-bottom: 0.05rem;
+            margin-bottom: 0.2rem;
         }
 
         .info-label i {
-            color: #718096;
-            font-size: 13px;
+            color: #4e6a8c;
+            font-size: 1rem;
         }
 
         .info-value {
             color: #0b1a33;
-            font-weight: 700;
-            font-size: 1.12rem;
-            line-height: 1.35;
+            font-weight: 500;
+            font-size: 1.05rem;
+            line-height: 1.4;
             background: #ffffff;
-            border: 1px solid #dbe4ef;
-            border-radius: 10px;
-            padding: 0.62rem 0.85rem;
+            border: 1px solid #c9d3df;
+            border-radius: 12px;
+            padding: 0.72rem 0.95rem;
             display: block;
             width: 100%;
+            min-height: 56px;
             word-break: break-word;
         }
 
