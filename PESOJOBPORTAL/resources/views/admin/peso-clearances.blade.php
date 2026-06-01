@@ -80,6 +80,14 @@
         font-size: 0.8rem;
     }
     .btn-issue:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .btn-issued {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1.5px solid #86efac;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.8rem;
+    }
+    .btn-issued:hover { background: #dcfce7; color: #15803d; border-color: #86efac; }
 
     .btn-decline {
         background: #fef2f2;
@@ -227,6 +235,18 @@
     }
     .data-table tbody tr:last-child { border-bottom: none; }
     .data-table tbody tr:hover { background: #fafbff; }
+    .data-table tbody tr.row-issued {
+        background: #dcfce7;
+    }
+    .data-table tbody tr.row-issued:hover {
+        background: #c8f7d4;
+    }
+    .data-table tbody tr.row-declined {
+        background: #fee2e2;
+    }
+    .data-table tbody tr.row-declined:hover {
+        background: #fecaca;
+    }
     .data-table td {
         padding: 1rem 1.5rem;
         font-size: 0.875rem;
@@ -258,6 +278,14 @@
         color: #0f172a;
         line-height: 1.2;
     }
+    .applicant-name-link {
+        color: inherit;
+        text-decoration: none;
+    }
+    .applicant-name-link:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
 
     .address-text {
         color: #64748b;
@@ -278,6 +306,18 @@
         border-radius: 5px;
         border: 1px solid #e2e8f0;
         display: inline-block;
+    }
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        width: max-content;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        margin-top: 0.35rem;
     }
 
     .action-cell {
@@ -444,17 +484,23 @@
                         'declined', 'rejected' => 'background:#fee2e2;color:#dc2626;',
                         default => 'background:#fef9c3;color:#a16207;',
                     };
-                    $hasDocument = !empty($clearance->document_path);
+                    $hasDocument = !empty($clearance->document_path) || !empty($clearance->issuedClearance?->document_path);
                     $fullNameParts = collect(preg_split('/\s+/', trim($applicantName)) ?: [])->filter()->values();
                     $avatar = $fullNameParts->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->join('');
                 @endphp
-                <tr data-name="{{ strtolower($applicantName) }}" data-status="{{ strtolower($clearance->status ?? '') }}">
+                <tr data-name="{{ strtolower($applicantName) }}" data-status="{{ strtolower($clearance->status ?? '') }}" class="{{ $clearance->status === 'active' ? 'row-issued' : ($clearance->status === 'declined' ? 'row-declined' : '') }}">
                     <td>
                         <div class="applicant-cell">
                             <div class="applicant-avatar">
                                 {{ $avatar !== '' ? $avatar : strtoupper(substr($applicantName, 0, 1)) }}
                             </div>
-                            <div class="applicant-name">{{ $clearance->user?->name ?? 'N/A' }}</div>
+                            @if($clearance->user)
+                                <a href="{{ route('admin.jobseekers.show', $clearance->user) }}" class="applicant-name applicant-name-link">
+                                    {{ $clearance->user?->name ?? 'N/A' }}
+                                </a>
+                            @else
+                                <div class="applicant-name">{{ $clearance->user?->name ?? 'N/A' }}</div>
+                            @endif
                         </div>
                     </td>
                     <td>
@@ -482,34 +528,28 @@
                                 Awaiting review
                             @endif
                         </div>
+                        <div class="status-pill" style="{{ $statusClass }}">
+                            {{ $statusLabel }}
+                        </div>
                     </td>
                     <td>
                         <div class="action-cell">
-                            @if($clearance->status === 'pending')
-                                <form method="POST" action="{{ route('admin.peso-clearances.generate-document', $clearance) }}" style="display:inline;">
-                                    @csrf
-                                    <input type="hidden" name="preview" value="1">
-                                    <button type="submit" class="btn btn-issue" onclick="return confirm('Preview the certificate before issuing?')">
-                                        <i class="bi bi-check-lg"></i> Issue
-                                    </button>
-                                </form>
-                            @else
-                                <button class="btn btn-issue" type="button" disabled style="opacity:0.7;cursor:not-allowed;">
+                            @if($clearance->status !== 'pending')
+                                <button class="btn btn-issued" type="button" disabled style="cursor:not-allowed;">
                                     <i class="bi bi-check-lg"></i> Issued
                                 </button>
                             @endif
-                            @if($hasDocument)
-                                <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" class="btn btn-view">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            @else
-                                <button type="button" class="btn btn-view" disabled style="opacity:0.45;cursor:not-allowed;">
-                                    <i class="bi bi-eye"></i>
-                                </button>
+                            <a href="{{ route('admin.peso-clearances.view-document', $clearance) }}" class="btn btn-view">
+                                <i class="bi bi-eye"></i> Open
+                            </a>
+                            @if($clearance->status === 'pending')
+                                <form method="POST" action="{{ route('admin.peso-clearances.decline', $clearance) }}" style="display:inline;" onsubmit="return confirm('Decline this clearance request?');">
+                                    @csrf
+                                    <button class="btn btn-decline" type="submit">
+                                        <i class="bi bi-x-lg"></i> Decline
+                                    </button>
+                                </form>
                             @endif
-                            <button class="btn btn-decline" type="button" disabled title="Decline action is not wired yet">
-                                <i class="bi bi-x-lg"></i> Decline
-                            </button>
                         </div>
                     </td>
                 </tr>
@@ -562,14 +602,6 @@ function confirmAction(action, id) {
         btn.className = 'btn-confirm-issue';
         btn.textContent = 'Yes, Preview';
         btn.onclick = () => executeAction('issue', id);
-    } else {
-        icon.className = 'modal-icon decline';
-        icon.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
-        title.textContent = 'Decline Request?';
-        desc.textContent = 'This will decline the clearance request. The applicant will be notified of the decision.';
-        btn.className = 'btn-confirm-decline';
-        btn.textContent = 'Yes, Decline';
-        btn.onclick = () => executeAction('decline', id);
     }
 
     modal.classList.add('active');

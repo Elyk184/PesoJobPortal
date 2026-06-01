@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\PesoClearance;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PesoClearanceDocumentService
@@ -13,9 +14,9 @@ class PesoClearanceDocumentService
     public function generateClearanceDocument(PesoClearance $clearance): ?string
     {
         try {
-            return $this->copyClearanceTemplate($clearance);
+            return $this->generatePdfDocument($clearance);
         } catch (\Exception $e) {
-            \Log::error('Failed to generate clearance document', [
+            Log::error('Failed to generate clearance document', [
                 'clearance_id' => $clearance->id,
                 'error' => $e->getMessage(),
             ]);
@@ -25,52 +26,33 @@ class PesoClearanceDocumentService
     }
 
     /**
-     * Copy clearance template image and store
+     * Generate PDF clearance document and store it locally.
      */
-    public function copyClearanceTemplate(PesoClearance $clearance): ?string
+    public function generatePdfDocument(PesoClearance $clearance): ?string
     {
         try {
             // Ensure storage directory exists
             Storage::disk('local')->makeDirectory('peso-clearances', 0755, true);
 
-            $templatePath = public_path('images/peso-clearance-template.jpg');
+            $pdf = app('dompdf.wrapper')->loadView('documents.peso-clearance-certificate', [
+                'name' => $clearance->user?->name ?? 'APPLICANT NAME',
+                'clearance_number' => $clearance->clearance_number ?? 'DRAFT',
+                'issue_date' => $clearance->issue_date?->format('m/d/Y') ?? now()->format('m/d/Y'),
+                'expiry_date' => $clearance->expiry_date?->format('m/d/Y') ?? now()->addYear()->format('m/d/Y'),
+                'company_name' => $clearance->company_name ?? 'GENERAL SERVICES MULTIPURPOSE COOPERATIVE',
+                'residence_address' => $clearance->residence_address ?? 'BARANGAY (LGU AREA)',
+                'objective_pronoun' => 'him/her',
+                'possessive_pronoun' => 'their',
+            ])->setPaper('a4');
 
-            // If template exists, copy it; otherwise create a simple placeholder
-            if (file_exists($templatePath)) {
-                $fileName = 'clearance-' . $clearance->id . '-' . now()->timestamp . '.jpg';
-                $path = 'peso-clearances/' . $fileName;
-                $templateContent = file_get_contents($templatePath);
-                Storage::disk('local')->put($path, $templateContent);
-            } else {
-                // Create digital document
-                $fileName = 'clearance-' . $clearance->id . '-' . now()->timestamp . '.txt';
-                $path = 'peso-clearances/' . $fileName;
-                
-                $content = "================================================================================\n";
-                $content .= "                         PESO CLEARANCE DOCUMENT\n";
-                $content .= "================================================================================\n\n";
-                $content .= "Clearance Number: " . $clearance->clearance_number . "\n";
-                $content .= "Applicant: " . ($clearance->user?->name ?? 'Unknown') . "\n";
-                $content .= "Status: " . ucfirst($clearance->status) . "\n";
-                $content .= "Generated: " . now()->format('F d, Y \a\t h:i A') . "\n";
-                $content .= "Request Date: " . ($clearance->request_date ? $clearance->request_date->format('F d, Y') : 'N/A') . "\n";
-                if ($clearance->issue_date) {
-                    $content .= "Issue Date: " . $clearance->issue_date->format('F d, Y') . "\n";
-                }
-                $content .= "Validity: " . ($clearance->validity_period ?? '1 Year') . "\n";
-                $content .= "Company/Organization: " . ($clearance->company_name ?? 'N/A') . "\n";
-                $content .= "\n";
-                $content .= "================================================================================\n";
-                $content .= "This is an official PESO Clearance document.\n";
-                $content .= "For verification, please contact the Philippine Employment Service Office.\n";
-                $content .= "================================================================================\n";
-                
-                Storage::disk('local')->put($path, $content);
-            }
+            $fileName = 'clearance-' . $clearance->id . '-' . now()->timestamp . '.pdf';
+            $path = 'peso-clearances/' . $fileName;
+
+            Storage::disk('local')->put($path, $pdf->output());
 
             return $path;
         } catch (\Exception $e) {
-            \Log::error('Failed to copy clearance template', [
+            Log::error('Failed to copy clearance template', [
                 'clearance_id' => $clearance->id,
                 'error' => $e->getMessage(),
             ]);
@@ -91,7 +73,7 @@ class PesoClearanceDocumentService
 
             return true;
         } catch (\Exception $e) {
-            \Log::error('Failed to save document path', [
+            Log::error('Failed to save document path', [
                 'clearance_id' => $clearance->id,
                 'error' => $e->getMessage(),
             ]);
@@ -121,7 +103,7 @@ class PesoClearanceDocumentService
             return null;
         }
 
-        $fileName = 'PESO-Clearance-' . ($clearance->user?->name ?? 'Document') . '-' . now()->format('YmdHis') . '.jpg';
+        $fileName = 'PESO-Clearance-' . ($clearance->user?->name ?? 'Document') . '-' . now()->format('YmdHis') . '.pdf';
 
         return Storage::download($clearance->document_path, $fileName);
     }

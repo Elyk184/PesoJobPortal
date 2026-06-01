@@ -121,6 +121,66 @@
             color: #000;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
+
+        .clearance-inline-input {
+            border: 0;
+            border-bottom: 1px solid #000;
+            background: transparent;
+            color: #000;
+            font: inherit;
+            line-height: 1.2;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .clearance-inline-editor {
+            border-bottom: 1px solid #000;
+            color: #000;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            min-height: 1.2em;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        .clearance-inline-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #7a7a7a;
+            text-transform: uppercase;
+        }
+
+        .clearance-inline-input::placeholder {
+            color: #7a7a7a;
+            opacity: 1;
+        }
+
+        .clearance-inline-editor--company {
+            display: block;
+            text-align: center;
+            font-weight: 700;
+            text-decoration: underline;
+            text-transform: uppercase;
+            font-size: 20px;
+            letter-spacing: 0.3px;
+            margin-top: var(--org-gap) !important;
+            width: 100%;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .clearance-inline-editor--barangay {
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: underline;
+            display: inline;
+            white-space: normal;
+            word-break: break-word;
+            text-align: left;
+        }
         
         .clearance-statement {
             background: transparent;
@@ -156,7 +216,7 @@
         }
         
         .office-info {
-            margin-top: 1.2rem;
+            margin-top: 0.35rem;
             margin-left: -1.2in;
             margin-right: -1.2in;
             margin-bottom: 0;
@@ -164,7 +224,7 @@
             line-height: 1.2;
             color: #000;
             border-top: 2px solid #000;
-            padding-top: 0.15rem;
+            padding-top: 0.03rem;
             padding-bottom: 0.1rem;
             padding-left: 1.2in;
             padding-right: 1.2in;
@@ -235,9 +295,6 @@
         }
         
         .print-button {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
             padding: 0.75rem 1.5rem;
             background: #003366;
             color: white;
@@ -247,6 +304,46 @@
             cursor: pointer;
             font-size: 14px;
             z-index: 100;
+        }
+
+        .document-actions {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .document-actions .print-button,
+        .document-actions .edit-button,
+        .document-actions .save-button {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+        }
+
+        .saved-message {
+            display: none;
+            position: fixed;
+            top: 4.25rem;
+            right: 1rem;
+            z-index: 120;
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .saved-message.is-visible {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
         }
         
         .print-button:hover {
@@ -321,6 +418,7 @@
             padding: 0 !important;
             line-height: 1 !important;
             font-size: 20px;
+            margin-left: 32px;
         }
         /* Keep ordinance paragraph snug below the org-line, but add a configurable gap above the org-line */
         .body-text.spaced-paragraph + .org-line {
@@ -345,7 +443,7 @@
                 padding: 1in;
             }
             
-            .print-button, .back-button {
+            .document-actions, .back-button {
                 display: none;
             }
         }
@@ -353,24 +451,23 @@
 </head>
 <body>
     <a href="{{ route('admin.peso-clearances') }}" class="back-button">← Back</a>
-    <button class="print-button" onclick="window.print()">🖨️ Print</button>
+    <div id="saved-message" class="saved-message">✓ Saved</div>
     @if($clearance->status === 'pending')
-        <form method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}" style="position:fixed;top:1rem;right:8.5rem;z-index:100;display:flex;flex-direction:column;gap:0.35rem;background:#fff;padding:0.75rem;border:1px solid #d1d5db;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);width:360px;max-width:calc(100vw - 11rem);">
+        <form id="clearance-issue-form" method="POST" action="{{ route('admin.peso-clearances.issue', $clearance) }}">
             @csrf
-            <label for="company_name_input" style="font-size:12px;font-weight:700;color:#111827;">Company / Organization</label>
-            <input id="company_name_input" name="company_name" type="text" placeholder="Type company or organization" value="{{ old('company_name', $clearance->company_name ?? '') }}" style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;line-height:1.5;">
-            @error('company_name')
-                <div style="font-size:12px;color:#dc2626;">{{ $message }}</div>
-            @enderror
-            <label for="residence_address_input" style="font-size:12px;font-weight:700;color:#111827;">Residence address</label>
-            <textarea id="residence_address_input" name="residence_address" rows="3" placeholder="Type the jobseeker residence here" style="width:100%;padding:0.65rem;border:1px solid #cbd5e1;border-radius:6px;font-family:inherit;font-size:13px;line-height:1.5;resize:vertical;">{{ old('residence_address', $residenceAddress) }}</textarea>
-            @error('residence_address')
-                <div style="font-size:12px;color:#dc2626;">{{ $message }}</div>
-            @enderror
-            <button type="submit" class="print-button" style="background:#16a34a;position:static;right:auto;top:auto;width:100%;">✔ Issue Clearance</button>
-        </form>
+            <input type="hidden" id="company_name_input" name="company_name" value="{{ old('company_name', $clearance->company_name ?? '') }}">
+            <textarea id="residence_address_input" name="residence_address" hidden>{{ old('residence_address', $residenceAddress) }}</textarea>
+            <div class="document-actions">
+                <button class="print-button" type="button" onclick="window.print()">🖨️ Print</button>
+                <button type="button" id="edit-clearance-button" class="edit-button" data-view-label="✎ Edit" data-edit-label="💾 Save" style="padding:0.75rem 1.5rem;background:#0ea5a4;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:14px;">✎ Edit</button>
+                <button type="submit" id="save-clearance-button" class="save-button print-button" style="background:#16a34a;">✅ Approve</button>
+            </div>
+    @else
+        <div class="document-actions">
+            <button class="print-button" type="button" onclick="window.print()">🖨️ Print</button>
+        </div>
     @endif
-    
+
     <div class="document-container">
         <div class="content">
             <div class="header-wrapper">
@@ -405,14 +502,26 @@
             </div>
             
             <div class="body-text">
-                <strong>THIS CERTIFIES FURTHER THAT</strong> based on the clearances issued by the BARANGAY <span id="residence-address-body" class="capitalize-words{{ $residenceAddress ? ' typed-style' : '' }}">{!! $residenceAddress ? e($residenceAddress) : '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>' !!}</span> herein subject person has <strong>NO DEROGATORY RECORD.</strong>
+                <strong>THIS CERTIFIES FURTHER THAT</strong> based on the clearances issued by the BARANGAY <span id="residence-address-body" class="capitalize-words{{ $residenceAddress ? ' typed-style' : '' }}">
+                    @if($clearance->status === 'pending')
+                        <span id="residence-address-inline" class="clearance-inline-editor clearance-inline-editor--barangay" contenteditable="true" role="textbox" aria-label="Residence address" data-placeholder="TYPE BARANGAY HERE">{{ old('residence_address', $residenceAddress) }}</span>
+                    @else
+                        {!! $residenceAddress ? e($residenceAddress) : '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>' !!}
+                    @endif
+                </span> herein subject person has <strong>NO DEROGATORY RECORD.</strong>
             </div>
             
             <div class="body-text spaced-paragraph">
                 This EMPLOYMENT CLEARANCE is issued in connection with the desire of {{ $objectivePronoun }} to work at:
             </div>
 
-            <div id="organization-line" class="body-text org-line">{{ $clearance->company_name ? strtoupper($clearance->company_name) : 'COMPANY / ORGANIZATION NAME' }}</div>
+            <div id="organization-line" class="body-text org-line">
+                @if($clearance->status === 'pending')
+                    <div id="company_name_inline" class="clearance-inline-editor clearance-inline-editor--company" contenteditable="true" role="textbox" aria-label="Company or organization name" data-placeholder="COMPANY / ORGANIZATION NAME">{{ old('company_name', $companyName ?? $clearance->company_name ?? '') }}</div>
+                @else
+                    {{ ($companyName ?? $clearance->company_name) ? strtoupper($companyName ?? $clearance->company_name) : 'COMPANY / ORGANIZATION NAME' }}
+                @endif
+            </div>
 
             <div class="body-text spaced-paragraph">
                  Municipal Ordinance No. 2005-394, Dated July 2005
@@ -434,7 +543,8 @@
             </div>
             
 
-<div style="padding-top: 0.6rem; text-align: center; margin-bottom: 0.1rem; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
+<div style="padding-top: 0.6rem; text-align: center; margin-bottom: 0; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
+<div style="text-align:center; margin-top:-2px; margin-bottom:0.1rem; font-size:0.78rem; font-weight:500; color:#666; letter-spacing:0.8px; text-transform:uppercase;">SOAR HIGH MANOLO FORTICH</div>
 
             <div class="office-info">
                
@@ -452,198 +562,131 @@
             </div>
         </div>
     </div>
-    <!-- Floating edit pens (one for organization, one for barangay/residence) -->
-    <button id="edit-pen" title="Edit organization" aria-label="Edit organization" style="display:none;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="#fff"/>
-            <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="#fff"/>
-        </svg>
-    </button>
-    <button id="edit-pen-barangay" title="Edit barangay" aria-label="Edit barangay" style="display:none;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="#fff"/>
-            <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="#fff"/>
-        </svg>
-    </button>
+    @if($clearance->status === 'pending')
+        </form>
+    @endif
 </body>
 <script>
     (function () {
         const residenceInput = document.getElementById('residence_address_input');
-        const preview = document.getElementById('residence-address-preview');
         const body = document.getElementById('residence-address-body');
         const companyInput = document.getElementById('company_name_input');
-        const orgLine = document.getElementById('organization-line');
+        const companyInline = document.getElementById('company_name_inline');
+        const residenceInline = document.getElementById('residence-address-inline');
 
-        if (!residenceInput || !preview || !body) {
+        if (!body) {
             return;
         }
 
+        const syncEditableField = (editable, hiddenField, transform = (value) => value) => {
+            if (!editable || !hiddenField) {
+                return;
+            }
+
+            const update = () => {
+                const value = transform(editable.textContent.replace(/\u00a0/g, ' ').trim());
+                hiddenField.value = value;
+                if (!value) {
+                    editable.innerHTML = '';
+                }
+            };
+
+            editable.addEventListener('input', update);
+            editable.addEventListener('blur', update);
+            update();
+        };
+
         const updateResidencePreview = () => {
+            if (!residenceInput) {
+                return;
+            }
+
             const value = residenceInput.value.trim();
-            if (value) {
+            if (!residenceInline && value) {
                 body.textContent = value;
                 body.classList.add('typed-style');
-            } else {
+                return;
+            }
+
+            if (!residenceInline && !value) {
                 body.innerHTML = '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>';
                 body.classList.remove('typed-style');
             }
         };
 
         const updateOrgPreview = () => {
-            if (!orgLine || !companyInput) return;
+            if (!companyInput) return;
             const v = companyInput.value.trim();
-            if (v) {
-                orgLine.textContent = v.toUpperCase();
-                orgLine.classList.add('typed-style');
-            } else {
-                orgLine.textContent = 'COMPANY / ORGANIZATION NAME';
-                orgLine.classList.remove('typed-style');
+            if (!companyInline) {
+                return;
             }
+
+            companyInline.textContent = v;
         };
 
-        residenceInput.addEventListener('input', updateResidencePreview);
-        if (companyInput) companyInput.addEventListener('input', updateOrgPreview);
+        if (residenceInput) {
+            residenceInput.addEventListener('input', updateResidencePreview);
+        }
+        if (companyInput) {
+            companyInput.addEventListener('input', updateOrgPreview);
+        }
+        syncEditableField(residenceInline, residenceInput);
+        syncEditableField(companyInline, companyInput, (value) => value.toUpperCase());
         updateResidencePreview();
         updateOrgPreview();
     })();
 
-    // Floating edit pen logic (organization + barangay)
     (function () {
-        const container = document.querySelector('.document-container');
-        const orgLine = document.getElementById('organization-line');
-        const penOrg = document.getElementById('edit-pen');
-        const penBarangay = document.getElementById('edit-pen-barangay');
-        const companyInput = document.getElementById('company_name_input');
-        const residenceInput = document.getElementById('residence_address_input');
-        const residenceBody = document.getElementById('residence-address-body');
+        const editButton = document.getElementById('edit-clearance-button');
+        const saveButton = document.getElementById('save-clearance-button');
+        const savedMessage = document.getElementById('saved-message');
+        const form = document.getElementById('clearance-issue-form');
+        const companyInline = document.getElementById('company_name_inline');
+        const residenceInline = document.getElementById('residence-address-inline');
+        const editableFields = [companyInline, residenceInline].filter(Boolean);
+        let isEditing = false;
 
-        if (!container) return;
+        if (!editButton) return;
 
-        // shared styling for pens (use fixed so positions are viewport-based)
-        const pens = [penOrg, penBarangay].filter(Boolean);
-        pens.forEach(p => {
-            Object.assign(p.style, {
-                position: 'fixed',
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                background: '#0ea5a4',
-                border: '2px solid #fff',
-                boxShadow: '0 6px 18px rgba(0,0,0,0.16)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 120,
-                transition: 'transform .12s ease',
+        const setEditingState = (editing) => {
+            isEditing = editing;
+            editButton.textContent = editing ? editButton.dataset.editLabel : editButton.dataset.viewLabel;
+
+            editableFields.forEach((field) => {
+                field.setAttribute('contenteditable', editing ? 'true' : 'false');
+                field.style.outline = editing ? '1px dashed #0ea5a4' : 'none';
+                field.style.borderRadius = editing ? '2px' : '0';
             });
-            p.style.display = 'block';
+        };
+
+        setEditingState(false);
+
+        editButton.addEventListener('click', () => {
+            setEditingState(!isEditing);
+
+            if (!isEditing) {
+                const target = companyInline || residenceInline;
+                if (!target) return;
+
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.focus();
+                const range = document.createRange();
+                const selection = window.getSelection();
+                if (selection && target.firstChild) {
+                    range.setStart(target.firstChild, target.textContent.length);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+            }
         });
 
-        // pulse animation class and highlight style
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes pulsePen { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
-            .pen-pulse { animation: pulsePen .9s ease-in-out; }
-            .org-highlight { box-shadow: 0 0 0 4px rgba(14,165,164,0.12) inset; }
-            .barangay-highlight { box-shadow: 0 0 0 4px rgba(59,130,246,0.12) inset; }
-        `;
-        document.head.appendChild(style);
-
-        function positionPens() {
-            // use viewport coordinates from getBoundingClientRect directly
-            if (orgLine && penOrg) {
-                const orgRect = orgLine.getBoundingClientRect();
-                // center the pen horizontally above the organization text
-                const top = orgRect.top + (orgRect.height / 2) - 18;
-                const left = orgRect.left + (orgRect.width / 2) - 18;
-                // clamp inside viewport
-                const clampedTop = Math.max(8, Math.min(top, window.innerHeight - 44));
-                const clampedLeft = Math.max(8, Math.min(left, window.innerWidth - 44));
-                penOrg.style.top = `${clampedTop}px`;
-                penOrg.style.left = `${clampedLeft}px`;
-                // hide when target is offscreen
-                penOrg.style.display = (orgRect.top > window.innerHeight || orgRect.bottom < 0) ? 'none' : 'block';
-            }
-
-            if (residenceBody && penBarangay) {
-                const resRect = residenceBody.getBoundingClientRect();
-                // place pen slightly to the left of the barangay text center
-                const top = resRect.top + (resRect.height / 2) - 18;
-                const left = resRect.left - 48;
-                const clampedTop = Math.max(8, Math.min(top, window.innerHeight - 44));
-                const clampedLeft = Math.max(8, Math.min(left, window.innerWidth - 44));
-                penBarangay.style.top = `${clampedTop}px`;
-                penBarangay.style.left = `${clampedLeft}px`;
-                penBarangay.style.display = (resRect.top > window.innerHeight || resRect.bottom < 0) ? 'none' : 'block';
-            }
-        }
-
-        // reposition a few times during initial load in case fonts or images change layout
-        positionPens();
-        let tries = 0;
-        const interval = setInterval(() => {
-            positionPens();
-            tries += 1;
-            if (tries > 8) clearInterval(interval);
-        }, 250);
-
-        window.addEventListener('resize', positionPens);
-        window.addEventListener('scroll', positionPens);
-        setTimeout(positionPens, 120);
-
-        pens.forEach(p => {
-            p.addEventListener('mouseenter', () => p.classList.add('pen-pulse'));
-            p.addEventListener('mouseleave', () => p.classList.remove('pen-pulse'));
-        });
-
-        // org pen click
-        if (penOrg) {
-            penOrg.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (orgLine) {
-                    orgLine.classList.add('org-highlight');
-                    setTimeout(() => orgLine.classList.remove('org-highlight'), 900);
-                }
-                if (companyInput) {
-                    companyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    companyInput.focus();
-                    const val = companyInput.value || '';
-                    companyInput.setSelectionRange(val.length, val.length);
-                } else {
-                    const msg = document.createElement('div');
-                    msg.textContent = 'Open issuance form to edit organization';
-                    Object.assign(msg.style, {
-                        position: 'fixed', right: '1rem', top: '4rem', background: '#111827', color: '#fff', padding: '0.5rem 0.75rem', borderRadius: '6px', zIndex: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.18)'
-                    });
-                    document.body.appendChild(msg);
-                    setTimeout(() => msg.remove(), 1800);
-                }
-            });
-        }
-
-        // barangay pen click
-        if (penBarangay) {
-            penBarangay.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (residenceBody) {
-                    residenceBody.classList.add('barangay-highlight');
-                    setTimeout(() => residenceBody.classList.remove('barangay-highlight'), 900);
-                }
-                if (residenceInput) {
-                    residenceInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    residenceInput.focus();
-                    const val = residenceInput.value || '';
-                    residenceInput.setSelectionRange(val.length, val.length);
-                } else {
-                    const msg = document.createElement('div');
-                    msg.textContent = 'Open issuance form to edit barangay';
-                    Object.assign(msg.style, {
-                        position: 'fixed', right: '1rem', top: '4rem', background: '#111827', color: '#fff', padding: '0.5rem 0.75rem', borderRadius: '6px', zIndex: 200, boxShadow: '0 8px 24px rgba(0,0,0,0.18)'
-                    });
-                    document.body.appendChild(msg);
-                    setTimeout(() => msg.remove(), 1800);
-                }
+        if (form && saveButton && savedMessage) {
+            form.addEventListener('submit', () => {
+                savedMessage.classList.add('is-visible');
+                window.setTimeout(() => {
+                    savedMessage.classList.remove('is-visible');
+                }, 2500);
             });
         }
     })();

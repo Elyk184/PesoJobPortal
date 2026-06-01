@@ -28,22 +28,32 @@
     @endif
 
     <style>
+        .admin-dashboard {
+            background:
+                radial-gradient(900px 420px at 100% 0%, rgba(37, 99, 235, 0.14) 0%, rgba(37, 99, 235, 0) 60%),
+                radial-gradient(700px 320px at 0% 0%, rgba(20, 184, 166, 0.12) 0%, rgba(20, 184, 166, 0) 52%),
+                linear-gradient(180deg, #f8fbff 0%, #f3f7fb 100%);
+            padding: 1.25rem;
+            border-radius: 20px;
+        }
+
         .profile-header {
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 2rem;
             margin-bottom: 3rem;
+            align-items: start;
         }
 
         .profile-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, #f8fafc 100%);
+            border-radius: 24px;
             padding: 2.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
-            border: 2px solid #d1d5db;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.22);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
 
         .profile-card::before {
@@ -52,64 +62,81 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
-            border-radius: 16px 16px 0 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2563eb 0%, #14b8a6 55%, #f59e0b 100%);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .profile-card:hover,
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+            border-color: rgba(37, 99, 235, 0.18);
         }
 
         .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            width: 104px;
+            height: 104px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #0f172a 0%, #2563eb 55%, #14b8a6 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             color: white;
             font-size: 40px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 18px 28px rgba(37, 99, 235, 0.25);
             margin-bottom: 1.5rem;
         }
 
         .profile-info h3 {
             margin: 0 0 0.5rem 0;
-            color: #1f2937;
+            color: #0f172a;
             font-weight: 800;
-            font-size: 24px;
+            font-size: 28px;
+            letter-spacing: -0.5px;
         }
 
         .profile-info p {
-            margin: 0.25rem 0;
-            color: #6b7280;
+            margin: 0.35rem 0;
+            color: #475569;
             font-size: 14px;
         }
 
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
             margin-top: 2rem;
             padding-top: 2rem;
-            border-top: 2px solid #e5e7eb;
+            border-top: 1px solid rgba(148, 163, 184, 0.25);
         }
 
         .stat-item {
             text-align: center;
+            padding: 1rem;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.85) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 800;
-            color: #1f2937;
+            color: #0f172a;
+            line-height: 1;
         }
 
         .stat-label {
             font-size: 12px;
-            color: #6b7280;
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 0.5rem;
+            margin-top: 0.65rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
         }
 
         .action-sidebar {
@@ -153,14 +180,13 @@
         }
 
         .dashboard-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, #f8fafc 100%);
+            border-radius: 22px;
             padding: 2.25rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
-            border: 2px solid #d1d5db;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.22);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             margin-bottom: 2rem;
         }
 
@@ -170,24 +196,42 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
-            border-radius: 16px 16px 0 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2563eb 0%, #14b8a6 55%, #f59e0b 100%);
+            border-radius: 22px 22px 0 0;
         }
 
         .dashboard-card h5 {
-            color: #1f2937;
+            color: #0f172a;
             font-weight: 800;
             margin: 0 0 1.75rem 0;
             padding-bottom: 1.25rem;
-            border-bottom: 2px solid #d1d5db;
-            font-size: 18px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+            font-size: 17px;
             letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
         .dashboard-card h5 i {
-            color: #374151;
-            margin-right: 0.5rem;
+            color: #2563eb;
+            font-size: 1.05rem;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-left: auto;
         }
 
         .info-row {
@@ -211,36 +255,41 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .info-value {
-            color: #1f2937;
+            color: #0f172a;
             font-weight: 600;
+            line-height: 1.6;
         }
 
         .application-item {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 1rem;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
 
         .application-item:hover {
-            border-color: #d1d5db;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: rgba(37, 99, 235, 0.25);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            transform: translateY(-1px);
         }
 
         .application-title {
             font-weight: 700;
-            color: #1f2937;
+            color: #0f172a;
             margin-bottom: 0.5rem;
         }
 
         .application-company {
             font-size: 13px;
-            color: #6b7280;
+            color: #475569;
             margin-bottom: 0.75rem;
         }
 
@@ -267,6 +316,9 @@
             text-align: center;
             padding: 2rem;
             color: #9ca3af;
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.65), rgba(241, 245, 249, 0.5));
+            border-radius: 14px;
+            border: 1px dashed rgba(148, 163, 184, 0.35);
         }
 
         .empty-state i {
@@ -341,18 +393,63 @@
         .modal-body::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        .admin-dashboard {
+            background:
+                radial-gradient(900px 420px at 100% 0%, rgba(37, 99, 235, 0.14) 0%, rgba(37, 99, 235, 0) 60%),
+                radial-gradient(700px 320px at 0% 0%, rgba(20, 184, 166, 0.12) 0%, rgba(20, 184, 166, 0) 52%),
+                linear-gradient(180deg, #f8fbff 0%, #f3f7fb 100%);
+            padding: 1.25rem;
+            border-radius: 20px;
+        }
+
+        .top-action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-back-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 0.65rem 1rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .btn-back-top:hover {
+            color: #fff;
+            background: #1e293b;
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.28);
+        }
+
+        .profile-card,
+        .dashboard-card {
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        @media (max-width: 992px) {
+            .profile-header {
+                grid-template-columns: 1fr;
+            }
+
+            .action-sidebar {
+                flex-direction: row;
+            }
+        }
     </style>
 
-    <div class="profile-header">
-        <div class="profile-card">
-            <div class="profile-avatar">{{ strtoupper(substr($jobseeker->name ?? 'U', 0, 1)) }}</div>
-            <div class="profile-info">
-                <h3>{{ $jobseeker->name }}</h3>
-                <p><i class="bi bi-envelope me-2"></i>{{ $jobseeker->email }}</p>
-                @if($jobseeker->profile?->phone)
-                    <p><i class="bi bi-telephone me-2"></i>{{ $jobseeker->profile->phone }}</p>
-                @endif
-                <p><i class="bi bi-calendar me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
     @php
         $displayName = $personalInformation?->first_name
             ? trim(implode(' ', array_filter([
@@ -386,79 +483,82 @@
         ])->flatten()->filter()->count();
     @endphp
 
+    <div class="top-action-bar">
+        <a href="{{ route('admin.jobseekers.index') }}" class="btn-back-top">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+
     <div class="profile-header">
         <div class="profile-card">
             <div class="profile-avatar">{{ $avatarLetter }}</div>
             <div class="profile-info">
                 <h3>{{ $displayName }}</h3>
-                <p><i class="bi bi-envelope me-2"></i>{{ $jobseeker->email }}</p>
-                <p><i class="bi bi-calendar me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
-                <p><i class="bi bi-geo-alt me-2"></i>{{ $presentAddressLine }}</p>
+                <p><i class="bi bi-envelope-paper me-2"></i>{{ $jobseeker->email }}</p>
+                <p><i class="bi bi-calendar3 me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
+                <p><i class="bi bi-geo-alt-fill me-2"></i>{{ $presentAddressLine }}</p>
 
                 <div class="profile-stats">
                     <div class="stat-item">
                         <div class="stat-value">{{ $jobseeker->applications->count() }}</div>
-                        <div class="stat-label">Applications</div>
+                        <div class="stat-label"><i class="bi bi-send"></i>Applications</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ $educationRows->count() }}</div>
-                        <div class="stat-label">Education Records</div>
+                        <div class="stat-label"><i class="bi bi-mortarboard-fill"></i>Education</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ $skillsCount }}</div>
-                        <div class="stat-label">Skills Listed</div>
+                        <div class="stat-label"><i class="bi bi-stars"></i>Skills</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">{{ $availableJobs->count() }}</div>
-                        <div class="stat-label">Jobs Available</div>
+                        <div class="stat-label"><i class="bi bi-briefcase-fill"></i>Jobs Available</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="action-sidebar">
-            <a href="{{ route('admin.jobseekers.index') }}" class="btn btn-action btn-back">
-                <i class="bi bi-arrow-left"></i> Back to List
-            </a>
             <button type="button" class="btn btn-action btn-recommend open-recommend-modal"
                     data-jobseeker-id="{{ $jobseeker->id }}"
                     data-jobseeker-name="{{ $displayName }}">
-                <i class="bi bi-star"></i> Recommend Job
+                <i class="bi bi-stars"></i> Recommend Job
             </button>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h5>
+        <h5><i class="bi bi-person-lines-fill"></i>Personal Information <span class="section-badge"><i class="bi bi-person-vcard"></i>Identity</span></h5>
         <div class="row g-3">
-            <div class="col-md-4"><div class="info-row"><div class="info-label">First Name</div><div class="info-value">{{ $personalInformation?->first_name ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Middle Initial</div><div class="info-value">{{ $personalInformation?->middle_initial ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Surname</div><div class="info-value">{{ $personalInformation?->surname ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Suffix</div><div class="info-value">{{ $personalInformation?->suffix ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Date of Birth</div><div class="info-value">{{ $personalInformation?->date_of_birth ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Sex</div><div class="info-value">{{ $personalInformation?->sex ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Civil Status</div><div class="info-value">{{ $personalInformation?->civil_status ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Religion</div><div class="info-value">{{ $personalInformation?->religion ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Height</div><div class="info-value">{{ $personalInformation?->height ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">TIN</div><div class="info-value">{{ $personalInformation?->tin ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Contact Number</div><div class="info-value">{{ $personalInformation?->contact_number ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Email Address</div><div class="info-value">{{ $personalInformation?->email_address ?: $jobseeker->email }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">In School</div><div class="info-value">{{ ($personalInformation?->currently_in_school ?? false) ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge"></i>First Name</div><div class="info-value">{{ $personalInformation?->first_name ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge-fill"></i>Middle Initial</div><div class="info-value">{{ $personalInformation?->middle_initial ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-vcard-fill"></i>Surname</div><div class="info-value">{{ $personalInformation?->surname ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-award"></i>Suffix</div><div class="info-value">{{ $personalInformation?->suffix ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-calendar-heart"></i>Date of Birth</div><div class="info-value">{{ $personalInformation?->date_of_birth ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-gender-ambiguous"></i>Sex</div><div class="info-value">{{ $personalInformation?->sex ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-heart-pulse"></i>Civil Status</div><div class="info-value">{{ $personalInformation?->civil_status ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-stars"></i>Religion</div><div class="info-value">{{ $personalInformation?->religion ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-rulers"></i>Height</div><div class="info-value">{{ $personalInformation?->height ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-upc-scan"></i>TIN</div><div class="info-value">{{ $personalInformation?->tin ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-telephone"></i>Contact Number</div><div class="info-value">{{ $personalInformation?->contact_number ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-envelope-at"></i>Email Address</div><div class="info-value">{{ $personalInformation?->email_address ?: $jobseeker->email }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-journal-check"></i>In School</div><div class="info-value">{{ ($personalInformation?->currently_in_school ?? false) ? 'Yes' : 'No' }}</div></div></div>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-geo-alt-fill me-2"></i>Address Information</h5>
+        <h5><i class="bi bi-geo-alt-fill"></i>Address Information <span class="section-badge"><i class="bi bi-map"></i>Location</span></h5>
         <div class="row g-3">
             <div class="col-md-6">
                 <div class="info-row">
-                    <div class="info-label">Present Address</div>
+                    <div class="info-label"><i class="bi bi-house-door"></i>Present Address</div>
                     <div class="info-value">{{ $presentAddressLine }}</div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="info-row">
-                    <div class="info-label">Permanent Address</div>
+                    <div class="info-label"><i class="bi bi-house-heart"></i>Permanent Address</div>
                     <div class="info-value">{{ $permanentAddressLine }}</div>
                 </div>
             </div>
@@ -466,10 +566,10 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-mortarboard me-2"></i>Education</h5>
+        <h5><i class="bi bi-mortarboard"></i>Education <span class="section-badge"><i class="bi bi-book-half"></i>Learning</span></h5>
         @forelse($educationRows as $education)
             <div class="info-row">
-                <div class="info-label">{{ $education->school ?: 'Record ' . $loop->iteration }}</div>
+                <div class="info-label"><i class="bi bi-building"></i>{{ $education->school ?: 'Record ' . $loop->iteration }}</div>
                 <div class="info-value">
                     {{ $education->course ?: 'N/A' }} @if($education->year) | {{ $education->year }} @endif
                 </div>
@@ -480,10 +580,10 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-journal-bookmark me-2"></i>Training</h5>
+        <h5><i class="bi bi-journal-bookmark"></i>Training <span class="section-badge"><i class="bi bi-award-fill"></i>Courses</span></h5>
         @forelse($trainingRows as $training)
             <div class="info-row">
-                <div class="info-label">{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
+                <div class="info-label"><i class="bi bi-patch-check"></i>{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
                 <div class="info-value">
                     {{ collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A' }}
                 </div>
@@ -494,10 +594,10 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-briefcase me-2"></i>Work Experience</h5>
+        <h5><i class="bi bi-briefcase"></i>Work Experience <span class="section-badge"><i class="bi bi-clipboard2-data"></i>History</span></h5>
         @forelse($experienceRows as $experience)
             <div class="info-row">
-                <div class="info-label">{{ $experience->company ?: 'Experience ' . $loop->iteration }}</div>
+                <div class="info-label"><i class="bi bi-building-check"></i>{{ $experience->company ?: 'Experience ' . $loop->iteration }}</div>
                 <div class="info-value">
                     {{ collect([$experience->title, $experience->location, $experience->status, $experience->from_date . ($experience->to_date ? ' - ' . $experience->to_date : ''), $experience->salary_amount ? 'Salary: ' . $experience->salary_amount : null, $experience->salary_type, $experience->details])->filter()->join(' | ') ?: 'N/A' }}
                 </div>
@@ -508,10 +608,10 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-patch-check me-2"></i>Eligibility</h5>
+        <h5><i class="bi bi-patch-check"></i>Eligibility <span class="section-badge"><i class="bi bi-shield-check"></i>Credentials</span></h5>
         @forelse($eligibilityRows as $eligibility)
             <div class="info-row">
-                <div class="info-label">{{ $eligibility->eligibility ?: 'Eligibility ' . $loop->iteration }}</div>
+                <div class="info-label"><i class="bi bi-award"></i>{{ $eligibility->eligibility ?: 'Eligibility ' . $loop->iteration }}</div>
                 <div class="info-value">
                     {{ collect([$eligibility->date_taken, $eligibility->license, $eligibility->valid_until])->filter()->join(' | ') ?: 'N/A' }}
                 </div>
@@ -522,47 +622,47 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-stars me-2"></i>Skills</h5>
+        <h5><i class="bi bi-stars"></i>Skills <span class="section-badge"><i class="bi bi-lightning-charge"></i>Capabilities</span></h5>
         <div class="row g-3">
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">Trade / Manual</div><div class="info-value">{{ collect($otherSkills['trade_manual'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-tools"></i>Trade / Manual</div><div class="info-value">{{ collect($otherSkills['trade_manual'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
             </div>
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">IT / Technical</div><div class="info-value">{{ collect($otherSkills['it_technical'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-cpu"></i>IT / Technical</div><div class="info-value">{{ collect($otherSkills['it_technical'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
             </div>
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">Soft Skills</div><div class="info-value">{{ collect($otherSkills['soft_skills'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-chat-square-heart"></i>Soft Skills</div><div class="info-value">{{ collect($otherSkills['soft_skills'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div>
             </div>
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">Other Skill</div><div class="info-value">{{ $otherSkills['other_text'] ?? 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-chat-square-text"></i>Other Skill</div><div class="info-value">{{ $otherSkills['other_text'] ?? 'N/A' }}</div></div>
             </div>
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">With Certificate</div><div class="info-value">{{ !is_null($otherSkills['with_certificate'] ?? null) ? (($otherSkills['with_certificate'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-patch-check-fill"></i>With Certificate</div><div class="info-value">{{ !is_null($otherSkills['with_certificate'] ?? null) ? (($otherSkills['with_certificate'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
             </div>
             <div class="col-md-4">
-                <div class="info-row"><div class="info-label">By Experience</div><div class="info-value">{{ !is_null($otherSkills['by_experience'] ?? null) ? (($otherSkills['by_experience'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label"><i class="bi bi-clock-history"></i>By Experience</div><div class="info-value">{{ !is_null($otherSkills['by_experience'] ?? null) ? (($otherSkills['by_experience'] ? 'Yes' : 'No')) : 'N/A' }}</div></div>
             </div>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-person-check me-2"></i>Employment & Preferences</h5>
+        <h5><i class="bi bi-person-check"></i>Employment & Preferences <span class="section-badge"><i class="bi bi-funnel"></i>Match</span></h5>
         <div class="row g-3">
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Has Work Experience</div><div class="info-value">{{ !is_null($employmentStatus?->has_work_experience) ? ($employmentStatus->has_work_experience ? 'Yes' : 'No') : 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Wage Employed</div><div class="info-value">{{ $employmentStatus?->wage_employed ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Self Employed</div><div class="info-value">{{ $employmentStatus?->self_employed ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Unemployed</div><div class="info-value">{{ $employmentStatus?->unemployed ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Occupation</div><div class="info-value">{{ $jobPreferences?->occupation_text ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Work Preference</div><div class="info-value">{{ collect([$jobPreferences?->part_time ? 'Part Time' : null, $jobPreferences?->full_time ? 'Full Time' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Location Preference</div><div class="info-value">{{ collect([$jobPreferences?->local ? 'Local' : null, $jobPreferences?->overseas ? 'Overseas' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-briefcase"></i>Has Work Experience</div><div class="info-value">{{ !is_null($employmentStatus?->has_work_experience) ? ($employmentStatus->has_work_experience ? 'Yes' : 'No') : 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-cash-stack"></i>Wage Employed</div><div class="info-value">{{ $employmentStatus?->wage_employed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-workspace"></i>Self Employed</div><div class="info-value">{{ $employmentStatus?->self_employed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-search"></i>Unemployed</div><div class="info-value">{{ $employmentStatus?->unemployed ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-diagram-3"></i>Occupation</div><div class="info-value">{{ $jobPreferences?->occupation_text ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-flag"></i>Work Preference</div><div class="info-value">{{ collect([$jobPreferences?->part_time ? 'Part Time' : null, $jobPreferences?->full_time ? 'Full Time' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-pin-map"></i>Location Preference</div><div class="info-value">{{ collect([$jobPreferences?->local ? 'Local' : null, $jobPreferences?->overseas ? 'Overseas' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-translate me-2"></i>Languages</h5>
+        <h5><i class="bi bi-translate"></i>Languages <span class="section-badge"><i class="bi bi-chat-dots"></i>Fluency</span></h5>
         @forelse($languages as $language)
             <div class="info-row">
-                <div class="info-label">{{ $language->language ?: 'Language ' . $loop->iteration }}</div>
+                <div class="info-label"><i class="bi bi-globe2"></i>{{ $language->language ?: 'Language ' . $loop->iteration }}</div>
                 <div class="info-value">
                     {{ collect([
                         $language->can_read ? 'Read' : null,
@@ -579,32 +679,32 @@
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-universal-access me-2"></i>Disability</h5>
+        <h5><i class="bi bi-universal-access"></i>Disability <span class="section-badge"><i class="bi bi-heart-pulse"></i>Support</span></h5>
         <div class="row g-3">
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Visual</div><div class="info-value">{{ $disability?->visual ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Speech</div><div class="info-value">{{ $disability?->speech ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Mental</div><div class="info-value">{{ $disability?->mental ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Hearing</div><div class="info-value">{{ $disability?->hearing ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Physical</div><div class="info-value">{{ $disability?->physical ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label">Other</div><div class="info-value">{{ $disability?->other ? 'Yes' : 'No' }}</div></div></div>
-            <div class="col-md-12"><div class="info-row"><div class="info-label">Other Text</div><div class="info-value">{{ $disability?->other_text ?: 'N/A' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-eye"></i>Visual</div><div class="info-value">{{ $disability?->visual ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-chat-right-text"></i>Speech</div><div class="info-value">{{ $disability?->speech ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-brain"></i>Mental</div><div class="info-value">{{ $disability?->mental ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-ear"></i>Hearing</div><div class="info-value">{{ $disability?->hearing ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-walking"></i>Physical</div><div class="info-value">{{ $disability?->physical ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-question-circle"></i>Other</div><div class="info-value">{{ $disability?->other ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-12"><div class="info-row"><div class="info-label"><i class="bi bi-card-text"></i>Other Text</div><div class="info-value">{{ $disability?->other_text ?: 'N/A' }}</div></div></div>
         </div>
     </div>
 
     <div class="dashboard-card">
-        <h5><i class="bi bi-file-earmark-text me-2"></i>Applications History</h5>
+        <h5><i class="bi bi-file-earmark-text"></i>Applications History <span class="section-badge"><i class="bi bi-timeline"></i>Timeline</span></h5>
 
         @if($jobseeker->applications->count() > 0)
             @foreach($jobseeker->applications as $application)
                 <div class="application-item">
-                    <div class="application-title">{{ $application->job->title ?? 'N/A' }}</div>
+                    <div class="application-title"><i class="bi bi-briefcase-fill me-2 text-primary"></i>{{ $application->job->title ?? 'N/A' }}</div>
                     <div class="application-company">
                         <i class="bi bi-building me-1"></i>{{ $application->job->employer->companyProfile->company_name ?? $application->job->employer->name ?? 'Unknown Company' }}
                     </div>
                     <div>
                         <span class="application-status status-applied">{{ ucfirst($application->status ?? 'pending') }}</span>
                         <span style="font-size: 12px; color: #9ca3af; margin-left: 1rem;">
-                            Applied on {{ $application->created_at->format('M d, Y') }}
+                            <i class="bi bi-calendar2-event me-1"></i>Applied on {{ $application->created_at->format('M d, Y') }}
                         </span>
                     </div>
                 </div>
@@ -1056,6 +1156,18 @@
                         option.dataset.companyName = job.companyName;
                         option.dataset.location = job.location;
                         option.dataset.salary = job.salary;
+                        option.dataset.description = job.description;
+                        option.dataset.jobType = job.jobType;
+                        option.dataset.vacancies = job.vacancies;
+                        option.dataset.qualifications = job.qualifications;
+                        option.dataset.keyResponsibilities = job.keyResponsibilities;
+                        option.dataset.preferredSkills = job.preferredSkills;
+                        option.dataset.experience = job.experience;
+                        option.dataset.education = job.education;
+                        option.dataset.benefits = job.benefits;
+                        option.dataset.requirements = job.requirements;
+                        option.dataset.applicationStartDate = job.applicationStartDate;
+                        option.dataset.applicationEndDate = job.applicationEndDate;
                         jobSelect.appendChild(option);
                     });
                 } else {
@@ -1076,7 +1188,7 @@
                     
                     displayJobTitle.textContent = jobTitle;
                     displayEmployerCompany.textContent = companyName;
-                    displayEmployerName.textContent = employerName !== companyName ? employerName : '';
+                    displayEmployerName.textContent = employerName !== companyName ? employerName : 'Employer profile';
                     displayLocation.textContent = location;
                     displaySalary.textContent = salary;
                     document.getElementById('displayJobDescription').textContent = description || 'No description provided';

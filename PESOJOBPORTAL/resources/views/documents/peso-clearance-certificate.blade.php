@@ -208,6 +208,17 @@
             text-align: right;
         }
 
+        .footer-quote-secondary {
+            font-size: 9px;
+            font-weight: 400;
+            color: #666;
+            margin-top: -2px;
+            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: right;
+        }
+
         .footer-contact {
             font-size: 10px;
             color: #000;
@@ -220,6 +231,7 @@
 </head>
 <body>
     <div class="certificate-container">
+<div class="footer-quote-secondary">SOAR HIGH MANOLO FORTICH</div>
         <!-- Header -->
         <div class="header">
             <div class="agency-name">Republic of the Philippines</div>
@@ -238,14 +250,14 @@
         <div class="content-text">
             REGISTRY THIS IS TO CERTIFY THAT the above-named person has been entered in the MANPOWER SKILLS OF MANOLO FORTICH, and maybe employed in accordance with the Labor Code of the Philippines under Presidential Decree No.: 442, as amended and defined in the IT Chapter 1, Art. 60(1), Chapter II, Art. 139 (a.h.c.)
             <br><br>
-            THIS CERTIFIES FURTHER THAT based on the clearances issued by the BARANGAY (LGU AREA) herein subject person has NO DEROGATORY RECORD.
+            THIS CERTIFIES FURTHER THAT based on the clearances issued by the BARANGAY {{ strtoupper($residence_address ?? '(LGU AREA)') }} herein subject person has NO DEROGATORY RECORD.
             <br><br>
-            This EMPLOYMENT CLEARANCE is issued in connection with HER desire to work at:
+            This EMPLOYMENT CLEARANCE is issued in connection with {{ $possessive_pronoun ?? 'their' }} desire to work at:
         </div>
 
         <!-- Company Section -->
         <div class="company-section">
-            <div class="company-name">GENERAL SERVICES MULTIPURPOSE COOPERATIVE</div>
+            <div class="company-name">{{ strtoupper($company_name ?? 'GENERAL SERVICES MULTIPURPOSE COOPERATIVE') }}</div>
             <div style="font-size: 10px; color: #666;">Municipal Ordinance # 2005-394, Dated July 2005</div>
         </div>
 

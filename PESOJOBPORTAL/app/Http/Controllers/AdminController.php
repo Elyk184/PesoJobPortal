@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
+use App\Models\IssuedClearance;
 use App\Models\PesoClearance;
 use App\Models\JobseekerAddress;
 use App\Models\JobseekerPersonalInformation;
@@ -569,7 +570,7 @@ class AdminController extends Controller
 
     public function pesoClearances(): View
     {
-        $baseQuery = PesoClearance::query()->with('user');
+        $baseQuery = PesoClearance::query()->with(['user', 'issuedClearance']);
 
         $stats = [
             'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
@@ -592,18 +593,41 @@ class AdminController extends Controller
 
     public function generateClearanceDocument(Request $request, PesoClearance $clearance)
     {
+        $validated = $request->validate([
+            'residence_address' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+        ]);
+
+        $issuedClearance = IssuedClearance::updateOrCreate(
+            ['peso_clearance_id' => $clearance->id],
+            [
+                'user_id' => $clearance->user_id,
+                'clearance_number' => $clearance->clearance_number,
+                'company_name' => $validated['company_name'] ?? null,
+                'residence_address' => $validated['residence_address'],
+                'status' => 'saved',
+                'issued_at' => now(),
+            ]
+        );
+
+        $clearance->setAttribute('company_name', $issuedClearance->company_name);
+        $clearance->setAttribute('residence_address', $issuedClearance->residence_address);
+
         $documentService = new PesoClearanceDocumentService();
         $documentPath = $documentService->generateClearanceDocument($clearance);
         
         if ($documentPath) {
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+            $issuedClearance->update(['document_path' => $documentPath]);
 
             if ($request->boolean('preview')) {
                 return redirect()->route('admin.peso-clearances.view-document', $clearance)
                     ->with('success', 'Clearance certificate is ready for review.');
             }
 
-            return back()->with('success', 'Clearance document generated!');
+            $downloadName = 'PESO-Clearance-' . ($clearance->clearance_number ?: $clearance->id) . '.pdf';
+
+            return response()->download(storage_path('app/' . $documentPath), $downloadName);
         }
 
         return back()->with('error', 'Failed to generate clearance document.');
@@ -613,9 +637,7 @@ class AdminController extends Controller
     {
         $clearance->loadMissing('user');
 
-        if (!$clearance->document_path || !Storage::disk('local')->exists($clearance->document_path)) {
-            return back()->with('error', 'Document not found.');
-        }
+        $issuedClearance = IssuedClearance::where('peso_clearance_id', $clearance->id)->latest()->first();
 
         // Prefer explicit personal information (sex) if available
         $sexRecord = JobseekerPersonalInformation::query()
@@ -641,7 +663,8 @@ class AdminController extends Controller
         return view('admin.clearance-document-view', [
             'clearance' => $clearance,
             'autoResidenceAddress' => $this->formatAutoResidenceAddress($clearance),
-            'residenceAddress' => $clearance->residence_address ?? '',
+            'residenceAddress' => $issuedClearance?->residence_address ?? $clearance->residence_address ?? '',
+            'companyName' => $issuedClearance?->company_name ?? $clearance->company_name ?? '',
             'possessivePronoun' => $possessivePronoun,
             'objectivePronoun' => $objectivePronoun,
         ]);
@@ -649,11 +672,14 @@ class AdminController extends Controller
 
     public function downloadClearanceDocument(PesoClearance $clearance)
     {
-        if (!$clearance->document_path || !Storage::disk('local')->exists($clearance->document_path)) {
+        $issuedClearance = IssuedClearance::where('peso_clearance_id', $clearance->id)->latest()->first();
+        $documentPath = $issuedClearance?->document_path ?: $clearance->document_path;
+
+        if (!$documentPath || !Storage::disk('local')->exists($documentPath)) {
             return back()->with('error', 'Document not found.');
         }
 
-        return Storage::download($clearance->document_path, 'clearance-' . $clearance->clearance_number . '.txt');
+        return Storage::download($documentPath, 'clearance-' . $clearance->clearance_number . '.pdf');
     }
 
     public function issuePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
@@ -675,9 +701,22 @@ class AdminController extends Controller
             'issue_date' => now(),
             'expiry_date' => now()->addYear(),
             'remarks' => $clearance->remarks,
-            'residence_address' => $validated['residence_address'],
-            'company_name' => $validated['company_name'] ?? null,
         ]);
+
+        $issuedClearance = IssuedClearance::updateOrCreate(
+            ['peso_clearance_id' => $clearance->id],
+            [
+                'user_id' => $clearance->user_id,
+                'clearance_number' => $clearanceNumber,
+                'company_name' => $validated['company_name'] ?? null,
+                'residence_address' => $validated['residence_address'],
+                'status' => 'saved',
+                'issued_at' => now(),
+            ]
+        );
+
+        $clearance->setAttribute('company_name', $issuedClearance->company_name);
+        $clearance->setAttribute('residence_address', $issuedClearance->residence_address);
 
         // Generate and store clearance document
         $documentService = new PesoClearanceDocumentService();
@@ -685,6 +724,7 @@ class AdminController extends Controller
         
         if ($documentPath) {
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
+            $issuedClearance->update(['document_path' => $documentPath]);
         }
 
         return redirect()
@@ -692,15 +732,39 @@ class AdminController extends Controller
             ->with('success', 'PESO clearance has been issued successfully.');
     }
 
+    public function declinePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
+    {
+        if ($clearance->status !== 'pending') {
+            return back()->with('warning', 'Only pending clearance requests can be declined.');
+        }
+
+        $clearance->update([
+            'status' => 'declined',
+        ]);
+
+        return back()->with('success', 'PESO clearance request has been declined.');
+    }
+
     private function formatAutoResidenceAddress(PesoClearance $clearance): string
     {
-        $presentAddress = JobseekerAddress::query()
+        $baseQuery = JobseekerAddress::query()
             ->where('user_id', $clearance->user_id)
+            ->whereIn('type', ['present', 'permanent']);
+
+        $presentAddress = (clone $baseQuery)
             ->where('type', 'present')
-            ->first();
+            ->latest('updated_at')
+            ->first()
+            ?? (clone $baseQuery)
+                ->where('type', 'permanent')
+                ->latest('updated_at')
+                ->first()
+            ?? JobseekerAddress::query()
+                ->where('user_id', $clearance->user_id)
+                ->latest('updated_at')
+                ->first();
 
         $parts = array_filter([
-            $presentAddress?->house_no,
             $presentAddress?->barangay,
             $presentAddress?->municipality,
             $presentAddress?->province,
