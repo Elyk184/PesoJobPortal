@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
 use App\Models\CompanyProfile;
+use App\Services\CertificationService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -190,6 +191,21 @@ class EmployerController extends Controller
 
         $filePath = Storage::disk('public')->path($recruitmentActivityRequest->certification_path);
         return response()->download($filePath, "LRA_SRA_Certificate_{$recruitmentActivityRequest->id}.pdf");
+    }
+
+    public function viewRecruitmentActivityCertificate(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest)
+    {
+        // Ensure employer can only view their own certificates
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this certificate.');
+        }
+
+        try {
+            $certService = new CertificationService();
+            return $certService->viewCertification($recruitmentActivityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Certificate not available for viewing.');
+        }
     }
 
     public function submitDocumentsPage(Request $request): View

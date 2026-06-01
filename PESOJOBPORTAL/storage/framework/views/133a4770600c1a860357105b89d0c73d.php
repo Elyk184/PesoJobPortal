@@ -305,7 +305,7 @@
                 <?php endif; ?>
             </div>
             <div class="certificate-actions">
-                <a href="<?php echo e(route('admin.lra-sra.view-certification', $activityRequest)); ?>" target="_blank" class="btn-primary">
+                <a href="<?php echo e(route('employer.recruitment.view-certificate', $activityRequest)); ?>" target="_blank" class="btn-primary">
                     <i class="bi bi-eye me-2"></i>View Certificate
                 </a>
                 <a href="<?php echo e(route('employer.recruitment.download-certificate', $activityRequest)); ?>" class="btn-primary" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">

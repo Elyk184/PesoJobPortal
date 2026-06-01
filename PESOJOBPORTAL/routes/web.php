@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
     Route::get('/request-lra-sra', [EmployerController::class, 'requestLraSraPage'])->name('recruitment.index');
     Route::get('/request-lra-sra/{recruitmentActivityRequest}', [EmployerController::class, 'viewRecruitmentActivity'])->name('recruitment.show');
+    Route::get('/request-lra-sra/{recruitmentActivityRequest}/view-certificate', [EmployerController::class, 'viewRecruitmentActivityCertificate'])->name('recruitment.view-certificate');
     Route::get('/request-lra-sra/{recruitmentActivityRequest}/download-certificate', [EmployerController::class, 'downloadRecruitmentActivityCertificate'])->name('recruitment.download-certificate');
     Route::get('/submit-documents', [EmployerController::class, 'submitDocumentsPage'])->name('documents.index');
 
