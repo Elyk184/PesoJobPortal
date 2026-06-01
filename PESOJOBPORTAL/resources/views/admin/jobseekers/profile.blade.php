@@ -665,21 +665,7 @@
             @endforelse
         </div>
 
-        <div class="dashboard-card section-span-6 compact-section">
-            <h5><i class="bi bi-journal-bookmark"></i>Training <span class="section-badge"><i class="bi bi-award-fill"></i>Courses</span></h5>
-            @forelse($trainingRows as $training)
-                <div class="info-row">
-                    <div class="info-label"><i class="bi bi-patch-check"></i>{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
-                    <div class="info-value">
-                        {{ collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A' }}
-                    </div>
-                </div>
-            @empty
-                <div class="empty-state"><p>No training records available.</p></div>
-            @endforelse
-        </div>
-
-        <div class="dashboard-card section-span-6 compact-section">
+        <div class="dashboard-card section-span-12 compact-section">
             <h5><i class="bi bi-briefcase"></i>Work Experience <span class="section-badge"><i class="bi bi-clipboard2-data"></i>History</span></h5>
             @forelse($experienceRows as $experience)
                 <div class="experience-card">
@@ -734,6 +720,20 @@
                 </div>
             @empty
                 <div class="empty-state"><p>No work experience records available.</p></div>
+            @endforelse
+        </div>
+
+        <div class="dashboard-card section-span-6 compact-section">
+            <h5><i class="bi bi-journal-bookmark"></i>Training <span class="section-badge"><i class="bi bi-award-fill"></i>Courses</span></h5>
+            @forelse($trainingRows as $training)
+                <div class="info-row">
+                    <div class="info-label"><i class="bi bi-patch-check"></i>{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
+                    <div class="info-value">
+                        {{ collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A' }}
+                    </div>
+                </div>
+            @empty
+                <div class="empty-state"><p>No training records available.</p></div>
             @endforelse
         </div>
 
