@@ -1,6 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Request for Assistance Form')
+
+@section('dashboard-mobile-brand')
+    <div class="dashboard-mobile-brand">
+        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+        <span>OFW Portal</span>
+    </div>
+@endsection
+
+@section('dashboard-sidebar')
+    @include('dashboard.partials.ofw-nav')
+@endsection
 
 @push('styles')
 <style>

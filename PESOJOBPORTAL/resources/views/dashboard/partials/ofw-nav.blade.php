@@ -42,11 +42,15 @@
     <nav class="dashboard-nav" aria-label="OFW dashboard navigation">
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Overview</div>
-            <a href="#portal-accepts" class="dashboard-nav-link">
+            <a href="{{ route('ofw.dashboard') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.dashboard')) is-active @endif">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ route('ofw.accepted-requests') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.accepted-requests')) is-active @endif">
                 <i class="bi bi-info-circle"></i>
                 <span>Accepted Requests</span>
             </a>
-            <a href="#submitted-requests" class="dashboard-nav-link">
+            <a href="{{ route('ofw.submitted-requests') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.submitted-requests')) is-active @endif">
                 <i class="bi bi-list-check"></i>
                 <span>Submitted Requests</span>
             </a>
@@ -54,25 +58,9 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Forms</div>
-            <a href="#owwa-request" class="dashboard-nav-link">
+            <a href="{{ route('ofw.owwa-request') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.owwa-request')) is-active @endif">
                 <i class="bi bi-file-earmark-text"></i>
-                <span>OWWA Form</span>
-            </a>
-            <a href="#dmw-request" class="dashboard-nav-link">
-                <i class="bi bi-journal-text"></i>
-                <span>DMW Form</span>
-            </a>
-        </div>
-
-        <div class="dashboard-nav-section">
-            <div class="dashboard-nav-label">Support</div>
-            <a href="#portal-accepts" class="dashboard-nav-link">
-                <i class="bi bi-shield-check"></i>
-                <span>Portal Guidelines</span>
-            </a>
-            <a href="#submitted-requests" class="dashboard-nav-link">
-                <i class="bi bi-clock-history"></i>
-                <span>Case Tracking</span>
+                <span>OWWA RFA</span>
             </a>
         </div>
     </nav>

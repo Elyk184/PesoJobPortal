@@ -17,8 +17,8 @@
     <section aria-label="OFW dashboard">
         <div class="dashboard-topbar">
             <div>
-                <div class="dashboard-topbar-title">OWWA Request for Assistance</div>
-                <div class="dashboard-topbar-subtitle">Submit, track, and manage official OFW assistance requests</div>
+                <div class="dashboard-topbar-title">Dashboard</div>
+                <div class="dashboard-topbar-subtitle">Overview for OWWA Request for Assistance submissions</div>
             </div>
 
             <div class="d-none d-md-block text-end">
@@ -31,7 +31,7 @@
             <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
                 <div>
                     <h2 class="h4 mb-1 fw-bold">Welcome back, {{ $ofwUser->name ?? 'OFW' }}!</h2>
-                    <p class="mb-0 text-muted">Use the official forms below to submit an assistance request and monitor its progress.</p>
+                    <p class="mb-0 text-muted">Review accepted request types, open the OWWA RFA form, and monitor your submitted requests from one dashboard.</p>
                 </div>
 
                 <div class="dashboard-highlight" style="min-width: 280px; background: #f7f9fc; color: #314458; border: 1px solid var(--dash-border); box-shadow: none;">
@@ -49,11 +49,8 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('rfa.form') }}" class="btn btn-danger px-3 shadow-sm">
-                        <i class="bi bi-file-earmark-plus me-2"></i>Open OWWA Form
-                    </a>
-                    <a href="{{ route('rfa.form') }}" class="btn btn-outline-primary px-3">
-                        <i class="bi bi-journal-text me-2"></i>Open DMW Form
+                    <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger px-3 shadow-sm">
+                        <i class="bi bi-file-earmark-plus me-2"></i>Start OWWA RFA
                     </a>
                 </div>
             </div>
@@ -91,70 +88,49 @@
             </div>
         </div>
 
-        <div class="dashboard-section-card p-3 p-lg-4 mb-4" id="portal-accepts">
-            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                <h3 class="h5 mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>What this portal accepts</h3>
-            </div>
-
-            <p class="mb-3 text-muted">
-                As agreed with the officer-in-charge, this OFW portal accepts only formal assistance requests using the official forms.
-                Choose the correct form below and submit only one request per case.
-            </p>
-
-            <ul class="mb-0 text-secondary">
-                <li>OWWA Request for Assistance (RFA)</li>
-                <li>DMW Request for Assistance (RFA)</li>
-                <li>After submission, use My Submitted Requests to track case status.</li>
-            </ul>
-        </div>
-
         <div class="row g-3 mb-4">
-            <div class="col-12 col-lg-6" id="owwa-request">
+            <div class="col-12 col-lg-4">
                 <div class="dashboard-section-card h-100 p-3 p-lg-4">
                     <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>OWWA Request for Assistance</h3>
-                        <span class="badge rounded-pill text-bg-danger">Primary</span>
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Accepted Requests</h3>
+                        <span class="badge rounded-pill text-bg-success">Available</span>
                     </div>
-
                     <p class="text-muted mb-3">
-                        Use the OWWA form for support concerns handled under OWWA assistance workflows.
+                        View the OFW concerns and details accepted for OWWA Request for Assistance processing.
                     </p>
-
-                    <a href="{{ route('rfa.form') }}" class="btn btn-danger w-100">
-                        <i class="bi bi-box-arrow-up-right me-2"></i>Open OWWA Form
+                    <a href="{{ route('ofw.accepted-requests') }}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right me-2"></i>Open Page
                     </a>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-6" id="dmw-request">
+            <div class="col-12 col-lg-4">
                 <div class="dashboard-section-card h-100 p-3 p-lg-4">
                     <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-journal-text me-2"></i>DMW Request for Assistance</h3>
-                        <span class="badge rounded-pill text-bg-primary">Secondary</span>
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>OWWA RFA</h3>
+                        <span class="badge rounded-pill text-bg-danger">Form</span>
                     </div>
-
                     <p class="text-muted mb-3">
-                        Use the DMW form for cases that need Department of Migrant Workers assistance and coordination.
+                        Start a new OWWA assistance request using the official RFA form.
                     </p>
-
-                    <a href="{{ route('rfa.form') }}" class="btn btn-outline-primary w-100">
-                        <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form
+                    <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger w-100">
+                        <i class="bi bi-arrow-right me-2"></i>Open Page
                     </a>
                 </div>
             </div>
-        </div>
 
-        <div class="dashboard-section-card p-3 p-lg-4 mb-4" id="submitted-requests">
-            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                <h3 class="h5 mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>My Submitted Requests</h3>
-                <span class="badge rounded-pill text-bg-light text-secondary">View status</span>
-            </div>
-
-            <div class="dashboard-empty-state">
-                <div>
-                    <div class="fs-1 mb-2">✦</div>
-                    <div class="fw-semibold text-secondary">No submitted requests yet.</div>
-                    <div class="small">Submit an OWWA or DMW request to start tracking your case here.</div>
+            <div class="col-12 col-lg-4">
+                <div class="dashboard-section-card h-100 p-3 p-lg-4">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Submitted Requests</h3>
+                        <span class="badge rounded-pill text-bg-light text-secondary">{{ ($submittedRequests ?? collect())->count() }} recent</span>
+                    </div>
+                    <p class="text-muted mb-3">
+                        Review your latest submitted assistance requests and current processing status.
+                    </p>
+                    <a href="{{ route('ofw.submitted-requests') }}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right me-2"></i>Open Page
+                    </a>
                 </div>
             </div>
         </div>

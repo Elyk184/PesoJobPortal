@@ -22,7 +22,12 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-Route::middleware('auth')->get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.dashboard');
+Route::middleware('auth')->prefix('ofw')->name('ofw.')->group(function () {
+    Route::get('/', [OfwController::class, 'dashboard'])->name('dashboard');
+    Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
+    Route::get('/owwa-request', [OfwController::class, 'owwaRequest'])->name('owwa-request');
+    Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
+});
 
 // Auth routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
