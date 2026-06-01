@@ -899,7 +899,7 @@
 
             @if(!request()->routeIs('admin.jobseekers.index'))
             <li class="sidebar-menu-item">
-               
+
             </li>
             @endif
             <li class="sidebar-menu-item">
@@ -930,6 +930,9 @@
                 <a href="{{ route('admin.lra-sra-approvals') }}" class="sidebar-menu-link">
                     <i class="bi bi-clipboard-check"></i>
                     <span>LRA/SRA Approvals</span>
+                    @if(($adminSidebarCounts['pendingLraSraApprovals'] ?? 0) > 0)
+                        <span class="badge badge-pending" style="background:#ec4899;">{{ $adminSidebarCounts['pendingLraSraApprovals'] }}</span>
+                    @endif
                 </a>
             </li>
      
@@ -2233,50 +2236,50 @@
     // Update clock every second
     function updateClock() {
         const now = new Date();
-        
+
         // Get time components
         const hours = now.getHours();
         const minutes = now.getMinutes();
         const seconds = now.getSeconds();
         const milliseconds = now.getMilliseconds();
-        
+
         // Format time (HH:MM)
         const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-        
+
         // Format date (MMM DD, YYYY)
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const month = monthNames[now.getMonth()];
         const day = now.getDate();
         const year = now.getFullYear();
         const dateString = `${month} ${day}, ${year}`;
-        
+
         // Update digital display
         const timeElement = document.getElementById('currentTime');
         const dateElement = document.getElementById('currentDate');
-        
+
         if (timeElement) timeElement.textContent = timeString;
         if (dateElement) dateElement.textContent = dateString;
-        
+
         // Calculate analog clock hand angles
         // Hour hand: 360 / 12 hours = 30 degrees per hour + 0.5 degrees per minute
         const hourDegrees = (hours % 12) * 30 + minutes * 0.5 + seconds * 0.5 / 60;
-        
+
         // Minute hand: 360 / 60 minutes = 6 degrees per minute
         const minuteDegrees = minutes * 6 + seconds * 0.1;
-        
+
         // Second hand: 360 / 60 seconds = 6 degrees per second (smooth with milliseconds)
         const secondDegrees = seconds * 6 + (milliseconds / 1000) * 6;
-        
+
         // Update analog clock hands
         const hourHand = document.getElementById('hourHand');
         const minuteHand = document.getElementById('minuteHand');
         const secondHand = document.getElementById('secondHand');
-        
+
         if (hourHand) hourHand.style.transform = `rotate(${hourDegrees}deg)`;
         if (minuteHand) minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
         if (secondHand) secondHand.style.transform = `rotate(${secondDegrees}deg)`;
     }
-    
+
     // Update clock immediately and then frequently for smooth second hand
     updateClock();
     setInterval(updateClock, 50); // Update every 50ms for smooth motion
@@ -2297,7 +2300,7 @@
         const approvalsCtx = document.getElementById('approvalsAnalyticsChart');
         if (approvalsCtx) {
             const ctx = approvalsCtx.getContext('2d');
-            
+
             // Generate dates based on selected period
             const generateDateLabels = (period) => {
                 const today = new Date();
@@ -2342,7 +2345,7 @@
             const generateData = (baseValue, period) => {
                 const count = period === 'day' ? 24 : period === 'week' ? 7 : period === 'month' ? 4 : 12;
                 const data = [];
-                
+
                 // Create realistic trend data based on the base value
                 for (let i = 0; i < count; i++) {
                     // Add some variation but keep it around the base value
@@ -2357,7 +2360,7 @@
 
             const updateChart = (period) => {
                 const labels = generateDateLabels(period);
-                
+
                 const datasets = [
                     {
                         label: 'Applications',

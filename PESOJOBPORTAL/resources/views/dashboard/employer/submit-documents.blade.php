@@ -132,80 +132,6 @@
             font-size: 0.92rem;
         }
 
-        .docs-preview {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .docs-preview-header {
-            display: flex;
-            gap: 0.8rem;
-            align-items: center;
-        }
-
-        .docs-preview-logo {
-            width: 72px;
-            height: 72px;
-            border-radius: 16px;
-            object-fit: cover;
-            background: #fff;
-            border: 1px solid #d8e2f1;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-        }
-
-        .docs-preview-logo.placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #5d718e;
-            font-weight: 800;
-            font-size: 1.05rem;
-            background: linear-gradient(135deg, #e8f1ff 0%, #dfeaff 100%);
-        }
-
-        .docs-preview-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.25rem 0.65rem;
-            border-radius: 999px;
-            background: #eaf2ff;
-            color: #1f4f97;
-            font-size: 0.8rem;
-            font-weight: 800;
-        }
-
-        .docs-preview-panel {
-            border: 1px solid #dbe6f5;
-            border-radius: 14px;
-            background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
-            padding: 0.95rem;
-        }
-
-        .docs-preview-title {
-            margin: 0.2rem 0 0.25rem;
-            color: #12243f;
-            font-size: 1rem;
-            font-weight: 800;
-        }
-
-        .docs-preview-text {
-            margin: 0;
-            color: #5f6f86;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .docs-upload-state {
-            font-size: 0.86rem;
-            color: #64748b;
-            margin-top: 0.45rem;
-        }
-
-        .docs-upload-state strong {
-            color: #12243f;
-        }
-
         .docs-submit {
             width: fit-content;
             border: 0;
@@ -215,6 +141,7 @@
             color: #fff;
             background: linear-gradient(135deg, #1f4f97 0%, #2f6ec8 100%);
             box-shadow: 0 10px 20px rgba(31, 79, 151, 0.22);
+            cursor: pointer;
         }
 
         .docs-note {
@@ -228,76 +155,197 @@
             gap: 0.7rem;
         }
 
-        .submission-item {
-            border: 1px solid #e3eaf4;
-            border-radius: 14px;
-            padding: 0.95rem 1rem;
-            background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
-        }
-
-        .submission-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.7rem;
-            margin-bottom: 0.35rem;
-            flex-wrap: wrap;
-        }
-
-        .submission-type {
-            color: #12243f;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-        }
-
-        .submission-status {
-            display: inline-flex;
+        /* ── Modal Styles ───────────────────────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(15, 23, 42, 0.55);
             align-items: center;
             justify-content: center;
-            border-radius: 999px;
-            padding: 0.25rem 0.6rem;
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-            color: #fff;
-            background: #2f6ec8;
         }
 
-        .submission-meta {
-            margin: 0;
-            color: #60708a;
-            font-size: 0.92rem;
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 460px;
+            margin: 1rem;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+            animation: modalIn 0.22s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: translateY(18px); opacity: 0; }
+            to   { transform: translateY(0);   opacity: 1; }
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #e8f1ff 0%, #dfeaff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.55rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            margin: 0 0 0.3rem;
+            font-size: 1.22rem;
+            font-weight: 800;
+            color: #12243f;
+        }
+
+        .modal-desc {
+            margin: 0 0 1.4rem;
+            color: #5f6f86;
+            font-size: 0.93rem;
+            line-height: 1.55;
+        }
+
+        .modal-date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 0.9rem;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #22334d;
+            margin-bottom: 0.4rem;
+        }
+
+        .modal-field input[type="date"] {
+            width: 100%;
+            border: 1px solid #c8d6ea;
+            border-radius: 10px;
+            background: #fff;
+            padding: 0.62rem 0.75rem;
+            font-size: 0.93rem;
+            box-sizing: border-box;
+            transition: border-color 0.15s;
+            font-family: inherit;
+        }
+
+        .modal-field input[type="date"]:focus {
+            outline: none;
+            border-color: #2f6ec8;
+            box-shadow: 0 0 0 3px rgba(47, 110, 200, 0.13);
+        }
+
+        .modal-summary {
+            display: none;
+            padding: 0.7rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .modal-cancel {
+            flex: 1;
+            padding: 0.72rem;
+            border: 1px solid #c8d6ea;
+            border-radius: 10px;
+            background: #fff;
+            color: #5f6f86;
+            font-weight: 700;
+            font-size: 0.93rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .modal-cancel:hover { background: #f4f8ff; }
+
+        .modal-confirm {
+            flex: 2;
+            padding: 0.72rem;
+            border: 0;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1f4f97 0%, #2f6ec8 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.93rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(31, 79, 151, 0.22);
+            font-family: inherit;
+            transition: opacity 0.15s;
+        }
+
+        .modal-confirm:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         @media (max-width: 992px) {
-            .docs-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .docs-helper-grid {
-                grid-template-columns: 1fr;
-            }
+            .docs-grid { grid-template-columns: 1fr; }
+            .docs-helper-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .docs-page {
-                margin: -0.7rem;
-                padding: 0.8rem;
-            }
+            .docs-page { margin: -0.7rem; padding: 0.8rem; }
+            .docs-hero { padding: 1.15rem; }
+            .docs-hero h1 { font-size: 1.45rem; }
+            .docs-submit { width: 100%; }
+            .modal-date-row { grid-template-columns: 1fr; }
+        }
 
-            .docs-hero {
-                padding: 1.15rem;
-            }
-
-            .docs-hero h1 {
-                font-size: 1.45rem;
-            }
-
-            .docs-submit {
-                width: 100%;
-            }
+        @media (max-width: 480px) {
+            .modal-box { margin: 1rem; padding: 1.4rem; }
         }
     </style>
+
+    {{-- ── Recruitment Date Modal ──────────────────────────────────── --}}
+    <div class="modal-overlay" id="recruitmentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-icon">📅</div>
+            <h2 class="modal-title" id="modalTitle">Recruitment Schedule</h2>
+            <p class="modal-desc">
+                Please specify the <strong>start</strong> and <strong>end dates</strong> for your
+                <strong id="modalActivityLabel">LRA/SRA</strong> recruitment activity.
+                The total number of days will be automatically calculated.
+            </p>
+
+            <div class="modal-date-row">
+                <div class="modal-field">
+                    <label for="modal_start_date">Start Date</label>
+                    <input type="date" id="modal_start_date" required>
+                </div>
+                <div class="modal-field">
+                    <label for="modal_end_date">End Date</label>
+                    <input type="date" id="modal_end_date" required>
+                </div>
+            </div>
+
+            <div class="modal-summary" id="modalSummary"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" id="modalCancelBtn">Cancel</button>
+                <button type="button" class="modal-confirm" id="modalConfirmBtn" disabled>
+                    Confirm &amp; Submit
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="docs-page">
         <section class="docs-hero">
@@ -311,8 +359,13 @@
                 <h2>Submit Local / Special Recruitment Documents</h2>
                 <p>Attach all required files before sending your request for review.</p>
 
-                <form class="docs-form" method="POST" action="{{ route('employer.recruitment.request') }}" enctype="multipart/form-data">
+                <form class="docs-form" id="mainForm" method="POST" action="{{ route('employer.recruitment.request') }}" enctype="multipart/form-data">
                     @csrf
+
+                    {{-- Hidden fields populated by modal before submission --}}
+                    <input type="hidden" name="recruitment_start_date" id="hidden_start_date">
+                    <input type="hidden" name="recruitment_end_date"   id="hidden_end_date">
+                    <input type="hidden" name="recruitment_days"       id="hidden_days">
 
                     <div class="docs-helper-grid">
                         <div class="docs-field">
@@ -323,23 +376,6 @@
                                 <option value="sra" @selected(old('activity_type', $defaultActivityType) === 'sra')>SRA</option>
                             </select>
                         </div>
-
-                        <div class="docs-field">
-                            <label for="company_profile_source">Company Profile Source</label>
-                            <select id="company_profile_source" name="company_profile_source">
-                                <option value="upload" @selected(old('company_profile_source', 'upload') === 'upload')>Upload a file</option>
-                                <option value="profile_details" @selected(old('company_profile_source') === 'profile_details')>Reuse Company Logo + Establishment Details</option>
-                            </select>
-                            <div class="docs-upload-state" id="company_profile_upload_state">You can reuse the logo and establishment details or upload a fresh company profile file.</div>
-                        </div>
-                    </div>
-
-                    <div class="docs-field" id="company_profile_upload_field">
-                        <label for="company_profile">Company Profile File</label>
-                        <input id="company_profile" type="file" name="company_profile" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                        @error('company_profile')
-                            <div class="text-danger small mt-2">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="docs-field">
@@ -347,87 +383,284 @@
                         <input id="letter_of_intent" type="file" name="letter_of_intent" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="docs-field">
-                        <label for="job_advertisement">Job Advertisement (Facebook/Social Media Ready)</label>
-                        <input id="job_advertisement" type="file" name="job_advertisement" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    {{-- SRA Specific Fields --}}
+                    <div id="sra_dmw_certificate" class="docs-field" style="display: none;">
+                        <label for="dmw_certificate">DMW CERTIFICATE</label>
+                        <input id="dmw_certificate" type="file" name="dmw_certificate" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
 
-                    <div class="docs-field docs-preview">
-                        <label>Company Profile Preview</label>
-                        <div class="docs-preview-panel">
-                            <div class="docs-preview-header">
-                                @if($companyProfile && $companyProfile->logo_path)
-                                    <img class="docs-preview-logo" src="{{ asset('storage/' . $companyProfile->logo_path) }}" alt="Company logo preview">
-                                @else
-                                    <div class="docs-preview-logo placeholder">{{ strtoupper(substr($companyProfilePreview['company_name'] ?? auth()->user()->name ?? 'P', 0, 1)) }}</div>
-                                @endif
-                                <div>
-                                    <div class="docs-preview-badge"><i class="bi bi-building"></i> Company Profile</div>
-                                    <h3 class="docs-preview-title">{{ $companyProfilePreview['company_name'] ?? auth()->user()->name }}</h3>
-                                    <p class="docs-preview-text">{{ $companyProfilePreview['establishment_contact_person'] ?? 'Establishment details will be used here.' }}</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-3">
-                                <p class="docs-preview-text"><strong>Position:</strong> {{ $companyProfilePreview['establishment_contact_position'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Phone:</strong> {{ $companyProfilePreview['establishment_phone'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Email:</strong> {{ $companyProfilePreview['establishment_email'] ?? 'N/A' }}</p>
-                                <p class="docs-preview-text"><strong>Address:</strong> {{ trim(implode(', ', array_filter([
-                                    $companyProfilePreview['street_village'] ?? null,
-                                    $companyProfilePreview['barangay'] ?? null,
-                                    $companyProfilePreview['city_municipality'] ?? null,
-                                    $companyProfilePreview['province'] ?? null,
-                                ]))) ?: 'N/A' }}</p>
-                            </div>
-                        </div>
+                    <div id="sra_recruitment_officer" class="docs-field" style="display: none;">
+                        <label for="recruitment_officer_id">APPOINTMENT OF RECRUITMENT OFFICER AND ID</label>
+                        <input id="recruitment_officer_id" type="file" name="recruitment_officer_id" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
                     </div>
 
-                    <button class="docs-submit" type="submit">Submit LRA/SRA Request</button>
+                    <div id="sra_job_order_balance" class="docs-field" style="display: none;">
+                        <label for="job_order_balance">UPDATED JOB ORDER BALANCE</label>
+                        <input id="job_order_balance" type="file" name="job_order_balance" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="sra_deployment_report" class="docs-field" style="display: none;">
+                        <label for="deployment_report">LATEST DEPLOYMENT REPORT</label>
+                        <input id="deployment_report" type="file" name="deployment_report" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="sra_affidavit" class="docs-field" style="display: none;">
+                        <label for="affidavit_undertaking">AFFIDAVIT OF UNDERTAKING (TO FOLLOW)</label>
+                        <input id="affidavit_undertaking" type="file" name="affidavit_undertaking" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="sra_authority" class="docs-field" style="display: none;">
+                        <label for="sra_authority_file">SRA AUTHORITY (TO FOLLOW)</label>
+                        <input id="sra_authority_file" type="file" name="sra_authority_file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    {{-- LRA Specific Fields --}}
+                    <div id="lra_business_permit" class="docs-field" style="display: none;">
+                        <label for="business_permit">Business Permit</label>
+                        <input id="business_permit" type="file" name="business_permit" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_recruitment_officer" class="docs-field" style="display: none;">
+                        <label for="lra_recruitment_officer_id">APPOINTMENT OF RECRUITMENT OFFICER AND ID</label>
+                        <input id="lra_recruitment_officer_id" type="file" name="lra_recruitment_officer_id" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_job_vacancies" class="docs-field" style="display: none;">
+                        <label for="job_vacancies">Job Vacancies - Upload File</label>
+                        <input id="job_vacancies" type="file" name="job_vacancies" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </div>
+
+                    <div id="lra_job_vacancies_text" class="docs-field" style="display: none;">
+                        <label for="job_vacancies_text">Job Vacancies - Text Details</label>
+                        <textarea id="job_vacancies_text" name="job_vacancies_text" rows="6"
+                            style="width: 100%; border: 1px solid #c8d6ea; border-radius: 10px; background: #fff; padding: 0.6rem 0.7rem; font-size: 0.92rem; font-family: inherit;"
+                            placeholder="Enter job vacancy details here..."></textarea>
+                    </div>
+
+                    <button id="submitBtn" class="docs-submit" type="button">Submit LRA/SRA Request</button>
                 </form>
 
                 <p class="docs-note">Tip: clear file names and complete documents help speed up review.</p>
             </section>
 
             <section class="docs-card">
-                <h2>Recent Submissions</h2>
-                <div class="submission-list">
-                    @forelse ($recruitmentRequests as $submission)
-                        <article class="submission-item">
-                            <div class="submission-top">
-                                <span class="submission-type">{{ strtoupper($submission->activity_type) }}</span>
-                                <span class="submission-status">{{ strtoupper($submission->status) }}</span>
-                            </div>
-                            <p class="submission-meta">Submitted: {{ optional($submission->created_at)->format('M d, Y h:i A') }}</p>
-                        </article>
-                    @empty
-                        <p class="mb-0">No document submissions yet.</p>
-                    @endforelse
-                </div>
+                <h2>Request Requirements</h2>
+                <div class="submission-list" id="requirementsList"></div>
             </section>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const sourceSelect = document.getElementById('company_profile_source');
-            const uploadField = document.getElementById('company_profile_upload_field');
-            const uploadInput = document.getElementById('company_profile');
-            const uploadState = document.getElementById('company_profile_upload_state');
 
-            const updateCompanyProfileMode = () => {
-                const isUploadMode = sourceSelect.value === 'upload';
-                uploadField.style.display = isUploadMode ? 'block' : 'none';
-                uploadInput.required = isUploadMode;
+            // ── Existing logic ───────────────────────────────────────────────
+            const activityTypeSelect = document.getElementById('activity_type');
+            const submitBtn          = document.getElementById('submitBtn');
+            const requirementsList   = document.getElementById('requirementsList');
 
-                if (isUploadMode) {
-                    uploadState.textContent = 'Upload a fresh company profile file for this request.';
-                } else {
-                    uploadState.textContent = 'This request will reuse only your company logo and establishment details.';
+            const sraRequirements = [
+                { name: 'Letter of Intent (Addressed to ROGELIO N. QUIÑO, MUNICIPAL MAYOR, MANOLO FORTICH, THRU: LORRAINE A. REQUINTON - PESO MANAGER)', field: 'letter_of_intent' },
+                { name: 'DMW CERTIFICATE',                                field: 'dmw_certificate' },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID',      field: 'recruitment_officer_id' },
+                { name: 'UPDATED JOB ORDER BALANCE',                      field: 'job_order_balance' },
+                { name: 'LATEST DEPLOYMENT REPORT',                       field: 'deployment_report' },
+                { name: 'AFFIDAVIT OF UNDERTAKING (TO FOLLOW)',           field: 'affidavit_undertaking' },
+                { name: 'SRA AUTHORITY (TO FOLLOW)',                      field: 'sra_authority_file' },
+            ];
+
+            const lraRequirements = [
+                { name: 'Letter of Intent',                               field: 'letter_of_intent' },
+                { name: 'Business Permit',                                field: 'business_permit' },
+                { name: 'APPOINTMENT OF RECRUITMENT OFFICER AND ID',      field: 'lra_recruitment_officer_id' },
+                { name: 'Job Vacancies',                                  field: 'job_vacancies' },
+            ];
+
+            const updateVisibleFields = () => {
+                const type = activityTypeSelect.value;
+
+                // Hide all conditional fields
+                ['sra_dmw_certificate','sra_recruitment_officer','sra_job_order_balance',
+                 'sra_deployment_report','sra_affidavit','sra_authority',
+                 'lra_business_permit','lra_recruitment_officer','lra_job_vacancies','lra_job_vacancies_text']
+                    .forEach(id => document.getElementById(id).style.display = 'none');
+
+                if (type === 'sra') {
+                    ['sra_dmw_certificate','sra_recruitment_officer','sra_job_order_balance',
+                     'sra_deployment_report','sra_affidavit','sra_authority']
+                        .forEach(id => document.getElementById(id).style.display = 'block');
+                } else if (type === 'lra') {
+                    ['lra_business_permit','lra_recruitment_officer','lra_job_vacancies','lra_job_vacancies_text']
+                        .forEach(id => document.getElementById(id).style.display = 'block');
                 }
             };
 
-            sourceSelect.addEventListener('change', updateCompanyProfileMode);
-            updateCompanyProfileMode();
+            const isFieldFilled = (field) => {
+                if (field === 'job_vacancies') {
+                    const fileInput = document.getElementById('job_vacancies');
+                    const textInput = document.getElementById('job_vacancies_text');
+                    return (fileInput && fileInput.files.length > 0) ||
+                           (textInput && textInput.value.trim().length > 0);
+                }
+                const input = document.getElementById(field);
+                return input && input.type === 'file' && input.files.length > 0;
+            };
+
+            const updateRequirements = () => {
+                const type = activityTypeSelect.value;
+                const requirements = type === 'lra' ? lraRequirements : sraRequirements;
+
+                const completed = requirements.filter(r => isFieldFilled(r.field)).length;
+                const total     = requirements.length;
+                const pct       = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                let html = `
+                    <div style="margin-bottom:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                            <span style="font-weight:700;color:#12243f;">Submission Progress</span>
+                            <span style="font-weight:800;color:#1f4f97;font-size:1.1rem;">${pct}%</span>
+                        </div>
+                        <div style="width:100%;height:12px;border-radius:999px;background:#e1e9f5;overflow:hidden;">
+                            <div style="height:100%;width:${pct}%;background:linear-gradient(135deg,#1f4f97 0%,#2f6ec8 100%);transition:width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    <div style="display:grid;gap:0.7rem;">`;
+
+                requirements.forEach(req => {
+                    const done = isFieldFilled(req.field);
+                    html += `
+                        <div style="display:flex;align-items:center;gap:0.8rem;padding:0.6rem;border-radius:8px;background:${done ? '#eaf2ff' : '#f5f7fb'};">
+                            <div style="width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;${done ? 'background:#2f6ec8;color:#fff;' : 'background:#d8e2f1;color:#64748b;'}">
+                                ${done ? '✓' : '○'}
+                            </div>
+                            <span style="color:${done ? '#12243f' : '#5f6f86'};font-weight:${done ? '700' : '500'};">${req.name}</span>
+                        </div>`;
+                });
+
+                html += '</div>';
+                requirementsList.innerHTML = html;
+            };
+
+            const updateButtonText = () => {
+                const v = activityTypeSelect.value.toUpperCase();
+                submitBtn.textContent = (v === 'LRA' || v === 'SRA')
+                    ? `Submit ${v} Request`
+                    : 'Submit LRA/SRA Request';
+            };
+
+            activityTypeSelect.addEventListener('change', () => {
+                updateButtonText();
+                updateVisibleFields();
+                updateRequirements();
+            });
+
+            document.querySelectorAll('input[type="file"]').forEach(i =>
+                i.addEventListener('change', updateRequirements));
+
+            const jobVacanciesText = document.getElementById('job_vacancies_text');
+            if (jobVacanciesText) jobVacanciesText.addEventListener('input', updateRequirements);
+
+            updateButtonText();
+            updateVisibleFields();
+            updateRequirements();
+
+            // ── Modal logic ──────────────────────────────────────────────────
+            const form          = document.getElementById('mainForm');
+            const modal         = document.getElementById('recruitmentModal');
+            const startInput    = document.getElementById('modal_start_date');
+            const endInput      = document.getElementById('modal_end_date');
+            const summary       = document.getElementById('modalSummary');
+            const confirmBtn    = document.getElementById('modalConfirmBtn');
+            const cancelBtn     = document.getElementById('modalCancelBtn');
+            const activityLabel = document.getElementById('modalActivityLabel');
+            const hiddenStart   = document.getElementById('hidden_start_date');
+            const hiddenEnd     = document.getElementById('hidden_end_date');
+            const hiddenDays    = document.getElementById('hidden_days');
+
+            // Open modal on submit button click (after native validation)
+            submitBtn.addEventListener('click', function () {
+                // Trigger native HTML5 validation on the form
+                if (!form.reportValidity()) return;
+
+                // Update modal label
+                const type = activityTypeSelect.value.toUpperCase() || 'LRA/SRA';
+                activityLabel.textContent = type;
+
+                // Reset modal state
+                const today = new Date().toISOString().split('T')[0];
+                startInput.min   = today;
+                startInput.value = '';
+                endInput.value   = '';
+                endInput.min     = today;
+                summary.style.display  = 'none';
+                confirmBtn.disabled    = true;
+
+                modal.classList.add('active');
+                setTimeout(() => startInput.focus(), 50);
+            });
+
+            // Recalculate duration whenever a date changes
+            function recalculate() {
+                if (!startInput.value || !endInput.value) {
+                    summary.style.display = 'none';
+                    confirmBtn.disabled = true;
+                    return;
+                }
+
+                const start = new Date(startInput.value);
+                const end   = new Date(endInput.value);
+
+                if (end < start) {
+                    summary.style.display    = 'block';
+                    summary.style.background = '#fff0f0';
+                    summary.style.color      = '#b91c1c';
+                    summary.textContent      = '⚠ End date must be on or after the start date.';
+                    confirmBtn.disabled = true;
+                    return;
+                }
+
+                const days = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                summary.style.display    = 'block';
+                summary.style.background = '#eaf2ff';
+                summary.style.color      = '#1f4f97';
+                summary.textContent      = `✓ Recruitment duration: ${days} day${days !== 1 ? 's' : ''} (${startInput.value} → ${endInput.value})`;
+                confirmBtn.disabled = false;
+            }
+
+            startInput.addEventListener('change', function () {
+                endInput.min = startInput.value;
+                recalculate();
+            });
+
+            endInput.addEventListener('change', recalculate);
+
+            // Confirm: populate hidden fields and submit the real form
+            confirmBtn.addEventListener('click', function () {
+                const start = new Date(startInput.value);
+                const end   = new Date(endInput.value);
+                const days  = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+                hiddenStart.value = startInput.value;
+                hiddenEnd.value   = endInput.value;
+                hiddenDays.value  = days;
+
+                modal.classList.remove('active');
+                form.submit(); // bypass button click, submit directly
+            });
+
+            // Cancel button
+            cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+            // Click outside modal box to close
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+
+            // Escape key to close
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                }
+            });
         });
     </script>
 @endsection

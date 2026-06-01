@@ -53,6 +53,11 @@
                 <div class="alerts-stat-note">Company profiles awaiting approval</div>
             </div>
             <div class="alerts-stat">
+                <div class="alerts-stat-label">Pending LRA/SRA Approvals</div>
+                <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingLraSraApprovals'] ?? 0 }}</div>
+                <div class="alerts-stat-note">Requests awaiting certification</div>
+            </div>
+            <div class="alerts-stat">
                 <div class="alerts-stat-label">Pending PESO Clearances</div>
                 <div class="alerts-stat-value">{{ $adminSidebarCounts['pendingPesoClearances'] ?? 0 }}</div>
                 <div class="alerts-stat-note">Requests awaiting admin action</div>
@@ -77,10 +82,11 @@
                         $alertText = mb_strtolower($title . ' ' . $message);
                         $isJobApproval = str_contains($alertText, 'job post') || str_contains($alertText, 'job approval');
                         $isEmployerVerification = str_contains($alertText, 'employer verification') || str_contains($alertText, 'company verification') || str_contains($alertText, 'business permit');
+                        $isLraSra = str_contains($alertText, 'lra') || str_contains($alertText, 'sra') || str_contains($alertText, 'recruitment activity');
                         $isPesoClearance = str_contains($alertText, 'peso clearance');
                     @endphp
                     <div class="alert-item">
-                        <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isEmployerVerification ? '#16a34a' : '#2563eb') }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)') }};">
+                        <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isLraSra ? '#ec4899' : ($isEmployerVerification ? '#16a34a' : '#2563eb')) }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isLraSra ? 'rgba(236, 72, 153, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)')) }};">
                             <i class="bi bi-bell-fill"></i>
                         </div>
                         <div class="alert-info">
@@ -94,6 +100,9 @@
                                 @if($isEmployerVerification)
                                     <span class="badge text-bg-success rounded-pill">Employer Verification</span>
                                 @endif
+                                @if($isLraSra)
+                                    <span class="badge rounded-pill" style="background:#ec4899; color:white;">LRA/SRA Request</span>
+                                @endif
                                 @if($isPesoClearance)
                                     <span class="badge text-bg-warning text-dark rounded-pill">PESO Clearance</span>
                                 @endif
@@ -105,6 +114,9 @@
                             @endif
                             @if($isEmployerVerification)
                                 <a href="{{ route('admin.employer-verification') }}" class="btn-small btn-dismiss" style="background:#16a34a; color:#fff; text-decoration:none;">Review Queue</a>
+                            @endif
+                            @if($isLraSra)
+                                <a href="{{ route('admin.lra-sra-approvals') }}" class="btn-small btn-dismiss" style="background:#ec4899; color:#fff; text-decoration:none;">Review Queue</a>
                             @endif
                             @if($isPesoClearance)
                                 <a href="{{ route('admin.peso-clearances') }}" class="btn-small btn-dismiss" style="background:#f59e0b; color:#fff; text-decoration:none;">Open Queue</a>

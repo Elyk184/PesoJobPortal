@@ -655,7 +655,7 @@
                     <div class="profile-avatar">
                         <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="{{ $displayName }}">
                     </div>
-                    
+
                     <div class="profile-info">
                         <h3>{{ $displayName }}</h3>
                         <p><i class="bi bi-envelope-paper me-2"></i>{{ $jobseeker->email }}</p>
@@ -833,6 +833,13 @@
             </div>
         </div>
 
+        @if(!empty($jobseeker->profile->skills))
+            <div class="info-row">
+                <div class="info-label">Skills</div>
+                <div class="info-value">{{ is_array($jobseeker->profile->skills) ? implode(', ', $jobseeker->profile->skills) : $jobseeker->profile->skills }}</div>
+            </div>
+        @endif
+
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-person-check"></i>Employment & Preferences <span class="section-badge"><i class="bi bi-funnel"></i>Match</span></h5>
             <div class="row g-3">
@@ -910,7 +917,7 @@
                     @csrf
                     <div class="modal-body" style="padding: 2rem; background: #ffffff;">
                         <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;">N/A</span></p>
-                        
+
                         <div class="row mb-3">
                             <!-- Step 1: Select Employer -->
                             <div class="col-md-6">
@@ -938,7 +945,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <!-- Step 2: Select Job -->
                             <div class="col-md-6">
                                 <label for="jobSelect" class="form-label" style="font-weight: 700; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">
@@ -949,9 +956,9 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e5e7eb;">
-                        
+
                         <!-- Job Details Display (Facebook-like post) -->
                         <div id="jobDetailsSection" style="display: none; background: #f8fafc; padding: 1.25rem; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(15,23,42,0.06); margin-bottom: 1.5rem; border: 1px solid #e5e7eb;">
                             <!-- Post Header -->
@@ -964,10 +971,10 @@
                                     <div style="color: #6b7280; font-size: 0.92rem;" id="displayEmployerName"></div>
                                 </div>
                             </div>
-                            
+
                             <!-- Job Title -->
                             <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0 0 1.25rem 0;" id="displayJobTitle"></h3>
-                            
+
                             <!-- Job Details Grid -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                                 <!-- Location -->
@@ -980,7 +987,7 @@
                                         <div style="font-size: 1rem; color: #0f172a; font-weight: 600;" id="displayLocation"></div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Salary -->
                                 <div style="display: flex; gap: 1rem;">
                                     <div style="color: #475569; font-size: 1.3rem; flex-shrink: 0;">
@@ -992,27 +999,27 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Divider -->
                             <hr style="margin: 1.25rem 0; border: none; border-top: 1px solid #e5e7eb;">
-                            
+
                             <!-- Job Description -->
                             <div style="margin-bottom: 1.5rem;">
                                 <div style="font-size: 0.8rem; color: #6b7280; font-weight: 700; text-transform: uppercase; margin-bottom: 0.65rem;">About This Job</div>
                                 <div style="font-size: 0.98rem; color: #334155; line-height: 1.65; background: white; padding: 1rem; border-radius: 10px; border: 1px solid #e5e7eb;" id="displayJobDescription">No description provided</div>
                             </div>
-                            
+
                             <!-- More Details Button -->
                             <button type="button" id="moreDetailsBtn" class="btn" style="width: 100%; border-radius: 10px; padding: 0.75rem 1.5rem; font-weight: 700; font-size: 0.95rem; background: #243447; border: none; color: white; cursor: pointer; margin-bottom: 1rem;"><i class="bi bi-info-circle me-2"></i>More Details</button>
                         </div>
-                        
+
                         <!-- Message/Note Section -->
                         <div class="mb-0">
                             <label for="messageInput" class="form-label" style="font-weight: 700; color: #334155; margin-bottom: 0.75rem; font-size: 0.95rem;">
                                 <i class="bi bi-chat-dots me-2" style="color: #64748b;"></i>Personal Message (Optional)
                             </label>
-                            <textarea id="messageInput" name="message" class="form-control" rows="4" 
-                                      placeholder="Write a personal message to the applicant about this opportunity..." 
+                            <textarea id="messageInput" name="message" class="form-control" rows="4"
+                                      placeholder="Write a personal message to the applicant about this opportunity..."
                                       style="border-radius: 10px; border: 1px solid #cbd5e1; padding: 1rem; font-size: 0.98rem; color: #0f172a; font-family: inherit;"></textarea>
                         </div>
                     </div>
@@ -1024,7 +1031,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Detailed Job Modal -->
     <style>
         .job-detail-modal .modal-content {
@@ -1160,7 +1167,7 @@
             border: 1px solid #cbd5e1;
         }
     </style>
-    
+
     <div class="modal fade job-detail-modal" id="jobDetailModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
@@ -1281,35 +1288,34 @@
             </div>
         </div>
     </div>
+    @php
+        $jobsByEmployerData = $availableJobs->groupBy('employer_id')->map(function($jobs) {
+            return $jobs->map(function($job) {
+                return [
+                    'id' => $job->id,
+                    'title' => $job->title,
+                    'employerName' => $job->employer?->name ?? 'Unknown',
+                    'companyName' => $job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company',
+                    'location' => $job->location ?? 'N/A',
+                    'salary' => $job->salary_range ?? 'Not specified',
+                    'description' => $job->description ?? 'No description provided',
+                    'jobType' => $job->job_type ?? 'N/A',
+                    'vacancies' => $job->vacancies ?? 0,
+                    'qualifications' => $job->qualifications ?? '',
+                    'keyResponsibilities' => $job->key_responsibilities ?? '',
+                    'preferredSkills' => $job->preferred_skills ?? '',
+                    'experience' => $job->experience ?? '',
+                    'education' => $job->education ?? '',
+                    'benefits' => $job->benefits ?? '',
+                    'requirements' => $job->requirements ?? '',
+                    'applicationStartDate' => $job->application_start_date?->format('Y-m-d') ?? '',
+                    'applicationEndDate' => $job->application_end_date?->format('Y-m-d') ?? '',
+                ];
+            })->values();
+        });
+    @endphp
     <script>
-        const jobsByEmployer = {
-            @foreach($availableJobs->groupBy('employer_id') as $employerId => $jobs)
-                {{ $employerId }}: [
-                    @foreach($jobs as $job)
-                        {
-                            id: {{ $job->id }},
-                            title: '{{ addslashes($job->title) }}',
-                            employerName: '{{ addslashes($job->employer?->name ?? 'Unknown') }}',
-                            companyName: '{{ addslashes($job->employer?->companyProfile?->company_name ?? $job->employer?->name ?? 'Unknown Company') }}',
-                            location: '{{ addslashes($job->location ?? 'N/A') }}',
-                            salary: '{{ addslashes($job->salary_range ?? 'Not specified') }}',
-                            description: '{{ addslashes($job->description ?? 'No description provided') }}',
-                            jobType: '{{ addslashes($job->job_type ?? 'N/A') }}',
-                            vacancies: {{ $job->vacancies ?? 0 }},
-                            qualifications: '{{ addslashes($job->qualifications ?? '') }}',
-                            keyResponsibilities: '{{ addslashes($job->key_responsibilities ?? '') }}',
-                            preferredSkills: '{{ addslashes($job->preferred_skills ?? '') }}',
-                            experience: '{{ addslashes($job->experience ?? '') }}',
-                            education: '{{ addslashes($job->education ?? '') }}',
-                            benefits: '{{ addslashes($job->benefits ?? '') }}',
-                            requirements: '{{ addslashes($job->requirements ?? '') }}',
-                            applicationStartDate: '{{ $job->application_start_date?->format('Y-m-d') ?? '' }}',
-                            applicationEndDate: '{{ $job->application_end_date?->format('Y-m-d') ?? '' }}'
-                        },
-                    @endforeach
-                ],
-            @endforeach
-        };
+        const jobsByEmployer = @json($jobsByEmployerData);
     </script>
 
     <script>
@@ -1333,7 +1339,7 @@
                 jobSelect.innerHTML = '<option value="">-- Choose a Job --</option>';
                 jobDetailsSection.style.display = 'none';
                 jobSelect.value = '';
-                
+
                 if (this.value && jobsByEmployer[this.value]) {
                     jobSelect.disabled = false;
                     jobsByEmployer[this.value].forEach(job => {
@@ -1374,14 +1380,14 @@
                     const location = selectedOption.dataset.location;
                     const salary = selectedOption.dataset.salary;
                     const description = selectedOption.dataset.description;
-                    
+
                     displayJobTitle.textContent = jobTitle;
                     displayEmployerCompany.textContent = companyName;
                     displayEmployerName.textContent = employerName !== companyName ? employerName : 'Employer profile';
                     displayLocation.textContent = location;
                     displaySalary.textContent = salary;
                     document.getElementById('displayJobDescription').textContent = description || 'No description provided';
-                    
+
                     jobDetailsSection.style.display = 'block';
                 } else {
                     jobDetailsSection.style.display = 'none';
@@ -1401,7 +1407,7 @@
                     recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
                     console.log('Form action set to:', recommendForm.action);
                     console.log('Jobseeker:', jobseekerId, jobseekerName);
-                    
+
                     // Reset form fields
                     employerSelect.value = '';
                     jobSelect.value = '';
@@ -1505,23 +1511,23 @@
                 // Experience & Education
                 const hasExperience = jobData.experience && jobData.experience !== 'NULL' && jobData.experience !== '';
                 const hasEducation = jobData.education && jobData.education !== 'NULL' && jobData.education !== '';
-                
+
                 if (hasExperience || hasEducation) {
                     document.getElementById('experienceSection').style.display = 'block';
                     if (hasExperience) {
                         document.getElementById('experienceItem').style.display = 'block';
                         const expList = parseList(jobData.experience);
-                        document.getElementById('detailExperience').innerHTML = expList.length > 0 
+                        document.getElementById('detailExperience').innerHTML = expList.length > 0
                             ? expList.map(e => `<div style="margin-bottom: 0.5rem;">${e}</div>`).join('')
                             : jobData.experience;
                     } else {
                         document.getElementById('experienceItem').style.display = 'none';
                     }
-                    
+
                     if (hasEducation) {
                         document.getElementById('educationItem').style.display = 'block';
                         const eduList = parseList(jobData.education);
-                        document.getElementById('detailEducation').innerHTML = eduList.length > 0 
+                        document.getElementById('detailEducation').innerHTML = eduList.length > 0
                             ? eduList.map(e => `<div style="margin-bottom: 0.5rem;">${e}</div>`).join('')
                             : jobData.education;
                     } else {
@@ -1542,10 +1548,10 @@
                 }
 
                 // Dates
-                document.getElementById('detailStartDate').textContent = jobData.applicationStartDate 
+                document.getElementById('detailStartDate').textContent = jobData.applicationStartDate
                     ? new Date(jobData.applicationStartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                     : 'Not specified';
-                document.getElementById('detailEndDate').textContent = jobData.applicationEndDate 
+                document.getElementById('detailEndDate').textContent = jobData.applicationEndDate
                     ? new Date(jobData.applicationEndDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                     : 'Not specified';
 

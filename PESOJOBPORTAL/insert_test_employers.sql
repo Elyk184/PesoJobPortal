@@ -1,5 +1,5 @@
 -- Insert Test Employer Users
-INSERT INTO users (name, email, role, password, email_verified_at, created_at, updated_at) VALUES 
+INSERT INTO users (name, email, role, password, email_verified_at, created_at, updated_at) VALUES
 ('TechCorp Philippines', 'techcorp@example.com', 'employer', '$2y$12$xxxxxxxxxxxxxxxxxxx', NOW(), NOW(), NOW()),
 ('StartUp Innovations Inc', 'startup@example.com', 'employer', '$2y$12$xxxxxxxxxxxxxxxxxxx', NOW(), NOW(), NOW());
 
@@ -9,6 +9,7 @@ INSERT INTO company_profiles (
     company_name,
     business_name,
     trade_name,
+    established_year,
     office_type,
     employer_type_detail,
     workforce_size,
@@ -37,6 +38,7 @@ INSERT INTO company_profiles (
     'TechCorp Philippines',
     'TechCorp Phil Inc',
     'TECH-PH',
+    2015,
     'main_office',
     'direct_hire',
     'large',
@@ -68,6 +70,7 @@ INSERT INTO company_profiles (
     company_name,
     business_name,
     trade_name,
+    established_year,
     office_type,
     employer_type_detail,
     workforce_size,
@@ -94,6 +97,7 @@ INSERT INTO company_profiles (
     'StartUp Innovations Inc',
     'StartUp Innovations Incorporated',
     'STARTUP-INC',
+    2021,
     'main_office',
     'local_recruitment',
     'small',

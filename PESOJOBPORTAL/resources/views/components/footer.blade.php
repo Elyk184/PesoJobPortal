@@ -1,96 +1,101 @@
-<!-- FOOTER / CONTACT -->
-<footer id="contact" class="peso-footer" style="background: linear-gradient(135deg, #0a1428 0%, #0f1f35 50%, #08141f 100%); color: #e0e7ff; padding: 4rem 2rem 1.5rem; margin-top: 6rem; border-top: 3px solid #d72638; box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.3); width: 100%; display: block;">
-    <div style="max-width: 1300px; margin: 0 auto;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
-            <!-- About Section -->
-            <div>
-                <div style="display: flex; align-items: center; margin-bottom: 1.5rem; gap: 1rem;">
-                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" style="width: 48px; height: 42px; object-fit: cover; border-radius: 50%;">
-                    <div>
-                        <h4 style="color: #ffffff; font-weight: 800; font-size: 16px; margin: 0; letter-spacing: -0.3px;">PESO</h4>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 12px; color: #b0b8d4; font-weight: 600;">Manolo Fortich</p>
-                    </div>
-                </div>
-                <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 1.5rem;">Public Employment Service Office — Connecting jobseekers with opportunities in Manolo Fortich, Bukidnon.</p>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" style="width: 40px; height: 40px; background: rgba(215, 38, 56, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #d72638; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.background='#d72638'; this.style.color='white'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(215, 38, 56, 0.15)'; this.style.color='#d72638'; this.style.transform='none';">
-                        <i class="bi bi-facebook"></i>
-                    </a>
-                    <a href="#" style="width: 40px; height: 40px; background: rgba(215, 38, 56, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #d72638; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.background='#d72638'; this.style.color='white'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(215, 38, 56, 0.15)'; this.style.color='#d72638'; this.style.transform='none';">
-                        <i class="bi bi-twitter"></i>
-                    </a>
-                </div>
-            </div>
+<!-- PESO Footer - Fixed Alignment -->
+<footer class="peso-footer text-light py-5 mt-5 border-top border-danger" style="background: linear-gradient(90deg, #0f2d52, #1f4b8f); border-top: 3px solid #d72638 !important; box-shadow: 0 -8px 24px rgba(10,35,80,0.22);">
+  <style>
+    /* Force footer text to pure white for contrast, but preserve button/link CTAs */
+    .peso-footer,
+    .peso-footer h5,
+    .peso-footer p,
+    .peso-footer a:not(.btn),
+    .peso-footer li,
+    .peso-footer .small,
+    .peso-footer .fw-medium {
+      color: #ffffff !important;
+    }
 
-            <!-- Contact Section -->
-            <div>
-                <h4 style="color: #ffffff; font-weight: 800; font-size: 16px; margin-bottom: 1.5rem; letter-spacing: -0.3px;">Contact Us</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 14px;">
-                        <i class="bi bi-geo-alt-fill" style="color: #d72638; font-size: 1rem; margin-top: 2px; flex-shrink: 0;"></i>
-                        <span>Gen. Andres Bonifacio St. Cor. Albarece St., Brgy. Tankulan, Manolo Fortich, Bukidnon 8703</span>
-                    </li>
-                    <li style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 14px;">
-                        <i class="bi bi-envelope-fill" style="color: #d72638; font-size: 1rem; margin-top: 2px; flex-shrink: 0;"></i>
-                        <span>peso@manolofortich.gov.ph</span>
-                    </li>
-                    <li style="display: flex; align-items: flex-start; gap: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <i class="bi bi-telephone-fill" style="color: #d72638; font-size: 1rem; margin-top: 2px; flex-shrink: 0;"></i>
-                        <span>(088) 123-4567</span>
-                    </li>
-                </ul>
-            </div>
+    /* Keep CTA buttons readable (they have white backgrounds) */
+    .peso-footer .btn {
+      color: #15386b !important;
+    }
 
-            <!-- Quick Links Section -->
-            <div>
-                <h4 style="color: #ffffff; font-weight: 800; font-size: 16px; margin-bottom: 1.5rem; letter-spacing: -0.3px;">Quick Links</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="margin-bottom: 0.75rem;"><a href="{{ url('/') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">Home</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="{{ url('/#about-main') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">About Us</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="{{ url('/#features') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">Services</a></li>
-                    <li style="margin-bottom: 0.75rem;"><a href="{{ route('login') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">Login</a></li>
-                    <li><a href="{{ url('/contact') }}" style="color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.color='#d72638';" onmouseout="this.style.color='#cbd5e1';">Contact</a></li>
-                </ul>
-            </div>
-
-            <!-- Office Hours Section -->
-            <div>
-                <h4 style="color: #ffffff; font-weight: 800; font-size: 16px; margin-bottom: 1.5rem; letter-spacing: -0.3px;">Office Hours</h4>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Monday - Thursday</span>
-                        <span style="color: #fff; font-weight: 600;">7:30 AM - 6:00 PM</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Friday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 14px;">
-                        <span>Saturday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
-                    <li style="display: flex; justify-content: space-between; color: #cbd5e1; font-size: 14px;">
-                        <span>Sunday</span>
-                        <span style="color: #fff; font-weight: 600;">Closed</span>
-                    </li>
-                </ul>
-                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(215, 38, 56, 0.2);">
-                    <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" style="background: linear-gradient(135deg, #d72638 0%, #ff6b7a 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 14px; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(215, 38, 56, 0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
-                        <i class="bi bi-facebook"></i>
-                        <span>Facebook</span>
-                    </a>
-                </div>
-            </div>
+    .peso-footer a:not(.btn):hover {
+      color: #ffffff !important;
+      opacity: 0.9;
+      text-decoration: underline;
+    }
+  </style>
+  <div class="container-xl">
+    <div class="row g-4 g-lg-5 mb-5 align-items-start" style="min-height: 280px;">
+      <!-- About Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center mb-4 gap-3">
+          <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+          <div>
+            <h5 class="mb-1 text-white fw-bold" style="font-size: 1.1rem; letter-spacing: -0.5px;">PESO Manolo Fortich</h5>
+            <p class="mb-0 small text-white-50 fw-medium">Public Employment Service Office</p>
+          </div>
         </div>
-<<<<<<< HEAD
-        <div class="text-center mt-4 pt-3" style="border-top: 1px solid #1f4b8f; color: #b3c6e0;">
-            <p class="mb-0">&copy; {{ date('Y') }} Link Job Resource Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
-=======
+        <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
+        <!-- Social icons removed -->
+      </div>
 
-        <!-- Footer Bottom -->
-        <div style="border-top: 1px solid rgba(215, 38, 56, 0.2); padding-top: 2rem; margin-top: 2rem; text-align: center;">
-            <p style="margin: 0; font-size: 13px; color: #b0b8d4;">&copy; {{ date('Y') }} PESO Job Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
->>>>>>> ab9de89d2f5e284c46207d8c18a9ec535de60d62
+      <!-- Contact Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Contact Information</h5>
+        <ul class="list-unstyled">
+          <li class="mb-3 d-flex align-items-start gap-3">
+            <i class="bi bi-geo-alt-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">Gen. Andres Bonifacio St. Cor. Albarece St., Brgy. Tankulan<br>Manolo Fortich, Bukidnon 8703</span>
+          </li>
+          <li class="mb-3 d-flex align-items-start gap-3">
+            <i class="bi bi-envelope-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">peso@manolofortich.gov.ph</span>
+          </li>
+          <li class="d-flex align-items-start gap-3">
+            <i class="bi bi-telephone-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">(088) 123-4567</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="/" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Home</a></li>
+          <li class="mb-2"><a href="/about" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">About</a></li>
+          <li class="mb-2"><a href="/jobs" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Jobs</a></li>
+          <li class="mb-2"><a href="/contact" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Contact</a></li>
+          <li class="mb-2"><a href="/login" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Office Hours Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Office Hours</h5>
+        <div class="mb-4">
+          <div class="d-flex justify-content-between small fw-medium" style="padding: 0.25rem 0;">
+            <span>Monday - Friday</span>
+            <span>8:00 AM - 5:00 PM</span>
+          </div>
+          <div class="d-flex justify-content-between small" style="padding: 0.25rem 0;">
+            <span>Saturday</span>
+            <span class="fw-medium text-white">Closed</span>
+          </div>
+          <div class="d-flex justify-content-between small" style="padding: 0.25rem 0;">
+            <span>Sunday</span>
+            <span class="fw-medium text-white">Closed</span>
+          </div>
         </div>
+        <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="btn px-4 py-2 w-100 fw-bold mb-3" style="background: #fff; color: #15386b; border: none; box-shadow: 0 2px 8px rgba(15,45,82,0.10); letter-spacing: 0.5px; font-size: 1.08rem;">
+          <i class="bi bi-facebook me-2" style="color: #15386b;"></i>
+          Visit Facebook
+        </a>
+      </div>
     </div>
+
+    <!-- Copyright -->
+    <div class="text-center border-top border-danger border-opacity-25 pt-4 mt-4 w-100">
+      <p class="mb-0 small text-light opacity-75">&copy; {{ date('Y') }} PESO Job Portal — Manolo Fortich, Bukidnon. All rights reserved.</p>
+    </div>
+  </div>
 </footer>

@@ -12,9 +12,9 @@
 <div class="admin-dashboard">
     <style>
         .verification-detail-wrapper { max-width: 1200px; margin: 0 auto; }
-        
+
         /* Header Section */
-        .verification-header { 
+        .verification-header {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border-radius: 16px;
             padding: 2rem;
@@ -42,20 +42,20 @@
         }
 
         .company-logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .company-logo-box-placeholder { 
+        .company-logo-box-placeholder {
             color: white;
             font-size: 48px;
             font-weight: 800;
         }
 
-        .company-header-text h2 { 
+        .company-header-text h2 {
             margin: 0 0 0.5rem 0;
             font-size: 28px;
             font-weight: 800;
             color: #0d1f3c;
         }
 
-        .company-header-text p { 
+        .company-header-text p {
             margin: 0.25rem 0;
             font-size: 13px;
             color: #6b7280;
@@ -103,7 +103,7 @@
             border-bottom: 2px solid #f3f4f6;
         }
 
-        .detail-card h3 i { 
+        .detail-card h3 i {
             font-size: 18px;
             color: #d72638;
         }
@@ -176,7 +176,7 @@
         .doc-name { font-weight: 700; color: #0d1f3c; font-size: 14px; margin-bottom: 0.25rem; }
         .doc-meta { font-size: 12px; color: #6b7280; }
 
-        .doc-action { 
+        .doc-action {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -192,7 +192,7 @@
             transition: all 0.2s ease;
         }
 
-        .doc-action:hover { 
+        .doc-action:hover {
             background: #2563eb;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);

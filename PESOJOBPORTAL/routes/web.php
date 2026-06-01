@@ -3,27 +3,16 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\JobseekerApprovalController;
 use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-// Database fix route
-Route::get('/admin/database-fix', function () {
-    if (file_exists(base_path('fix_database.php'))) {
-        ob_start();
-        include base_path('fix_database.php');
-        $output = ob_get_clean();
-        return "<pre>" . htmlspecialchars($output) . "</pre>";
-    }
-    return "Fix script not found";
-});
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 Route::view('/history', 'history')->name('history');
 Route::view('/history-of-excellence', 'history-excellence')->name('history-of-excellence');
@@ -54,15 +43,21 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/notifications', [JobseekerController::class, 'notifications'])->name('notifications');
     Route::get('/notifications/feed', [JobseekerController::class, 'notificationsFeed'])->name('notifications.feed');
     Route::post('/notifications/{userNotification}/read', [JobseekerController::class, 'markNotificationAsRead'])->name('notifications.read');
+
     Route::get('/apply/{job}', [JobseekerController::class, 'applyJob'])->name('apply-job');
     Route::post('/apply/{job}', [JobseekerController::class, 'submitApplication'])->name('submit-application');
+
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
     Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
+
     Route::get('/skill-gap', [JobseekerController::class, 'skillGap'])->name('skill-gap');
+
     Route::get('/saved-jobs', [JobseekerController::class, 'savedJobs'])->name('saved-jobs');
     Route::post('/saved-jobs/{job}', [JobseekerController::class, 'toggleSaveJob'])->name('saved-jobs.toggle');
+
     Route::get('/peso-clearance', [JobseekerController::class, 'pesoClearance'])->name('peso-clearance');
     Route::post('/peso-clearance/request', [JobseekerController::class, 'requestPesoClearance'])->name('peso-clearance.request');
+
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
@@ -72,14 +67,20 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
 // Employer routes (protected)
 Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer.')->group(function () {
     Route::get('/dashboard', [EmployerController::class, 'dashboard'])->name('dashboard');
+
     Route::get('/post-new-job', [EmployerController::class, 'postNewJobPage'])->name('jobs.post');
     Route::get('/manage-jobs', [EmployerController::class, 'manageJobsPage'])->name('jobs.manage');
     Route::get('/view-applicants', [EmployerController::class, 'viewApplicantsPage'])->name('applicants.index');
+
     Route::get('/request-lra-sra', [EmployerController::class, 'requestLraSraPage'])->name('recruitment.index');
+    Route::get('/request-lra-sra/{recruitmentActivityRequest}', [EmployerController::class, 'viewRecruitmentActivity'])->name('recruitment.show');
+    Route::get('/request-lra-sra/{recruitmentActivityRequest}/download-certificate', [EmployerController::class, 'downloadRecruitmentActivityCertificate'])->name('recruitment.download-certificate');
     Route::get('/submit-documents', [EmployerController::class, 'submitDocumentsPage'])->name('documents.index');
+
     Route::get('/company-profile', [EmployerController::class, 'companyProfilePage'])->name('company-profile');
     Route::get('/company-profile/download', [EmployerController::class, 'downloadCompanyProfile'])->name('company-profile.download');
     Route::put('/company-profile', [EmployerController::class, 'updateCompanyProfile'])->name('profile.update');
+
     Route::get('/notifications', [EmployerController::class, 'notificationsPage'])->name('notifications.index');
 
     Route::post('/jobs', [EmployerController::class, 'storeJob'])->name('jobs.store');
@@ -94,9 +95,14 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::patch('/applications/{application}', [EmployerController::class, 'updateApplicantDecision'])
         ->name('applications.update');
 
-    // View single application details
     Route::get('/applications/{application}', [EmployerController::class, 'showApplication'])
         ->name('applications.show');
+
+    Route::get('/applications/{application}/resume/download', [EmployerController::class, 'downloadResume'])
+        ->name('applications.resume.download');
+
+    Route::post('/applications/{application}/feedback', [EmployerController::class, 'storeFeedback'])
+        ->name('applications.feedback');
 
     Route::patch('/notifications/{notification}/read', [EmployerController::class, 'markNotificationRead'])
         ->name('notifications.read');
@@ -104,19 +110,19 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     // Applicant recommendation routes
     Route::post('/applications/{application}/recommend', [EmployerController::class, 'recommendApplicant'])
         ->name('applications.recommend');
-    
+
     Route::get('/recommendations/sent', [EmployerController::class, 'viewMyRecommendations'])
         ->name('recommendations.sent');
-    
+
     Route::get('/recommendations/received', [EmployerController::class, 'viewReceivedRecommendations'])
         ->name('recommendations.received');
-    
+
     Route::post('/recommendations/{recommendation}/accept', [EmployerController::class, 'acceptRecommendation'])
         ->name('recommendations.accept');
-    
+
     Route::post('/recommendations/{recommendation}/reject', [EmployerController::class, 'rejectRecommendation'])
         ->name('recommendations.reject');
-    
+
     Route::post('/recommendations/{recommendation}/hire', [EmployerController::class, 'hireFromRecommendation'])
         ->name('recommendations.hire');
 
@@ -142,12 +148,13 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+
 Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerController::class, 'applyJob'])->name('jobs.show');
 
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::model('application', \App\Models\JobApplication::class);
-    
+
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Jobseeker Management
@@ -171,6 +178,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
     Route::get('/lra-sra-approvals/{activityRequest}', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
+    Route::get('/lra-sra-approvals/{activityRequest}/download/{field}', [AdminController::class, 'downloadLraSraFile'])->name('lra-sra.download-file');
+    Route::post('/lra-sra-approvals/{activityRequest}/generate-certification', [AdminController::class, 'generateLraSraCertification'])->name('lra-sra.generate-certification');
+    Route::get('/lra-sra-approvals/{activityRequest}/view-certification', [AdminController::class, 'viewLraSraCertification'])->name('lra-sra.view-certification');
+    Route::get('/lra-sra-approvals/{activityRequest}/download-certification', [AdminController::class, 'downloadLraSraCertification'])->name('lra-sra.download-certification');
     Route::post('/lra-sra-approvals/{activityRequest}/approve', [AdminController::class, 'approveLraSra'])->name('lra-sra.approve');
     Route::post('/lra-sra-approvals/{activityRequest}/reject', [AdminController::class, 'rejectLraSra'])->name('lra-sra.reject');
 
@@ -191,6 +202,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::view('/barangay-intelligence', 'admin.barangay-intelligence')->name('barangay-intelligence');
     Route::view('/report-builder', 'admin.report-builder')->name('report-builder');
     Route::get('/peso-clearances', [AdminController::class, 'pesoClearances'])->name('peso-clearances');
+    Route::get('/peso-clearances/{clearance}', [AdminController::class, 'showPesoClearance'])->name('peso-clearances.show');
     Route::post('/peso-clearances/{clearance}/issue', [AdminController::class, 'issuePesoClearance'])->name('peso-clearances.issue');
     Route::post('/peso-clearances/{clearance}/decline', [AdminController::class, 'declinePesoClearance'])->name('peso-clearances.decline');
     Route::post('/peso-clearances/auto-generate', [AdminController::class, 'autoGenerateClearances'])->name('peso-clearances.auto-generate');
@@ -224,7 +236,6 @@ Route::middleware('auth')->group(function () {
             'reason' => 'required|string|min:10'
         ]);
 
-        // Archive the job
         $job->update([
             'archived_at' => now(),
             'deletion_reason' => $validated['reason']
@@ -237,10 +248,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/contact', function () {
-    return view('contact');
-});
-
-Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])
-    ->name('chatbot.chat');
+Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])->name('chatbot.chat');
 

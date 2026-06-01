@@ -156,6 +156,10 @@
                 <td class="value">{{ $companyProfile?->business_name ?? 'N/A' }}</td>
             </tr>
             <tr>
+                <td class="label">Year Established</td>
+                <td class="value">{{ $companyProfile?->established_year ?? 'N/A' }}</td>
+            </tr>
+            <tr>
                 <td class="label">Trade Name</td>
                 <td class="value">{{ $companyProfile?->trade_name ?? 'N/A' }}</td>
             </tr>

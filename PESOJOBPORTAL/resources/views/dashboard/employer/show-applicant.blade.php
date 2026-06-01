@@ -1,771 +1,479 @@
 @extends('dashboard.employer.layout')
 
-@section('content')
+@section('title', 'Applicant Details - PESO')
+@section('page-title', 'Applicant Details')
+@section('page-subtitle', 'Review and manage this applicant')
 
+@push('styles')
 <style>
-    .show-applicant-page {
-        --sa-primary: #075cb2;
-        --sa-primary-soft: #ecf3ff;
-        --sa-border: #d9e6f6;
-        --sa-shadow: 0 12px 26px rgba(21, 61, 117, 0.08);
+    .applicant-show-page {
+        --as-primary: #1f4f8f;
+        --as-primary-deep: #153a69;
+        --as-border: #d8e6f6;
+        --as-soft-bg: #f4f8ff;
     }
-
-
-
-    .page-header {
-        background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);
+    .profile-header {
+        background: linear-gradient(135deg, #2e5bff 0%, #1a3db8 55%, #2750d5 100%);
+        color: white;
+        padding: 2.5rem 2rem;
         border-radius: 16px;
-        padding: 2.5rem;
         margin-bottom: 2rem;
-        box-shadow: 0 12px 24px rgba(7, 92, 178, 0.18);
-        color: #ffffff;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        box-shadow: 0 16px 30px rgba(30, 70, 180, 0.28);
     }
-
-    .page-header-left h2 {
-        margin: 0 0 0.5rem 0;
-        font-weight: 800;
-        font-size: 2rem;
-        letter-spacing: -0.5px;
-    }
-
-    .page-header-left p {
-        margin: 0;
-        color: rgba(255, 255, 255, 0.92);
-        font-size: 0.95rem;
-    }
-
-    .page-header-actions {
-        display: flex;
-        gap: 0.75rem;
-    }
-
-    .applicant-card {
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid var(--sa-border);
-        box-shadow: 0 4px 12px rgba(15, 49, 96, 0.05);
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-
-    .applicant-info-section {
-        padding: 2.5rem;
-        border-bottom: 1px solid #f0f6ff;
-    }
-
-    .applicant-header {
-        display: flex;
-        gap: 1.75rem;
-        align-items: flex-start;
-    }
-
     .user-avatar {
         width: 96px;
         height: 96px;
         border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #deebf9;
-        box-shadow: 0 8px 20px rgba(31, 79, 143, 0.15);
-        flex-shrink: 0;
-    }
-
-    .user-initials {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
+        background: linear-gradient(135deg,#6ea8ff,#2b67b1);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        color: #fff;
-        font-size: 2.2rem;
-        box-shadow: 0 8px 20px rgba(31, 79, 143, 0.15);
-        flex-shrink: 0;
-        background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);
-    }
-
-    .applicant-header-content {
-        flex: 1;
-    }
-
-    .user-info h4 {
-        margin: 0 0 0.25rem 0;
-        font-size: 1.5rem;
+        color: white;
         font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.3px;
+        font-size: 1.8rem;
+        flex-shrink: 0;
     }
-
-    .user-info .email {
-        display: block;
-        color: #6b7280;
-        font-size: 0.95rem;
-        margin-bottom: 1.5rem;
+    .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .user-initials { font-size: 1.25rem; }
+    .info-card {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid var(--as-border);
+        box-shadow: 0 10px 24px rgba(21, 58, 105, 0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
     }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 1.5rem;
-    }
-
-    .info-item {
+    .section-title {
+        color: var(--as-primary-deep);
+        font-weight: 700;
         display: flex;
-        flex-direction: column;
-    }
-
-    .info-label {
-        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+    }
+    .label-muted {
+        color: #637892;
+        font-size: 0.76rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        color: #7a8a9a;
         margin-bottom: 0.5rem;
+        display: block;
     }
-
-    .info-label i {
-        color: #075cb2;
-        font-size: 0.9rem;
-    }
-
-    .info-value {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #0f172a;
-    }
-
-    .status-badge-large {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.65em 1.25em;
+    .status-chip {
+        padding: 0.42rem 0.82rem;
         border-radius: 999px;
-        font-size: 0.9rem;
+        font-size: 0.78rem;
         font-weight: 700;
         text-transform: capitalize;
-        border: 1px solid transparent;
-        letter-spacing: 0.3px;
-    }
-
-    .status-badge-large i {
-        font-size: 0.5rem;
-    }
-
-    .resume-section {
-        padding: 2.5rem;
-        border-bottom: 1px solid #f0f6ff;
-    }
-
-    .section-title {
         display: inline-flex;
         align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #1f4f8f;
+        gap: 0.3rem;
     }
-
-    .section-title i {
-        color: #075cb2;
-        font-size: 1.2rem;
+    .status-chip::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.8;
     }
-
-    .resume-actions {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-    }
-
-    .resume-btn {
-        border-radius: 10px;
-        padding: 0.65rem 1.2rem;
-        font-size: 0.95rem;
-        font-weight: 600;
-        border: 1.5px solid transparent;
-        transition: all 0.25s ease;
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-reviewing { background: #e0e7ff; color: #4338ca; }
+    .status-shortlisted { background: #dbeafe; color: #1d4ed8; }
+    .status-interview { background: #fef3c7; color: #92400e; }
+    .status-hired { background: #d4edda; color: #155724; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .meta-card {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 12px;
+        padding: 0.65rem 0.9rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        height: 42px;
+        margin-top: 0.8rem;
+        font-weight: 600;
+        color: #f7fbff;
     }
-
-    .resume-btn i {
+    .star-rating {
+        display: inline-flex;
+        gap: 5px;
+    }
+    .star-rating i {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ddd;
+        transition: color 0.2s;
+    }
+    .star-rating i:focus { outline: 3px solid rgba(255,193,7,0.18); border-radius:4px; }
+    .star-rating i.active,
+    .star-rating i:hover {
+        color: #ffc107;
+    }
+    .form-select,
+    .form-control {
+        border-color: #c8daf2;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        height: auto;
         font-size: 0.95rem;
     }
-
-    .resume-btn.btn-outline-primary {
-        background: #057a73;
-        color: #ffffff;
+    .form-select:focus,
+    .form-control:focus {
+        border-color: #2b67b1;
+        box-shadow: 0 0 0 3px rgba(43, 103, 177, 0.14);
     }
-
-    .resume-btn.btn-outline-primary:hover {
-        background: #04645e;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(5, 122, 115, 0.2);
-    }
-
-    .resume-btn.btn-outline-secondary {
-        background: #6c757d;
-        color: #ffffff;
-    }
-
-    .resume-btn.btn-outline-secondary:hover {
-        background: #5a6268;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.2);
-    }
-
-    .resume-btn.btn-outline-info {
-        background: #17a2b8;
-        color: #ffffff;
-    }
-
-    .resume-btn.btn-outline-info:hover {
-        background: #138496;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(23, 162, 184, 0.2);
-    }
-
-    .resume-preview {
-        background: #f8fbff;
-        border: 1.5px solid #d9e6f6;
-        border-radius: 12px;
-        padding: 0;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .resume-preview iframe {
-        display: block;
-        width: 100%;
-        min-height: 600px;
-        border: none;
-    }
-
-    .notes-section {
-        padding: 2.5rem;
-        border-bottom: 1px solid #f0f6ff;
-    }
-
-    .notes-content {
-        background: #f8fbff;
-        border: 1.5px solid #d9e6f6;
-        border-radius: 12px;
-        padding: 1.5rem;
-        color: #334155;
-        line-height: 1.7;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-
-    .form-section {
-        padding: 2.5rem;
-        background: #f8fbff;
-        border-top: 1px solid #f0f6ff;
-    }
-
-    .form-section h5 {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 1.75rem;
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #1f4f8f;
-    }
-
-    .form-section h5 i {
-        color: #075cb2;
-        font-size: 1.2rem;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 2fr auto;
-        gap: 1.5rem;
-        align-items: start;
-    }
-
-    .form-group {
+    .right-sticky {
+        position: sticky;
+        top: 96px;
         display: flex;
         flex-direction: column;
+        gap: 1.5rem;
     }
-
-    .form-label {
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        color: #7a8a9a;
-        margin-bottom: 0.65rem;
-        display: block;
+    .btn-primary {
+        background: #2b67b1;
+        border: none;
+        color: white;
+        box-shadow: 0 4px 12px rgba(43, 103, 177, 0.2);
     }
-
-    .form-control,
-    .form-select {
-        border: 1.5px solid #d3dfe8;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        color: #243447;
-        transition: all 0.25s ease;
-        background: #ffffff;
-        height: auto;
+    .btn-primary:hover {
+        background: #1f4f8f;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(43, 103, 177, 0.3);
     }
-
-    .form-control::placeholder {
-        color: #7b8a9a;
+    .btn-outline-primary {
+        border-color: #2b67b1;
+        color: #2b67b1;
+        background: white;
     }
-
-    .form-control:hover,
-    .form-select:hover {
-        border-color: #b8d5f0;
-        background: #ffffff;
+    .btn-outline-primary:hover {
+        background: #2b67b1;
+        color: white;
+        border-color: #2b67b1;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(43, 103, 177, 0.2);
     }
-
     .form-control:focus,
     .form-select:focus {
-        border-color: #2b67b1;
-        background: #ffffff;
-        box-shadow: 0 0 0 4px rgba(43, 103, 177, 0.12);
+        border-color: #2b67b1 !important;
+        box-shadow: 0 0 0 3px rgba(43, 103, 177, 0.15) !important;
     }
-
-    .form-actions {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 0;
+    textarea.form-control {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-
-    .form-actions .btn {
-        border-radius: 10px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        height: 44px;
-        transition: all 0.25s ease;
+    .alert {
+        border-radius: 12px;
+        border: 1px solid currentColor;
+        opacity: 0.95;
     }
-
-    .form-actions .btn-primary {
-        background: linear-gradient(135deg, #1f4f8f 0%, #2b67b1 100%);
-        border: none;
-        box-shadow: 0 4px 12px rgba(31, 79, 143, 0.2);
-    }
-
-    .form-actions .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(31, 79, 143, 0.3);
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: #ffffff;
-        color: #1f4f8f;
-        border: 1.5px solid #d9e6f6;
-        border-radius: 10px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 600;
-        transition: all 0.25s ease;
-        text-decoration: none;
-    }
-
-    .btn-back:hover {
-        background: #f8fbff;
-        border-color: #b8d5f0;
-        color: #1f4f8f;
-        transform: translateY(-2px);
-    }
-
-    .btn-back i {
-        font-size: 0.9rem;
-    }
-
     @media (max-width: 991.98px) {
-        .page-header {
-            flex-direction: column;
-            text-align: center;
-            padding: 2rem;
+        .profile-header {
+            padding: 1.75rem 1.5rem;
+            border-radius: 14px;
+            margin-bottom: 1.5rem;
         }
-
-        .applicant-header {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        .user-avatar { width:72px; height:72px; }
+        .profile-header .d-flex {
+            align-items: flex-start !important;
+            gap: 1rem;
         }
-
-        .info-grid {
-            grid-template-columns: 1fr;
+        .info-card {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
+        .right-sticky {
+            position: static;
+            gap: 1rem;
         }
-
-        .resume-actions {
-            justify-content: center;
-        }
-
-        .form-actions {
-            flex-wrap: wrap;
-        }
+    }
+    @media (max-width: 575.98px) {
+        .right-sticky { position: static; }
+        .profile-header { padding-bottom: 1.25rem; }
     }
 </style>
+@endpush
 
-<div class="show-applicant-page">
-<div class="container-fluid py-5">
-    <div class="page-header">
-        <div class="page-header-left">
-            <h2>Applicant Details</h2>
-            <p>Review application, resume, and manage applicant status</p>
-        </div>
-        <div class="page-header-actions">
-            <a href="{{ route('employer.applicants.index') }}" class="btn-back">
-                <i class="bi bi-arrow-left"></i>
-                <span>Back</span>
-            </a>
-        </div>
-    </div>
+@section('content')
+<div class="applicant-show-page">
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <div>{{ session('success') }}</div>
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+</div>
+@endif
 
-    <div class="applicant-card">
-        <!-- Applicant Info Section -->
-        <div class="applicant-info-section">
-            <div class="applicant-header">
-                @if($application->user->avatar)
-                    <img src="{{ Storage::url($application->user->avatar) }}" alt="{{ $application->user->name }}" class="user-avatar">
-                @else
-                    <div class="user-initials">{{ strtoupper(substr($application->user->name, 0, 1)) }}</div>
-                @endif
-                <div class="applicant-header-content">
-                    <div class="user-info">
-                        <h4>{{ $application->user->name }}</h4>
-                        <span class="email">{{ $application->user->email }}</span>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="profile-header">
+            <div class="d-flex align-items-center gap-3">
+                @if(!empty($application->applicant->avatar))
+                    <div class="user-avatar">
+                        <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}">
                     </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-briefcase"></i>Applied For</span>
-                            <span class="info-value">{{ $application->jobPost->title ?? 'N/A' }}</span>
+                @else
+                    <div class="user-avatar user-initials" aria-hidden="true">{{ strtoupper(substr($application->applicant->name ?? '', 0, 1)) }}</div>
+                @endif
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;">{{ $application->applicant->name }}</h3>
+                    <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;">{{ $application->applicant->email ?? 'No email on file' }}</p>
+                    <div style="display:flex; gap:0.75rem; align-items:center; margin-top:0.6rem;">
+                        <div class="meta-card" aria-hidden="true">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <span>Applied for: {{ $application->jobPost->title }}</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-calendar-event"></i>Application Date</span>
-                            <span class="info-value">{{ $application->applied_at?->format('M d, Y H:i') ?? $application->created_at->format('M d, Y H:i') }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="bi bi-activity"></i>Current Status</span>
+                        <div>
                             @php
-                                $statusClasses = [
-                                    'pending' => 'bg-light text-dark',
-                                    'reviewing' => 'bg-info bg-opacity-25 text-info-emphasis',
-                                    'recommended' => 'bg-primary bg-opacity-25 text-primary-emphasis',
-                                    'interviewed' => 'bg-secondary bg-opacity-25 text-secondary-emphasis',
-                                    'hired' => 'bg-success bg-opacity-25 text-success-emphasis',
-                                    'rejected' => 'bg-danger bg-opacity-25 text-danger-emphasis',
-                                ];
+                                $sclass = match($application->status) {
+                                    'pending' => 'status-pending',
+                                    'reviewing' => 'status-reviewing',
+                                    'shortlisted' => 'status-shortlisted',
+                                    'interview' => 'status-interview',
+                                    'hired' => 'status-hired',
+                                    'rejected' => 'status-rejected',
+                                    default => 'status-pending'
+                                };
                             @endphp
-                            <span class="status-badge-large {{ $statusClasses[$application->status] ?? 'bg-light text-dark' }}">
-                                <i class="bi bi-circle-fill"></i>
-                                {{ $application->status }}
-                            </span>
+                            <span class="status-chip {{ $sclass }}" aria-label="Application status: {{ $application->status }}">{{ ucfirst($application->status) }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Resume Section -->
-        @if($application->resume_path)
-        <div class="resume-section">
-            <h6 class="section-title"><i class="bi bi-file-earmark-pdf"></i>Resume</h6>
-            @if($application->resume_type === 'builder')
-                {{-- Resume Builder Type --}}
-                <div class="resume-actions">
-                    <button type="button" class="resume-btn btn-outline-info btn-preview-resume">
-                        <i class="bi bi-eye-fill"></i>
-                        <span>Show Resume</span>
-                    </button>
+        <div class="info-card">
+            <h5 class="mb-3 section-title"><i class="bi bi-file-earmark-text text-primary"></i>Application Details</h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <span class="label-muted">Applied Date</span>
+                    <p class="mb-0" style="font-weight: 600; font-size: 0.95rem;">{{ optional($application->applied_at)->format('F d, Y') }}</p>
                 </div>
-                @php
-                    $builderResume = $application->user->profile ?? $application->user->userProfile;
-                @endphp
-                @if($builderResume)
-                @php
-                    $toText = function ($value): string {
-                        if (is_array($value)) {
-                            $parts = collect($value)
-                                ->flatten()
-                                ->filter(fn ($item) => $item !== null && $item !== '')
-                                ->map(fn ($item) => is_scalar($item) ? (string) $item : json_encode($item))
-                                ->map(fn ($item) => trim((string) $item))
-                                ->filter()
-                                ->values();
-
-                            return $parts->join(' | ');
-                        }
-
-                        if (is_object($value)) {
-                            return trim((string) json_encode($value));
-                        }
-
-                        return trim((string) $value);
-                    };
-
-                    $builderName = $toText($builderResume->resume_name ?? $application->user->name);
-                    $builderEmail = $toText($builderResume->resume_email ?? $application->user->email);
-                    $builderPhone = $toText($builderResume->phone ?? '');
-                    $builderAddress = $toText($builderResume->address ?? '');
-                    $builderObjective = $toText($builderResume->objective ?? '');
-                    $builderSkills = collect(explode(',', $toText($builderResume->skills ?? '')))
-                        ->map(fn ($item) => trim($item))
-                        ->filter()
-                        ->values();
-                    $builderEducationRows = collect(is_array($builderResume->education ?? null) ? $builderResume->education : []);
-                    $builderExperienceRows = collect(is_array($builderResume->experience ?? null) ? $builderResume->experience : []);
-                    $builderTrainingRows = collect(is_array($builderResume->training ?? null) ? $builderResume->training : []);
-                    $builderEligibilityRows = collect(is_array($builderResume->eligibility ?? null) ? $builderResume->eligibility : []);
-                @endphp
-                <div class="resume-preview" style="display:none; background:#fff; padding:2.25rem; border:1px solid #d9e6f6; border-radius:12px; margin-top:1rem; font-family: Georgia, 'Times New Roman', Times, serif; color:#111827; font-size:12px; line-height:1.55;">
-                    <div style="text-align:center; margin-bottom:1rem;">
-                        <h4 style="margin:0; font-size:24px; font-weight:700; letter-spacing:0.02em;">{{ $builderName }}</h4>
-                        <div style="margin-top:6px; font-size:11px; color:#374151;">
-                            {{ collect([$builderAddress, $builderPhone, $builderEmail])->filter()->join(' | ') }}
-                        </div>
+                <div class="col-md-6">
+                    <span class="label-muted">Current Status</span>
+                    <div>
+                        @switch($application->status)
+                            @case('pending')
+                                <span class="status-chip status-pending">Pending</span>
+                                @break
+                            @case('reviewing')
+                                <span class="status-chip status-reviewing">Reviewing</span>
+                                @break
+                            @case('shortlisted')
+                                <span class="status-chip status-shortlisted">Shortlisted</span>
+                                @break
+                            @case('interview')
+                                <span class="status-chip status-interview">Interview</span>
+                                @break
+                            @case('hired')
+                                <span class="status-chip status-hired">Hired</span>
+                                @break
+                            @case('rejected')
+                                <span class="status-chip status-rejected">Rejected</span>
+                                @break
+                        @endswitch
                     </div>
-
-                    @if($builderObjective !== '')
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Objective</div>
-                        <div style="white-space:pre-wrap;">{!! nl2br(e($builderObjective)) !!}</div>
-                    </div>
-                    @endif
-
-                    @if($builderEducationRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Education</div>
-                        @foreach ($builderEducationRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
-                                <div style="margin-bottom:10px;">
-                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
-                                        <div>{{ $item['school'] ?? '' }}</div>
-                                        <div>{{ $item['year'] ?? '' }}</div>
-                                    </div>
-                                    <div style="color:#4b5563; font-style:italic;">{{ $item['course'] ?? '' }}</div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                    @endif
-
-                    @if($builderExperienceRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Experience</div>
-                        @foreach ($builderExperienceRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
-                                <div style="margin-bottom:10px;">
-                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
-                                        <div>{{ $item['title'] ?? '' }}</div>
-                                        <div>{{ $item['period'] ?? $item['from_date'] ?? '' }}</div>
-                                    </div>
-                                    <div style="color:#4b5563; font-style:italic;">{{ $item['company'] ?? '' }}</div>
-                                    <div>{{ $item['details'] ?? '' }}</div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                    @endif
-
-                    @if($builderTrainingRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Training</div>
-                        @foreach ($builderTrainingRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
-                                <div style="margin-bottom:10px;">
-                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
-                                        <div>{{ $item['course'] ?? '' }}</div>
-                                        <div>{{ $item['hours'] ?? '' }}</div>
-                                    </div>
-                                    <div style="color:#4b5563; font-style:italic;">{{ $item['institution'] ?? '' }}</div>
-                                    <div>{{ $item['dates'] ?? '' }}</div>
-                                    <div>{{ $item['skills'] ?? '' }}</div>
-                                    <div>{{ $item['certificates'] ?? '' }}</div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                    @endif
-
-                    @if($builderEligibilityRows->filter(fn ($row) => collect($row)->filter()->isNotEmpty())->isNotEmpty())
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Eligibility</div>
-                        @foreach ($builderEligibilityRows as $item)
-                            @if(collect($item)->filter()->isNotEmpty())
-                                <div style="margin-bottom:10px;">
-                                    <div style="display:flex; justify-content:space-between; gap:12px; font-weight:700;">
-                                        <div>{{ $item['eligibility'] ?? '' }}</div>
-                                        <div>{{ $item['date_taken'] ?? '' }}</div>
-                                    </div>
-                                    <div style="color:#4b5563; font-style:italic;">{{ $item['license'] ?? '' }}</div>
-                                    <div>{{ $item['valid_until'] ?? '' }}</div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                    @endif
-
-                    @if($builderSkills->count())
-                    <div style="margin-top:18px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #111827; padding-bottom:3px; margin-bottom:8px;">Skills</div>
-                        <ul style="margin:0; padding-left:18px;">
-                            @foreach ($builderSkills as $skill)
-                                <li style="margin-bottom:4px;">{{ $skill }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
                 </div>
-                @endif
-            @else
-                {{-- Uploaded Resume --}}
-                @php
-                    $uploadedResumeUrl = Storage::url($application->resume_path);
-                    $uploadedResumeExt = strtolower(pathinfo($application->resume_path, PATHINFO_EXTENSION));
-                @endphp
-                <div class="resume-actions">
-                    <button type="button" class="resume-btn btn-outline-info btn-preview-resume">
-                        <i class="bi bi-eye-fill"></i>
-                        <span>Preview</span>
-                    </button>
-                </div>
-                <div class="resume-preview" style="display:none;">
-                    @if(in_array($uploadedResumeExt, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                        <img src="{{ $uploadedResumeUrl }}" alt="Uploaded Resume" style="width:100%;height:auto;display:block;">
-                    @elseif($uploadedResumeExt === 'pdf')
-                        <iframe src="{{ $uploadedResumeUrl }}" frameborder="0" title="Resume Preview"></iframe>
-                    @else
-                        <div style="padding:1.5rem; background:#fff; border:1px solid #d9e6f6; border-radius:12px;">
-                            <p style="margin:0 0 1rem 0; color:#334155; font-weight:600;">Preview is not available for this file type.</p>
-                            <a href="{{ $uploadedResumeUrl }}" target="_blank" class="resume-btn btn-outline-secondary">
-                                <i class="bi bi-box-arrow-up-right"></i>
-                                <span>Open Uploaded File</span>
-                            </a>
-                        </div>
-                    @endif
-                </div>
+            </div>
+
+            @if($application->cover_letter)
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
+                <span class="label-muted">Cover Letter / Notes</span>
+                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;">{{ $application->cover_letter }}</p>
+            </div>
+            @endif
+
+            @if($application->resume_path)
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
+                <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
+                    <i class="bi bi-download"></i> Download Resume
+                </a>
+            </div>
             @endif
         </div>
-        @endif
 
-        <!-- Notes / Cover Letter Section -->
-        @if($application->notes)
-        <div class="notes-section">
-            <h6 class="section-title"><i class="bi bi-chat-left-text"></i>Cover Letter / Notes</h6>
-            <div class="notes-content">
-                {!! nl2br(e($application->notes)) !!}
+        <div class="info-card">
+            <h5 class="mb-3 section-title"><i class="bi bi-chat-dots text-primary"></i>Leave Feedback</h5>
+
+            @if($feedback)
+            <div class="alert alert-info mb-4" style="background: #dbeafe; border-color: #93c5fd; color: #1e40af; border-radius: 12px; padding: 1rem;">
+                <h6 class="alert-heading mb-2" style="font-weight: 700;">Previous Feedback</h6>
+                <p class="mb-2">{{ $feedback->feedback }}</p>
+                @if($feedback->rating)
+                <div style="margin-bottom: 0.5rem;">
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="bi bi-star{{ $i <= $feedback->rating ? '-fill' : '' }}" style="color: #ffc107; font-size: 0.9rem;"></i>
+                    @endfor
+                </div>
+                @endif
+                <small style="opacity: 0.85;">Type: {{ ucfirst(str_replace('_', ' ', $feedback->feedback_type)) }}</small>
             </div>
-        </div>
-        @endif
+            @endif
 
-        <!-- Status Update Form Section -->
-        <div class="form-section">
-            <h5><i class="bi bi-pencil-square"></i>Update Application Status</h5>
-            <form method="POST" action="{{ route('employer.applications.update', $application->id) }}">
+            <form id="feedbackForm" action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
                 @csrf
-                @method('PATCH')
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select" id="applicationStatusSelect">
-                            @php $s = $application->status; @endphp
-                            <option value="pending" {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="reviewing" {{ $s === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                            <option value="recommended" {{ $s === 'recommended' ? 'selected' : '' }}>Recommended</option>
-                            <option value="interviewed" {{ $s === 'interviewed' ? 'selected' : '' }}>Interviewed</option>
-                            <option value="hired" {{ $s === 'hired' ? 'selected' : '' }}>Hired</option>
-                            <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
+                <div class="mb-4">
+                    <label class="form-label">Feedback Type</label>
+                    <select id="feedbackType" name="feedback_type" class="form-select">
+                        <option value="">Select feedback type</option>
+                        <option value="interview_experience">Interview Experience</option>
+                        <option value="job_performance">Job Performance</option>
+                        <option value="professionalism">Professionalism</option>
+                        <option value="general">General Feedback</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Rating (Optional)</label>
+                    <div class="star-rating" id="starRating" role="radiogroup" aria-label="Rating">
+                        <i class="bi bi-star" data-value="1" role="radio" tabindex="0" aria-checked="false" aria-label="1 star" onclick="setRating(1)"></i>
+                        <i class="bi bi-star" data-value="2" role="radio" tabindex="0" aria-checked="false" aria-label="2 stars" onclick="setRating(2)"></i>
+                        <i class="bi bi-star" data-value="3" role="radio" tabindex="0" aria-checked="false" aria-label="3 stars" onclick="setRating(3)"></i>
+                        <i class="bi bi-star" data-value="4" role="radio" tabindex="0" aria-checked="false" aria-label="4 stars" onclick="setRating(4)"></i>
+                        <i class="bi bi-star" data-value="5" role="radio" tabindex="0" aria-checked="false" aria-label="5 stars" onclick="setRating(5)"></i>
                     </div>
-                    <div class="form-group" id="interviewScheduleGroup" style="{{ $application->status === 'interviewed' ? '' : 'display:none;' }}">
-                        <label class="form-label">Interview Schedule</label>
-                        <input
-                            type="datetime-local"
-                            name="interview_scheduled_at"
-                            id="interviewScheduledAt"
-                            class="form-control"
-                            value="{{ optional($application->interview_scheduled_at)->format('Y-m-d\\TH:i') }}"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Feedback (optional)</label>
-                        <textarea name="employer_feedback" rows="2" class="form-control" placeholder="Add any feedback for this applicant...">{{ $application->employer_feedback ?? '' }}</textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg"></i>
-                            Save Changes
-                        </button>
-                    </div>
+                    <input type="hidden" name="rating" id="ratingInput" value="">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Feedback</label>
+                    <textarea id="feedbackText" name="feedback" class="form-control" rows="4" placeholder="Write your feedback about this applicant..." style="resize: vertical;"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    @if($application->resume_path)
+                        <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-outline-primary">Download Resume</a>
+                    @endif
                 </div>
             </form>
         </div>
     </div>
+
+    <div class="col-lg-4">
+        <div class="right-sticky">
+        <div class="info-card">
+            <h5 class="mb-4 section-title"><i class="bi bi-pencil-square text-primary"></i>Update Status</h5>
+            <form id="statusForm" action="{{ route('employer.applications.update', $application->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="mb-4">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" id="statusSelect" onchange="toggleInterviewDate()">
+                        <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="reviewing" {{ $application->status == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
+                        <option value="shortlisted" {{ $application->status == 'shortlisted' ? 'selected' : '' }}>Shortlisted</option>
+                        <option value="interview" {{ $application->status == 'interview' ? 'selected' : '' }}>Interview</option>
+                        <option value="hired" {{ $application->status == 'hired' ? 'selected' : '' }}>Hired</option>
+                        <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Not Selected</option>
+                    </select>
+                </div>
+                <div class="mb-4" id="interviewDateField" style="display: {{ $application->status == 'interview' ? 'block' : 'none' }};">
+                    <label class="form-label">Interview Date & Time</label>
+                    <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Notes (Optional)</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this applicant..." style="resize: vertical;">{{ $application->notes }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-check-lg"></i> Update Status
+                </button>
+            </form>
+        </div>
+
+        <div class="info-card">
+            <h5 class="mb-4 section-title"><i class="bi bi-briefcase text-primary"></i>Job Information</h5>
+            <div style="padding: 0.5rem 0;">
+                <p style="margin: 0 0 0.75rem 0; font-weight: 700; font-size: 1rem; color: #0f172a;">{{ $application->jobPost->title }}</p>
+                <p style="margin: 0 0 0.5rem 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-geo-alt me-2" style="color: #075cb2;"></i>{{ $application->jobPost->location }}</p>
+                <p style="margin: 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-briefcase me-2" style="color: #075cb2;"></i>{{ ucfirst(str_replace('_', ' ', $application->jobPost->employment_type)) }}</p>
+            </div>
+            <hr style="margin: 1.25rem 0;">
+            <a href="{{ route('employer.jobs.manage') }}" class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-arrow-left"></i> Back to Jobs
+            </a>
+        </div>
+        </div>
+    </div>
 </div>
 </div>
-
-<script>
-// Preview toggle and lazy-load
-document.addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-preview-resume');
-    if (!btn) return;
-    const resumeSection = btn.closest('.resume-section');
-    if (!resumeSection) return;
-    const preview = resumeSection.querySelector('.resume-preview');
-    if (!preview) return;
-
-    const span = btn.querySelector('span');
-    if (!span) return;
-
-    // Check if this is an uploaded resume (has iframe/image) or builder resume (plain div)
-    const iframe = preview.querySelector('iframe');
-
-    if (preview.style.display === 'none' || preview.style.display === '') {
-        preview.style.display = 'block';
-        span.textContent = iframe ? 'Hide Preview' : 'Hide Resume';
-    } else {
-        preview.style.display = 'none';
-        span.textContent = iframe ? 'Preview' : 'Show Resume';
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const statusSelect = document.getElementById('applicationStatusSelect');
-    const scheduleGroup = document.getElementById('interviewScheduleGroup');
-    const scheduledAtInput = document.getElementById('interviewScheduledAt');
-
-    if (!statusSelect || !scheduleGroup || !scheduledAtInput) {
-        return;
-    }
-
-    const syncInterviewScheduleVisibility = () => {
-        const shouldShow = statusSelect.value === 'interviewed';
-        scheduleGroup.style.display = shouldShow ? '' : 'none';
-        scheduledAtInput.required = shouldShow;
-        if (!shouldShow) {
-            scheduledAtInput.value = '';
-        }
-    };
-
-    statusSelect.addEventListener('change', syncInterviewScheduleVisibility);
-    syncInterviewScheduleVisibility();
-});
-</script>
-
 @endsection
 
+@push('scripts')
+<script>
+    function toggleInterviewDate() {
+        const status = document.getElementById('statusSelect')?.value;
+        const interviewField = document.getElementById('interviewDateField');
+        if (!interviewField) return;
+        interviewField.style.display = status === 'interview' ? 'block' : 'none';
+    }
+
+    function setRating(value) {
+        const input = document.getElementById('ratingInput');
+        if (input) input.value = value;
+        const stars = Array.from(document.querySelectorAll('#starRating i'));
+        stars.forEach((star, index) => {
+            const active = index < value;
+            star.classList.toggle('bi-star-fill', active);
+            star.classList.toggle('bi-star', !active);
+            star.style.color = active ? '#ffc107' : '#ddd';
+            star.setAttribute('aria-checked', active ? 'true' : 'false');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // initialize interview field visibility
+        toggleInterviewDate();
+
+        const feedbackForm = document.getElementById('feedbackForm');
+        const statusForm = document.getElementById('statusForm');
+
+        if (statusForm && feedbackForm) {
+            statusForm.addEventListener('submit', async function (e) {
+                const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
+                const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
+                const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
+
+                if (feedbackText.trim().length > 0 || rating || feedbackType) {
+                    e.preventDefault();
+                    const data = new FormData(feedbackForm);
+                    try {
+                        await fetch(feedbackForm.action, {
+                            method: 'POST',
+                            body: data,
+                            credentials: 'same-origin',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                    } catch (err) {
+                        console.error('Failed to save feedback before status update', err);
+                    }
+                    statusForm.submit();
+                }
+            });
+        }
+
+        // keyboard support for star-rating
+        const stars = document.querySelectorAll('#starRating i[role="radio"]');
+        stars.forEach(st => {
+            st.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault();
+                    const v = Number(this.getAttribute('data-value')) || 0;
+                    setRating(v);
+                }
+                if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') {
+                    ev.preventDefault();
+                    const prev = this.previousElementSibling;
+                    if (prev) prev.focus();
+                }
+                if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') {
+                    ev.preventDefault();
+                    const next = this.nextElementSibling;
+                    if (next) next.focus();
+                }
+            });
+            st.addEventListener('focus', function () { this.classList.add('focus-visible'); });
+            st.addEventListener('blur', function () { this.classList.remove('focus-visible'); });
+        }
+    });
+</script>
+@endpush

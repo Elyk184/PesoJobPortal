@@ -108,7 +108,6 @@
         border-color: #2b67b1;
         background: linear-gradient(135deg, #ffffff 0%, #f0f6ff 100%);
     }
-    }
     .stat-icon {
         width: 60px;
         height: 60px;
@@ -283,8 +282,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 0.5rem;
-        flex-wrap: nowrap;
+        gap: 0.6rem;
+        flex-wrap: wrap;
         white-space: nowrap;
     }
 
@@ -298,17 +297,17 @@
     }
     /* Make the applicants table card stretch edge-to-edge within the page */
     .applicants-table-card.full-bleed {
-        border-radius: 0;
-        margin-left: -1.25rem;
-        margin-right: -1.25rem;
-        width: calc(100% + 2.5rem);
+        border-radius: 16px;
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
     }
     .table-card-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
-        padding: 1rem 1.25rem;
+        padding: 0.8rem 1.1rem;
         background: #f8fbff;
         border-bottom: 1px solid #deebf9;
     }
@@ -353,24 +352,29 @@
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        padding: 0.9rem 1.25rem;
+        padding: 1.25rem 1.25rem;
         background: transparent;
     }
     .table tbody td {
-        padding: 1.1rem 1.25rem;
+        padding: 1.25rem 1.25rem;
         vertical-align: middle;
+        border-color: #f1f5f9;
+    }
+    /* Removed inconsistent first-child padding for uniformity */
+    .d-flex.align-items-start.gap-3 {
+        gap: 1rem;
     }
     .user-avatar {
-        width: 56px;
-        height: 56px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid #fff;
-        box-shadow: 0 4px 10px rgba(15,49,96,0.06);
+        box-shadow: 0 6px 12px rgba(15,49,96,0.08);
     }
     .user-initials {
-        width: 56px;
-        height: 56px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -382,39 +386,43 @@
     .user-info .name {
         display: block;
         font-weight: 700;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.1rem;
     }
     .user-info .email {
         display: block;
         color: #6b7280;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
     }
     .table-actions {
         justify-content: flex-end;
+        align-items: flex-start;
     }
     @media (min-width: 992px) {
+        .table thead th:nth-child(1),
+        .table tbody td:nth-child(1) { text-align: left; }
         .table thead th:nth-child(2),
         .table tbody td:nth-child(2) { text-align: left; }
         .table thead th:nth-child(3),
-        .table tbody td:nth-child(3) { text-align: center; }
+        .table tbody td:nth-child(3) { text-align: left; }
         .table thead th:nth-child(4),
         .table tbody td:nth-child(4) { text-align: center; }
         .table thead th:nth-child(5),
-        .table tbody td:nth-child(5) { text-align: right; }
+        .table tbody td:nth-child(5) { text-align: center; }
     }
     .table tbody tr {
         transition: all 0.2s ease;
         border-bottom: 1px solid #e8f0f8;
     }
     .table tbody tr:hover {
-        background-color: #f7fbff;
-        box-shadow: inset 0 2px 8px rgba(31, 79, 143, 0.04);
+        background: linear-gradient(90deg, #f8fbff 0%, #f0f7ff 100%);
+        box-shadow: 0 4px 12px rgba(31, 79, 143, 0.08);
+        transform: translateY(-1px);
     }
     .table tbody td {
         vertical-align: middle;
-        padding: 1.1rem 1.2rem;
+        padding: 0.9rem 1rem;
         color: #334155;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
     }
     .table tbody tr:last-child td {
         border-bottom: none;
@@ -446,45 +454,66 @@
     .user-info {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.08rem;
+        min-width: 0;
     }
     .user-info .name {
         font-weight: 600;
         color: #0f172a;
+        word-break: break-word;
     }
     .user-info .email {
         font-size: 0.85rem;
         color: #7a8a9a;
+        word-break: break-all;
     }
+    .applicant-link {
+        color: #0f172a;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        max-width: 320px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .applicant-link:hover { color: #2b67b1; text-decoration: underline; }
+    .applicant-link:focus { outline: 3px solid rgba(43,103,177,0.18); border-radius: 6px; }
+
+    .job-title { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .action-btn:focus { outline: 3px solid rgba(43,103,177,0.18); }
     .status-badge {
-        padding: 0.5em 1em;
+        padding: 0.5em 0.9em;
         border-radius: 999px;
         font-size: 0.8rem;
         font-weight: 700;
         text-transform: capitalize;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         border: 1px solid transparent;
         letter-spacing: 0.3px;
+        white-space: nowrap;
     }
     .status-badge i {
         font-size: 0.5rem;
     }
     .action-btn {
         border-radius: 999px;
-        padding: 0.45rem 0.95rem;
+        padding: 0.4rem 0.85rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: all 0.18s ease;
         border: 1px solid transparent;
-        font-size: 0.95rem;
-        min-width: 72px;
+        font-size: 0.9rem;
+        min-width: 64px;
         height: auto;
+        white-space: nowrap;
     }
-    .action-btn i { font-size: 0.95rem; }
+    .action-btn i { font-size: 0.92rem; }
     .action-text {
         display: inline-block;
         font-size: 0.95rem;
@@ -623,20 +652,56 @@
             padding: 1rem;
         }
         .table thead th {
-            padding: 0.8rem;
-            font-size: 0.75rem;
+            padding: 0.85rem 0.75rem;
+            font-size: 0.7rem;
         }
         .table tbody td {
-            padding: 0.8rem;
+            padding: 0.9rem 0.75rem;
             font-size: 0.85rem;
+        }
+        .table tbody td:first-child {
+            padding-left: 1rem;
+        }
+        .table thead th:first-child {
+            padding-left: 1rem;
         }
         .action-btn {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             font-size: 0.85rem;
             padding: 0;
-            min-width: 34px;
+            min-width: 36px;
         }
+        .table-actions {
+            gap: 0.4rem;
+        }
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+        }
+        .user-initials {
+            width: 38px;
+            height: 38px;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Improve table usability: sticky header and scroll for large result sets */
+    .table-responsive {
+        max-height: 56vh;
+        overflow: auto;
+    }
+    .table-responsive .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: linear-gradient(90deg, #f0f6ff 0%, #f3f8ff 100%);
+    }
+
+    /* On smaller screens show icon-only action buttons for compactness */
+    @media (max-width: 768px) {
+        .action-text { display: none; }
+        .action-btn { width: 36px; height: 36px; padding: 0; }
     }
 </style>
 
@@ -778,11 +843,11 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th class="ps-4"><span class="th-label"><i class="bi bi-person"></i>Name</span></th>
+                                <th><span class="th-label"><i class="bi bi-person"></i>Name</span></th>
                                 <th><span class="th-label"><i class="bi bi-briefcase"></i>Job Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-calendar-event"></i>Date Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-activity"></i>Status</span></th>
-                                <th class="text-center"><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
+                                <th><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -808,7 +873,11 @@
                                         </div>
                                         @endif
                                         <div class="user-info">
-                                            <span class="name">{{ $applicantName }}</span>
+                                            @if(!$isRecommendation)
+                                                <a href="{{ route('employer.applications.show', $application->id) }}" class="applicant-link name">{{ $applicantName }}</a>
+                                            @else
+                                                <span class="name">{{ $applicantName }}</span>
+                                            @endif
                                             <span class="email">{{ $applicantEmail }}</span>
                                             @if($isRecommendation)
                                             <span class="badge bg-info-subtle text-info ms-2" style="font-size: 0.75rem;">Recommended</span>
@@ -816,7 +885,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $job->title ?? 'N/A' }}</td>
+                                <td class="job-title" title="{{ $job->title ?? 'N/A' }}">{{ \Illuminate\Support\Str::limit($job->title ?? 'N/A', 60) }}</td>
                                 <td>{{ $dateApplied->format('M d, Y') }}</td>
                                 <td>
                                     @php
@@ -834,7 +903,7 @@
                                         {{ $application->status }}
                                     </span>
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     <div class="table-actions">
                                         @if($isRecommendation)
                                             <button type="button" class="btn btn-sm btn-outline-primary action-btn" title="View Details" onclick="alert('Recommendation Details\n\nFrom: {{ $application->recommendedBy->name ?? 'Admin' }}\n\nMessage: {{ $application->recommendation_reason ?? 'No message provided' }}')">
@@ -949,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const filterValue = this.dataset.filterValue;
             const statusSelect = document.querySelector('select[name="status"]');
             const filterForm = document.querySelector('form.filters-grid');
-            
+
             if (filterType === 'reset') {
                 // Reset all filters
                 document.querySelector('select[name="job_id"]').value = '';
@@ -959,10 +1028,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set the status filter and submit
                 statusSelect.value = filterValue;
             }
-            
+
             // Scroll to filter section
             document.querySelector('.filter-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
+
             // Highlight the status dropdown briefly to show it's selected
             statusSelect.style.borderColor = '#2b67b1';
             statusSelect.style.boxShadow = '0 0 0 4px rgba(43, 103, 177, 0.2)';
@@ -970,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusSelect.style.borderColor = '';
                 statusSelect.style.boxShadow = '';
             }, 2000);
-            
+
             // Auto-submit the form after a brief delay
             setTimeout(() => {
                 filterForm.submit();

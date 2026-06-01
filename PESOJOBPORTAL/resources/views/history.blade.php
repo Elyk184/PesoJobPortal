@@ -3,7 +3,7 @@
 @section('title', 'Brief Historical Background | Link Job Resource Portal')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/history-section.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/history-section.css') . '?v=' . filemtime(public_path('css/history-section.css')) }}">
 @endpush
 
 @section('content')
@@ -44,10 +44,12 @@
                     throughout the region. It was theorized that they came from places of what is
                     now known as Indonesia. Traveling by the sea, these migrants reached the
                     gulf of Davao where some ventured further to areas of what is presently
-                    known as Bukidnon and Misamis Oriental..
+                    known as Bukidnon and Misamis Oriental.
                 </p>
             </div>
         </div>
     </div>
 </section>
+
+@include('components.footer')
 @endsection

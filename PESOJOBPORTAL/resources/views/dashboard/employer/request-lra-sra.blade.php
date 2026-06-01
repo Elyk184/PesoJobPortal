@@ -259,7 +259,7 @@
                                 <span class="request-status {{ $request->status }}">{{ strtoupper($request->status) }}</span>
                             </div>
                             <p class="request-meta">Submitted: {{ optional($request->created_at)->format('M d, Y h:i A') }}</p>
-                            
+
                             @if($request->status === 'approved')
                                 <div class="request-approval-info">
                                     <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
@@ -277,6 +277,20 @@
                                     @endif
                                 </div>
                             @endif
+
+                            <!-- Action Buttons -->
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <a href="{{ route('employer.recruitment.show', $request) }}"
+                                   style="background: #6366f1; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="bi bi-eye"></i> View Details
+                                </a>
+                                @if($request->status === 'approved' && $request->certification_path)
+                                    <a href="{{ route('employer.recruitment.download-certificate', $request) }}"
+                                       style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="bi bi-download"></i> Download Certificate
+                                    </a>
+                                @endif
+                            </div>
                         </article>
                     @empty
                         <p class="mb-0">No LRA/SRA requests submitted yet.</p>

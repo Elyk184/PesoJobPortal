@@ -14,7 +14,6 @@ return new class extends Migration
             $table->enum('activity_type', ['lra', 'sra']);
             $table->string('letter_of_intent_path');
             $table->string('company_profile_path');
-            $table->string('job_advertisement_path');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->text('notes')->nullable();
             $table->timestamps();

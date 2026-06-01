@@ -12,7 +12,9 @@ use App\Models\JobseekerPersonalInformation;
 use App\Models\RecruitmentActivityRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
+use App\Models\PortalNotification;
 use App\Models\UserNotification;
+use App\Services\CertificationService;
 use App\Services\PesoClearanceService;
 use App\Services\PesoClearanceDocumentService;
 use Carbon\Carbon;
@@ -21,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -281,7 +284,7 @@ class AdminController extends Controller
         $femaleCount = $genderData->where('gender', 'female')->first()?->count ?? 0;
         $maleCount = $genderData->where('gender', 'male')->first()?->count ?? 0;
         $otherCount = $genderData->where('gender', null)->first()?->count ?? 0;
-        
+
         // Handle case where gender values might be different
         $otherCount = $totalApplications - ($femaleCount + $maleCount);
         if ($otherCount < 0) $otherCount = 0;
@@ -507,8 +510,70 @@ class AdminController extends Controller
         return view('admin.approvals.lra-sra-detail', compact('activityRequest'));
     }
 
+    public function downloadLraSraFile(Request $request, RecruitmentActivityRequest $activityRequest, string $field)
+    {
+        // Only allow specific file fields to be downloaded
+        $allowed = [
+            'letter_of_intent_path',
+            'dmw_certificate_path',
+            'recruitment_officer_id_path',
+            'job_order_balance_path',
+            'deployment_report_path',
+            'affidavit_undertaking_path',
+            'sra_authority_file_path',
+            'business_permit_path',
+            'lra_recruitment_officer_id_path',
+            'job_vacancies_path',
+            'company_profile_path',
+            'certification_path',
+        ];
+
+        if (! in_array($field, $allowed, true)) {
+            abort(404);
+        }
+
+        $filePath = data_get($activityRequest, $field);
+        if (! $filePath) {
+            return back()->with('error', 'File not found.');
+        }
+
+        // Try public disk first, then fallback to default (local) disk.
+        $disksToTry = ['public', config('filesystems.default')];
+        foreach (array_unique($disksToTry) as $disk) {
+            try {
+                if (Storage::disk($disk)->exists($filePath)) {
+                    $fullPath = Storage::disk($disk)->path($filePath);
+
+                    // Prefer original uploaded filename if available
+                    $originalField = preg_replace('/_path$/', '_original_name', $field);
+                    $downloadName = basename($filePath);
+                    if ($originalField && data_get($activityRequest, $originalField)) {
+                        // sanitize original name
+                        $candidate = str_replace(["\n", "\r", "\0"], '', data_get($activityRequest, $originalField));
+                        $candidate = basename($candidate);
+                        if ($candidate !== '') {
+                            $downloadName = $candidate;
+                        }
+                    }
+
+                    return response()->download($fullPath, $downloadName);
+                }
+            } catch (\Exception $e) {
+                // ignore and try next disk
+            }
+        }
+
+        return back()->with('error', 'File not found.');
+    }
+
     public function approveLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse
     {
+        // Check if certification exists
+        $certService = new CertificationService();
+        if (!$certService->hasCertification($activityRequest)) {
+            return back()->with('error', 'You must generate a certification before approving this request. Please generate the certification first.');
+        }
+
         $activityRequest->update([
             'status' => 'approved',
             'approved_at' => now(),
@@ -516,7 +581,67 @@ class AdminController extends Controller
         ]);
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
-        return back()->with('success', "{$type} request has been approved.");
+        $typeLabel = $activityRequest->activity_type === 'lra' ? 'Local Recruitment Activity' : 'Special Recruitment Activity';
+
+        // Send emails to employer
+        try {
+            if ($activityRequest->employer && $activityRequest->employer->email) {
+                // Send certification email
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\CertificationApprovalMail($activityRequest));
+
+                // Send request approval email
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\RequestApprovedMail($activityRequest));
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send approval emails: ' . $e->getMessage());
+        }
+
+        // Create in-app notification for employer
+        if ($activityRequest->employer) {
+            $this->notifyEmployer(
+                $activityRequest->employer,
+                'lra_sra_update',
+                "{$type} Request Approved",
+                "Your {$typeLabel} request has been approved. Your certification is ready for download."
+            );
+        }
+
+        return back()->with('success', "{$type} request has been approved and emails sent to employer.");
+    }
+
+    public function generateLraSraCertification(RecruitmentActivityRequest $activityRequest): RedirectResponse
+    {
+        try {
+            $certService = new CertificationService();
+            $certService->generateCertification($activityRequest, Auth::user());
+
+            $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
+            return back()->with('success', "{$type} certification has been generated successfully.");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to generate certification: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadLraSraCertification(RecruitmentActivityRequest $activityRequest)
+    {
+        try {
+            $certService = new CertificationService();
+            return $certService->downloadCertification($activityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to download certification: ' . $e->getMessage());
+        }
+    }
+
+    public function viewLraSraCertification(RecruitmentActivityRequest $activityRequest)
+    {
+        try {
+            $certService = new CertificationService();
+            return $certService->viewCertification($activityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to view certification: ' . $e->getMessage());
+        }
     }
 
     public function rejectLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse
@@ -529,7 +654,29 @@ class AdminController extends Controller
         ]);
 
         $type = $activityRequest->activity_type === 'lra' ? 'LRA' : 'SRA';
-        return back()->with('success', "{$type} request has been rejected.");
+        $typeLabel = $activityRequest->activity_type === 'lra' ? 'Local Recruitment Activity' : 'Special Recruitment Activity';
+
+        // Send rejection email to employer
+        try {
+            if ($activityRequest->employer && $activityRequest->employer->email) {
+                \Illuminate\Support\Facades\Mail::to($activityRequest->employer->email)
+                    ->send(new \App\Mail\RequestRejectedMail($activityRequest, $request->notes));
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send rejection email: ' . $e->getMessage());
+        }
+
+        // Create in-app notification for employer
+        if ($activityRequest->employer) {
+            $this->notifyEmployer(
+                $activityRequest->employer,
+                'lra_sra_update',
+                "{$type} Request Rejected",
+                "Your {$typeLabel} request has been rejected. Reason: {$request->notes}"
+            );
+        }
+
+        return back()->with('success', "{$type} request has been rejected and notification sent to employer.");
     }
 
     private function notifyEmployer(User $employer, string $preferredType, string $title, string $message): void
@@ -555,6 +702,25 @@ class AdminController extends Controller
             EmployerNotification::query()->create($payload);
         } catch (\Throwable) {
             // Swallow the error so admin approval does not fail just because notifications cannot be recorded.
+        }
+    }
+
+    private function notifyJobseeker(User $user, string $title, string $message): void
+    {
+        try {
+            $portalNotification = PortalNotification::query()->create([
+                'title' => $title,
+                'message' => $message,
+                'created_by' => Auth::id(),
+            ]);
+
+            UserNotification::query()->create([
+                'user_id' => $user->id,
+                'portal_notification_id' => $portalNotification->id,
+                'read_at' => null,
+            ]);
+        } catch (\Throwable) {
+            // Ignore notification failures so clearance issuance still succeeds.
         }
     }
 
@@ -615,7 +781,7 @@ class AdminController extends Controller
 
         $documentService = new PesoClearanceDocumentService();
         $documentPath = $documentService->generateClearanceDocument($clearance);
-        
+
         if ($documentPath) {
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
             $issuedClearance->update(['document_path' => $documentPath]);
@@ -682,6 +848,12 @@ class AdminController extends Controller
         return Storage::download($documentPath, 'clearance-' . $clearance->clearance_number . '.pdf');
     }
 
+    public function showPesoClearance(PesoClearance $clearance): View
+    {
+        $clearance->load('user');
+        return view('admin.peso-clearance-show', compact('clearance'));
+    }
+
     public function issuePesoClearance(Request $request, PesoClearance $clearance): RedirectResponse
     {
         if ($clearance->status !== 'pending') {
@@ -689,17 +861,24 @@ class AdminController extends Controller
         }
 
         $validated = $request->validate([
-            'residence_address' => 'required|string|max:255',
+            'clearance_number' => ['nullable', 'string', 'max:255', 'unique:peso_clearances,clearance_number,' . $clearance->id],
+            'issue_date' => ['nullable', 'date'],
+            'expiry_date' => ['nullable', 'date'],
+            'residence_address' => 'nullable|string|max:255',
             'company_name' => 'nullable|string|max:255',
         ]);
 
-        $clearanceNumber = 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id;
+        $providedNumber = trim((string) ($validated['clearance_number'] ?? ''));
+        $clearanceNumber = $providedNumber !== '' ? $providedNumber : 'CLR-' . now()->format('YmdHis') . '-' . $clearance->id;
+
+        $issueDate = isset($validated['issue_date']) ? Carbon::parse($validated['issue_date']) : now();
+        $expiryDate = isset($validated['expiry_date']) ? Carbon::parse($validated['expiry_date']) : now()->addYear();
 
         $clearance->update([
             'status' => 'active',
             'clearance_number' => $clearanceNumber,
-            'issue_date' => now(),
-            'expiry_date' => now()->addYear(),
+            'issue_date' => $issueDate,
+            'expiry_date' => $expiryDate,
             'remarks' => $clearance->remarks,
         ]);
 
@@ -708,8 +887,8 @@ class AdminController extends Controller
             [
                 'user_id' => $clearance->user_id,
                 'clearance_number' => $clearanceNumber,
-                'company_name' => $validated['company_name'] ?? null,
-                'residence_address' => $validated['residence_address'],
+                'company_name' => $validated['company_name'] ?? $clearance->company_name ?? null,
+                'residence_address' => $validated['residence_address'] ?? $clearance->residence_address ?? null,
                 'status' => 'saved',
                 'issued_at' => now(),
             ]
@@ -721,10 +900,21 @@ class AdminController extends Controller
         // Generate and store clearance document
         $documentService = new PesoClearanceDocumentService();
         $documentPath = $documentService->generateClearanceDocument($clearance);
-        
+
         if ($documentPath) {
             $documentService->saveClearanceDocumentPath($clearance, $documentPath);
             $issuedClearance->update(['document_path' => $documentPath]);
+        }
+
+        if ($clearance->user) {
+            $this->notifyJobseeker(
+                $clearance->user,
+                'PESO Clearance Issued',
+                sprintf(
+                    'Your PESO clearance request has been issued. Clearance Number: %s.',
+                    $clearanceNumber
+                )
+            );
         }
 
         return redirect()

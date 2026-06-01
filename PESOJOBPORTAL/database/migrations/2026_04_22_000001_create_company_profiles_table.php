@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('business_name')->default('')->nullable();
             $table->string('trade_name')->default('')->nullable();
             $table->string('acronym_abbreviation')->default('')->nullable();
+            $table->year('established_year')->nullable();
 
             // Company Type & Classification
             $table->enum('office_type', ['main_office', 'branch'])->default('main_office');

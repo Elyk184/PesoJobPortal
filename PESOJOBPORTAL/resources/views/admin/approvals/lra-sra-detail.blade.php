@@ -11,431 +11,500 @@
 @section('content')
 <div class="admin-dashboard">
     <div class="dashboard-card">
-        <div class="mb-4">
-            <a href="{{ route('admin.lra-sra-approvals') }}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-1"></i>Back to Approvals
+
+        {{-- Page Header --}}
+        <div class="lra-topbar">
+            <div>
+                <h1 class="lra-page-title">{{ strtoupper($activityRequest->activity_type) }} Request Review</h1>
+                <p class="lra-page-sub">
+                    Review and {{ $activityRequest->status === 'pending' ? 'approve or reject' : 'view' }} the LRA/SRA request documents
+                </p>
+            </div>
+            <a href="{{ route('admin.lra-sra-approvals') }}" class="lra-back-btn">
+                <i class="bi bi-arrow-left"></i> Back to Approvals
             </a>
         </div>
 
-        <div class="row g-4">
-            <!-- Main Content -->
-            <div class="col-lg-9">
-                <!-- Request Overview -->
-                <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Activity Type</small>
-                            <span class="badge" style="background-color: {{ $activityRequest->activity_type === 'lra' ? '#3b82f6' : '#ec4899' }}; padding: 0.5rem 0.75rem; font-size: 0.9rem;">
-                                {{ strtoupper($activityRequest->activity_type) }}
+        {{-- Two-column layout --}}
+        <div class="lra-layout">
+
+            {{-- ── MAIN COLUMN ── --}}
+            <div class="lra-main">
+
+                {{-- Meta strip --}}
+                <div class="lra-card lra-card--flush mb-card">
+                    <div class="lra-meta-strip">
+                        <div class="lra-meta-cell">
+                            <div class="lra-meta-label"><i class="bi bi-tag me-1"></i>Activity type</div>
+                            <span class="lra-badge lra-badge--{{ $activityRequest->activity_type }}">
+                                <i class="bi bi-file-earmark me-1"></i>{{ strtoupper($activityRequest->activity_type) }}
                             </span>
                         </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Employer</small>
-                            <strong>{{ $activityRequest->employer?->name ?? 'N/A' }}</strong>
+                        <div class="lra-meta-cell">
+                            <div class="lra-meta-label"><i class="bi bi-building me-1"></i>Employer</div>
+                            <div class="lra-meta-val">{{ $activityRequest->employer?->name ?? 'N/A' }}</div>
                         </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Submitted</small>
-                            <strong>{{ $activityRequest->created_at->format('M d, Y') }}</strong>
+                        <div class="lra-meta-cell">
+                            <div class="lra-meta-label"><i class="bi bi-calendar me-1"></i>Submitted</div>
+                            <div class="lra-meta-val">{{ $activityRequest->created_at->format('M d, Y') }}</div>
                         </div>
-                        <div class="col-md-3">
-                            <small class="text-muted d-block mb-1">Status</small>
-                            <span class="badge" style="background-color: 
-                                @if($activityRequest->status === 'pending') #f59e0b
-                                @elseif($activityRequest->status === 'approved') #10b981
-                                @else #ef4444 @endif; padding: 0.5rem 0.75rem; font-size: 0.9rem;">
+                        <div class="lra-meta-cell">
+                            <div class="lra-meta-label"><i class="bi bi-info-circle me-1"></i>Status</div>
+                            <span class="lra-badge lra-badge--status-{{ $activityRequest->status }}">
                                 {{ ucfirst($activityRequest->status) }}
                             </span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Documents -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-light border-0 py-3">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark-pdf me-2"></i>Documents</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Letter of Intent</strong></p>
+                    {{-- Required Documents --}}
+                    <div class="lra-card-body">
+                        <div class="lra-section-tag lra-section-tag--red">
+                            <i class="bi bi-file-earmark-pdf me-1"></i> Required documents
+                        </div>
+                        <div class="lra-doc-grid">
+                            <div class="lra-doc-item">
+                                <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--red"></i>
+                                <p class="lra-doc-name">Letter of Intent</p>
                                 @if($activityRequest->letter_of_intent_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->letter_of_intent_path) }}" 
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'letter_of_intent_path']) }}"
+                                       class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Company Profile</strong></p>
-                                @if($activityRequest->company_profile_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->company_profile_path) }}" 
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="border rounded p-3 text-center h-100" style="background-color: #f9fafb;">
-                                <i class="bi bi-file-pdf" style="font-size: 2rem; color: #ef4444;"></i>
-                                <p class="mt-2 mb-1 small"><strong>Job Advertisement</strong></p>
-                                @if($activityRequest->job_advertisement_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->job_advertisement_path) }}" 
-                                       class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        <i class="bi bi-download me-1"></i>Download
-                                    </a>
-                                @else
-                                    <small class="text-muted">Not provided</small>
+                                    <span class="lra-doc-missing">Not provided</span>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Employer Details / Company Profile Table -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light border-0 py-3" style="border-bottom: 2px solid #e5e7eb;">
-                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Company Profile</h5>
-                </div>
-                <div class="card-body p-0">
-                    <!-- Company Logo Section -->
-                    <div class="p-4 border-bottom" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
-                        <div class="row align-items-center">
-                            <div class="col-md-2 text-center">
-                                @if($activityRequest->employer?->profile?->logo_path)
-                                    <img src="{{ asset('storage/' . $activityRequest->employer->profile->logo_path) }}" 
-                                         alt="Company Logo" class="img-fluid rounded-lg shadow-sm" style="max-width: 120px; max-height: 120px; object-fit: cover;">
+                {{-- SRA Specific Documents --}}
+                @if($activityRequest->activity_type === 'sra')
+                <div class="lra-card mb-card">
+                    <div class="lra-card-head">
+                        <i class="bi bi-file-earmark"></i>
+                        <span class="lra-card-head-label">SRA-specific documents</span>
+                    </div>
+                    <div class="lra-card-body">
+                        <div class="lra-section-tag lra-section-tag--purple">
+                            <i class="bi bi-file-earmark me-1"></i> SRA documents
+                        </div>
+                        @php
+                            $sraDocuments = [
+                                ['name' => 'DMW Certificate',         'field' => 'dmw_certificate_path'],
+                                ['name' => 'Recruitment Officer ID',  'field' => 'recruitment_officer_id_path'],
+                                ['name' => 'Job Order Balance',       'field' => 'job_order_balance_path'],
+                                ['name' => 'Deployment Report',       'field' => 'deployment_report_path'],
+                                ['name' => 'Affidavit of Undertaking','field' => 'affidavit_undertaking_path'],
+                                ['name' => 'SRA Authority',           'field' => 'sra_authority_file_path'],
+                            ];
+                        @endphp
+                        <div class="lra-doc-grid">
+                            @foreach($sraDocuments as $doc)
+                            <div class="lra-doc-item">
+                                <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--purple"></i>
+                                <p class="lra-doc-name">{{ $doc['name'] }}</p>
+                                @if($activityRequest->{$doc['field']})
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, $doc['field']]) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
                                 @else
-                                    <div class="border-2 border-dashed rounded-lg p-4" style="background-color: #e5e7eb; aspect-ratio: 1;">
-                                        <i class="bi bi-image" style="font-size: 2.5rem; color: #9ca3af;"></i>
+                                    <span class="lra-doc-missing">Not provided</span>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- LRA Specific Documents + Job Vacancies --}}
+                @if($activityRequest->activity_type === 'lra')
+                <div class="lra-card mb-card">
+                    <div class="lra-card-head">
+                        <i class="bi bi-file-earmark"></i>
+                        <span class="lra-card-head-label">LRA-specific documents</span>
+                    </div>
+                    <div class="lra-card-body">
+                        <div class="lra-section-tag lra-section-tag--teal">
+                            <i class="bi bi-file-earmark me-1"></i> LRA documents
+                        </div>
+                        <div class="lra-doc-grid">
+                            <div class="lra-doc-item">
+                                <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
+                                <p class="lra-doc-name">Business Permit</p>
+                                @if($activityRequest->business_permit_path)
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'business_permit_path']) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <span class="lra-doc-missing">Not provided</span>
+                                @endif
+                            </div>
+                            <div class="lra-doc-item">
+                                <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
+                                <p class="lra-doc-name">Recruitment Officer ID</p>
+                                @if($activityRequest->lra_recruitment_officer_id_path)
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'lra_recruitment_officer_id_path']) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <span class="lra-doc-missing">Not provided</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Job Vacancies --}}
+                <div id="job-vacancies" class="lra-card mb-card">
+                    <div class="lra-card-head">
+                        <i class="bi bi-briefcase"></i>
+                        <span class="lra-card-head-label">Job vacancies</span>
+                    </div>
+                    <div class="lra-card-body">
+                        @if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text)
+                            <div class="lra-jv-split">
+                                <div class="lra-doc-item">
+                                    <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--blue"></i>
+                                    <p class="lra-doc-name">Job Vacancies File</p>
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'job_vacancies_path']) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </div>
+                                <div class="lra-vacancies-text">{{ $activityRequest->job_vacancies_text }}</div>
+                            </div>
+                        @elseif($activityRequest->job_vacancies_path)
+                            <div class="lra-doc-grid">
+                                <div class="lra-doc-item">
+                                    <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--blue"></i>
+                                    <p class="lra-doc-name">Job Vacancies File</p>
+                                    <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                </div>
+                            </div>
+                        @elseif($activityRequest->job_vacancies_text)
+                            <div class="lra-vacancies-text">{{ $activityRequest->job_vacancies_text }}</div>
+                        @else
+                            <div class="lra-empty">
+                                <i class="bi bi-inbox"></i>
+                                <span>Not provided</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+            </div>{{-- /main --}}
+
+            {{-- ── SIDEBAR ── --}}
+            <div class="lra-sidebar">
+
+                {{-- Company info --}}
+                <div class="lra-card mb-card">
+                    <div class="lra-card-head">
+                        <i class="bi bi-building"></i>
+                        <span class="lra-card-head-label">Company</span>
+                    </div>
+                    <div class="lra-card-body lra-card-body--compact">
+                        <div class="lra-info-row">
+                            <span class="lra-info-key"><i class="bi bi-globe me-1"></i>Business</span>
+                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</span>
+                        </div>
+                        <div class="lra-info-row">
+                            <span class="lra-info-key"><i class="bi bi-people me-1"></i>Workforce</span>
+                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->workforce_size ?? 'N/A' }}</span>
+                        </div>
+                        <div class="lra-info-row lra-info-row--last">
+                            <span class="lra-info-key"><i class="bi bi-telephone me-1"></i>Contact</span>
+                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->establishment_phone ?? 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if($activityRequest->status === 'pending')
+
+                    {{-- Certification --}}
+                    <div class="lra-card mb-card">
+                        <div class="lra-card-head">
+                            <i class="bi bi-certificate"></i>
+                            <span class="lra-card-head-label">Certification</span>
+                        </div>
+                        <div class="lra-card-body lra-card-body--compact">
+                            @if($activityRequest->certification_path)
+                                <div class="lra-cert-status lra-cert-status--ok">
+                                    <div class="lra-cert-title">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Certification generated
                                     </div>
-                                @endif
-                            </div>
-                            <div class="col-md-10">
-                                <div class="ps-3">
-                                    <h6 style="color: #0f4c8a; margin-bottom: 0.5rem;">{{ $activityRequest->employer->profile?->company_name ?? $activityRequest->employer->profile?->business_name ?? $activityRequest->employer?->name ?? 'N/A' }}</h6>
-                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">{{ $activityRequest->employer->profile?->trade_name ? '(' . $activityRequest->employer->profile->trade_name . ')' : '' }}</p>
+                                    <div class="lra-cert-sub">
+                                        {{-- ✅ FIXED: Convert UTC timestamp to Asia/Manila (UTC+8) --}}
+                                        {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
+                                        &mdash; {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Business Information Table -->
-                    <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
-                        <tbody>
-                            <tr style="background-color: #f9fafb;">
-                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; width: 30%; border-top: 1px solid #e5e7eb;"><i class="bi bi-briefcase me-2" style="color: #0f4c8a;"></i>Business Name</td>
-                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->business_name ?? 'N/A' }}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-tag me-2" style="color: #0f4c8a;"></i>Tax ID (TIN)</td>
-                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->tin ?? 'N/A' }}</td>
-                            </tr>
-                            <tr style="background-color: #f9fafb;">
-                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-people me-2" style="color: #0f4c8a;"></i>Workforce Size</td>
-                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">
-                                    <span class="badge" style="background-color: #dbeafe; color: #0c4a6e; padding: 0.4rem 0.8rem;">{{ ucfirst($activityRequest->employer->profile?->workforce_size ?? 'N/A') }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-diagram-3 me-2" style="color: #0f4c8a;"></i>Line of Business</td>
-                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</td>
-                            </tr>
-                            <tr style="background-color: #f9fafb;">
-                                <td style="padding: 1rem; font-weight: 600; color: #6b7280; border-top: 1px solid #e5e7eb;"><i class="bi bi-building me-2" style="color: #0f4c8a;"></i>Office Type</td>
-                                <td style="padding: 1rem; color: #1f2937; border-top: 1px solid #e5e7eb;">
-                                    <span class="badge" style="background-color: #f0fdf4; color: #15803d; padding: 0.4rem 0.8rem;">{{ ucfirst(str_replace('_', ' ', $activityRequest->employer->profile?->office_type ?? 'N/A')) }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <!-- Contact Information Section -->
-                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f0fdf4;">
-                        <h6 style="color: #0f4c8a; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-telephone me-2"></i>Contact Information</h6>
-                        <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
-                            <tbody>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280; width: 30%;"><i class="bi bi-person me-2" style="color: #059669;"></i>Contact Person</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->contact_person_name ?? $activityRequest->employer->profile?->establishment_contact_person ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-briefcase me-2" style="color: #059669;"></i>Position</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->establishment_contact_position ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-envelope me-2" style="color: #059669;"></i>Email</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;"><a href="mailto:{{ $activityRequest->employer->profile?->establishment_email ?? $activityRequest->employer?->email ?? '#' }}">{{ $activityRequest->employer->profile?->establishment_email ?? $activityRequest->employer?->email ?? 'N/A' }}</a></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-phone me-2" style="color: #059669;"></i>Phone</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->establishment_phone ?? $activityRequest->employer->profile?->contact_person_phone ?? 'N/A' }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Business Address Section -->
-                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #eff6ff;">
-                        <h6 style="color: #0f4c8a; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-geo-alt me-2"></i>Business Address</h6>
-                        <table class="table table-borderless mb-0" style="font-size: 0.95rem;">
-                            <tbody>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280; width: 30%;"><i class="bi bi-house me-2" style="color: #2563eb;"></i>Street / Village</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->street_village ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-map me-2" style="color: #2563eb;"></i>Barangay</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->barangay ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-building me-2" style="color: #2563eb;"></i>City / Municipality</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->city_municipality ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0.75rem 0; font-weight: 600; color: #6b7280;"><i class="bi bi-signpost me-2" style="color: #2563eb;"></i>Province</td>
-                                    <td style="padding: 0.75rem 0; color: #1f2937;">{{ $activityRequest->employer->profile?->province ?? 'N/A' }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Business Documents Section -->
-                    <div style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #fef3c7;">
-                        <h6 style="color: #92400e; margin-bottom: 1rem; font-weight: 700;"><i class="bi bi-file-check me-2"></i>Business Documents</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="border rounded p-3" style="background-color: #fffbeb; border-color: #fde68a;">
-                                    <i class="bi bi-file-pdf" style="font-size: 1.5rem; color: #dc2626;"></i>
-                                    <p class="mt-2 mb-1 small"><strong>Business Permit</strong></p>
-                                    @if($activityRequest->employer->profile?->business_permit_path)
-                                        <a href="{{ asset('storage/' . $activityRequest->employer->profile->business_permit_path) }}" 
-                                           class="btn btn-sm btn-outline-warning mt-2" target="_blank">
-                                            <i class="bi bi-download me-1"></i>Download
-                                        </a>
-                                    @else
-                                        <small class="text-muted">Not provided</small>
-                                    @endif
+                                <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}"
+                                   class="lra-action-btn lra-action-btn--view" target="_blank">
+                                    <i class="bi bi-eye me-1"></i>View certification
+                                </a>
+                                <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}">
+                                    @csrf
+                                    <button type="submit" class="lra-action-btn lra-action-btn--generate w-100">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Regenerate
+                                    </button>
+                                </form>
+                            @else
+                                <div class="lra-cert-status lra-cert-status--pending">
+                                    <div class="lra-cert-title">
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i>Not yet generated
+                                    </div>
+                                    <div class="lra-cert-sub">
+                                        Generate a certification document before approving this request.
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="border rounded p-3" style="background-color: #fffbeb; border-color: #fde68a;">
-                                    <i class="bi bi-file-earmark-ruled" style="font-size: 1.5rem; color: #f59e0b;"></i>
-                                    <p class="mt-2 mb-1 small"><strong>DTI/SEC Registration</strong></p>
-                                    @if($activityRequest->employer->profile?->dti_sec_registration_path)
-                                        <a href="{{ asset('storage/' . $activityRequest->employer->profile->dti_sec_registration_path) }}" 
-                                           class="btn btn-sm btn-outline-warning mt-2" target="_blank">
-                                            <i class="bi bi-download me-1"></i>Download
-                                        </a>
-                                    @else
-                                        <small class="text-muted">Not provided</small>
-                                    @endif
-                                </div>
-                            </div>
+                                <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}">
+                                    @csrf
+                                    <button type="submit" class="lra-action-btn lra-action-btn--generate w-100">
+                                        <i class="bi bi-file-earmark-plus me-1"></i>Generate certification
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
-                </div>
-            </div>
 
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="col-lg-3">
-            @if($activityRequest->status === 'pending')
-                <!-- Request Summary Card -->
-                <div class="card border-0 shadow-sm mb-3" style="background: linear-gradient(135deg, #f0f4ff 0%, #f9f5ff 100%); border-left: 4px solid #6366f1;">
-                    <div class="card-body p-3">
-                        <div class="text-center pb-2 border-bottom border-opacity-25">
-                            <div style="font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 0.5rem;">Request Type</div>
-                            <div class="badge" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);">
-                                <i class="bi bi-file-earmark me-1"></i>{{ strtoupper($activityRequest->activity_type) }}
-                            </div>
+                    {{-- Review actions --}}
+                    <div class="lra-card lra-sidebar-sticky">
+                        <div class="lra-card-head">
+                            <i class="bi bi-shield-check"></i>
+                            <span class="lra-card-head-label">Review</span>
                         </div>
-                        <div class="mt-2" style="font-size: 0.85rem;">
-                            <div class="mb-2 pb-2 border-bottom border-opacity-25">
-                                <p style="font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.3rem;"><i class="bi bi-building me-1"></i>Submitted by</p>
-                                <p class="mb-0" style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ $activityRequest->employer?->name }}</p>
+                        <div class="lra-card-body lra-card-body--compact">
+                            <div class="lra-notice">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Generate certification first, then approve.
                             </div>
-                            <div>
-                                <p style="font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.3rem;"><i class="bi bi-calendar me-1"></i>Submitted on</p>
-                                <p class="mb-0" style="font-size: 0.9rem; color: #374151;">{{ optional($activityRequest->created_at)->format('M d, Y') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Card -->
-                <div class="card border-0 shadow-lg sticky-top" style="top: 20px; background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%); border-left: 4px solid #f59e0b; border-top: 2px solid #f59e0b;">
-                    <div class="card-header border-0 py-2 px-3 border-bottom border-warning border-opacity-25" style="background: transparent;">
-                        <h6 class="mb-0" style="font-weight: 700; color: #92400e; letter-spacing: 0.3px; font-size: 0.9rem;"><i class="bi bi-shield-check me-2"></i>REVIEW</h6>
-                    </div>
-                    <div class="card-body p-3">
-                        <div style="background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.35rem; padding: 0.5rem; margin-bottom: 0.75rem;" role="alert">
-                            <small style="color: #1e40af; font-weight: 500; font-size: 0.75rem;"><i class="bi bi-info-circle me-1"></i>Review all details before deciding.</small>
-                        </div>
-                        <form method="POST" class="d-grid gap-2">
-                            @csrf
-                            <button type="submit" formaction="{{ route('admin.lra-sra.approve', $activityRequest) }}" 
-                                    class="btn btn-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; font-weight: 600; padding: 0.5rem 0.75rem; font-size: 0.85rem;">
-                                <i class="bi bi-check-circle me-1"></i>Approve
-                            </button>
-                            <button type="button" class="btn btn-sm" style="background: white; color: #dc2626; border: 2px solid #fca5a5; font-weight: 600; padding: 0.5rem 0.75rem; font-size: 0.85rem;" data-bs-toggle="modal" 
+                            <form method="POST" class="d-grid gap-2">
+                                @csrf
+                                <button type="submit"
+                                        formaction="{{ route('admin.lra-sra.approve', $activityRequest) }}"
+                                        class="lra-action-btn lra-action-btn--approve w-100"
+                                        {{ !$activityRequest->certification_path ? 'disabled' : '' }}>
+                                    <i class="bi bi-check-circle me-1"></i>Approve
+                                </button>
+                            </form>
+                            <button type="button"
+                                    class="lra-action-btn lra-action-btn--reject w-100 mt-2"
+                                    data-bs-toggle="modal"
                                     data-bs-target="#rejectModal">
-                                <i class="bi bi-x-circle me-1"></i>Reject
+                                <i class="bi bi-x-circle me-1"></i>Reject request
                             </button>
-                        </form>
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05);">
-                            <p style="font-size: 0.7rem; color: #6b7280; text-align: center; margin-bottom: 0;"><i class="bi bi-exclamation-triangle me-1" style="color: #f59e0b;"></i><strong style="color: #f59e0b;">PENDING</strong></p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Status Info Card -->
-                <div class="card border-0 shadow-sm" style="overflow: hidden;">
-                    <div class="card-header border-0 py-2 px-3 border-bottom" style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
-                        <h6 class="mb-0" style="font-weight: 700; color: #374151; letter-spacing: 0.3px; font-size: 0.9rem;"><i class="bi bi-info-circle me-2"></i>COMPANY</h6>
-                    </div>
-                    <div class="card-body p-3 small">
-                        <div class="mb-3">
-                            <p class="text-muted mb-1" style="font-size: 0.7rem;"><i class="bi bi-globe me-1"></i>BUSINESS</p>
-                            <p class="mb-0" style="font-weight: 600;">{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <p class="text-muted mb-1" style="font-size: 0.7rem;"><i class="bi bi-people me-1"></i>WORKFORCE</p>
-                            <p class="mb-0" style="font-weight: 600;">{{ $activityRequest->employer->profile?->workforce_size ?? 'N/A' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-1" style="font-size: 0.7rem;"><i class="bi bi-telephone me-1"></i>CONTACT</p>
-                            <p class="mb-0" style="font-weight: 600; word-break: break-word;">{{ $activityRequest->employer->profile?->establishment_phone ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <!-- Request Summary Card -->
-                <div class="card border-0 shadow-sm mb-3" style="background: linear-gradient(135deg, #f0f4ff 0%, #f9f5ff 100%); border-left: 4px solid #6366f1;">
-                    <div class="card-body p-3">
-                        <div class="text-center pb-2 border-bottom border-opacity-25">
-                            <div style="font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 0.5rem;">Request Type</div>
-                            <div class="badge" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);">
-                                <i class="bi bi-file-earmark me-1"></i>{{ strtoupper($activityRequest->activity_type) }}
-                            </div>
-                        </div>
-                        <div class="mt-2" style="font-size: 0.85rem;">
-                            <div class="mb-2 pb-2 border-bottom border-opacity-25">
-                                <p style="font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.3rem;"><i class="bi bi-building me-1"></i>Submitted by</p>
-                                <p class="mb-0" style="font-size: 0.9rem; font-weight: 600; color: #1f2937;">{{ $activityRequest->employer?->name }}</p>
-                            </div>
-                            <div>
-                                <p style="font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.3rem;"><i class="bi bi-calendar me-1"></i>Submitted on</p>
-                                <p class="mb-0" style="font-size: 0.9rem; color: #374151;">{{ optional($activityRequest->created_at)->format('M d, Y') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @else
 
-                <!-- Status Info Card -->
-                <div class="card border-0 shadow-sm" style="overflow: hidden;">
-                    <div class="card-header border-0 py-2 px-3 border-bottom" style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
-                        <h6 class="mb-0" style="font-weight: 700; color: #374151; letter-spacing: 0.3px; font-size: 0.9rem;"><i class="bi bi-info-circle me-2"></i>STATUS</h6>
-                    </div>
-                    <div class="card-body p-0">
-                        @if($activityRequest->status === 'approved')
-                            <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid #10b981; padding: 0.75rem;">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill me-2" style="font-size: 1.2rem; color: #059669; flex-shrink: 0;"></i>
-                                    <div style="flex: 1; min-width: 0;">
-                                        <p style="font-weight: 700; color: #065f46; font-size: 0.9rem; margin-bottom: 0.5rem;">Approved</p>
-                                        <div style="background: white; border-radius: 0.3rem; padding: 0.5rem; font-size: 0.75rem; color: #374151;">
-                                            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.5rem; word-break: break-word;">
-                                                <span style="font-weight: 600; color: #059669;"><i class="bi bi-calendar-event" style="font-size: 0.7rem;"></i></span>
-                                                <span>{{ optional($activityRequest->approved_at)->format('M d, Y') }}</span>
-                                                <span style="font-weight: 600; color: #059669;"><i class="bi bi-person-check" style="font-size: 0.7rem;"></i></span>
-                                                <span style="word-break: break-word;">{{ $activityRequest->approvedBy?->name ?? 'System' }}</span>
-                                            </div>
+                    {{-- Status info (approved / rejected) --}}
+                    <div class="lra-card">
+                        <div class="lra-card-head">
+                            <i class="bi bi-info-circle"></i>
+                            <span class="lra-card-head-label">Status</span>
+                        </div>
+                        <div class="lra-card-body--flush">
+                            @if($activityRequest->status === 'approved')
+                                <div class="lra-status-block lra-status-block--approved">
+                                    <i class="bi bi-check-circle-fill lra-status-icon"></i>
+                                    <div>
+                                        <div class="lra-status-title">Approved</div>
+                                        <div class="lra-status-detail">
+                                            <span>{{ optional($activityRequest->approved_at)->format('M d, Y') }}</span>
+                                            <span>&mdash; {{ $activityRequest->approvedBy?->name ?? 'System' }}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @elseif($activityRequest->status === 'rejected')
-                            <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-left: 4px solid #ef4444; padding: 0.75rem;">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill me-2" style="font-size: 1.2rem; color: #dc2626; flex-shrink: 0;"></i>
-                                    <div style="flex: 1; min-width: 0;">
-                                        <p style="font-weight: 700; color: #7f1d1d; font-size: 0.9rem; margin-bottom: 0.5rem;">Rejected</p>
-                                        <div style="background: white; border-radius: 0.3rem; padding: 0.5rem; font-size: 0.75rem; color: #374151;">
-                                            <p style="font-weight: 600; color: #dc2626; margin-bottom: 0.3rem;"><i class="bi bi-exclamation-circle" style="font-size: 0.7rem;"></i> Reason:</p>
-                                            <p style="margin-bottom: 0; color: #7f1d1d; font-style: italic; word-break: break-word; line-height: 1.3;">{{ $activityRequest->notes ?? 'No reason provided' }}</p>
+                            @elseif($activityRequest->status === 'rejected')
+                                <div class="lra-status-block lra-status-block--rejected">
+                                    <i class="bi bi-x-circle-fill lra-status-icon"></i>
+                                    <div>
+                                        <div class="lra-status-title">Rejected</div>
+                                        <div class="lra-status-reason">
+                                            {{ $activityRequest->notes ?? 'No reason provided' }}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-</div>
 
-<!-- Rejection Modal -->
-                                        <p style="font-weight: 700; color: #7f1d1d; font-size: 0.9rem; margin-bottom: 0.5rem;">Rejected</p>
-                                        <div style="background: white; border-radius: 0.3rem; padding: 0.5rem; font-size: 0.75rem; color: #374151;">
-                                            <p style="font-weight: 600; color: #dc2626; margin-bottom: 0.3rem;"><i class="bi bi-exclamation-circle" style="font-size: 0.7rem;"></i> Reason:</p>
-                                            <p style="margin-bottom: 0; color: #7f1d1d; font-style: italic; word-break: break-word; line-height: 1.3;">{{ $activityRequest->notes ?? 'No reason provided' }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endif
-            </div>
-        </div>
+                @endif
+
+            </div>{{-- /sidebar --}}
+
+        </div>{{-- /layout --}}
     </div>
 </div>
 
-<!-- Rejection Modal -->
+{{-- Rejection Modal --}}
 @if($activityRequest->status === 'pending')
-    <div class="modal fade" id="rejectModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Reject Request</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form method="POST" action="{{ route('admin.lra-sra.reject', $activityRequest) }}">
-                    @csrf
-                    <div class="modal-body">
-                        <small class="text-muted">{{ strtoupper($activityRequest->activity_type) }} - {{ $activityRequest->employer?->name }}</small>
-                        <div class="mb-0 mt-3">
-                            <label for="rejection_notes" class="form-label">Reason <span class="text-danger">*</span></label>
-                            <textarea id="rejection_notes" name="notes" class="form-control" rows="4" 
-                                      placeholder="Explain why..." required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                    </div>
-                </form>
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <form method="POST" action="{{ route('admin.lra-sra.reject', $activityRequest) }}">
+                @csrf
+                <div class="modal-body">
+                    <small class="text-muted">
+                        {{ strtoupper($activityRequest->activity_type) }} &mdash; {{ $activityRequest->employer?->name }}
+                    </small>
+                    <div class="mb-0 mt-3">
+                        <label for="rejection_notes" class="form-label">
+                            Reason <span class="text-danger">*</span>
+                        </label>
+                        <textarea id="rejection_notes" name="notes" class="form-control" rows="4"
+                                  placeholder="Explain why this request is being rejected..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 @endif
 
+{{-- ── Scoped styles ── --}}
+<style>
+:root{
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --muted: #6b7280;
+    --text: #0f172a;
+    --primary: #0369a1;
+    --teal: #0ea5a4;
+    --purple: #7c3aed;
+    --red: #ef4444;
+    --success: #16a34a;
+    --card-border: #e6eef6;
+    --shadow: 0 8px 22px rgba(2,6,23,0.06);
+}
+
+/* Layout */
+.lra-topbar {
+    display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap;
+}
+.lra-page-title{font-size:1.18rem;font-weight:600;color:var(--text);margin:0 0 4px}
+.lra-page-sub{font-size:0.82rem;color:var(--muted);margin:0}
+.lra-back-btn{display:inline-flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--primary);background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 12px;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.lra-back-btn:hover{background:var(--surface);border-color:var(--card-border);color:var(--primary)}
+
+.lra-layout{display:grid;grid-template-columns:1fr 288px;gap:1.25rem;align-items:start}
+@media(max-width:900px){.lra-layout{grid-template-columns:1fr}}
+.mb-card{margin-bottom:1rem}
+
+/* Card */
+.lra-card{background:var(--bg);border:1px solid var(--card-border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.lra-card--flush{padding:0}
+.lra-card-head{display:flex;align-items:center;gap:8px;padding:0.75rem 1.15rem;border-bottom:1px solid rgba(0,0,0,0.04);background:var(--surface);font-size:0.78rem;color:var(--muted)}
+.lra-card-head-label{font-size:0.86rem;font-weight:700;color:var(--text)}
+.lra-card-body{padding:1.15rem}
+.lra-card-body--compact{padding:0.85rem 1.1rem}
+.lra-card-body--flush{padding:0}
+
+/* Meta */
+.lra-meta-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(0,0,0,0.04)}
+@media(max-width:640px){.lra-meta-strip{grid-template-columns:repeat(2,1fr)}}
+.lra-meta-cell{padding:0.9rem 1.1rem;border-right:1px solid rgba(0,0,0,0.04)}
+.lra-meta-cell:last-child{border-right:none}
+.lra-meta-label{font-size:0.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px}
+.lra-meta-val{font-size:0.9rem;font-weight:700;color:var(--text)}
+
+/* Badges */
+.lra-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;padding:4px 12px;border-radius:999px}
+.lra-badge--lra{background:rgba(59,130,246,0.08);color:#1e40af}
+.lra-badge--sra{background:rgba(124,58,237,0.07);color:#6d28d9}
+.lra-badge--status-pending{background:rgba(245,158,11,0.07);color:#92400e}
+.lra-badge--status-approved{background:rgba(16,185,129,0.06);color:var(--success)}
+.lra-badge--status-rejected{background:rgba(239,68,68,0.06);color:var(--red)}
+
+/* Section tags */
+.lra-section-tag{display:inline-flex;align-items:center;font-size:0.72rem;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:0.75rem}
+.lra-section-tag--red{background:rgba(239,68,68,0.06);color:var(--red)}
+.lra-section-tag--purple{background:rgba(124,58,237,0.06);color:var(--purple)}
+.lra-section-tag--teal{background:rgba(14,165,164,0.06);color:var(--teal)}
+.lra-section-tag--blue{background:rgba(3,105,161,0.06);color:var(--primary)}
+
+/* Documents */
+.lra-doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.lra-doc-item{background:rgba(15,23,42,0.02);border:1px solid rgba(0,0,0,0.04);border-radius:10px;padding:1rem 0.75rem;text-align:center;display:flex;flex-direction:column;align-items:center;transition:transform .12s ease,box-shadow .12s ease}
+.lra-doc-item:hover{transform:translateY(-4px);box-shadow:0 8px 18px rgba(2,6,23,0.06)}
+.lra-doc-icon{font-size:1.85rem;margin-bottom:8px;display:block}
+.lra-doc-icon--red{color:var(--red)}
+.lra-doc-icon--purple{color:var(--purple)}
+.lra-doc-icon--teal{color:var(--teal)}
+.lra-doc-icon--blue{color:var(--primary)}
+.lra-doc-name{font-size:0.78rem;color:var(--text);font-weight:600;margin:0 0 8px;line-height:1.35}
+.lra-doc-missing{font-size:0.72rem;color:var(--muted);font-style:italic}
+.lra-dl-btn{display:inline-flex;align-items:center;gap:6px;font-size:0.73rem;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--bg);color:var(--text);text-decoration:none;transition:background .12s,border-color .12s}
+.lra-dl-btn:hover{background:var(--surface);border-color:var(--card-border);color:var(--text)}
+
+/* Job vacancies */
+.lra-jv-split{display:grid;grid-template-columns:160px 1fr;gap:1rem;align-items:start}
+@media(max-width:500px){.lra-jv-split{grid-template-columns:1fr}}
+.lra-vacancies-text{background:rgba(15,23,42,0.02);border:1px solid rgba(0,0,0,0.04);border-radius:8px;padding:0.95rem;font-size:0.86rem;color:var(--text);line-height:1.6;max-height:260px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+.lra-empty{display:flex;align-items:center;gap:8px;padding:1.25rem;justify-content:center;color:var(--muted);font-size:0.86rem}
+.lra-empty i{font-size:1.2rem}
+
+/* Sidebar */
+.lra-info-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.lra-info-row--last{border-bottom:none;padding-bottom:0}
+.lra-info-key{font-size:0.78rem;color:var(--muted);flex-shrink:0;display:flex;align-items:center}
+.lra-info-val{font-size:0.86rem;font-weight:700;color:var(--text);text-align:right;word-break:break-word}
+
+/* Certification */
+.lra-cert-status{border-radius:8px;padding:0.7rem 0.9rem;margin-bottom:0.8rem}
+.lra-cert-status--ok{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12)}
+.lra-cert-status--pending{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12)}
+.lra-cert-title{font-size:0.82rem;font-weight:700;margin-bottom:4px}
+.lra-cert-status--ok .lra-cert-title{color:var(--success)}
+.lra-cert-status--pending .lra-cert-title{color:#b45309}
+.lra-cert-sub{font-size:0.75rem;color:var(--muted);line-height:1.4}
+
+/* Notice */
+.lra-notice{background:rgba(3,105,161,0.06);border:1px solid rgba(3,105,161,0.12);border-radius:8px;padding:8px 10px;margin-bottom:0.75rem;font-size:0.78rem;color:var(--primary);line-height:1.4}
+
+/* Actions */
+.lra-action-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:9px 14px;border-radius:9px;font-size:0.86rem;font-weight:700;cursor:pointer;border:1px solid transparent;transition:opacity .12s,transform .12s;text-decoration:none;text-align:center;margin-bottom:0}
+.lra-action-btn+ .lra-action-btn,.lra-action-btn+ form,form + .lra-action-btn{margin-top:0.5rem}
+.lra-action-btn:disabled{opacity:0.5;cursor:not-allowed}
+.lra-action-btn--approve{background:rgba(16,185,129,0.08);color:var(--success);border-color:rgba(16,185,129,0.12)}
+.lra-action-btn--approve:hover:not(:disabled){transform:translateY(-2px)}
+.lra-action-btn--reject{background:rgba(239,68,68,0.06);color:var(--red);border-color:rgba(239,68,68,0.12)}
+.lra-action-btn--reject:hover{transform:translateY(-2px)}
+.lra-action-btn--generate{background:rgba(245,158,11,0.06);color:#92400e;border-color:rgba(245,158,11,0.12)}
+.lra-action-btn--view{background:rgba(3,105,161,0.06);color:var(--primary);border-color:rgba(3,105,161,0.12)}
+
+.lra-sidebar-sticky{position:sticky;top:22px}
+
+/* Status blocks */
+.lra-status-block{display:flex;align-items:flex-start;gap:12px;padding:1rem 1.1rem}
+.lra-status-block--approved{background:rgba(16,185,129,0.06);border-left:4px solid var(--success)}
+.lra-status-block--rejected{background:rgba(239,68,68,0.04);border-left:4px solid var(--red)}
+.lra-status-icon{font-size:1.15rem;flex-shrink:0;margin-top:2px}
+.lra-status-block--approved .lra-status-icon{color:var(--success)}
+.lra-status-block--rejected .lra-status-icon{color:var(--red)}
+.lra-status-title{font-size:0.9rem;font-weight:800;margin-bottom:6px}
+.lra-status-block--approved .lra-status-title{color:var(--success)}
+.lra-status-block--rejected .lra-status-title{color:var(--red)}
+.lra-status-detail{font-size:0.78rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px}
+.lra-status-reason{font-size:0.8rem;color:#7f1d1d;font-style:italic;line-height:1.4}
+</style>
 @endsection

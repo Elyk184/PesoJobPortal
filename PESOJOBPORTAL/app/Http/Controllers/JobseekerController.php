@@ -70,36 +70,9 @@ class JobseekerController extends Controller
                 ->values();
         }
 
-        $recentlyViewedJobIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
-            ->map(fn ($id) => (int) $id)
-            ->filter(fn ($id) => $id > 0)
-            ->unique()
-            ->values();
-
-        $recentlyViewedJobs = collect();
-
-        if ($recentlyViewedJobIds->isNotEmpty()) {
-            $recentlyViewedMap = PesoJob::query()
-                ->where('status', 'active')
-                ->whereIn('id', $recentlyViewedJobIds->all())
-                ->get()
-                ->keyBy('id');
-
-            $recentlyViewedJobs = $recentlyViewedJobIds
-                ->map(fn ($id) => $recentlyViewedMap->get($id))
-                ->filter()
-                ->take(3)
-                ->map(function (PesoJob $job) {
-                    return [
-                        'title' => $job->title,
-                        'location' => $job->location,
-                        'employer_name' => $job->employer_name,
-                        'salary_range' => $job->salary_range,
-                        'description' => $job->description,
-                    ];
-                })
-                ->values();
-        }
+        $savedJobsCount = $userId
+            ? SavedJob::query()->where('user_id', $userId)->count()
+            : 0;
 
         $isUsingSampleRecommendations = false;
 
@@ -126,9 +99,9 @@ class JobseekerController extends Controller
                 ->pluck('aggregate', 'status');
 
             $applicationStatusCounts['pending'] = (int) ($rawApplicationCounts['pending'] ?? 0);
-            $applicationStatusCounts['interview'] = (int) ($rawApplicationCounts['interviewed'] ?? 0);
+            $applicationStatusCounts['interview'] = (int) (($rawApplicationCounts['interview'] ?? 0) + ($rawApplicationCounts['interviewed'] ?? 0));
             $applicationStatusCounts['hired'] = (int) ($rawApplicationCounts['hired'] ?? 0);
-            $applicationStatusCounts['recommended'] = (int) ($rawApplicationCounts['reviewed'] ?? 0);
+            $applicationStatusCounts['recommended'] = (int) (($rawApplicationCounts['reviewing'] ?? 0) + ($rawApplicationCounts['reviewed'] ?? 0) + ($rawApplicationCounts['shortlisted'] ?? 0));
             $applicationStatusCounts['total'] = (int) $rawApplicationCounts->sum();
         }
 
@@ -142,7 +115,7 @@ class JobseekerController extends Controller
         $interviewsThisWeek = $userId
             ? JobApplication::query()
                 ->where('user_id', $userId)
-                ->where('status', 'interviewed')
+                ->whereIn('status', ['interview', 'interviewed'])
                 ->where('updated_at', '>=', now()->subDays(7))
                 ->count()
             : 0;
@@ -214,7 +187,7 @@ class JobseekerController extends Controller
 
         $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
 
-        return view('jobseeker.dashboard', [
+        return view('dashboard.jobseeker.dashboard', [
             'availableJobsCount' => $activeJobsCount > 0 ? $activeJobsCount : $sampleJobsCount,
             'profileCompletionPercent' => $profileCompletionPercent,
             'profileCompletionLabel' => $this->profileCompletionLabel($profileCompletionPercent),
@@ -224,8 +197,7 @@ class JobseekerController extends Controller
             'applicationStatusCounts' => $applicationStatusCounts,
             'dashboardNotifications' => $notifications,
             'unreadNotificationsCount' => $unreadNotificationsCount,
-            'recentlyViewedJobs' => $recentlyViewedJobs,
-            'recentlyViewedCount' => $recentlyViewedJobIds->count(),
+            'savedJobsCount' => $savedJobsCount,
             'kpiTrends' => [
                 'jobsThisWeek' => $jobsThisWeek,
                 'applicationsThisWeek' => $applicationsThisWeek,
@@ -235,111 +207,9 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function vacancies(Request $request): RedirectResponse
+    public function vacancies(Request $request): View
     {
-        $manoloFortichBarangays = [
-            'Agusan Canyon',
-            'Alae',
-            'Dahilayan',
-            'Dalirig',
-            'Damilag',
-            'Dicklum',
-            'Guilang-guilang',
-            'Kalugmanan',
-            'Lindaban',
-            'Lingion',
-            'Lunocan',
-            'Maluko',
-            'Mambatangan',
-            'Mampayag',
-            'Mantibugao',
-            'Minsuro',
-            'San Miguel',
-            'Sankanan',
-            'Santiago',
-            'Santo Nino',
-            'Tankulan (Poblacion)',
-            'Ticala',
-        ];
-
-        $keyword = trim((string) $request->query('keyword', ''));
-        $location = trim((string) $request->query('location', ''));
-        $skills = trim((string) $request->query('skills', ''));
-        $employer = trim((string) $request->query('employer', ''));
-        $sort = (string) $request->query('sort', 'newest');
-
-        if (! in_array($location, $manoloFortichBarangays, true)) {
-            $location = '';
-        }
-
-        $jobsQuery = PesoJob::query()->where('status', 'active');
-
-        if ($keyword !== '') {
-            $jobsQuery->where(function ($query) use ($keyword) {
-                $query->where('title', 'like', '%' . $keyword . '%')
-                    ->orWhere('description', 'like', '%' . $keyword . '%')
-                    ->orWhere('employer_name', 'like', '%' . $keyword . '%')
-                    ->orWhere('location', 'like', '%' . $keyword . '%')
-                    ->orWhere('requirements', 'like', '%' . $keyword . '%');
-            });
-        }
-
-        if ($location !== '') {
-            $jobsQuery->where('location', 'like', '%' . $location . '%');
-        }
-
-        if ($skills !== '') {
-            $jobsQuery->where(function ($query) use ($skills) {
-                $query->where('requirements', 'like', '%' . $skills . '%')
-                    ->orWhere('description', 'like', '%' . $skills . '%')
-                    ->orWhere('title', 'like', '%' . $skills . '%');
-            });
-        }
-
-        if ($employer !== '') {
-            $jobsQuery->where('employer_name', 'like', '%' . $employer . '%');
-        }
-
-        if ($sort === 'oldest') {
-            $jobsQuery->oldest();
-        } elseif ($sort === 'title_asc') {
-            $jobsQuery->orderBy('title');
-        } elseif ($sort === 'location_asc') {
-            $jobsQuery->orderBy('location')->orderByDesc('created_at');
-        } else {
-            $jobsQuery->latest();
-        }
-
-        $jobs = $jobsQuery->paginate(9)->withQueryString();
-
-        $jobs->getCollection()->transform(function (PesoJob $job) {
-            $job->setAttribute('requirements_list', $this->extractJobRequirements($job));
-
-            return $job;
-        });
-
-        $currentPageJobIds = $jobs->getCollection()
-            ->pluck('id')
-            ->map(fn ($id) => (int) $id)
-            ->filter(fn ($id) => $id > 0)
-            ->values();
-
-        if ($currentPageJobIds->isNotEmpty()) {
-            $existingViewedIds = collect($request->session()->get('jobseeker_recently_viewed_job_ids', []))
-                ->map(fn ($id) => (int) $id)
-                ->filter(fn ($id) => $id > 0);
-
-            $mergedViewedIds = $currentPageJobIds
-                ->concat($existingViewedIds)
-                ->unique()
-                ->take(15)
-                ->values()
-                ->all();
-
-            $request->session()->put('jobseeker_recently_viewed_job_ids', $mergedViewedIds);
-        }
-
-        return redirect()->route('jobseeker.browse-jobs');
+        return view('dashboard.jobseeker.vacancies');
     }
 
     public function browseJobs(Request $request): View
@@ -428,7 +298,7 @@ class JobseekerController extends Controller
             return $job;
         });
 
-        return view('jobseeker.browse-jobs', [
+        return view('dashboard.jobseeker.browse-jobs', [
             'jobs' => $jobs,
             'locations' => $locations,
             'industries' => $industries,
@@ -439,11 +309,10 @@ class JobseekerController extends Controller
     public function applications(Request $request): View
     {
         $statusMap = [
-            // include both 'interview' and legacy 'interviewed' values so they are treated the same
-            'all' => ['pending', 'reviewed', 'interview', 'interviewed', 'hired', 'rejected'],
+            'all' => ['pending', 'reviewing', 'reviewed', 'shortlisted', 'interview', 'interviewed', 'hired', 'rejected'],
             'pending' => ['pending'],
-            'reviewing' => ['reviewed'],
-            'shortlisted' => ['reviewed'],
+            'reviewing' => ['reviewing', 'reviewed'],
+            'shortlisted' => ['shortlisted'],
             'interview' => ['interview', 'interviewed'],
             'hired' => ['hired'],
             'rejected' => ['rejected'],
@@ -457,14 +326,17 @@ class JobseekerController extends Controller
 
         $userId = (int) Auth::id();
 
-        $applications = JobApplication::query()
+        $query = JobApplication::query()
             ->where('user_id', $userId)
             ->whereIn('status', $statusMap[$statusFilter])
             ->with('job')
             ->orderByDesc('applied_at')
-            ->orderByDesc('created_at')
-            ->paginate(10)
-            ->withQueryString();
+            ->orderByDesc('created_at');
+
+        $perPageParam = (string) $request->query('per_page', '10');
+        $perPage = $perPageParam === 'all' ? max(1, $query->count()) : (int) max(1, intval($perPageParam));
+
+        $applications = $query->paginate($perPage)->withQueryString();
 
         $rawStatusCounts = JobApplication::query()
             ->where('user_id', $userId)
@@ -475,15 +347,14 @@ class JobseekerController extends Controller
         $statusCounts = [
             'all' => (int) $rawStatusCounts->sum(),
             'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
-            'reviewing' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            'shortlisted' => (int) ($rawStatusCounts['reviewed'] ?? 0),
-            // sum both keys in case some records still use the legacy 'interviewed' value
+            'reviewing' => (int) (($rawStatusCounts['reviewing'] ?? 0) + ($rawStatusCounts['reviewed'] ?? 0)),
+            'shortlisted' => (int) ($rawStatusCounts['shortlisted'] ?? 0),
             'interview' => (int) (($rawStatusCounts['interview'] ?? 0) + ($rawStatusCounts['interviewed'] ?? 0)),
             'hired' => (int) ($rawStatusCounts['hired'] ?? 0),
             'rejected' => (int) ($rawStatusCounts['rejected'] ?? 0),
         ];
 
-        return view('jobseeker.applications', [
+        return view('dashboard.jobseeker.applications', [
             'applications' => $applications,
             'statusCounts' => $statusCounts,
             'statusFilter' => $statusFilter,
@@ -501,7 +372,7 @@ class JobseekerController extends Controller
             ->count();
         $appliedJobsCount = $user ? JobApplication::query()->where('user_id', $user->id)->count() : 0;
 
-        return view('jobseeker.recommendations', [
+        return view('dashboard.jobseeker.recommendations', [
             'recommendations' => $recommendations,
             'recommendedCount' => $recommendations->count(),
             'activeJobsCount' => $activeJobsCount,
@@ -521,7 +392,7 @@ class JobseekerController extends Controller
             ->limit(50)
             ->get();
 
-        return view('jobseeker.notifications', [
+        return view('dashboard.jobseeker.notifications', [
             'notifications' => $notifications,
             'unreadCount' => (int) $notifications->whereNull('read_at')->count(),
             'latestNotificationId' => (int) ($notifications->max('id') ?? 0),
@@ -592,9 +463,11 @@ class JobseekerController extends Controller
         $user = Auth::user();
         $profile = $user?->profile;
         $skillGapAnalysis = $this->buildSkillGapAnalysis($profile);
+        $savedJobsGap = $this->buildSavedJobsSkillGap($profile);
 
-        return view('jobseeker.skill-gap', [
+        return view('dashboard.jobseeker.skill-gap', [
             'skillGapAnalysis' => $skillGapAnalysis,
+            'savedJobsGap' => $savedJobsGap,
         ]);
     }
 
@@ -629,7 +502,7 @@ class JobseekerController extends Controller
                 });
         }
 
-        return view('jobseeker.saved-jobs', [
+        return view('dashboard.jobseeker.saved-jobs', [
             'savedJobs' => $savedJobs,
             'savedCount' => $savedJobs->count(),
         ]);
@@ -701,7 +574,7 @@ class JobseekerController extends Controller
             $isActive = false;
         }
 
-        return view('jobseeker.peso-clearance', [
+        return view('dashboard.jobseeker.peso-clearance', [
             'clearance' => $clearance,
             'pendingRequest' => $pendingRequest,
             'hasClearance' => $hasClearance,
@@ -793,7 +666,7 @@ class JobseekerController extends Controller
 
     public function profile(): View
     {
-        return view('jobseeker.profile', $this->profileFormData(Auth::user()));
+        return view('dashboard.jobseeker.profile', $this->profileFormData(Auth::user()));
     }
 
     public function saveProfile(Request $request): RedirectResponse
@@ -992,14 +865,14 @@ class JobseekerController extends Controller
     {
         $data = $this->resumeBuilderData(Auth::user());
 
-        return view('jobseeker.resume-builder', $data);
+        return view('dashboard.jobseeker.resume-builder', $data);
     }
 
     public function exportResumeBuilder(): Response
     {
         $data = $this->resumeBuilderData(Auth::user());
 
-        $pdf = Pdf::loadView('jobseeker.resume-builder-pdf', $data)
+        $pdf = Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $data)
             ->setPaper('a4', 'portrait');
 
         $fileName = trim(($data['resumeName'] ?: 'resume') . '-harvard-style.pdf');
@@ -1027,6 +900,18 @@ class JobseekerController extends Controller
             'experience.*.company' => ['nullable', 'string', 'max:255'],
             'experience.*.period' => ['nullable', 'string', 'max:100'],
             'experience.*.details' => ['nullable', 'string', 'max:1000'],
+            'training' => ['nullable', 'array'],
+            'training.*.course' => ['nullable', 'string', 'max:255'],
+            'training.*.institution' => ['nullable', 'string', 'max:255'],
+            'training.*.dates' => ['nullable', 'string', 'max:100'],
+            'training.*.hours' => ['nullable', 'string', 'max:100'],
+            'training.*.skills' => ['nullable', 'string', 'max:500'],
+            'training.*.certificates' => ['nullable', 'string', 'max:255'],
+            'eligibility' => ['nullable', 'array'],
+            'eligibility.*.eligibility' => ['nullable', 'string', 'max:255'],
+            'eligibility.*.license' => ['nullable', 'string', 'max:255'],
+            'eligibility.*.date_taken' => ['nullable', 'string', 'max:100'],
+            'eligibility.*.valid_until' => ['nullable', 'string', 'max:100'],
         ]);
 
         $profile = UserProfile::updateOrCreate(
@@ -1041,6 +926,8 @@ class JobseekerController extends Controller
                 'skills' => $this->normalizeList($validated['skills'] ?? ''),
                 'education' => $this->normalizeResumeSection($validated['education'] ?? [], ['school', 'course', 'year']),
                 'experience' => $this->normalizeResumeSection($validated['experience'] ?? [], ['title', 'company', 'period', 'details']),
+                'training' => $this->normalizeResumeSection($validated['training'] ?? [], ['course', 'institution', 'dates', 'hours', 'skills', 'certificates']),
+                'eligibility' => $this->normalizeResumeSection($validated['eligibility'] ?? [], ['eligibility', 'license', 'date_taken', 'valid_until']),
             ]
         );
 
@@ -1373,8 +1260,8 @@ class JobseekerController extends Controller
                 'user_id' => $userId,
                 'other_enabled' => (bool) ($otherSkills['other_enabled'] ?? false),
                 'other_text' => trim((string) ($otherSkills['other_text'] ?? '')),
-                'with_certificate' => isset($otherSkills['with_certificate']) ? (bool) $otherSkills['with_certificate'] : null,
-                'by_experience' => isset($otherSkills['by_experience']) ? (bool) $otherSkills['by_experience'] : null,
+                'with_certificate' => (bool) ($otherSkills['with_certificate'] ?? false),
+                'by_experience' => (bool) ($otherSkills['by_experience'] ?? false),
             ]
         );
     }
@@ -1983,6 +1870,139 @@ class JobseekerController extends Controller
             ->count();
     }
 
+    private function buildSavedJobsSkillGap(?UserProfile $profile): array
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $profile) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $savedJobIds = SavedJob::query()
+            ->where('user_id', (int) $user->id)
+            ->pluck('job_id')
+            ->all();
+
+        if ($savedJobIds === []) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $savedJobs = PesoJob::query()
+            ->whereIn('id', $savedJobIds)
+            ->where('status', 'active')
+            ->get(['title', 'description', 'requirements', 'preferred_skills']);
+
+        if ($savedJobs->isEmpty()) {
+            return [
+                'hasData' => false,
+                'matched_skills_unique_count' => 0,
+                'missing_skills' => [],
+            ];
+        }
+
+        $userSkills = collect();
+        $userSkills = $userSkills->merge($profile->skills ?? []);
+
+        $otherSkills = $profile->other_skills ?? [];
+        $userSkills = $userSkills
+            ->merge($otherSkills['trade_manual'] ?? [])
+            ->merge($otherSkills['it_technical'] ?? [])
+            ->merge($otherSkills['soft_skills'] ?? [])
+            ->push((string) ($otherSkills['other_text'] ?? ''));
+
+        $trainingSkills = collect($profile->training ?? [])
+            ->pluck('skills')
+            ->filter()
+            ->flatMap(function ($skillsText) {
+                return collect(preg_split('/[\r\n,]+/', (string) $skillsText) ?: [])
+                    ->map(fn ($s) => trim($s))
+                    ->filter();
+            });
+        $userSkills = $userSkills->merge($trainingSkills);
+
+        $experienceTitles = collect($profile->experience ?? [])
+            ->pluck('title')
+            ->filter()
+            ->map(fn ($t) => trim((string) $t));
+        $userSkills = $userSkills->merge($experienceTitles);
+
+        $occupationPref = trim((string) data_get($profile, 'job_preferences.occupation_text', ''));
+        if ($occupationPref !== '') {
+            $userSkills->push($occupationPref);
+        }
+
+        $normalizedUserSkills = $userSkills
+            ->map(fn ($s) => mb_strtolower(trim((string) $s)))
+            ->filter(fn ($s) => mb_strlen($s) >= 2)
+            ->unique()
+            ->values()
+            ->all();
+
+        $jobSkillFrequency = [];
+
+        foreach ($savedJobs as $job) {
+            $jobText = implode(' ', [
+                (string) $job->title,
+                (string) $job->description,
+                (string) $job->getRawOriginal('requirements'),
+                (string) $job->preferred_skills,
+            ]);
+
+            foreach ($this->extractSkillCandidatesFromText($jobText) as $candidate) {
+                $normalized = mb_strtolower(trim($candidate));
+
+                if (mb_strlen($normalized) < 3) {
+                    continue;
+                }
+
+                $jobSkillFrequency[$normalized] = ($jobSkillFrequency[$normalized] ?? 0) + 1;
+            }
+        }
+
+        arsort($jobSkillFrequency);
+
+        $savedJobSkills = collect($jobSkillFrequency)
+            ->take(20)
+            ->keys()
+            ->values()
+            ->all();
+
+        $matchedSkills = [];
+        $missingSkills = [];
+
+        foreach ($savedJobSkills as $savedJobSkill) {
+            $isMatched = false;
+
+            foreach ($normalizedUserSkills as $userSkill) {
+                if (str_contains($savedJobSkill, $userSkill) || str_contains($userSkill, $savedJobSkill)) {
+                    $isMatched = true;
+                    break;
+                }
+            }
+
+            if ($isMatched) {
+                $matchedSkills[] = $savedJobSkill;
+                continue;
+            }
+
+            $missingSkills[] = $savedJobSkill;
+        }
+
+        return [
+            'hasData' => true,
+            'matched_skills_unique_count' => count(array_unique($matchedSkills)),
+            'missing_skills' => array_values(array_unique($missingSkills)),
+        ];
+    }
+
     private function buildSkillGapAnalysis(?UserProfile $profile): array
     {
         if (! $profile) {
@@ -2312,7 +2332,7 @@ class JobseekerController extends Controller
 
     public function applyJob(PesoJob $job): View
     {
-        return view('jobseeker.apply-job', [
+        return view('dashboard.jobseeker.apply-job', [
             'job' => $job->load(['employer', 'employer.companyProfile']),
         ]);
     }
@@ -2324,7 +2344,7 @@ class JobseekerController extends Controller
         // Validate based on resume type
         $validated = $request->validate([
             'letter' => ['nullable', 'string', 'max:2000'],
-            'resume' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'resume' => ['nullable', 'file', 'extensions:pdf,doc,docx', 'max:5120'],
             'resume_type' => ['required', 'in:upload,builder'],
             'use_resume_builder' => ['nullable', 'boolean'],
         ]);
@@ -2341,6 +2361,8 @@ class JobseekerController extends Controller
         }
 
         $resumePath = null;
+        $resumeOriginalFilename = null;
+        $resumeFileExtension = null;
         $resumeType = $validated['resume_type'];
 
         // If an actual file was uploaded, always treat the submission as an upload.
@@ -2352,7 +2374,10 @@ class JobseekerController extends Controller
         // Handle resume based on type
         if ($resumeType === 'upload') {
             if ($request->hasFile('resume')) {
-                $resumePath = $request->file('resume')->store('resumes', 'public');
+                $resumeFile = $request->file('resume');
+                $resumePath = $resumeFile->store('resumes', 'public');
+                $resumeOriginalFilename = $resumeFile->getClientOriginalName();
+                $resumeFileExtension = $resumeFile->getClientOriginalExtension();
             } else {
                 return redirect()
                     ->back()
@@ -2379,6 +2404,8 @@ class JobseekerController extends Controller
             'status' => 'pending',
             'notes' => $validated['letter'] ?? null,
             'resume_path' => $resumePath,
+            'resume_original_filename' => $resumeOriginalFilename,
+            'resume_file_extension' => $resumeFileExtension,
             'resume_type' => $resumeType,
         ]);
 

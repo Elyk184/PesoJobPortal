@@ -253,10 +253,10 @@
 
             <div class="mb-3">
                 <label for="role" class="form-label">Register as</label>
-                <select class="form-select" id="role" name="role" required>
-                    <option value="" selected disabled>Select your role</option>
-                    <option value="jobseeker">Jobseeker</option>
-                    <option value="employer">Employer</option>
+                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" autocomplete="off" required>
+                    <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
+                    <option value="jobseeker" {{ old('role') === 'jobseeker' ? 'selected' : '' }}>Jobseeker</option>
+                    <option value="employer" {{ old('role') === 'employer' ? 'selected' : '' }}>Employer</option>
                 </select>
             </div>
 
@@ -284,10 +284,9 @@
                 <i class="bi bi-person-plus me-2"></i>Create Account
             </button>
 
-            <a href="/" class="home-button mb-3">
+            <a href="{{ route('home') }}" class="home-button mb-3">
                 <i class="bi bi-house-door me-2"></i>Back to Home
             </a>
-
             <div class="policy-consent mb-3">
                 <div class="form-check">
                     <input class="form-check-input @error('policy_consent') is-invalid @enderror" type="checkbox" value="1" id="policy_consent" name="policy_consent" {{ old('policy_consent') ? 'checked' : '' }} required>

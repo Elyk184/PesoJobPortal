@@ -184,19 +184,7 @@
         <h1 class="login-title">Sign In</h1>
         <p class="login-subtitle">Welcome back to PESO Manolo Fortich</p>
 
-        @if (session('status'))
-            <div class="alert alert-success" role="alert">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger" role="alert">
-                {{ $errors->first() }}
-            </div>
-        @endif
-
-<form action="{{ route('login') }}" method="POST">
+        <form action="{{ route('login') }}" method="POST">
             @csrf
 
             @if ($errors->any())
@@ -209,16 +197,16 @@
             </div>
             @endif
 
-@if (session('error'))
+            @if (session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
             @endif
 
-            @if (session('success'))
+            @if (session('success') || session('status'))
             <div class="alert alert-success alert-dismissible fade show d-flex align-items-start gap-2" role="alert">
                 <i class="bi bi-check-circle-fill mt-1"></i>
-                <div>{{ session('success') }}</div>
+                <div>{{ session('success', session('status')) }}</div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             @endif
@@ -246,24 +234,18 @@
                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
             </button>
 
-            <a href="/" class="home-button mb-3">
+            <a href="{{ route('home') }}" class="home-button mb-3">
                 <i class="bi bi-house-door me-2"></i>Back to Home
             </a>
         </form>
 
         <div class="divider"></div>
-        <p class="legal-links mb-1">
-            <a href="{{ route('privacy-policy') }}" class="link-muted">Privacy Policy</a>
-            <span class="mx-2">|</span>
-            <a href="{{ route('terms-of-service') }}" class="link-muted">Terms of Service</a>
-        </p>
-        <p class="text-center mb-0" style="color: #5f6c7a;">
+        <p class="text-center mb-0 login-foot">
             Don't have an account? <a href="{{ route('register') }}" class="link-muted">Register</a>
         </p>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
     <script>
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);

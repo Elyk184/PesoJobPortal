@@ -9,13 +9,39 @@
 ?>
 
 @section('content')
-<div class="admin-dashboard">
+    <div class="admin-dashboard">
     <style>
-        .data-table { font-size: 13px; }
-        .data-table thead { background: #f3f4f6; }
-        .data-table th { color: #0d1f3c; font-weight: 700; border-bottom: 2px solid #e5e7eb; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .data-table td { padding: 13px 10px; vertical-align: middle; font-weight: 500; }
-        .data-table tbody tr:hover { background: #f9fafb; }
+        /* Card & table layout tweaks */
+        .dashboard-card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
+        .data-table { font-size: 13px; border-collapse: separate; border-spacing: 0 10px; }
+        .data-table thead { background: transparent; }
+        .data-table th { color: #0d1f3c; font-weight: 700; border-bottom: none; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 10px; }
+        .data-table td { padding: 14px 10px; vertical-align: middle; font-weight: 500; background: #fff; border-top: 1px solid transparent; }
+        .data-table tbody tr { background: transparent; }
+        .data-table tbody tr:hover td { background: #fbfdff; transform: translateY(-1px); }
+
+        /* Row wrapper visual separation */
+        .data-table tbody tr + tr td { border-top: 1px solid #eef2f6; }
+
+        /* Document badges and compact layout */
+        .doc-badge { display:inline-flex; align-items:center; gap:8px; margin:4px 6px 4px 0; padding:7px 10px; font-size:0.78rem; border-radius:999px; text-decoration:none; transition:transform .12s ease, box-shadow .12s ease; }
+        .doc-badge i { font-size:0.92rem }
+        .doc-badge:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(15,23,42,0.08); }
+        .doc-missing { display:inline-block; margin:4px 6px 4px 0; padding:7px 10px; font-size:0.78rem; border-radius:999px; background:#f3f4f6; color:#9ca3af; border:1px dashed #e6eef6; }
+        .docs-count { display:block; margin-bottom:8px; font-size:0.75rem; color:#374151; }
+        .doc-col { max-width:380px; word-break:break-word; }
+        @media(max-width:900px){ .doc-col { max-width:220px } }
+
+        /* Action buttons */
+        .action-btns .btn { margin-left:6px; margin-right:2px; }
+        .action-btns .btn i { margin-right:6px; }
+
+        /* Activity badge */
+        .badge-activity { padding:6px 10px; border-radius:999px; font-weight:700; color:#fff; }
+
+        /* Modal preview sizing */
+        #docPreviewContainer { min-height: 40vh; }
+        @media(min-width:1200px){ #docPreviewContainer iframe { height:70vh; } }
     </style>
 
     <div class="dashboard-card">
@@ -38,26 +64,107 @@
                                     <span class="badge badge-activity bg-info">{{ strtoupper($request->activity_type) }}</span>
                                 </td>
                                 <td><strong>{{ Str::limit($request->employer?->name ?? 'N/A', 20) }}</strong></td>
-                                <td>
+                                <td class="doc-col">
                                     <small>
-                                        <i class="bi bi-file-pdf"></i> LOI<br>
-                                        <i class="bi bi-file-pdf"></i> Company Profile<br>
-                                        <i class="bi bi-file-pdf"></i> Job Ad
+                                        @php
+                                            $commonDocs = [
+                                                ['label' => 'LOI', 'field' => 'letter_of_intent_path'],
+                                                ['label' => 'Company Profile', 'field' => 'company_profile_path'],
+                                            ];
+
+                                            $lraDocs = [
+                                                ['label' => 'Business Permit', 'field' => 'business_permit_path'],
+                                                ['label' => 'Recruitment Officer ID', 'field' => 'lra_recruitment_officer_id_path'],
+                                                ['label' => 'Job Vacancies', 'field' => 'job_vacancies_path'],
+                                            ];
+
+                                            $sraDocs = [
+                                                ['label' => 'DMW Certificate', 'field' => 'dmw_certificate_path'],
+                                                ['label' => 'Recruitment Officer ID', 'field' => 'recruitment_officer_id_path'],
+                                                ['label' => 'Job Order Balance', 'field' => 'job_order_balance_path'],
+                                            ];
+
+                                            $docsToShow = $commonDocs;
+                                            if ($request->activity_type === 'lra') {
+                                                $docsToShow = array_merge($docsToShow, $lraDocs);
+                                            } elseif ($request->activity_type === 'sra') {
+                                                $docsToShow = array_merge($docsToShow, $sraDocs);
+                                            }
+                                        @endphp
+
+                                        @php
+                                            $totalDocs = count($docsToShow);
+                                            $present = array_filter($docsToShow, function($d) use ($request) {
+                                                if ($d['field'] === 'job_vacancies_path') {
+                                                    return !empty($request->job_vacancies_path) || !empty($request->job_vacancies_text);
+                                                }
+                                                return !empty($request->{$d['field']});
+                                            });
+                                            $presentCount = count($present);
+                                        @endphp
+
+                                        <span class="docs-count"><strong>{{ $presentCount }}</strong>/{{ $totalDocs }} uploaded</span>
+
+                                        @foreach($docsToShow as $doc)
+                                            @if($doc['field'] === 'job_vacancies_path')
+                                                @if(!empty($request->job_vacancies_path))
+                                                    <button type="button"
+                                                            class="doc-badge btn bg-success text-white"
+                                                            data-type="file"
+                                                            data-url="{{ asset('storage/' . $request->job_vacancies_path) }}"
+                                                            title="Preview Job Vacancies PDF">
+                                                        <i class="bi bi-download"></i>
+                                                        {{ Str::limit($doc['label'], 18) }}
+                                                    </button>
+                                                @elseif(!empty($request->job_vacancies_text))
+                                                    <button type="button"
+                                                            class="doc-badge btn bg-primary text-white"
+                                                            data-type="text"
+                                                            data-vacancy-id="{{ $request->id }}"
+                                                            title="View Job Vacancies (text)">
+                                                        <i class="bi bi-card-text"></i>
+                                                        {{ Str::limit($doc['label'], 18) }}
+                                                    </button>
+                                                @else
+                                                    <span class="doc-missing">{{ Str::limit($doc['label'], 14) }}</span>
+                                                @endif
+                                            @else
+                                                @if(!empty($request->{$doc['field']}))
+                                                    <button type="button"
+                                                            class="doc-badge btn bg-success text-white"
+                                                            data-type="file"
+                                                            data-url="{{ asset('storage/' . $request->{$doc['field']}) }}"
+                                                            title="Preview {{ $doc['label'] }} PDF">
+                                                        <i class="bi bi-download"></i>
+                                                        {{ Str::limit($doc['label'], 18) }}
+                                                    </button>
+                                                @else
+                                                    <span class="doc-missing">{{ Str::limit($doc['label'], 14) }}</span>
+                                                @endif
+                                            @endif
+                                        @endforeach
+
+                                        {{-- Hidden vacancy text (for preview modal) --}}
+                                        @if(!empty($request->job_vacancies_text))
+                                            <div id="vacancy-text-{{ $request->id }}" class="d-none">
+                                                {!! nl2br(e($request->job_vacancies_text)) !!}
+                                            </div>
+                                        @endif
                                     </small>
                                 </td>
                                 <td><small>{{ $request->created_at->format('d M, Y') }}</small></td>
                                 <td class="text-center">
-                                    <form method="POST" class="d-inline-flex gap-2">
+                                    <form method="POST" class="d-inline-flex gap-2 align-items-center action-btns">
                                         @csrf
-                                        <a href="{{ route('admin.lra-sra.review', $request) }}" 
+                                        <a href="{{ route('admin.lra-sra.review', $request) }}"
                                            class="btn btn-sm btn-info" title="Review this request">
                                             <i class="bi bi-eye"></i> Review
                                         </a>
-                                        <button type="submit" formaction="{{ route('admin.lra-sra.approve', $request) }}" 
+                                        <button type="submit" formaction="{{ route('admin.lra-sra.approve', $request) }}"
                                                 class="btn btn-sm btn-success" title="Approve this request">
                                             <i class="bi bi-check-circle"></i> Approve
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" 
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                                 data-bs-target="#rejectModal{{ $request->id }}" title="Reject this request">
                                             <i class="bi bi-x-circle"></i> Reject
                                         </button>
@@ -81,11 +188,11 @@
                                                     <label for="rejection_note_{{ $request->id }}" class="form-label">
                                                         Rejection Note <span class="text-danger">*</span>
                                                     </label>
-                                                    <textarea 
+                                                    <textarea
                                                         id="rejection_note_{{ $request->id }}"
-                                                        name="notes" 
-                                                        class="form-control" 
-                                                        rows="4" 
+                                                        name="notes"
+                                                        class="form-control"
+                                                        rows="4"
                                                         placeholder="Explain why this request is being rejected..."
                                                         required></textarea>
                                                 </div>
@@ -106,6 +213,26 @@
                 <div class="d-flex justify-content-center mt-4">
                     {{ $pendingRequests->links('pagination::bootstrap-5') }}
                 </div>
+
+                {{-- Document preview modal --}}
+                <div class="modal fade" id="docPreviewModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Document preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="docPreviewContainer">
+                                    <!-- iframe or text will be injected here -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @else
                 <!-- Empty State -->
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -118,3 +245,39 @@
     </div>
 
 @endsection
+
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        const modalEl = document.getElementById('docPreviewModal');
+        if (!modalEl) return;
+        const bsModal = new bootstrap.Modal(modalEl);
+        const container = modalEl.querySelector('#docPreviewContainer');
+
+        document.querySelectorAll('.doc-badge').forEach(btn => {
+            btn.addEventListener('click', function(e){
+                const type = btn.getAttribute('data-type');
+                container.innerHTML = '';
+                if (type === 'file') {
+                    const url = btn.getAttribute('data-url');
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '70vh';
+                    iframe.frameBorder = 0;
+                    iframe.allowFullscreen = true;
+                    container.appendChild(iframe);
+                } else if (type === 'text') {
+                    const vid = btn.getAttribute('data-vacancy-id');
+                    const source = document.getElementById('vacancy-text-' + vid);
+                    const div = document.createElement('div');
+                    div.className = 'p-3';
+                    div.innerHTML = source ? source.innerHTML : '<em>No text provided.</em>';
+                    container.appendChild(div);
+                }
+                bsModal.show();
+            });
+        });
+    });
+    </script>
+    @endpush

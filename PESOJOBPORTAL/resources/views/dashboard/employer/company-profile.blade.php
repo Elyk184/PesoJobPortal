@@ -339,6 +339,7 @@
                     ['key' => 'name', 'label' => 'Full Name', 'section' => 'account-info-section', 'filled' => filled(old('name', $user->name ?? null))],
                     ['key' => 'email', 'label' => 'Email Address', 'section' => 'account-info-section', 'filled' => filled(old('email', $user->email ?? null))],
                     ['key' => 'business_name', 'label' => 'Business Name', 'section' => 'establishment-details-section', 'filled' => filled(old('business_name', $companyProfile->business_name ?? null))],
+                    ['key' => 'established_year', 'label' => 'Year Established', 'section' => 'establishment-details-section', 'filled' => filled(old('established_year', $companyProfile->established_year ?? null))],
                     ['key' => 'office_type', 'label' => 'Office Type', 'section' => 'establishment-details-section', 'filled' => filled(old('office_type', $companyProfile->office_type ?? (empty($companyProfile) ? 'main_office' : null)))],
                     ['key' => 'employer_type_detail', 'label' => 'Employer Type', 'section' => 'establishment-details-section', 'filled' => filled(old('employer_type_detail', $companyProfile->employer_type_detail ?? null))],
                     ['key' => 'workforce_size', 'label' => 'Total Work Force', 'section' => 'establishment-details-section', 'filled' => filled(old('workforce_size', $companyProfile->workforce_size ?? null))],
@@ -521,6 +522,16 @@
                            id="business_name" name="business_name" value="{{ old('business_name', $companyProfile->business_name ?? '') }}"
                            placeholder="Registered business name" required>
                     @error('business_name')
+                        <div class="form-error-custom">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="established_year" class="form-label-custom">Year Established <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control form-control-custom @error('established_year') is-invalid @enderror"
+                           id="established_year" name="established_year" value="{{ old('established_year', $companyProfile->established_year ?? '') }}"
+                           placeholder="e.g. 2018" min="1900" max="{{ now()->year }}" required>
+                    @error('established_year')
                         <div class="form-error-custom">{{ $message }}</div>
                     @enderror
                 </div>
@@ -820,10 +831,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5fa565a71d516ec0744babea080ca427a40e20a3
             <!-- Action Buttons -->
             <div class="profile-actions">
                 <a href="{{ route('employer.company-profile.download') }}" class="btn btn-outline-primary">
@@ -851,6 +858,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'name', label: 'Full Name', sectionId: 'account-info-section', type: 'input', selector: '#name' },
         { key: 'email', label: 'Email Address', sectionId: 'account-info-section', type: 'input', selector: '#email' },
         { key: 'business_name', label: 'Business Name', sectionId: 'establishment-details-section', type: 'input', selector: '#business_name' },
+        { key: 'established_year', label: 'Year Established', sectionId: 'establishment-details-section', type: 'input', selector: '#established_year' },
         { key: 'office_type', label: 'Office Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="office_type"]' },
         { key: 'employer_type_detail', label: 'Employer Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="employer_type_detail"]' },
         { key: 'workforce_size', label: 'Total Work Force', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="workforce_size"]' },

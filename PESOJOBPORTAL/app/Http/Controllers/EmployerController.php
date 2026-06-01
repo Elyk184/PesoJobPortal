@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
 use App\Models\CompanyProfile;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,8 @@ use Illuminate\View\View;
 
 class EmployerController extends Controller
 {
+    use AuthorizesRequests;
+
     public function dashboard(Request $request): View
     {
         $employer = $request->user()->loadMissing('companyProfile');
@@ -38,10 +41,20 @@ class EmployerController extends Controller
             ? asset('storage/'.$logoPath)
             : null;
 
+        // Get recent LRA/SRA status updates (approved or rejected)
+        $recentLraSraUpdates = RecruitmentActivityRequest::query()
+            ->where('employer_id', $employer->id)
+            ->whereIn('status', ['approved', 'rejected'])
+            ->with(['approvedBy'])
+            ->latest('updated_at')
+            ->limit(5)
+            ->get();
+
         return view('dashboard.employer', [
             'stats' => $this->buildDashboardStats($employer->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
             'companyLogoUrl' => $companyLogoUrl,
+            'recentLraSraUpdates' => $recentLraSraUpdates,
         ]);
     }
 
@@ -127,61 +140,16 @@ class EmployerController extends Controller
             $employer->forceFill(['is_employer_verified' => true])->save();
         }
 
-        // Get all referred applications and recommended applicants
-        $referredApplications = $this->getReferredApplications($employer->id);
-        $recommendedApplicants = $this->getRecommendedApplicants($employer->id);
-        
-        // Combine both collections
-        $allApplicants = collect();
-        
-        // Add job applications with type indicator
-        foreach ($referredApplications as $app) {
-            $app->applicant_type = 'application';
-            $app->user_name = $app->user->name ?? 'N/A';
-            $app->user_email = $app->user->email ?? 'N/A';
-            $allApplicants->push($app);
-        }
-        
-        // Add recommended applicants with type indicator
-        foreach ($recommendedApplicants as $rec) {
-            $rec->applicant_type = 'recommendation';
-            $rec->user_name = $rec->jobseeker->name ?? 'N/A';
-            $rec->user_email = $rec->jobseeker->email ?? 'N/A';
-            $rec->peso_job_id = $rec->peso_job_id;
-            $rec->status = $rec->status;
-            $allApplicants->push($rec);
-        }
+        $referredApplications = $this->getReferredApplications($employer->id, $request);
 
-        // Apply filters based on request parameters
-        if ($request->has('job_id') && $request->get('job_id') !== '') {
-            $allApplicants = $allApplicants->where('peso_job_id', $request->get('job_id'));
-        }
-
-        if ($request->has('status') && $request->get('status') !== '') {
-            $allApplicants = $allApplicants->where('status', $request->get('status'));
-        }
-
-        if ($request->has('search') && $request->get('search') !== '') {
-            $searchTerm = strtolower($request->get('search'));
-            $allApplicants = $allApplicants->filter(function ($app) use ($searchTerm) {
-                $name = strtolower($app->user_name ?? '');
-                $email = strtolower($app->user_email ?? '');
-                return str_contains($name, $searchTerm) || str_contains($email, $searchTerm);
-            });
-        }
-
-        // Calculate stats including both types
-        $totalCount = $referredApplications->count() + $recommendedApplicants->count();
-        $recommendedCount = $referredApplications->where('status', 'recommended')->count() + 
-                           $recommendedApplicants->where('status', 'pending')->count();
+        $filteredApplications = collect($referredApplications); // For stats
 
         return view('dashboard.employer.view-applicants', [
-            'referredApplications' => $allApplicants->values(),
-            'totalApplicants' => $totalCount,
-            'pendingReview' => $referredApplications->whereNull('employer_status')->count(),
-            'recommended' => $recommendedCount,
-            'approved' => $referredApplications->where('employer_status', 'hired')->count(),
-            'rejected' => $referredApplications->where('employer_status', 'not_selected')->count(),
+            'referredApplications' => $referredApplications,
+            'totalApplicants' => $filteredApplications->count(),
+            'pendingReview' => $filteredApplications->whereNull('employer_status')->count(),
+            'approved' => $filteredApplications->where('employer_status', 'hired')->count(),
+            'rejected' => $filteredApplications->where('employer_status', 'not_selected')->count(),
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -192,6 +160,36 @@ class EmployerController extends Controller
         return view('dashboard.employer.request-lra-sra', [
             'recruitmentRequests' => $this->getRecruitmentRequests($request->user()->id),
         ]);
+    }
+
+    public function viewRecruitmentActivity(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest): View
+    {
+        // Ensure employer can only view their own requests
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this request.');
+        }
+
+        $recruitmentActivityRequest->load(['employer', 'approvedBy', 'certificationGeneratedBy']);
+
+        return view('dashboard.employer.recruitment-activity-detail', [
+            'activityRequest' => $recruitmentActivityRequest,
+        ]);
+    }
+
+    public function downloadRecruitmentActivityCertificate(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest)
+    {
+        // Ensure employer can only download their own certificates
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this certificate.');
+        }
+
+        // Check if certification exists
+        if (!$recruitmentActivityRequest->certification_path || !Storage::disk('public')->exists($recruitmentActivityRequest->certification_path)) {
+            return back()->with('error', 'Certificate not available for download.');
+        }
+
+        $filePath = Storage::disk('public')->path($recruitmentActivityRequest->certification_path);
+        return response()->download($filePath, "LRA_SRA_Certificate_{$recruitmentActivityRequest->id}.pdf");
     }
 
     public function submitDocumentsPage(Request $request): View
@@ -295,6 +293,7 @@ class EmployerController extends Controller
             'business_name' => ['required', 'string', 'max:255'],
             'trade_name' => ['nullable', 'string', 'max:255'],
             'acronym_abbreviation' => ['nullable', 'string', 'max:100'],
+            'established_year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . now()->year],
             'office_type' => ['required', 'in:main_office,branch'],
             'tin' => ['nullable', 'string', 'max:50'],
             'employer_type_detail' => ['required', 'in:national_gov,local_gov,gocc,state_college,direct_hire,local_recruitment,overseas_recruitment,do174'],
@@ -350,6 +349,7 @@ class EmployerController extends Controller
             'business_name' => 'business_name',
             'trade_name' => 'trade_name',
             'acronym_abbreviation' => 'acronym_abbreviation',
+            'established_year' => 'established_year',
             'office_type' => 'office_type',
             'tin' => 'tin',
             'employer_type_detail' => 'employer_type_detail',
@@ -461,10 +461,123 @@ class EmployerController extends Controller
 
         $application->load(['user.profile', 'jobPost']);
 
+        // Get feedback if it exists on the application
+        $feedback = $application->feedback ?? null;
+
         return view('dashboard.employer.show-applicant', [
             'application' => $application,
+            'feedback' => $feedback,
             'isVerifiedEmployer' => (bool) $request->user()->is_employer_verified,
         ]);
+    }
+
+    public function downloadResume(Request $request, JobApplication $application)
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to download this resume.');
+        }
+
+        if (! $application->resume_path) {
+            abort(404, 'Resume not found.');
+        }
+
+        // Handle resume builder generated resumes (stored as 'builder:profile_id')
+        if (str_starts_with($application->resume_path, 'builder:')) {
+            // For builder resumes, generate PDF on the fly
+            $user = $application->user;
+            $userProfile = $user->profile ?? $user->userProfile;
+            if (! $userProfile) {
+                abort(404, 'Resume builder data not found.');
+            }
+
+            // Prepare data for PDF template
+            $profilePersonal = $userProfile->personal_information ?? [];
+            $profilePresentAddress = $userProfile->present_address ?? [];
+            $profilePermanentAddress = $userProfile->permanent_address ?? [];
+            $profileSkills = $userProfile->skills ?? [];
+            $profileEducationRows = $userProfile->education ?? [];
+            $profileTrainingRows = $userProfile->training ?? [];
+            $profileExperienceRows = $userProfile->experience ?? [];
+            $profileEligibilityRows = $userProfile->eligibility ?? [];
+
+            $resumeName = $userProfile->resume_name ?? $user->name;
+            $resumeEmail = $userProfile->resume_email ?? data_get($profilePersonal, 'email_address', $user->email ?? '');
+            $resumePhone = $userProfile->phone ?? data_get($profilePersonal, 'contact_number', '');
+            $resumeAddress = $userProfile->address ?? '';
+            $resumeObjective = $userProfile->objective ?? '';
+            $resumeSkills = implode(', ', $profileSkills ?: []);
+
+            $pdfData = [
+                'user' => $user,
+                'profile' => $userProfile,
+                'resumeName' => $resumeName,
+                'resumeEmail' => $resumeEmail,
+                'resumePhone' => $resumePhone,
+                'resumeAddress' => $resumeAddress,
+                'resumeObjective' => $resumeObjective,
+                'resumeSkills' => $resumeSkills,
+                'educationRows' => $profileEducationRows,
+                'trainingRows' => $profileTrainingRows,
+                'experienceRows' => $profileExperienceRows,
+                'eligibilityRows' => $profileEligibilityRows,
+                'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
+            ];
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $pdfData)
+                ->setPaper('a4', 'portrait');
+
+            $downloadFilename = trim(($resumeName ?: 'resume') . '-harvard-style.pdf');
+
+            return $pdf->download($downloadFilename);
+        }
+
+        // Handle uploaded resumes
+        if (! Storage::disk('public')->exists($application->resume_path)) {
+            abort(404, 'Resume file not found.');
+        }
+
+        // Determine the download filename
+        if ($application->resume_original_filename) {
+            // For new uploads with original filename stored
+            $downloadFilename = $application->resume_original_filename;
+        } elseif ($application->resume_file_extension) {
+            // For uploads with just the extension stored
+            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.' . $application->resume_file_extension;
+        } else {
+            // Fallback for old records
+            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
+        }
+
+        return response()->download(
+            Storage::disk('public')->path($application->resume_path),
+            $downloadFilename
+        );
+    }
+
+    public function storeFeedback(Request $request, JobApplication $application): RedirectResponse
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to provide feedback for this applicant.');
+        }
+
+        $validated = $request->validate([
+            'feedback' => ['required', 'string', 'max:1000'],
+            'feedback_type' => ['required', 'in:general,technical,soft_skills,cultural_fit,other'],
+            'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
+        ]);
+
+        // Store feedback on the application
+        $application->update([
+            'employer_feedback' => $validated['feedback'],
+        ]);
+
+        return redirect()
+            ->route('employer.applications.show', $application->id)
+            ->with('success', 'Feedback saved successfully.');
     }
 
     public function notificationsPage(Request $request): View
@@ -649,60 +762,120 @@ class EmployerController extends Controller
     public function requestRecruitmentActivity(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'activity_type' => ['required', 'in:lra,sra'],
-            'company_profile_source' => ['nullable', 'in:upload,profile_details'],
+'activity_type' => ['required', 'in:lra,sra'],
             'letter_of_intent' => ['required', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'company_profile' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
-            'job_advertisement' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+
+            // Confirm & Submit modal fields
+            'recruitment_start_date' => ['nullable', 'date'],
+            'recruitment_end_date' => ['nullable', 'date', 'after_or_equal:recruitment_start_date'],
+            'recruitment_days' => ['nullable', 'integer', 'min:1'],
+            'confirm_clicked_at' => ['nullable', 'date'],
+
+
+
+            // SRA specific validations
+            'dmw_certificate' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'recruitment_officer_id' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_order_balance' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'deployment_report' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'affidavit_undertaking' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'sra_authority_file' => ['nullable', 'required_if:activity_type,sra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+
+            // LRA specific validations
+            'business_permit' => ['nullable', 'required_if:activity_type,lra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'lra_recruitment_officer_id' => ['nullable', 'required_if:activity_type,lra', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_vacancies' => ['nullable', 'file', 'extensions:pdf,doc,docx,png,jpg,jpeg', 'max:5120'],
+            'job_vacancies_text' => ['nullable', 'string'],
         ]);
 
         $employer = $request->user()->loadMissing('companyProfile');
-        $companyProfile = $employer->companyProfile;
 
-        $companyProfileSource = $validated['company_profile_source'] ?? 'upload';
-        $companyProfilePath = null;
-
-        if ($request->hasFile('company_profile')) {
-            $companyProfilePath = $request->file('company_profile')->store('recruitment-documents');
-        } elseif ($companyProfileSource === 'profile_details' && $companyProfile) {
-            $summaryLines = [
-                'COMPANY PROFILE',
-                '================',
-                'Company Name: '.($companyProfile->company_name ?? $employer->name),
-                'Logo Path: '.($companyProfile->logo_path ?? 'N/A'),
-                'Establishment Contact Person: '.($companyProfile->establishment_contact_person ?? 'N/A'),
-                'Establishment Contact Position: '.($companyProfile->establishment_contact_position ?? 'N/A'),
-                'Establishment Phone: '.($companyProfile->establishment_phone ?? 'N/A'),
-                'Establishment Email: '.($companyProfile->establishment_email ?? 'N/A'),
-                'Address: '.trim(implode(', ', array_filter([
-                    $companyProfile->street_village ?? null,
-                    $companyProfile->barangay ?? null,
-                    $companyProfile->city_municipality ?? null,
-                    $companyProfile->province ?? null,
-                ]))),
-            ];
-
-            $companyProfilePath = 'recruitment-documents/company-profile-'.now()->format('YmdHis').'.txt';
-            Storage::disk('public')->put($companyProfilePath, implode("\n", $summaryLines));
-        }
-
-        if (! $companyProfilePath) {
-            return back()
-                ->withErrors(['company_profile' => 'Please upload a company profile file or choose the saved company profile details source.'])
-                ->withInput();
-        }
-
-        $jobAdvertisementPath = $request->hasFile('job_advertisement')
-            ? $request->file('job_advertisement')->store('recruitment-documents')
-            : '';
-
-        RecruitmentActivityRequest::create([
+        $dataToCreate = [
             'employer_id' => $employer->id,
             'activity_type' => $validated['activity_type'],
-            'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
-            'company_profile_path' => $companyProfilePath,
-            'job_advertisement_path' => $jobAdvertisementPath,
-        ]);
+            'company_profile_path' => 'recruitment-documents/legacy',
+            // From Confirm & Submit modal (submit-documents.blade.php)
+'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
+            'recruitment_end_date' => $validated['recruitment_end_date'] ?? null,
+            'recruitment_days' => $validated['recruitment_days'] ?? null,
+            'confirm_clicked_at' => $validated['confirm_clicked_at'] ?? null,
+            'submitted_at' => now(),
+            'submitted_via' => $request->header('User-Agent') ? 'web' : 'unknown',
+            'submitted_by_employer_at' => now(),
+        ];
+
+
+        // Required letter of intent is always present
+        if ($request->hasFile('letter_of_intent')) {
+            $file = $request->file('letter_of_intent');
+            $dataToCreate['letter_of_intent_path'] = $file->store('recruitment-documents');
+            $dataToCreate['letter_of_intent_original_name'] = $file->getClientOriginalName();
+        }
+
+        // Handle SRA specific files
+        if ($validated['activity_type'] === 'sra') {
+            if ($request->hasFile('dmw_certificate')) {
+                $f = $request->file('dmw_certificate');
+                $dataToCreate['dmw_certificate_path'] = $f->store('recruitment-documents');
+                $dataToCreate['dmw_certificate_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('recruitment_officer_id')) {
+                $f = $request->file('recruitment_officer_id');
+                $dataToCreate['recruitment_officer_id_path'] = $f->store('recruitment-documents');
+                $dataToCreate['recruitment_officer_id_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('job_order_balance')) {
+                $f = $request->file('job_order_balance');
+                $dataToCreate['job_order_balance_path'] = $f->store('recruitment-documents');
+                $dataToCreate['job_order_balance_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('deployment_report')) {
+                $f = $request->file('deployment_report');
+                $dataToCreate['deployment_report_path'] = $f->store('recruitment-documents');
+                $dataToCreate['deployment_report_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('affidavit_undertaking')) {
+                $f = $request->file('affidavit_undertaking');
+                $dataToCreate['affidavit_undertaking_path'] = $f->store('recruitment-documents');
+                $dataToCreate['affidavit_undertaking_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('sra_authority_file')) {
+                $f = $request->file('sra_authority_file');
+                $dataToCreate['sra_authority_file_path'] = $f->store('recruitment-documents');
+                $dataToCreate['sra_authority_file_original_name'] = $f->getClientOriginalName();
+            }
+        }
+
+        // Handle LRA specific files and text
+        if ($validated['activity_type'] === 'lra') {
+            if ($request->hasFile('business_permit')) {
+                $f = $request->file('business_permit');
+                $dataToCreate['business_permit_path'] = $f->store('recruitment-documents');
+                $dataToCreate['business_permit_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('lra_recruitment_officer_id')) {
+                $f = $request->file('lra_recruitment_officer_id');
+                $dataToCreate['lra_recruitment_officer_id_path'] = $f->store('recruitment-documents');
+                $dataToCreate['lra_recruitment_officer_id_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('job_vacancies')) {
+                $f = $request->file('job_vacancies');
+                $dataToCreate['job_vacancies_path'] = $f->store('recruitment-documents');
+                $dataToCreate['job_vacancies_original_name'] = $f->getClientOriginalName();
+            }
+            $dataToCreate['job_vacancies_text'] = $validated['job_vacancies_text'] ?? null;
+        }
+
+        $activityRequest = RecruitmentActivityRequest::create($dataToCreate);
+
+        // Notify admins of new request
+        $activityType = strtoupper($validated['activity_type']);
+        $employerName = $request->user()->name;
+        $this->notifyAdmins(
+            "New {$activityType} Request",
+            "New {$activityType} request submitted by {$employerName} requiring review and certification.",
+            $request->user()->id
+        );
 
         return back()->with('success', 'LRA/SRA request submitted successfully and is awaiting admin approval.');
     }
@@ -879,19 +1052,43 @@ class EmployerController extends Controller
     {
         return RecruitmentActivityRequest::query()
             ->where('employer_id', $employerId)
+            ->with(['approvedBy'])
             ->latest()
             ->get();
     }
 
-    private function getReferredApplications(int $employerId)
+    private function getReferredApplications(int $employerId, Request $request = null)
     {
-        return JobApplication::query()
+        $query = JobApplication::query()
             ->with(['user.profile', 'jobPost'])
-            ->whereHas('job', function ($query) use ($employerId) {
-                $query->where('employer_id', $employerId);
-            })
-            ->latest()
-            ->get();
+            ->whereHas('job', function ($queryBuilder) use ($employerId) {
+                $queryBuilder->where('employer_id', $employerId);
+            });
+
+        if ($request) {
+            $jobId = $request->query('job_id');
+            $status = $request->query('status');
+            $search = trim($request->query('search', ''));
+
+            if ($jobId) {
+                $query->where('peso_job_id', $jobId);
+            }
+
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                                  ->orWhere('email', 'like', "%{$search}%");
+                    });
+                });
+            }
+        }
+
+        return $query->latest()->get();
     }
 
     private function getRecommendedApplicants(int $employerId)
@@ -1015,7 +1212,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('create', RecommendedApplicant::class);
-        
+
         // Verify the application belongs to a job this employer can recommend
         if ($application->job->employer_id !== $employer->id) {
             return redirect()->back()->with('error', 'You can only recommend applicants from your own job postings.');
@@ -1037,7 +1234,7 @@ class EmployerController extends Controller
                     ->first();
 
                 if ($existing) {
-                    throw new \Exception('You have already recommended this applicant to ' . 
+                    throw new \Exception('You have already recommended this applicant to ' .
                         User::find($validated['recommended_to_user_id'])->name . '.');
                 }
 
@@ -1080,7 +1277,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('viewSent', RecommendedApplicant::class);
-        
+
         $recommendations = RecommendedApplicant::where('recommended_by_user_id', $employer->id)
             ->where('recommendation_type', '!=', 'general') // Only show specific recommendations sent
             ->with(['jobApplication', 'jobApplication.user', 'job', 'recommendedTo'])
@@ -1100,7 +1297,7 @@ class EmployerController extends Controller
     {
         $employer = $request->user();
         $this->authorize('viewReceived', RecommendedApplicant::class);
-        
+
         // Only show recommendations specifically addressed to this employer
         $recommendations = RecommendedApplicant::where('recommended_to_user_id', $employer->id)
             ->whereNotNull('recommended_to_user_id') // Must be specifically addressed to someone
@@ -1184,7 +1381,7 @@ class EmployerController extends Controller
 
         DB::transaction(function () use ($recommendation, $employer) {
             $recommendation->markAsHired('Hired through recommendation');
-            
+
             // Update the job application status
             $recommendation->jobApplication->update(['status' => 'hired']);
 
@@ -1275,7 +1472,7 @@ class EmployerController extends Controller
                         'user_id' => $recipient->id,
                         'type' => 'recommendation_followup',
                         'title' => 'Applicant Recommendation Follow-up',
-                        'message' => $employer->name . ' is following up on a recommended applicant for ' . 
+                        'message' => $employer->name . ' is following up on a recommended applicant for ' .
                             $recommendation->job->title,
                         'related_id' => $recommendation->id,
                     ]);
@@ -1357,7 +1554,7 @@ class EmployerController extends Controller
     public function markRecommendationReviewed(Request $request, RecommendedApplicant $recommendation): RedirectResponse
     {
         $employer = $request->user();
-        
+
         if ($recommendation->recommended_to_user_id !== $employer->id) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
@@ -1373,7 +1570,7 @@ class EmployerController extends Controller
     public function shareRecommendation(Request $request, RecommendedApplicant $recommendation): JsonResponse
     {
         $employer = $request->user();
-        
+
         if ($recommendation->recommended_to_user_id !== $employer->id) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -1395,7 +1592,7 @@ class EmployerController extends Controller
                         'user_id' => $user->id,
                         'type' => 'recommendation_shared',
                         'title' => 'Shared Applicant Recommendation',
-                        'message' => $employer->name . ' shared an applicant recommendation: ' . 
+                        'message' => $employer->name . ' shared an applicant recommendation: ' .
                             $recommendation->job->title,
                         'related_id' => $recommendation->id,
                     ]);

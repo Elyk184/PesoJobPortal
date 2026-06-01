@@ -250,7 +250,7 @@
                 All Verified Employers
                 <span class="employers-count">{{ $allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified')->count() ?? 0 }}</span>
             </h5>
-            
+
             @if($allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified')->count() > 0)
                 <ul class="employers-list">
                     @foreach($allEmployers->filter(fn($e) => $e->companyProfile?->verification_status === 'verified') as $employer)

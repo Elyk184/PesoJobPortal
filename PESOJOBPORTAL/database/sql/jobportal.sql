@@ -75,6 +75,7 @@ CREATE TABLE `company_profiles` (
   `business_name` varchar(255) DEFAULT '',
   `trade_name` varchar(255) DEFAULT '',
   `acronym_abbreviation` varchar(255) DEFAULT '',
+  `established_year` year(4) DEFAULT NULL,
   `office_type` enum('main_office','branch') NOT NULL DEFAULT 'main_office',
   `employer_type_detail` enum('national_gov','local_gov','gocc','state_college','direct_hire','local_recruitment','overseas_recruitment','do174') DEFAULT NULL,
   `workforce_size` enum('micro','small','medium','large') DEFAULT NULL,
@@ -116,8 +117,8 @@ CREATE TABLE `company_profiles` (
 -- Dumping data for table `company_profiles`
 --
 
-INSERT INTO `company_profiles` (`id`, `user_id`, `company_name`, `business_name`, `trade_name`, `acronym_abbreviation`, `office_type`, `employer_type_detail`, `workforce_size`, `tin`, `line_of_business`, `street_village`, `barangay`, `city_municipality`, `establishment_contact_person`, `establishment_contact_position`, `establishment_email`, `establishment_phone`, `contact_person_name`, `contact_person_phone`, `business_permit_path`, `dti_sec_registration_path`, `description`, `industry`, `company_size`, `website`, `phone`, `address`, `city`, `province`, `postal_code`, `tin_number`, `logo_path`, `verification_status`, `verification_notes`, `verified_at`, `about_company`, `created_at`, `updated_at`, `verified_by`, `deleted_at`) VALUES
-(1, 1, 'NexaCore Solutions Inc.', 'NexaCore Solutions Inc.', 'NexaCore Solutions', 'NCSI', 'main_office', 'gocc', 'medium', '123-456-789-683', 'IT Services, Software Development, and Network Solutions', '123 Mabini Street, Golden Meadows Subdivision', 'Carmen', 'Cagayan de Oro City', 'Zean Kyle Tapac', 'HR manager', '20221230@nbsc.edu.ph', '', 'James Ivan Felicitas', '09351432467', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Misamis Oriental', NULL, NULL, 'company-profiles/nEJsAtGiUVHIBz7lWi7JrpuDnLLKhrqldbE7C8cI.png', 'pending', NULL, NULL, NULL, '2026-04-23 00:00:43', '2026-04-23 00:01:18', NULL, NULL);
+INSERT INTO `company_profiles` (`id`, `user_id`, `company_name`, `business_name`, `trade_name`, `acronym_abbreviation`, `established_year`, `office_type`, `employer_type_detail`, `workforce_size`, `tin`, `line_of_business`, `street_village`, `barangay`, `city_municipality`, `establishment_contact_person`, `establishment_contact_position`, `establishment_email`, `establishment_phone`, `contact_person_name`, `contact_person_phone`, `business_permit_path`, `dti_sec_registration_path`, `description`, `industry`, `company_size`, `website`, `phone`, `address`, `city`, `province`, `postal_code`, `tin_number`, `logo_path`, `verification_status`, `verification_notes`, `verified_at`, `about_company`, `created_at`, `updated_at`, `verified_by`, `deleted_at`) VALUES
+(1, 1, 'NexaCore Solutions Inc.', 'NexaCore Solutions Inc.', 'NexaCore Solutions', 'NCSI', 2016, 'main_office', 'gocc', 'medium', '123-456-789-683', 'IT Services, Software Development, and Network Solutions', '123 Mabini Street, Golden Meadows Subdivision', 'Carmen', 'Cagayan de Oro City', 'Zean Kyle Tapac', 'HR manager', '20221230@nbsc.edu.ph', '', 'James Ivan Felicitas', '09351432467', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Misamis Oriental', NULL, NULL, 'company-profiles/nEJsAtGiUVHIBz7lWi7JrpuDnLLKhrqldbE7C8cI.png', 'pending', NULL, NULL, NULL, '2026-04-23 00:00:43', '2026-04-23 00:01:18', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -466,7 +467,6 @@ CREATE TABLE `recruitment_activity_requests` (
   `activity_type` enum('lra','sra') NOT NULL,
   `letter_of_intent_path` varchar(255) NOT NULL,
   `company_profile_path` varchar(255) NOT NULL,
-  `job_advertisement_path` varchar(255) NOT NULL,
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `approved_at` timestamp NULL DEFAULT NULL,
   `approved_by` bigint(20) UNSIGNED DEFAULT NULL,

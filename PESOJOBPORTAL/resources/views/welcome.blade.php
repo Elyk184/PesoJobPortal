@@ -19,7 +19,7 @@
         @endif
         <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
         <link rel="stylesheet" href="{{ asset('css/services.css') }}">
-        
+
 
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
@@ -116,20 +116,9 @@
                 z-index: -1;
             }
 
-            /* PESO Logo Watermark Background */
+            /* PESO Logo Watermark Background (removed) */
             .peso-hero::after {
-                content: '';
-                position: absolute;
-                bottom: -10%;
-                right: -5%;
-                width: 500px;
-                height: 500px;
-                background-image: url('/images/P1so.png');
-                background-size: contain;
-                background-repeat: no-repeat;
-                opacity: 0.08;
-                z-index: 0;
-                pointer-events: none;
+                content: none;
             }
 
             /* Tablet background */
@@ -139,12 +128,8 @@
                     background-size: cover;
                     background-position: center center;
                 }
-                
-                .peso-hero::after {
-                    width: 350px;
-                    height: 350px;
-                    opacity: 0.06;
-                }
+
+                .peso-hero::after { content: none; }
             }
 
             /* Mobile background */
@@ -154,14 +139,8 @@
                     background-size: cover;
                     background-position: center center;
                 }
-                
-                .peso-hero::after {
-                    width: 250px;
-                    height: 250px;
-                    bottom: -5%;
-                    right: 0;
-                    opacity: 0.05;
-                }
+
+                .peso-hero::after { content: none; }
             }
 
             .hero-static {
@@ -646,6 +625,7 @@
                 </div>
             </section>
 
+
             <section class="about-section" id="about-main" aria-label="About PESO Manolo Fortich">
                 <div class="about-grid">
                     <article class="about-item">
@@ -756,6 +736,7 @@
                                 <span>→</span>
                             </a>
                         </div>
+
                     </div>
                 </div>
             </section>
