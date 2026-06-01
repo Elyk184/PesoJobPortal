@@ -673,10 +673,53 @@
             <h5><i class="bi bi-briefcase"></i>Work Experience <span class="section-badge"><i class="bi bi-clipboard2-data"></i>History</span></h5>
             @forelse($experienceRows as $experience)
                 <div class="info-row">
-                    <div class="info-label"><i class="bi bi-building-check"></i>{{ $experience->company ?: 'Experience ' . $loop->iteration }}</div>
-                    <div class="info-value">
-                        {{ collect([$experience->title, $experience->location, $experience->status, $experience->from_date . ($experience->to_date ? ' - ' . $experience->to_date : ''), $experience->salary_amount ? 'Salary: ' . $experience->salary_amount : null, $experience->salary_type, $experience->details])->filter()->join(' | ') ?: 'N/A' }}
-                    </div>
+                    <div class="info-label">Work Experience #{{ $loop->iteration }}</div>
+                    <div class="info-value">&nbsp;</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Company Name <span class="text-danger">*</span></div>
+                    <div class="info-value">{{ $experience->company ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Position/Job Title <span class="text-danger">*</span></div>
+                    <div class="info-value">{{ $experience->title ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Location (City) <span class="text-danger">*</span></div>
+                    <div class="info-value">{{ $experience->location ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">{{ $experience->status ? 'Yes' : 'No' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">From Date</div>
+                    <div class="info-value">{{ $experience->from_date ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">To Date</div>
+                    <div class="info-value">{{ $experience->to_date ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Salary Amount</div>
+                    <div class="info-value">{{ $experience->salary_amount ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Salary Type</div>
+                    <div class="info-value">{{ $experience->salary_type ?: 'N/A' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Reason Left / Duties</div>
+                    <div class="info-value">{{ $experience->details ?: 'N/A' }}</div>
                 </div>
             @empty
                 <div class="empty-state"><p>No work experience records available.</p></div>
