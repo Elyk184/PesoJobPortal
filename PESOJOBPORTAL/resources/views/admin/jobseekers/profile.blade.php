@@ -449,6 +449,16 @@
             margin-top: 1.25rem;
         }
 
+        /* Compact experience card to keep work experience short and inline */
+        .experience-card {
+            border: 1px solid #e6eef6;
+            border-radius: 12px;
+            padding: 12px;
+            background: linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+            margin-bottom: 12px;
+        }
+        .experience-card .profile-entry-kicker { margin-bottom: 10px; font-weight:700; color:#33475f }
+
         .profile-meta-item {
             display: flex;
             align-items: center;
@@ -672,54 +682,55 @@
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-briefcase"></i>Work Experience <span class="section-badge"><i class="bi bi-clipboard2-data"></i>History</span></h5>
             @forelse($experienceRows as $experience)
-                <div class="info-row">
-                    <div class="info-label">Work Experience #{{ $loop->iteration }}</div>
-                    <div class="info-value">&nbsp;</div>
-                </div>
+                <div class="experience-card">
+                    <div class="profile-entry-kicker">Work Experience #{{ $loop->iteration }}</div>
 
-                <div class="info-row">
-                    <div class="info-label">Company Name <span class="text-danger">*</span></div>
-                    <div class="info-value">{{ $experience->company ?: 'N/A' }}</div>
-                </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="info-label">Company Name <span class="text-danger">*</span></div>
+                            <div class="info-value">{{ $experience->company ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Position/Job Title <span class="text-danger">*</span></div>
-                    <div class="info-value">{{ $experience->title ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-4">
+                            <div class="info-label">Position/Job Title <span class="text-danger">*</span></div>
+                            <div class="info-value">{{ $experience->title ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Location (City) <span class="text-danger">*</span></div>
-                    <div class="info-value">{{ $experience->location ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-3">
+                            <div class="info-label">Location (City) <span class="text-danger">*</span></div>
+                            <div class="info-value">{{ $experience->location ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Status</div>
-                    <div class="info-value">{{ $experience->status ? 'Yes' : 'No' }}</div>
-                </div>
+                        <div class="col-md-1">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">{{ $experience->status ? 'Yes' : 'No' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">From Date</div>
-                    <div class="info-value">{{ $experience->from_date ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-3">
+                            <div class="info-label">From Date</div>
+                            <div class="info-value">{{ $experience->from_date ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">To Date</div>
-                    <div class="info-value">{{ $experience->to_date ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-3">
+                            <div class="info-label">To Date</div>
+                            <div class="info-value">{{ $experience->to_date ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Salary Amount</div>
-                    <div class="info-value">{{ $experience->salary_amount ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-3">
+                            <div class="info-label">Salary Amount</div>
+                            <div class="info-value">{{ $experience->salary_amount ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Salary Type</div>
-                    <div class="info-value">{{ $experience->salary_type ?: 'N/A' }}</div>
-                </div>
+                        <div class="col-md-3">
+                            <div class="info-label">Salary Type</div>
+                            <div class="info-value">{{ $experience->salary_type ?: 'N/A' }}</div>
+                        </div>
 
-                <div class="info-row">
-                    <div class="info-label">Reason Left / Duties</div>
-                    <div class="info-value">{{ $experience->details ?: 'N/A' }}</div>
+                        <div class="col-12">
+                            <div class="info-label">Reason Left / Duties</div>
+                            <div class="info-value">{{ $experience->details ?: 'N/A' }}</div>
+                        </div>
+                    </div>
                 </div>
             @empty
                 <div class="empty-state"><p>No work experience records available.</p></div>
