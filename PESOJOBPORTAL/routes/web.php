@@ -8,6 +8,7 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\OfwController;
 use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\RfaController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,9 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+
+Route::get('/rfa', [RfaController::class, 'create'])->name('rfa.form');
+Route::post('/rfa/download', [RfaController::class, 'download'])->name('rfa.download');
 
 // Admin routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

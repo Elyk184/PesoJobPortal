@@ -49,10 +49,10 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="#owwa-request" class="btn btn-danger px-3 shadow-sm">
+                    <a href="{{ route('rfa.form') }}" class="btn btn-danger px-3 shadow-sm">
                         <i class="bi bi-file-earmark-plus me-2"></i>Open OWWA Form
                     </a>
-                    <a href="#dmw-request" class="btn btn-outline-primary px-3">
+                    <a href="{{ route('rfa.form') }}" class="btn btn-outline-primary px-3">
                         <i class="bi bi-journal-text me-2"></i>Open DMW Form
                     </a>
                 </div>
@@ -120,7 +120,7 @@
                         Use the OWWA form for support concerns handled under OWWA assistance workflows.
                     </p>
 
-                    <a href="#portal-accepts" class="btn btn-danger w-100">
+                    <a href="{{ route('rfa.form') }}" class="btn btn-danger w-100">
                         <i class="bi bi-box-arrow-up-right me-2"></i>Open OWWA Form
                     </a>
                 </div>
@@ -137,7 +137,7 @@
                         Use the DMW form for cases that need Department of Migrant Workers assistance and coordination.
                     </p>
 
-                    <a href="#portal-accepts" class="btn btn-outline-primary w-100">
+                    <a href="{{ route('rfa.form') }}" class="btn btn-outline-primary w-100">
                         <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form
                     </a>
                 </div>
