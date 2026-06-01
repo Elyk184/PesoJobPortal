@@ -269,42 +269,45 @@
 
     <!-- Main Content -->
     <main class="admin-main">
-        <!-- Top Bar -->
-        <div class="admin-topbar">
-            <div class="admin-topbar-left">
-                <div class="topbar-logo">
-                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
-                </div>
-                <div class="topbar-title">
-                    <h2><i class="bi {{ $icon ?? 'bi-speedometer2' }} me-2"></i>{{ $title ?? 'Admin' }}</h2>
-                    <div class="topbar-subtitle">{{ $subtitle ?? 'PESO Admin Portal' }}</div>
-                </div>
-            </div>
-            <div class="admin-topbar-right">
-                <div class="topbar-datetime">
-                    <div class="analog-clock" id="analogClock">
-                        <div class="clock-marker clock-marker-12"></div>
-                        <div class="clock-marker clock-marker-3"></div>
-                        <div class="clock-marker clock-marker-6"></div>
-                        <div class="clock-marker clock-marker-9"></div>
-                        <div class="hand hour-hand" id="hourHand"></div>
-                        <div class="hand minute-hand" id="minuteHand"></div>
-                        <div class="hand second-hand" id="secondHand"></div>
-                        <div class="clock-center"></div>
+        @unless($hideAdminTopbar ?? false)
+            <!-- Top Bar -->
+            <div class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <div class="topbar-logo">
+                        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
                     </div>
-                    <div class="topbar-time">
-                        <div class="topbar-time-display" id="currentTime">--:--</div>
-                        <div class="topbar-date-display" id="currentDate">--/--/----</div>
+                    <div class="topbar-title">
+                        <h2><i class="bi {{ $icon ?? 'bi-speedometer2' }} me-2"></i>{{ $title ?? 'Admin' }}</h2>
+                        <div class="topbar-subtitle">{{ $subtitle ?? 'PESO Admin Portal' }}</div>
                     </div>
                 </div>
+                <div class="admin-topbar-right">
+                    <div class="topbar-datetime">
+                        <div class="analog-clock" id="analogClock">
+                            <div class="clock-marker clock-marker-12"></div>
+                            <div class="clock-marker clock-marker-3"></div>
+                            <div class="clock-marker clock-marker-6"></div>
+                            <div class="clock-marker clock-marker-9"></div>
+                            <div class="hand hour-hand" id="hourHand"></div>
+                            <div class="hand minute-hand" id="minuteHand"></div>
+                            <div class="hand second-hand" id="secondHand"></div>
+                            <div class="clock-center"></div>
+                        </div>
+                        <div class="topbar-time">
+                            <div class="topbar-time-display" id="currentTime">--:--</div>
+                            <div class="topbar-date-display" id="currentDate">--/--/----</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endunless
 
         {{ $slot }}
     </main>
 </div>
 
 <script>
+    @unless($hideAdminTopbar ?? false)
     function updateDateTime() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
@@ -362,4 +365,5 @@
 
     updateDateTime();
     setInterval(updateDateTime, 100); // Update 10 times per second for smooth animation
+    @endunless
 </script>
