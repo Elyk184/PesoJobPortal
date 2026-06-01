@@ -178,6 +178,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/lra-sra-approvals', [AdminController::class, 'lraSraApprovals'])->name('lra-sra-approvals');
     Route::get('/lra-sra-approvals/{activityRequest}', [AdminController::class, 'viewLraSraRequest'])->name('lra-sra.review');
+    Route::get('/lra-sra-approvals/{activityRequest}/download/{field}', [AdminController::class, 'downloadLraSraFile'])->name('lra-sra.download-file');
     Route::post('/lra-sra-approvals/{activityRequest}/generate-certification', [AdminController::class, 'generateLraSraCertification'])->name('lra-sra.generate-certification');
     Route::get('/lra-sra-approvals/{activityRequest}/view-certification', [AdminController::class, 'viewLraSraCertification'])->name('lra-sra.view-certification');
     Route::get('/lra-sra-approvals/{activityRequest}/download-certification', [AdminController::class, 'downloadLraSraCertification'])->name('lra-sra.download-certification');

@@ -505,6 +505,62 @@ class AdminController extends Controller
         return view('admin.approvals.lra-sra-detail', compact('activityRequest'));
     }
 
+    public function downloadLraSraFile(Request $request, RecruitmentActivityRequest $activityRequest, string $field)
+    {
+        // Only allow specific file fields to be downloaded
+        $allowed = [
+            'letter_of_intent_path',
+            'dmw_certificate_path',
+            'recruitment_officer_id_path',
+            'job_order_balance_path',
+            'deployment_report_path',
+            'affidavit_undertaking_path',
+            'sra_authority_file_path',
+            'business_permit_path',
+            'lra_recruitment_officer_id_path',
+            'job_vacancies_path',
+            'company_profile_path',
+            'certification_path',
+        ];
+
+        if (! in_array($field, $allowed, true)) {
+            abort(404);
+        }
+
+        $filePath = data_get($activityRequest, $field);
+        if (! $filePath) {
+            return back()->with('error', 'File not found.');
+        }
+
+        // Try public disk first, then fallback to default (local) disk.
+        $disksToTry = ['public', config('filesystems.default')];
+        foreach (array_unique($disksToTry) as $disk) {
+            try {
+                if (Storage::disk($disk)->exists($filePath)) {
+                    $fullPath = Storage::disk($disk)->path($filePath);
+
+                    // Prefer original uploaded filename if available
+                    $originalField = preg_replace('/_path$/', '_original_name', $field);
+                    $downloadName = basename($filePath);
+                    if ($originalField && data_get($activityRequest, $originalField)) {
+                        // sanitize original name
+                        $candidate = str_replace(["\n", "\r", "\0"], '', data_get($activityRequest, $originalField));
+                        $candidate = basename($candidate);
+                        if ($candidate !== '') {
+                            $downloadName = $candidate;
+                        }
+                    }
+
+                    return response()->download($fullPath, $downloadName);
+                }
+            } catch (\Exception $e) {
+                // ignore and try next disk
+            }
+        }
+
+        return back()->with('error', 'File not found.');
+    }
+
     public function approveLraSra(Request $request, RecruitmentActivityRequest $activityRequest): RedirectResponse
     {
         // Check if certification exists

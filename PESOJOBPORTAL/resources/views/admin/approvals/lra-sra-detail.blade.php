@@ -66,7 +66,7 @@
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--red"></i>
                                 <p class="lra-doc-name">Letter of Intent</p>
                                 @if($activityRequest->letter_of_intent_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->letter_of_intent_path) }}"
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'letter_of_intent_path']) }}"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -105,7 +105,7 @@
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--purple"></i>
                                 <p class="lra-doc-name">{{ $doc['name'] }}</p>
                                 @if($activityRequest->{$doc['field']})
-                                    <a href="{{ asset('storage/' . $activityRequest->{$doc['field']}) }}"
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, $doc['field']]) }}"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -135,7 +135,7 @@
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
                                 <p class="lra-doc-name">Business Permit</p>
                                 @if($activityRequest->business_permit_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->business_permit_path) }}"
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'business_permit_path']) }}"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -147,7 +147,7 @@
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
                                 <p class="lra-doc-name">Recruitment Officer ID</p>
                                 @if($activityRequest->lra_recruitment_officer_id_path)
-                                    <a href="{{ asset('storage/' . $activityRequest->lra_recruitment_officer_id_path) }}"
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'lra_recruitment_officer_id_path']) }}"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
@@ -171,7 +171,7 @@
                                 <div class="lra-doc-item">
                                     <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--blue"></i>
                                     <p class="lra-doc-name">Job Vacancies File</p>
-                                    <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'job_vacancies_path']) }}"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>

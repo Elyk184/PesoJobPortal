@@ -793,7 +793,6 @@ class EmployerController extends Controller
         $dataToCreate = [
             'employer_id' => $employer->id,
             'activity_type' => $validated['activity_type'],
-            'letter_of_intent_path' => $request->file('letter_of_intent')->store('recruitment-documents'),
             'company_profile_path' => 'recruitment-documents/legacy',
             // From Confirm & Submit modal (submit-documents.blade.php)
 'recruitment_start_date' => $validated['recruitment_start_date'] ?? null,
@@ -806,21 +805,64 @@ class EmployerController extends Controller
         ];
 
 
+        // Required letter of intent is always present
+        if ($request->hasFile('letter_of_intent')) {
+            $file = $request->file('letter_of_intent');
+            $dataToCreate['letter_of_intent_path'] = $file->store('recruitment-documents');
+            $dataToCreate['letter_of_intent_original_name'] = $file->getClientOriginalName();
+        }
+
         // Handle SRA specific files
         if ($validated['activity_type'] === 'sra') {
-            $dataToCreate['dmw_certificate_path'] = $request->file('dmw_certificate')?->store('recruitment-documents');
-            $dataToCreate['recruitment_officer_id_path'] = $request->file('recruitment_officer_id')?->store('recruitment-documents');
-            $dataToCreate['job_order_balance_path'] = $request->file('job_order_balance')?->store('recruitment-documents');
-            $dataToCreate['deployment_report_path'] = $request->file('deployment_report')?->store('recruitment-documents');
-            $dataToCreate['affidavit_undertaking_path'] = $request->file('affidavit_undertaking')?->store('recruitment-documents');
-            $dataToCreate['sra_authority_file_path'] = $request->file('sra_authority_file')?->store('recruitment-documents');
+            if ($request->hasFile('dmw_certificate')) {
+                $f = $request->file('dmw_certificate');
+                $dataToCreate['dmw_certificate_path'] = $f->store('recruitment-documents');
+                $dataToCreate['dmw_certificate_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('recruitment_officer_id')) {
+                $f = $request->file('recruitment_officer_id');
+                $dataToCreate['recruitment_officer_id_path'] = $f->store('recruitment-documents');
+                $dataToCreate['recruitment_officer_id_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('job_order_balance')) {
+                $f = $request->file('job_order_balance');
+                $dataToCreate['job_order_balance_path'] = $f->store('recruitment-documents');
+                $dataToCreate['job_order_balance_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('deployment_report')) {
+                $f = $request->file('deployment_report');
+                $dataToCreate['deployment_report_path'] = $f->store('recruitment-documents');
+                $dataToCreate['deployment_report_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('affidavit_undertaking')) {
+                $f = $request->file('affidavit_undertaking');
+                $dataToCreate['affidavit_undertaking_path'] = $f->store('recruitment-documents');
+                $dataToCreate['affidavit_undertaking_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('sra_authority_file')) {
+                $f = $request->file('sra_authority_file');
+                $dataToCreate['sra_authority_file_path'] = $f->store('recruitment-documents');
+                $dataToCreate['sra_authority_file_original_name'] = $f->getClientOriginalName();
+            }
         }
 
         // Handle LRA specific files and text
         if ($validated['activity_type'] === 'lra') {
-            $dataToCreate['business_permit_path'] = $request->file('business_permit')?->store('recruitment-documents');
-            $dataToCreate['lra_recruitment_officer_id_path'] = $request->file('lra_recruitment_officer_id')?->store('recruitment-documents');
-            $dataToCreate['job_vacancies_path'] = $request->file('job_vacancies')?->store('recruitment-documents');
+            if ($request->hasFile('business_permit')) {
+                $f = $request->file('business_permit');
+                $dataToCreate['business_permit_path'] = $f->store('recruitment-documents');
+                $dataToCreate['business_permit_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('lra_recruitment_officer_id')) {
+                $f = $request->file('lra_recruitment_officer_id');
+                $dataToCreate['lra_recruitment_officer_id_path'] = $f->store('recruitment-documents');
+                $dataToCreate['lra_recruitment_officer_id_original_name'] = $f->getClientOriginalName();
+            }
+            if ($request->hasFile('job_vacancies')) {
+                $f = $request->file('job_vacancies');
+                $dataToCreate['job_vacancies_path'] = $f->store('recruitment-documents');
+                $dataToCreate['job_vacancies_original_name'] = $f->getClientOriginalName();
+            }
             $dataToCreate['job_vacancies_text'] = $validated['job_vacancies_text'] ?? null;
         }
 
