@@ -49,9 +49,19 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
+<<<<<<< HEAD:PESOJOBPORTAL/resources/views/dashboard/ofw/dashboard.blade.php
                     <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger px-3 shadow-sm">
                         <i class="bi bi-file-earmark-plus me-2"></i>Start OWWA RFA
+=======
+                    <a href="{{ route('ofw.dashboard') . '#owwa-request' }}" class="btn btn-danger px-3 shadow-sm">
+                        <i class="bi bi-file-earmark-plus me-2"></i>Open OWWA Form
                     </a>
+                    @if(optional(auth()->user())->role === 'ofw')
+                    <a href="{{ route('ofw.dashboard') . '#dmw-request' }}" class="btn btn-outline-primary px-3">
+                        <i class="bi bi-journal-text me-2"></i>Open DMW Form
+>>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2:PESOJOBPORTAL/resources/views/dashboard/ofw.blade.php
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -98,8 +108,14 @@
                     <p class="text-muted mb-3">
                         View the OFW concerns and details accepted for OWWA Request for Assistance processing.
                     </p>
+<<<<<<< HEAD:PESOJOBPORTAL/resources/views/dashboard/ofw/dashboard.blade.php
                     <a href="{{ route('ofw.accepted-requests') }}" class="btn btn-outline-primary w-100">
                         <i class="bi bi-arrow-right me-2"></i>Open Page
+=======
+
+                    <a href="{{ route('ofw.dashboard') . '#portal-accepts' }}" class="btn btn-danger w-100">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>Open OWWA Form
+>>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2:PESOJOBPORTAL/resources/views/dashboard/ofw.blade.php
                     </a>
                 </div>
             </div>
@@ -113,9 +129,43 @@
                     <p class="text-muted mb-3">
                         Start a new OWWA assistance request using the official RFA form.
                     </p>
+<<<<<<< HEAD:PESOJOBPORTAL/resources/views/dashboard/ofw/dashboard.blade.php
                     <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger w-100">
                         <i class="bi bi-arrow-right me-2"></i>Open Page
                     </a>
+=======
+                    <div class="mb-3">
+                        <a href="{{ route('ofw.dmw-builder') }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-box-arrow-up-right me-2"></i>Open DMW Form Builder
+                        </a>
+
+                        <form action="{{ route('ofw.attachments.upload') }}" method="POST" enctype="multipart/form-data" class="d-flex gap-2">
+                            @csrf
+                            <input type="file" name="attachment" accept="application/pdf,image/*" class="form-control form-control-sm" required>
+                            <button class="btn btn-sm btn-secondary">Upload</button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold">Uploaded attachments</div>
+                        @if(! empty($dmwAttachments))
+                            <ul class="list-unstyled small mb-0">
+                                @foreach($dmwAttachments as $idx => $att)
+                                    <li class="d-flex align-items-center justify-content-between py-1">
+                                        <a href="{{ $att }}" target="_blank">Attachment {{ $idx + 1 }}</a>
+                                        <form action="{{ route('ofw.attachments.delete') }}" method="POST" class="mb-0">
+                                            @csrf
+                                            <input type="hidden" name="path" value="{{ ltrim(str_replace(asset('storage').'/', '', $att), '/') }}">
+                                            <button class="btn btn-link btn-sm text-danger p-0">Remove</button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="small text-muted">No attachments uploaded yet. Upload passport and contract copies here to have them appended to the DMW PDF.</div>
+                        @endif
+                    </div>
+>>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2:PESOJOBPORTAL/resources/views/dashboard/ofw.blade.php
                 </div>
             </div>
 
