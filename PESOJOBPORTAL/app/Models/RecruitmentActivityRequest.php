@@ -57,6 +57,14 @@ class RecruitmentActivityRequest extends Model
         'status' => 'pending', // Default status for admin approval
     ];
 
+    protected $casts = [
+        'approved_at' => 'datetime',
+        'certification_generated_at' => 'datetime',
+        'recruitment_start_date' => 'date',
+        'recruitment_end_date' => 'date',
+        'submitted_by_employer_at' => 'datetime',
+    ];
+
     public function employer()
     {
         return $this->belongsTo(User::class, 'employer_id');

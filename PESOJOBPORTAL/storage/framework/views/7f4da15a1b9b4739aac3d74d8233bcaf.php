@@ -36,6 +36,16 @@
 
         /* Activity badge */
         .badge-activity { padding:6px 10px; border-radius:999px; font-weight:700; color:#fff; }
+        .history-card { margin-top: 24px; }
+        .history-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+        .history-title { margin:0; font-size:1rem; font-weight:800; color:#0d1f3c; }
+        .history-subtitle { margin:4px 0 0; color:#64748b; font-size:0.82rem; }
+        .status-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:0.76rem; font-weight:800; text-transform:capitalize; }
+        .status-pill--approved { background:#dcfce7; color:#166534; }
+        .status-pill--rejected { background:#fee2e2; color:#991b1b; }
+        .cert-link { display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700; color:#15803d; }
+        .cert-link:hover { color:#166534; }
+        .cert-missing { color:#94a3b8; font-size:0.82rem; }
 
         /* Modal preview sizing */
         #docPreviewContainer { min-height: 40vh; }
@@ -242,6 +252,89 @@
                     <i class="bi bi-check-circle-fill me-2"></i>
                     <strong>All caught up!</strong> No pending LRA/SRA approvals to review.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="dashboard-card history-card">
+            <div class="history-header">
+                <div>
+                    <h2 class="history-title">Recent Request History</h2>
+                    <p class="history-subtitle">Latest approved and rejected LRA/SRA requests, including issued certificates.</p>
+                </div>
+            </div>
+
+            <?php if($recentRequests->count() > 0): ?>
+                <table class="table data-table w-100">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Employer</th>
+                            <th>Status</th>
+                            <th>Certificate</th>
+                            <th>Updated</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__currentLoopData = $recentRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr>
+                                <td>
+                                    <span class="badge badge-activity <?php echo e($request->activity_type === 'sra' ? 'bg-primary' : 'bg-info'); ?>">
+                                        <?php echo e(strtoupper($request->activity_type)); ?>
+
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong><?php echo e(Str::limit($request->employer?->name ?? 'N/A', 28)); ?></strong>
+                                    <div class="text-muted small"><?php echo e($request->created_at->format('d M, Y')); ?></div>
+                                </td>
+                                <td>
+                                    <span class="status-pill status-pill--<?php echo e($request->status); ?>">
+                                        <i class="bi <?php echo e($request->status === 'approved' ? 'bi-check-circle-fill' : 'bi-x-circle-fill'); ?>"></i>
+                                        <?php echo e($request->status); ?>
+
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php if($request->certification_path): ?>
+                                        <a href="<?php echo e(route('admin.lra-sra.view-certification', $request)); ?>"
+                                           class="cert-link"
+                                           target="_blank">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                                            View certificate
+                                        </a>
+                                        <?php if($request->certification_generated_at): ?>
+                                            <div class="text-muted small">
+                                                <?php echo e(\Carbon\Carbon::parse($request->certification_generated_at)->timezone('Asia/Manila')->format('d M, Y')); ?>
+
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <span class="cert-missing">No certificate</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <small><?php echo e($request->updated_at->format('d M, Y')); ?></small>
+                                    <?php if($request->approvedBy): ?>
+                                        <div class="text-muted small">by <?php echo e(Str::limit($request->approvedBy->name, 22)); ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="text-center">
+                                    <a href="<?php echo e(route('admin.lra-sra.review', $request)); ?>"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="View request details">
+                                        <i class="bi bi-eye"></i> Details
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="alert alert-light border mb-0" role="alert">
+                    <i class="bi bi-clock-history me-2"></i>
+                    No approved or rejected LRA/SRA requests yet.
                 </div>
             <?php endif; ?>
         </div>

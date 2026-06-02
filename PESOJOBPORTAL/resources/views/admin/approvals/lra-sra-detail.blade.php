@@ -340,6 +340,38 @@
                         </div>
                     </div>
 
+                    @if($activityRequest->certification_path)
+                        <div class="lra-card mt-3">
+                            <div class="lra-card-head">
+                                <i class="bi bi-certificate"></i>
+                                <span class="lra-card-head-label">Certificate Given</span>
+                            </div>
+                            <div class="lra-card-body lra-card-body--compact">
+                                <div class="lra-cert-status lra-cert-status--ok">
+                                    <div class="lra-cert-title">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Certification available
+                                    </div>
+                                    <div class="lra-cert-sub">
+                                        @if($activityRequest->certification_generated_at)
+                                            {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
+                                            &mdash;
+                                        @endif
+                                        {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
+                                    </div>
+                                </div>
+                                <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}"
+                                   class="lra-action-btn lra-action-btn--view"
+                                   target="_blank">
+                                    <i class="bi bi-eye me-1"></i>View certificate
+                                </a>
+                                <a href="{{ route('admin.lra-sra.download-certification', $activityRequest) }}"
+                                   class="lra-action-btn lra-action-btn--generate">
+                                    <i class="bi bi-download me-1"></i>Download certificate
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                 @endif
 
             </div>{{-- /sidebar --}}

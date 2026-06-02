@@ -501,12 +501,19 @@ class AdminController extends Controller
         $pendingRequests = RecruitmentActivityRequest::where('status', 'pending')
             ->with('employer')
             ->paginate(15);
-        return view('admin.approvals.lra-sra', compact('pendingRequests'));
+
+        $recentRequests = RecruitmentActivityRequest::whereIn('status', ['approved', 'rejected'])
+            ->with(['employer', 'approvedBy', 'certificationGeneratedBy'])
+            ->latest('updated_at')
+            ->limit(10)
+            ->get();
+
+        return view('admin.approvals.lra-sra', compact('pendingRequests', 'recentRequests'));
     }
 
     public function viewLraSraRequest(RecruitmentActivityRequest $activityRequest): View
     {
-        $activityRequest->load(['employer', 'approvedBy']);
+        $activityRequest->load(['employer', 'approvedBy', 'certificationGeneratedBy']);
         return view('admin.approvals.lra-sra-detail', compact('activityRequest'));
     }
 
