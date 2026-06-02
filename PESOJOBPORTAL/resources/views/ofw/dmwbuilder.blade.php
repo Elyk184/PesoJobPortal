@@ -1,494 +1,994 @@
-@extends('layouts.dashboard')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request for Assistance (RFA) Form - DMW</title>
 
-@section('title', 'DMW Request Builder')
+    {{-- html2pdf library for client-side PDF download --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-@section('content')
-@php
-    $profile = $ofwProfile ?? null;
-    $user = $ofwUser ?? auth()->user();
-    $draft = $dmwDraft ?? [];
-    $applicantName = old('applicant_name', $draft['applicant_name'] ?? $profile?->personal_information['first_name'] ?? $user->name ?? '');
-    $birthdate = old('birthdate', $draft['birthdate'] ?? '');
-    $sex = old('sex', $draft['sex'] ?? '');
-    $email = old('email', $draft['email'] ?? $profile?->personal_information['email_address'] ?? $user->email ?? '');
-    $phone = old('phone', $draft['phone'] ?? $profile?->phone ?? '');
-    $passportNumber = old('passport_number', $draft['passport_number'] ?? $profile?->personal_information['passport_number'] ?? '');
-    $address = old('address', $draft['address'] ?? $profile?->present_address['full'] ?? '');
-    $contractEmployer = old('employer', $draft['employer'] ?? '');
-    $contractStart = old('contract_start', $draft['contract_start'] ?? '');
-    $contractEnd = old('contract_end', $draft['contract_end'] ?? '');
-    $requestDetails = old('request_details', $draft['request_details'] ?? '');
-    $signatureDate = old('signature_date', $draft['signature_date'] ?? '');
-    $assistance = old('assistance', $draft['assistance'] ?? []);
-    if (! is_array($assistance)) {
-        $assistance = [$assistance];
-    }
-@endphp
+    <style>
+        /* ─────────────────────────────────────────────
+           RESET & BASE
+        ───────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-@section('dashboard-sidebar')
-    @include('dashboard.partials.ofw-nav')
-@endsection
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10.5pt;
+            background: #b0b8c8;
+            color: #000;
+        }
 
-<section aria-label="DMW Request Builder">
-    <div class="dashboard-topbar mb-3">
-        <div>
-            <div class="dashboard-topbar-title">DMW Request for Assistance - Builder</div>
-            <div class="dashboard-topbar-subtitle">Fill the official form fields below. Required fields are marked *</div>
+        /* ─────────────────────────────────────────────
+           DOWNLOAD BAR (hidden from PDF)
+        ───────────────────────────────────────────── */
+        .download-bar {
+            background: #1a3a6b;
+            text-align: center;
+            padding: 11px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .download-bar .btn-download {
+            background: #f5c518;
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 30px;
+            font-size: 11pt;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: background 0.2s;
+        }
+
+        .download-bar .btn-download:hover { background: #e0b210; }
+
+        .download-bar .btn-download:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .download-bar span {
+            color: #aac4f5;
+            font-size: 9pt;
+        }
+
+        #downloadProgress {
+            display: none;
+            color: #f5c518;
+            font-size: 9.5pt;
+            font-style: italic;
+        }
+
+        /* ─────────────────────────────────────────────
+           A4 PAGE  (210mm × 297mm)
+        ───────────────────────────────────────────── */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #fff;
+            margin: 18px auto;
+            padding: 13mm 14mm 13mm 14mm;
+            box-shadow: 0 2px 14px rgba(0,0,0,.22);
+            position: relative;
+            page-break-after: always;
+        }
+
+        /* ─────────────────────────────────────────────
+           HEADER
+        ───────────────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            gap: 6px;
+        }
+
+        .header-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        /* Bagong Pilipinas logo is wider/rectangular — constrain it smaller */
+        .header-logo-bagong {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-center {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-center .republic   { font-size: 8.5pt; }
+        .header-center .dept-name  { font-size: 15pt; font-weight: bold; font-family: 'Times New Roman', serif; line-height: 1.15; }
+        .header-center .address    { font-size: 7pt; margin-top: 2px; }
+        .header-center .contact    { font-size: 6.5pt; color: #333; }
+
+        hr.divider { border: none; border-top: 1.2px solid #000; margin: 5px 0; }
+
+        /* ─────────────────────────────────────────────
+           FORM TITLE & TYPE ROW
+        ───────────────────────────────────────────── */
+        .form-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11.5pt;
+            text-decoration: underline;
+            margin: 8px 0 5px;
+            letter-spacing: .3px;
+        }
+
+        .form-type-row {
+            text-align: center;
+            font-size: 9pt;
+            margin-bottom: 8px;
+        }
+
+        .form-type-row label { margin: 0 9px; cursor: pointer; }
+        .form-type-row input[type="checkbox"] { margin-right: 3px; vertical-align: middle; }
+
+        .referral-input {
+            border: none;
+            border-bottom: 1px solid #000;
+            width: 130px;
+            outline: none;
+            font-size: 9pt;
+        }
+
+        /* ─────────────────────────────────────────────
+           SECTION HEADER
+        ───────────────────────────────────────────── */
+        .section-header {
+            font-weight: bold;
+            font-size: 9pt;
+            text-decoration: underline;
+            margin: 9px 0 4px;
+        }
+
+        /* ─────────────────────────────────────────────
+           FORM TABLE
+        ───────────────────────────────────────────── */
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2px;
+        }
+
+        .form-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            vertical-align: top;
+            font-size: 9pt;
+        }
+
+        .label-cell {
+            background: #efefef;
+            font-weight: bold;
+            white-space: nowrap;
+            width: 30%;
+            vertical-align: middle;
+        }
+
+        .input-cell input[type="text"],
+        .input-cell input[type="date"],
+        .input-cell input[type="email"] {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 9pt;
+            font-family: Arial, sans-serif;
+            background: transparent;
+        }
+
+        /* ── Name fields (3-col split) ── */
+        .name-fields {
+            display: flex;
+            gap: 0;
+        }
+
+        .name-field {
+            flex: 1;
+            padding: 0 4px;
+            border-right: 1px solid #ccc;
+        }
+
+        .name-field:last-child { border-right: none; }
+
+        .name-field input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #aaa;
+            outline: none;
+            font-size: 9pt;
+            font-family: Arial, sans-serif;
+            background: transparent;
+        }
+
+        .name-field-label {
+            font-size: 6.5pt;
+            font-style: italic;
+            color: #555;
+            margin-top: 1px;
+        }
+
+        /* ── Checkbox groups ── */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 16px;
+            align-items: center;
+        }
+
+        .checkbox-group label,
+        .sex-row label {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 9pt;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sex-row { display: flex; gap: 36px; align-items: center; }
+
+        /* ─────────────────────────────────────────────
+           PAGE 2 — SECTION C
+        ───────────────────────────────────────────── */
+        .assistance-types {
+            width: 100%;
+            border: 1px solid #000;
+            padding: 7px 10px;
+            margin-bottom: 3px;
+        }
+
+        .assistance-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .assistance-row label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9pt;
+            cursor: pointer;
+            flex: 1;
+            min-width: 170px;
+        }
+
+        .others-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9pt;
+            margin-top: 2px;
+        }
+
+        .others-input {
+            border: none;
+            border-bottom: 1px solid #000;
+            flex: 1;
+            outline: none;
+            font-size: 9pt;
+        }
+
+        /* ─────────────────────────────────────────────
+           SECTION D — Narrative
+        ───────────────────────────────────────────── */
+        .narrative-box {
+            width: 100%;
+            border: 1px solid #000;
+            padding: 5px 6px;
+            margin-bottom: 3px;
+        }
+
+        .narrative-box textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
+            resize: none;
+            min-height: 190px;
+            background: transparent;
+            background-image: repeating-linear-gradient(
+                to bottom, transparent, transparent 21px, #ccc 21px, #ccc 22px
+            );
+            line-height: 22px;
+            padding-top: 1px;
+        }
+
+        /* ─────────────────────────────────────────────
+           SECTION E — Account
+        ───────────────────────────────────────────── */
+        .account-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+
+        .account-table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            font-size: 8.5pt;
+            vertical-align: top;
+        }
+
+        .account-table .auth-text  { width: 38%; font-size: 8pt; }
+        .account-table .sig-cell   { width: 24%; text-align: center; font-weight: bold; font-size: 8.5pt; }
+        .account-table .bank-cell  { width: 38%; }
+
+        .sig-space { height: 52px; display: block; }
+
+        .bank-field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 8.5pt;
+            gap: 4px;
+        }
+
+        .bank-field input[type="text"] {
+            border: none;
+            border-bottom: 1px solid #000;
+            outline: none;
+            font-size: 8.5pt;
+            flex: 1;
+            min-width: 0;
+            background: transparent;
+        }
+
+        /* ─────────────────────────────────────────────
+           CERTIFICATION
+        ───────────────────────────────────────────── */
+        .certification-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10.5pt;
+            text-decoration: underline;
+            margin: 9px 0 5px;
+        }
+
+        .certification-box {
+            border: 1px solid #000;
+            padding: 7px 10px;
+            font-size: 8.5pt;
+            text-align: justify;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        /* ─────────────────────────────────────────────
+           SIGNATURE
+        ───────────────────────────────────────────── */
+        .signature-section { display: flex; gap: 20px; margin-top: 18px; }
+
+        .sig-block { flex: 1; text-align: center; }
+
+        .sig-line {
+            border-bottom: 1px solid #000;
+            width: 100%;
+            height: 38px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .sig-label { font-size: 8pt; font-style: italic; }
+
+        /* ─────────────────────────────────────────────
+           PAGE NUMBER
+        ───────────────────────────────────────────── */
+        .page-number { text-align: right; font-size: 9pt; margin-top: 12px; }
+
+        /* ─────────────────────────────────────────────
+           PAGES 3 & 4 — ATTACHMENT
+        ───────────────────────────────────────────── */
+        .attachment-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300mm;
+        }
+
+        .attachment-header { width: 100%; text-align: center; margin-bottom: 18px; }
+
+        .attachment-header .page-label {
+            font-size: 12pt;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 3px;
+        }
+
+        .attachment-header .page-sublabel { font-size: 9pt; color: #444; }
+
+        .upload-area {
+            width: 100%;
+            max-width: 500px;
+            min-height: 320px;
+            border: 2.5px dashed #999;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 20px;
+            cursor: pointer;
+            background: #fafafa;
+            position: relative;
+            transition: background .2s, border-color .2s;
+        }
+
+        .upload-area:hover { background: #f0f0f0; border-color: #666; }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .upload-icon   { font-size: 50px; margin-bottom: 10px; color: #aaa; }
+        .upload-text   { font-size: 10pt; color: #666; margin-bottom: 4px; text-align: center; }
+        .upload-subtext{ font-size: 8pt; color: #999; text-align: center; }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 440px;
+            object-fit: contain;
+            display: none;
+            border-radius: 4px;
+            position: relative;
+            z-index: 0;
+        }
+
+        .remove-btn {
+            display: none;
+            margin-top: 10px;
+            padding: 5px 18px;
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 9pt;
+            z-index: 2;
+            position: relative;
+        }
+
+        .remove-btn:hover { background: #a93226; }
+
+        .attachment-note {
+            margin-top: 12px;
+            font-size: 8pt;
+            font-style: italic;
+            color: #888;
+            text-align: center;
+        }
+
+        /* ─────────────────────────────────────────────
+           PRINT — hide bar; everything else renders via html2pdf
+        ───────────────────────────────────────────── */
+        @media print {
+            .download-bar { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- DOWNLOAD BAR --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="download-bar">
+    <button class="btn-download" id="btnDownload" onclick="downloadPDF()">
+        ⬇ Download as PDF
+    </button>
+    <span id="downloadProgress">Generating PDF, please wait…</span>
+    <span id="downloadHint">Fill out all fields before downloading</span>
+</div>
+
+<div id="dmwPdfPages">
+
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- PAGE 1 --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="page" id="page1">
+
+    <div class="header">
+        {{-- DMW logo --}}
+        <img src="{{ asset('images/migrant-logo.png') }}" alt="DMW Logo" class="header-logo">
+
+        <div class="header-center">
+            <div class="republic">Republic of the Philippines</div>
+            <div class="dept-name">Department of Migrant Workers</div>
+            <div class="address">Blas F. Ople Building, Ortigas Avenue cor. EDSA, Mandaluyong City 1550</div>
+            <div class="contact">Website: www.dmw.gov.ph &nbsp;|&nbsp; Email: feedback@dmw.gov.ph &nbsp;|&nbsp; Hotlines: (632) 952-8072 / 955-9007 / (02) 8722-3606</div>
         </div>
-        <a href="{{ route('ofw.dashboard') }}" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-        </a>
+
+        {{-- Bagong Pilipinas logo --}}
+        <img src="{{ asset('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas" class="header-logo-bagong">
     </div>
 
-    @if ($errors->any())
-        <div class="alert alert-danger border-0 shadow-sm">
-            <div class="fw-semibold mb-1">Please fix the highlighted problems.</div>
-            <ul class="mb-0 ps-3">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <hr class="divider">
+
+    <div class="form-title">REQUEST FOR ASSISTANCE (RFA) FORM</div>
+
+    <div class="form-type-row">
+        <label><input type="checkbox" name="mode" value="online"> Online</label>
+        <label><input type="checkbox" name="mode" value="walkin"> Walk-in</label>
+        <label>
+            <input type="checkbox" name="mode" value="referral"> Referral by:
+            <input type="text" class="referral-input" name="referral_by">
+        </label>
+    </div>
+
+    {{-- ── SECTION A ── --}}
+    <div class="section-header">A.&nbsp;&nbsp;IMPORMASYON NG OFW:</div>
+
+    {{-- Pangalan ng OFW --}}
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Pangalan ng OFW :</td>
+            <td class="input-cell">
+                <div class="name-fields">
+                    <div class="name-field">
+                        <input type="text" name="ofw_lastname">
+                        <div class="name-field-label">Last name</div>
+                    </div>
+                    <div class="name-field">
+                        <input type="text" name="ofw_firstname">
+                        <div class="name-field-label">First Name</div>
+                    </div>
+                    <div class="name-field">
+                        <input type="text" name="ofw_middlename">
+                        <div class="name-field-label">Middle Name</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Birthdate:</td>
+            <td class="input-cell"><input type="date" name="ofw_birthdate"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Sex (Kasarian):</td>
+            <td class="input-cell">
+                <div class="sex-row">
+                    <label><input type="radio" name="ofw_sex" value="male"> Male / Lalaki</label>
+                    <label><input type="radio" name="ofw_sex" value="female"> Female / Babae</label>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Civil Status:</td>
+            <td class="input-cell" style="padding:5px 6px;">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="civil_status" value="single"> Single / Walang Asawa</label>
+                    <label><input type="checkbox" name="civil_status" value="married"> Married / May Asawa</label>
+                    <label><input type="checkbox" name="civil_status" value="widow"> Widow/Widower (Balo)</label>
+                    <label><input type="checkbox" name="civil_status" value="separated"> Separated / Hiwalay</label>
+                    <label><input type="checkbox" name="civil_status" value="soloparent"> Solo Parent</label>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Passport / Travel Document No:</td>
+            <td class="input-cell"><input type="text" name="ofw_passport"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Address sa abroad:</td>
+            <td class="input-cell"><input type="text" name="ofw_address_abroad"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Address sa Pilipinas</td>
+            <td class="input-cell"><input type="text" name="ofw_address_ph"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Contact No/s. Mobile/Phone No.:</td>
+            <td class="input-cell"><input type="text" name="ofw_contact"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Email / Facebook Account:</td>
+            <td class="input-cell"><input type="text" name="ofw_email"></td>
+        </tr>
+    </table>
+
+    {{-- ── SECTION B ── --}}
+    <div class="section-header" style="margin-top:12px;">B.&nbsp;&nbsp;IMPORMASYON NG KAMAG-ANAK NG OFW NA HUMIHINGI NG TULONG:</div>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Pangalan :</td>
+            <td class="input-cell">
+                <div class="name-fields">
+                    <div class="name-field">
+                        <input type="text" name="fam_lastname">
+                        <div class="name-field-label">Last name</div>
+                    </div>
+                    <div class="name-field">
+                        <input type="text" name="fam_firstname">
+                        <div class="name-field-label">First Name</div>
+                    </div>
+                    <div class="name-field">
+                        <input type="text" name="fam_middlename">
+                        <div class="name-field-label">Middle Name</div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Birthdate:</td>
+            <td class="input-cell"><input type="date" name="fam_birthdate"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Relationship to OFW:</td>
+            <td class="input-cell" style="padding:5px 6px;">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="relationship" value="spouse"> Spouse / Asawa</label>
+                    <label><input type="checkbox" name="relationship" value="child"> Child / Anak</label>
+                    <label><input type="checkbox" name="relationship" value="sibling"> Sibling / Kapatid</label>
+                    <label>
+                        <input type="checkbox" name="relationship" value="others"> Others:
+                        <input type="text" name="relationship_others"
+                               style="border:none;border-bottom:1px solid #000;width:110px;outline:none;font-size:9pt;background:transparent;">
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">ID No:</td>
+            <td class="input-cell"><input type="text" name="fam_id"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Address sa Pilipinas</td>
+            <td class="input-cell"><input type="text" name="fam_address"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Mobile/Phone No.:</td>
+            <td class="input-cell"><input type="text" name="fam_contact"></td>
+        </tr>
+    </table>
+
+    <table class="form-table">
+        <tr>
+            <td class="label-cell">Email / Facebook Account:</td>
+            <td class="input-cell"><input type="text" name="fam_email"></td>
+        </tr>
+    </table>
+
+    <div class="page-number">15</div>
+</div>
+{{-- END PAGE 1 --}}
+
+
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- PAGE 2 --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="page" id="page2">
+
+    {{-- SECTION C --}}
+    <div class="section-header">C.&nbsp;&nbsp;URI NG TULONG NA HINIHINGI (Please check):</div>
+
+    <div class="assistance-types">
+        <div class="assistance-row">
+            <label><input type="checkbox" name="assistance[]" value="legal"> LEGAL ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="medical"> MEDICAL ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="repatriation"> REPATRIATION</label>
         </div>
-    @endif
-
-    <div class="dashboard-section-card p-3 p-lg-4">
-        <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-            <div>
-                <h3 class="h5 mb-0 fw-bold">Form Fields</h3>
-                <small class="text-muted">Fill the fields below. The downloaded PDF will place them on the official DMW template and append your images as extra pages.</small>
-            </div>
-            <div class="small text-muted text-end">
-                Max 10 images total, 100MB total size
-            </div>
+        <div class="assistance-row">
+            <label><input type="checkbox" name="assistance[]" value="rescue"> RESCUE / EVACUATION</label>
+            <label><input type="checkbox" name="assistance[]" value="welfare"> WELFARE ASSISTANCE FOR SENIOR OFW RETURNEES</label>
         </div>
-
-        <form id="dmwbuilder-form" method="POST" action="{{ route('ofw.dmw-builder.save') }}" enctype="multipart/form-data">
-            @csrf
-
-            <div class="row g-3">
-                <div class="col-12">
-                    <label class="form-label fw-semibold">Request type</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="request_type" id="request_online" value="online" @checked(old('request_type', $draft['request_type'] ?? '') === 'online')>
-                        <label class="form-check-label" for="request_online">Online</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="request_type" id="request_walkin" value="walkin" @checked(old('request_type', $draft['request_type'] ?? '') === 'walkin')>
-                        <label class="form-check-label" for="request_walkin">Walk-in</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="request_type" id="request_referral" value="referral" @checked(old('request_type', $draft['request_type'] ?? '') === 'referral')>
-                        <label class="form-check-label" for="request_referral">Referral by</label>
-                    </div>
-                    <div class="d-inline-block ms-2" id="referral_by_wrapper" style="display: none; max-width: 40%;">
-                        <input type="text" name="referral_by" id="referral_by" placeholder="Referral by" class="form-control" value="{{ old('referral_by', $draft['referral_by'] ?? '') }}">
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold">Full name <span class="text-danger">*</span></label>
-                    <div class="row g-2">
-                        <div class="col-12 col-md-4">
-                            <input type="text" name="name_last" id="name_last" class="form-control" placeholder="Last name" value="{{ old('name_last', $draft['name_last'] ?? '') }}">
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <input type="text" name="name_first" id="name_first" class="form-control" placeholder="First name" value="{{ old('name_first', $draft['name_first'] ?? '') }}">
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <input type="text" name="name_middle" id="name_middle" class="form-control" placeholder="Middle name" value="{{ old('name_middle', $draft['name_middle'] ?? '') }}">
-                        </div>
-                    </div>
-                    <input type="hidden" name="applicant_name" id="applicant_name" value="{{ $applicantName }}">
-                </div>
-
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="birthdate">Birthdate</label>
-                    <input type="date" name="birthdate" id="birthdate" class="form-control" value="{{ $birthdate }}">
-                </div>
-
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="sex">Sex</label>
-                    <select name="sex" id="sex" class="form-select">
-                        <option value="">Select</option>
-                        <option value="male" @selected($sex === 'male')>Male</option>
-                        <option value="female" @selected($sex === 'female')>Female</option>
-                    </select>
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="civil_status">Civil status</label>
-                    <select name="civil_status" id="civil_status" class="form-select">
-                        <option value="">Select</option>
-                        <option value="single">Single / Walang Asawa</option>
-                        <option value="married">Married / May Asawa</option>
-                        <option value="widow">Widow / Widower</option>
-                        <option value="separated">Separated / Hiwalay</option>
-                        <option value="solo_parent">Solo Parent</option>
-                    </select>
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="email">Email / Facebook Account</label>
-                    <input type="email" name="email" id="email" class="form-control" value="{{ $email }}">
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="phone">Contact No./Mobile</label>
-                    <input type="text" name="phone" id="phone" class="form-control" value="{{ $phone }}">
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="passport_number">Passport / Travel Document No.</label>
-                    <input type="text" name="passport_number" id="passport_number" class="form-control" value="{{ $passportNumber }}">
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="address_abroad">Address abroad</label>
-                    <input type="text" name="address_abroad" id="address_abroad" class="form-control" value="{{ old('address_abroad', $draft['address_abroad'] ?? '') }}">
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="address_ph">Address in the Philippines</label>
-                    <input type="text" name="address_ph" id="address_ph" class="form-control" value="{{ old('address_ph', $draft['address_ph'] ?? '') }}">
-                </div>
-
-                <!-- Employer field removed per specification -->
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold" for="address">Present address</label>
-                    <textarea name="address" id="address" class="form-control" rows="2">{{ $address }}</textarea>
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="contract_start">Contract start date</label>
-                    <input type="date" name="contract_start" id="contract_start" class="form-control" value="{{ $contractStart }}">
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <label class="form-label fw-semibold" for="contract_end">Contract end date</label>
-                    <input type="date" name="contract_end" id="contract_end" class="form-control" value="{{ $contractEnd }}">
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold" for="request_details">Nature of request / details <span class="text-danger">*</span></label>
-                    <textarea name="request_details" id="request_details" class="form-control" rows="6" required>{{ $requestDetails }}</textarea>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold">B. Information of relative / contact person</label>
-                    <div class="row g-2">
-                        <div class="col-12 col-md-4"><input type="text" name="relative_last" class="form-control" placeholder="Relative last name" value="{{ old('relative_last', $draft['relative_last'] ?? '') }}"></div>
-                        <div class="col-12 col-md-4"><input type="text" name="relative_first" class="form-control" placeholder="Relative first name" value="{{ old('relative_first', $draft['relative_first'] ?? '') }}"></div>
-                        <div class="col-12 col-md-4"><input type="text" name="relative_middle" class="form-control" placeholder="Relative middle name" value="{{ old('relative_middle', $draft['relative_middle'] ?? '') }}"></div>
-                        <div class="col-12 col-md-4 mt-2"><input type="date" name="relative_birthdate" class="form-control" placeholder="Birthdate" value="{{ old('relative_birthdate', $draft['relative_birthdate'] ?? '') }}"></div>
-                        <div class="col-12 col-md-4 mt-2">
-                            <select name="relative_relationship" class="form-select">
-                                <option value="">Relationship to OFW</option>
-                                <option value="spouse">Spouse / Asawa</option>
-                                <option value="child">Child / Anak</option>
-                                <option value="sibling">Sibling / Kapatid</option>
-                                <option value="others">Others</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4 mt-2"><input type="text" name="relative_id_no" class="form-control" placeholder="ID No." value="{{ old('relative_id_no', $draft['relative_id_no'] ?? '') }}"></div>
-                        <div class="col-12 mt-2"><input type="text" name="relative_address_ph" class="form-control" placeholder="Address in the Philippines" value="{{ old('relative_address_ph', $draft['relative_address_ph'] ?? '') }}"></div>
-                        <div class="col-12 col-md-6 mt-2"><input type="text" name="relative_mobile" class="form-control" placeholder="Mobile / Phone No." value="{{ old('relative_mobile', $draft['relative_mobile'] ?? '') }}"></div>
-                        <div class="col-12 col-md-6 mt-2"><input type="email" name="relative_email" class="form-control" placeholder="Email / Facebook" value="{{ old('relative_email', $draft['relative_email'] ?? '') }}"></div>
-                    </div>
-                </div>
-
-                <div class="col-12 mt-3">
-                    <label class="form-label fw-semibold">C. Requested assistance (please check)</label>
-                    <div class="row g-2">
-                        @foreach([
-                            'legal' => 'Legal assistance',
-                            'medical' => 'Medical assistance',
-                            'repatriation' => 'Repatriation',
-                            'rescue' => 'Rescue / Evacuation',
-                            'welfare_senior' => 'Welfare assistance for senior OFW returnees',
-                            'shipment' => 'Shipment of human remains / Cremains',
-                            'compassionate' => 'Compassionate visit',
-                            'food' => 'Food assistance',
-                            'transportation' => 'Transportation assistance',
-                            'temporary_shelter' => 'Temporary shelter'
-                        ] as $val => $label)
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="assistance[]" id="assistance_{{ $val }}" value="{{ $val }}" @checked(in_array($val, $assistance, true))>
-                                    <label class="form-check-label" for="assistance_{{ $val }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="assistance[]" id="assistance_others" value="others" @checked(in_array('others', $assistance, true))>
-                                <label class="form-check-label" for="assistance_others">Others</label>
-                            </div>
-                            <input type="text" name="assistance_others_text" class="form-control mt-1" placeholder="If others, please specify" value="{{ old('assistance_others_text', $draft['assistance_others_text'] ?? '') }}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label fw-semibold">Attachments</label>
-                    <div class="alert alert-light border mb-0">
-                        Use the uploader below to choose one file and upload it. Allowed: image or PDF. Max 10 files total, 100MB combined.
-                    </div>
-                </div>
-
-                @if (!empty($dmwAttachments))
-                    <div class="col-12">
-                        <div class="border rounded-3 p-3 bg-light">
-                            <div class="fw-semibold mb-2">Current attachments</div>
-                            <div class="row g-2">
-                                @foreach ($dmwAttachments as $attachment)
-                                    <div class="col-12 col-md-6 col-lg-4">
-                                        <div class="d-flex align-items-center justify-content-between gap-2 border rounded-2 bg-white px-3 py-2 h-100">
-                                            <a href="{{ $attachment['url'] }}" target="_blank" rel="noopener" class="text-decoration-none text-truncate">{{ $attachment['name'] }}</a>
-                                            <form method="POST" action="{{ route('ofw.attachments.delete') }}" class="m-0">
-                                                @csrf
-                                                <input type="hidden" name="path" value="{{ $attachment['path'] }}">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <div class="col-12">
-                    <h6 class="fw-semibold">E. Account details (if funds to be deposited)</h6>
-                </div>
-
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="bank_account_no">Bank Account No.</label>
-                    <input type="text" name="bank_account_no" id="bank_account_no" class="form-control" value="{{ old('bank_account_no', $draft['bank_account_no'] ?? '') }}">
-                </div>
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="bank_name">Bank</label>
-                    <input type="text" name="bank_name" id="bank_name" class="form-control" value="{{ old('bank_name', $draft['bank_name'] ?? '') }}">
-                </div>
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="bank_branch">Branch</label>
-                    <input type="text" name="bank_branch" id="bank_branch" class="form-control" value="{{ old('bank_branch', $draft['bank_branch'] ?? '') }}">
-                </div>
-                <div class="col-12 col-lg-3">
-                    <label class="form-label fw-semibold" for="account_name">Account Name</label>
-                    <input type="text" name="account_name" id="account_name" class="form-control" value="{{ old('account_name', $draft['account_name'] ?? '') }}">
-                </div>
-
-                <div class="col-12 col-lg-4">
-                    <label class="form-label fw-semibold" for="signature_printed">Signature over Printed Name</label>
-                    <input type="text" name="signature_printed" id="signature_printed" class="form-control" value="{{ old('signature_printed', $draft['signature_printed'] ?? $user->name ?? '') }}">
-                </div>
-
-                <div class="col-12 col-lg-4">
-                    <label class="form-label fw-semibold" for="signature_date">Date Signed <span class="text-danger">*</span></label>
-                    <input type="date" name="signature_date" id="signature_date" class="form-control" value="{{ $signatureDate }}" required>
-                </div>
-            </div>
-
-            <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
-                <button type="submit" class="btn btn-primary flex-fill">
-                    <i class="bi bi-save me-2"></i>Save Form (Draft)
-                </button>
-
-                <a href="{{ route('ofw.dmw-download') }}" class="btn btn-outline-secondary flex-fill">
-                    <i class="bi bi-download me-2"></i>Download PDF
-                </a>
-
-                <button type="submit" formaction="{{ route('ofw.dmw-submit') }}" class="btn btn-success flex-fill">
-                    <i class="bi bi-send me-2"></i>Submit to Admin
-                </button>
-            </div>
-        </form>
-
-        <div class="dashboard-section-card p-3 p-lg-4 mt-3">
-            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                <div>
-                    <h3 class="h6 mb-0 fw-bold">Upload Attachment</h3>
-                    <small class="text-muted">Upload one image or PDF at a time.</small>
-                </div>
-            </div>
-
-            <form id="attachment-upload-form" action="{{ route('ofw.attachments.upload') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column flex-md-row gap-2 align-items-md-end">
-                @csrf
-                <div class="flex-grow-1">
-                    <input type="file" name="attachment" id="attachments" class="form-control" accept="application/pdf,image/*">
-                    <div class="small text-muted mt-1">No file selected.</div>
-                    <div id="attachments-status" class="small text-muted mt-1">No file selected.</div>
-                </div>
-                <button type="submit" id="attachment-upload-button" class="btn btn-secondary">
-                    <i class="bi bi-upload me-2"></i>Upload File
-                </button>
-            </form>
+        <div class="assistance-row">
+            <label><input type="checkbox" name="assistance[]" value="compassionate"> COMPASSIONATE VISIT</label>
+            <label><input type="checkbox" name="assistance[]" value="shipment"> SHIPMENT OF HUMAN REMAINS / CREMAINS</label>
+        </div>
+        <div class="assistance-row">
+            <label><input type="checkbox" name="assistance[]" value="food"> FOOD ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="transportation"> TRANSPORTATION ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="shelter"> TEMPORARY SHELTER</label>
+        </div>
+        <div class="others-row">
+            <input type="checkbox" name="assistance[]" value="others" id="other_check">
+            <label for="other_check">OTHERS</label>
+            <input type="text" class="others-input" name="assistance_others">
         </div>
     </div>
-</section>
 
-@endsection
+    {{-- SECTION D --}}
+    <div class="section-header" style="margin-top:10px;">D.&nbsp;&nbsp;MAIKLING SALAYSAY TUNGKOL SA HINIHINGING TULONG:</div>
 
-@push('scripts')
+    <div class="narrative-box">
+        <textarea name="narrative" placeholder="Isulat ang maikling salaysay tungkol sa hinihinging tulong..."></textarea>
+    </div>
+
+    {{-- SECTION E --}}
+    <div class="section-header" style="margin-top:10px;">E.&nbsp;&nbsp;ACCOUNT KUNG SAAN IDEDEPOSITO ANG PINANSYAL NA TULONG:</div>
+
+    <table class="account-table">
+        <tr>
+            <td class="auth-text">
+                In the event of the approval of my application for financial assistance, I hereby authorize the Department of Migrant Workers to credit the assistance through the account/s I have indicated on the right portion:
+            </td>
+            <td class="sig-cell">
+                SIGNATURE OF<br>APPLICANT:
+                <span class="sig-space"></span>
+            </td>
+            <td class="bank-cell">
+                <div class="bank-field">
+                    <input type="checkbox" name="has_bank" value="1">
+                    <span style="white-space:nowrap;">Bank Account No:</span>
+                    <input type="text" name="bank_account_no">
+                </div>
+                <div class="bank-field">
+                    <span>Bank:</span>
+                    <input type="text" name="bank_name" style="max-width:85px;">
+                    <span>Branch:</span>
+                    <input type="text" name="bank_branch" style="max-width:75px;">
+                </div>
+                <div class="bank-field">
+                    <span style="white-space:nowrap;">Account Name:</span>
+                    <input type="text" name="bank_account_name">
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    {{-- CERTIFICATION --}}
+    <div class="certification-title">CERTIFICATION</div>
+
+    <div class="certification-box">
+        I hereby certify that the information given, and all statements made herein are true and correct. Likewise, I hereby authorize DMW to collect, record, organize, update/modify, consult, use, consolidate, block, erase or destruct my personal data as part of my information. I hereby affirm my right to: (a) be informed; (b) object to processing, (c) access, (d) rectify, suspend or withdraw my personal data; (e) damages; and (f) data portability pursuant to the provision of R.A. No. 10173 (Data Privacy Act of 2012).
+    </div>
+
+    <div class="signature-section">
+        <div class="sig-block">
+            <span class="sig-line"></span>
+            <div class="sig-label">Signature over Printed Name</div>
+        </div>
+        <div class="sig-block">
+            <span class="sig-line"></span>
+            <div class="sig-label">Date Signed</div>
+        </div>
+    </div>
+
+    <div class="page-number">16</div>
+</div>
+{{-- END PAGE 2 --}}
+
+
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- PAGE 3 — CONTRACT PICTURE ATTACHMENT --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="page" id="page3">
+    <div class="attachment-page">
+
+        <div class="attachment-header">
+            <div class="page-label">Page 3 — Employment Contract</div>
+            <div class="page-sublabel">Attach a clear photo or scanned copy of your Employment Contract</div>
+        </div>
+
+        <div class="upload-area" id="contractArea">
+            <input type="file" name="contract_attachment" id="contractFile" accept="image/*"
+                   onchange="previewFile(this,'contractPreview','contractArea','contractRemove','contractPlaceholder')">
+
+            <div id="contractPlaceholder" style="display:flex;flex-direction:column;align-items:center;">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to upload or drag &amp; drop</div>
+                <div class="upload-subtext">Employment Contract photo (JPG, PNG)</div>
+            </div>
+
+            <img id="contractPreview" class="preview-image" alt="Contract">
+        </div>
+
+        <button class="remove-btn" id="contractRemove"
+                onclick="removeFile('contractFile','contractPreview','contractArea','contractRemove','contractPlaceholder')">
+            ✕ Remove
+        </button>
+
+        <div class="attachment-note">Accepted: JPG, PNG &nbsp;|&nbsp; Max size: 10 MB</div>
+    </div>
+
+    <div class="page-number">17</div>
+</div>
+{{-- END PAGE 3 --}}
+
+
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- PAGE 4 — PASSPORT PICTURE ATTACHMENT --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="page" id="page4">
+    <div class="attachment-page">
+
+        <div class="attachment-header">
+            <div class="page-label">Page 4 — Passport / Travel Document</div>
+            <div class="page-sublabel">Attach a clear photo or scanned copy of the data page of your Passport</div>
+        </div>
+
+        <div class="upload-area" id="passportArea">
+            <input type="file" name="passport_attachment" id="passportFile" accept="image/*"
+                   onchange="previewFile(this,'passportPreview','passportArea','passportRemove','passportPlaceholder')">
+
+            <div id="passportPlaceholder" style="display:flex;flex-direction:column;align-items:center;">
+                <div class="upload-icon">🛂</div>
+                <div class="upload-text">Click to upload or drag &amp; drop</div>
+                <div class="upload-subtext">Passport data page photo (JPG, PNG)</div>
+            </div>
+
+            <img id="passportPreview" class="preview-image" alt="Passport">
+        </div>
+
+        <button class="remove-btn" id="passportRemove"
+                onclick="removeFile('passportFile','passportPreview','passportArea','passportRemove','passportPlaceholder')">
+            ✕ Remove
+        </button>
+
+        <div class="attachment-note">Accepted: JPG, PNG &nbsp;|&nbsp; Max size: 10 MB</div>
+    </div>
+
+    <div class="page-number">18</div>
+</div>
+{{-- END PAGE 4 --}}
+
+</div>
+
 <script>
-    (function () {
-        const form = document.getElementById('dmwbuilder-form');
-        if (! form) return;
+/* ──────────────────────────────────────────────────────
+   IMAGE UPLOAD PREVIEW
+────────────────────────────────────────────────────── */
+function previewFile(input, previewId, areaId, removeId, placeholderId) {
+    const file = input.files[0];
+    if (!file) return;
 
-        const statusEl = document.createElement('div');
-        statusEl.className = 'small text-muted mt-2 d-flex gap-2 align-items-center';
-        statusEl.id = 'dmw-save-status';
-        statusEl.innerHTML = '<span id="dmw-save-message">Draft auto-save enabled</span><span id="dmw-save-ts" class="text-muted"></span>';
-        form.parentNode.insertBefore(statusEl, form.nextSibling);
+    const preview     = document.getElementById(previewId);
+    const area        = document.getElementById(areaId);
+    const removeBtn   = document.getElementById(removeId);
+    const placeholder = document.getElementById(placeholderId);
 
-        let timer = null;
-        let inFlight = false;
-        const attachmentsInput = document.getElementById('attachments');
-        const attachmentsStatus = document.getElementById('attachments-status');
-        const attachmentUploadForm = document.getElementById('attachment-upload-form');
-        const attachmentUploadButton = document.getElementById('attachment-upload-button');
-        const submitButtons = form.querySelectorAll('button[type="submit"]');
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        removeBtn.style.display = 'inline-block';
+        area.style.border = '2.5px solid #2c7a2c';
+        area.style.background = '#f0fff0';
+    };
+    reader.readAsDataURL(file);
+}
 
-        function setStatus(text) {
-            const msg = document.getElementById('dmw-save-message');
-            if (msg) msg.textContent = text;
-        }
+function removeFile(fileId, previewId, areaId, removeId, placeholderId) {
+    document.getElementById(fileId).value = '';
+    const preview     = document.getElementById(previewId);
+    const area        = document.getElementById(areaId);
+    const removeBtn   = document.getElementById(removeId);
+    const placeholder = document.getElementById(placeholderId);
 
-        function setSavedTimestamp(date = new Date()) {
-            const ts = document.getElementById('dmw-save-ts');
-            if (! ts) return;
-            const pad = (n) => n.toString().padStart(2, '0');
-            const hh = pad(date.getHours());
-            const mm = pad(date.getMinutes());
-            const ss = pad(date.getSeconds());
-            ts.textContent = `Saved at ${hh}:${mm}:${ss}`;
-        }
+    preview.src = '';
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+    removeBtn.style.display = 'none';
+    area.style.border = '2.5px dashed #999';
+    area.style.background = '#fafafa';
+}
 
-        async function autosave() {
-            if (inFlight) return;
-            inFlight = true;
-            setStatus('Saving draft...');
-            try {
-                const url = form.getAttribute('action');
-                const tokenInput = document.querySelector('input[name="_token"]');
-                const metaToken = document.querySelector('meta[name="csrf-token"]');
-                const token = tokenInput ? tokenInput.value : (metaToken ? metaToken.getAttribute('content') : '');
-                const formData = new FormData(form);
-                if (token) {
-                    formData.set('_token', token);
-                }
-
-                const resp = await fetch(url, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    },
-                    body: formData,
-                });
-
-                if (! resp.ok) {
-                    const body = await resp.text().catch(() => '');
-                    console.error('Draft save failed', resp.status, body);
-                    setStatus(resp.status === 419 ? 'Session expired. Refresh the page and try again.' : `Failed to save draft (${resp.status})`);
-                } else {
-                    const json = await resp.json().catch(() => null);
-                    const message = (json && json.message) ? json.message : 'Draft saved';
-                    setStatus(message);
-                    setSavedTimestamp(new Date());
-                }
-            } catch (err) {
-                setStatus('Error saving draft');
-                console.error('Autosave error', err);
-            } finally {
-                inFlight = false;
-            }
-        }
-
-        function scheduleSave() {
-            if (timer) clearTimeout(timer);
-            timer = setTimeout(autosave, 1500);
-        }
-
-        function updateAttachmentStatus() {
-            if (! attachmentsInput || ! attachmentsStatus) return;
-
-            const file = attachmentsInput.files && attachmentsInput.files[0];
-            if (! file) {
-                attachmentsStatus.textContent = 'No file selected.';
-                return;
-            }
-
-            attachmentsStatus.textContent = `Selected file: ${file.name}`;
-        }
-
-        if (attachmentUploadForm) {
-            attachmentUploadForm.addEventListener('submit', function () {
-                if (attachmentUploadButton) {
-                    attachmentUploadButton.disabled = true;
-                }
-                if (attachmentsStatus && attachmentsInput && attachmentsInput.files && attachmentsInput.files[0]) {
-                    attachmentsStatus.textContent = 'Uploading file...';
-                }
+/* ──────────────────────────────────────────────────────
+   SINGLE-SELECT civil status checkboxes
+────────────────────────────────────────────────────── */
+document.querySelectorAll('input[name="civil_status"]').forEach(function (cb) {
+    cb.addEventListener('change', function () {
+        if (this.checked) {
+            document.querySelectorAll('input[name="civil_status"]').forEach(function (o) {
+                if (o !== cb) o.checked = false;
             });
         }
+    });
+});
 
-            if (attachmentUploadForm && attachmentsInput && attachmentUploadButton) {
-                attachmentUploadForm.addEventListener('submit', function (event) {
-                    const file = attachmentsInput.files && attachmentsInput.files[0];
-                    if (! file) {
-                        if (attachmentsStatus) {
-                            attachmentsStatus.textContent = 'Choose a file first.';
-                        }
-                        event.preventDefault();
-                        return;
-                    }
+/* ──────────────────────────────────────────────────────
+   PDF DOWNLOAD via html2pdf.js
+   - A4 size: 210 mm × 297 mm
+   - Hides the download bar during capture
+   - Captures all 4 pages as separate PDF pages
+────────────────────────────────────────────────────── */
+function downloadPDF() {
+    const btn      = document.getElementById('btnDownload');
+    const progress = document.getElementById('downloadProgress');
+    const hint     = document.getElementById('downloadHint');
+    const bar      = document.querySelector('.download-bar');
 
-                    if (attachmentsStatus) {
-                        attachmentsStatus.textContent = 'Uploading file...';
-                    }
-                    attachmentUploadButton.disabled = true;
-                });
-            }
+    btn.disabled = true;
+    progress.style.display = 'inline';
+    hint.style.display = 'none';
 
-        if (attachmentsInput) {
-            attachmentsInput.addEventListener('change', updateAttachmentStatus);
-            updateAttachmentStatus();
-        }
+    /* Temporarily hide the bar so it doesn't appear in the PDF */
+    bar.style.display = 'none';
 
-        // Attach listeners to inputs (skip file inputs)
-        form.querySelectorAll('input, textarea, select').forEach(function (el) {
-            if (el.type === 'file') return;
-            el.addEventListener('input', scheduleSave);
-            el.addEventListener('change', scheduleSave);
-        });
+    const element = document.getElementById('dmwPdfPages');
 
-        // initial status
-        setStatus('Draft auto-save enabled');
-    })();
+    const opt = {
+        margin: 0,
+        filename: 'RFA_Form_DMW.pdf',
+        image: { type: 'jpeg', quality: 0.97 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            windowWidth: 794, /* 210mm @ 96 dpi ≈ A4 width */
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait',
+        },
+        bar.style.display = 'flex';
+        btn.disabled = false;
+        progress.style.display = 'none';
+        hint.style.display = 'inline';
+    }).catch(function (err) {
+        console.error(err);
+        bar.style.display = 'flex';
+        btn.disabled = false;
+        progress.style.display = 'none';
+        hint.style.display = 'inline';
+    });
+}
 </script>
-@endpush
 
-@push('scripts')
-<script>
-    (function () {
-        function toggleReferral() {
-            const referralRadio = document.getElementById('request_referral');
-            const wrapper = document.getElementById('referral_by_wrapper');
-            if (! wrapper || ! referralRadio) return;
-            wrapper.style.display = referralRadio.checked ? 'inline-block' : 'none';
-        }
-
-        document.querySelectorAll('input[name="request_type"]').forEach(function (el) {
-            el.addEventListener('change', toggleReferral);
-        });
-
-        // initialize on load
-        document.addEventListener('DOMContentLoaded', function () {
-            toggleReferral();
-        });
-    })();
-</script>
-@endpush
+</body>
+</html>
