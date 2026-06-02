@@ -1,24 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request for Assistance (RFA) Form - DMW</title>
+@extends('layouts.dashboard')
 
-    {{-- html2pdf library for client-side PDF download --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+@section('title', 'Request for Assistance (RFA) Form - DMW')
 
-    <style>
+@section('dashboard-mobile-brand')
+    <div class="dashboard-mobile-brand">
+        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+        <span>OFW Portal</span>
+    </div>
+@endsection
+
+@section('dashboard-sidebar')
+    @include('dashboard.partials.ofw-nav')
+@endsection
+
+@push('styles')
+<style>
         /* ─────────────────────────────────────────────
            RESET & BASE
         ───────────────────────────────────────────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
+        .dmw-builder-shell {
             font-family: Arial, sans-serif;
             font-size: 10.5pt;
             background: #b0b8c8;
             color: #000;
+            padding: 18px 0 26px;
         }
 
         /* ─────────────────────────────────────────────
@@ -28,13 +35,13 @@
             background: #1a3a6b;
             text-align: center;
             padding: 11px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 200;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 16px;
+            max-width: 210mm;
+            margin: 14px auto 0;
+            border-radius: 6px;
         }
 
         .download-bar .btn-download {
@@ -489,19 +496,10 @@
             .download-bar { display: none !important; }
         }
     </style>
-</head>
-<body>
+@endpush
 
-{{-- ══════════════════════════════════════════════════════ --}}
-{{-- DOWNLOAD BAR --}}
-{{-- ══════════════════════════════════════════════════════ --}}
-<div class="download-bar">
-    <button class="btn-download" id="btnDownload" onclick="downloadPDF()">
-        ⬇ Download as PDF
-    </button>
-    <span id="downloadProgress">Generating PDF, please wait…</span>
-    <span id="downloadHint">Fill out all fields before downloading</span>
-</div>
+@section('content')
+<div class="dmw-builder-shell">
 
 <div id="dmwPdfPages">
 
@@ -887,6 +885,22 @@
 
 </div>
 
+{{-- ══════════════════════════════════════════════════════ --}}
+{{-- DOWNLOAD BAR --}}
+{{-- ══════════════════════════════════════════════════════ --}}
+<div class="download-bar">
+    <button class="btn-download" id="btnDownload" onclick="downloadPDF()">
+        ⬇ Download as PDF
+    </button>
+    <span id="downloadProgress">Generating PDF, please wait…</span>
+    <span id="downloadHint">Fill out all fields before downloading</span>
+</div>
+</div>
+@endsection
+
+@push('scripts')
+{{-- html2pdf library for client-side PDF download --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 /* ──────────────────────────────────────────────────────
    IMAGE UPLOAD PREVIEW
@@ -989,6 +1003,4 @@ function downloadPDF() {
     });
 }
 </script>
-
-</body>
-</html>
+@endpush
