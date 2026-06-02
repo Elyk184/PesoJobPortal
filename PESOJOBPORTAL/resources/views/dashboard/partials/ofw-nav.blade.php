@@ -43,7 +43,6 @@
     <nav class="dashboard-nav" aria-label="OFW dashboard navigation">
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Overview</div>
-<<<<<<< HEAD
             <a href="{{ route('ofw.dashboard') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.dashboard')) is-active @endif">
                 <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
@@ -53,13 +52,6 @@
                 <span>Accepted Requests</span>
             </a>
             <a href="{{ route('ofw.submitted-requests') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.submitted-requests')) is-active @endif">
-=======
-            <a href="{{ $portalAcceptsUrl }}" class="dashboard-nav-link">
-                <i class="bi bi-info-circle"></i>
-                <span>Accepted Requests</span>
-            </a>
-            <a href="{{ route('ofw.dashboard') . '#submitted-requests' }}" class="dashboard-nav-link">
->>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2
                 <i class="bi bi-list-check"></i>
                 <span>Submitted Requests</span>
             </a>
@@ -67,34 +59,16 @@
 
         <div class="dashboard-nav-section">
             <div class="dashboard-nav-label">Forms</div>
-<<<<<<< HEAD
             <a href="{{ route('ofw.owwa-request') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.owwa-request')) is-active @endif">
                 <i class="bi bi-file-earmark-text"></i>
                 <span>OWWA RFA</span>
-=======
-            <a href="{{ route('ofw.dashboard') . '#owwa-request' }}" class="dashboard-nav-link">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>OWWA Form</span>
             </a>
             @if(optional($user)->role === 'ofw')
-            <a href="{{ route('ofw.dmw-builder') }}" class="dashboard-nav-link">
-                <i class="bi bi-journal-text"></i>
-                <span>DMW Form</span>
-            </a>
+                <a href="{{ route('ofw.dmw-builder') }}" class="dashboard-nav-link @if(request()->routeIs('ofw.dmw-builder')) is-active @endif">
+                    <i class="bi bi-journal-text"></i>
+                    <span>DMW Form</span>
+                </a>
             @endif
-        </div>
-
-        <div class="dashboard-nav-section">
-            <div class="dashboard-nav-label">Support</div>
-            <a href="{{ $portalAcceptsUrl }}" class="dashboard-nav-link">
-                <i class="bi bi-shield-check"></i>
-                <span>Portal Guidelines</span>
-            </a>
-            <a href="{{ route('ofw.dashboard') . '#submitted-requests' }}" class="dashboard-nav-link">
-                <i class="bi bi-clock-history"></i>
-                <span>Case Tracking</span>
->>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2
-            </a>
         </div>
     </nav>
 

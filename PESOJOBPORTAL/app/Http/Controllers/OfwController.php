@@ -39,9 +39,6 @@ class OfwController extends Controller
         $ofwProfile = $ofwUser->profile;
         $requestQuery = OfwRequest::query()->where('user_id', $ofwUser->id);
 
-<<<<<<< HEAD
-        return [
-=======
         $rawAttachments = [];
         try {
             $rawAttachments = $this->readAttachments($ofwUser->id);
@@ -51,8 +48,7 @@ class OfwController extends Controller
 
         $dmwAttachments = collect($rawAttachments)->map(fn (string $path) => asset('storage/' . $path))->values()->all();
 
-        return view('dashboard.ofw', [
->>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2
+        return [
             'ofwUser' => $ofwUser,
             'ofwProfile' => $ofwProfile,
             'submittedRequests' => (clone $requestQuery)
@@ -70,13 +66,8 @@ class OfwController extends Controller
                 'phone' => $ofwProfile?->phone ?? data_get($ofwProfile, 'personal_information.contact_number'),
                 'address' => $ofwProfile?->address ?? data_get($ofwProfile, 'present_address.municipality'),
             ],
-<<<<<<< HEAD
-        ];
-    }
-}
-=======
             'dmwAttachments' => $dmwAttachments,
-        ]);
+        ];
     }
 
     public function dmwBuilder(Request $request): View
@@ -756,4 +747,3 @@ class OfwController extends Controller
         ];
     }
 }
->>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2

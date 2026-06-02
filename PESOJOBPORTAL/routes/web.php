@@ -22,25 +22,20 @@ Route::view('/legal-mandate', 'legal-mandate')->name('legal-mandate');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-<<<<<<< HEAD
-Route::middleware('auth')->prefix('ofw')->name('ofw.')->group(function () {
+Route::middleware(['auth', 'role:ofw'])->prefix('ofw')->name('ofw.')->group(function () {
     Route::get('/', [OfwController::class, 'dashboard'])->name('dashboard');
     Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
     Route::get('/owwa-request', [OfwController::class, 'owwaRequest'])->name('owwa-request');
     Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
     Route::get('/rfa', [RfaController::class, 'create'])->name('rfa.form');
     Route::post('/rfa/download', [RfaController::class, 'download'])->name('rfa.download');
-=======
-Route::middleware(['auth', 'role:ofw'])->group(function () {
-    Route::get('/ofw', [OfwController::class, 'dashboard'])->name('ofw.dashboard');
-    Route::get('/ofw/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('ofw.dmw-builder');
-    Route::post('/ofw/dmw-builder', [OfwController::class, 'saveDmwBuilder'])->name('ofw.dmw-builder.save');
-    Route::match(['get', 'post'], '/ofw/dmw-download', [OfwController::class, 'downloadDmwForm'])->name('ofw.dmw-download');
-    Route::post('/ofw/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('ofw.attachments.upload');
-    Route::post('/ofw/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('ofw.attachments.delete');
-    Route::post('/ofw/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('ofw.dmw-submit');
-    Route::post('/ofw/dmw-calibrate', [OfwController::class, 'saveDmwCoords'])->name('ofw.dmw-calibrate');
->>>>>>> 26fcc21c858b8cb66dc7c98e0ce921d300a044d2
+    Route::get('/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('dmw-builder');
+    Route::post('/dmw-builder', [OfwController::class, 'saveDmwBuilder'])->name('dmw-builder.save');
+    Route::match(['get', 'post'], '/dmw-download', [OfwController::class, 'downloadDmwForm'])->name('dmw-download');
+    Route::post('/attachments/upload', [OfwController::class, 'uploadAttachment'])->name('attachments.upload');
+    Route::post('/attachments/delete', [OfwController::class, 'deleteAttachment'])->name('attachments.delete');
+    Route::post('/dmw-submit', [OfwController::class, 'submitDmwForm'])->name('dmw-submit');
+    Route::post('/dmw-calibrate', [OfwController::class, 'saveDmwCoords'])->name('dmw-calibrate');
 });
 
 // Auth routes
