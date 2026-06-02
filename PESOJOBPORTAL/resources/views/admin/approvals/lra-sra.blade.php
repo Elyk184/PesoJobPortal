@@ -11,37 +11,131 @@
 @section('content')
     <div class="admin-dashboard">
     <style>
-        /* Card & table layout tweaks */
-        .dashboard-card { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
-        .data-table { font-size: 13px; border-collapse: separate; border-spacing: 0 10px; }
-        .data-table thead { background: transparent; }
-        .data-table th { color: #0d1f3c; font-weight: 700; border-bottom: none; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 10px; }
-        .data-table td { padding: 14px 10px; vertical-align: middle; font-weight: 500; background: #fff; border-top: 1px solid transparent; }
-        .data-table tbody tr { background: transparent; }
-        .data-table tbody tr:hover td { background: #fbfdff; transform: translateY(-1px); }
-
-        /* Row wrapper visual separation */
-        .data-table tbody tr + tr td { border-top: 1px solid #eef2f6; }
-
-        /* Document badges and compact layout */
-        .doc-badge { display:inline-flex; align-items:center; gap:8px; margin:4px 6px 4px 0; padding:7px 10px; font-size:0.78rem; border-radius:999px; text-decoration:none; transition:transform .12s ease, box-shadow .12s ease; }
-        .doc-badge i { font-size:0.92rem }
-        .doc-badge:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(15,23,42,0.08); }
-        .doc-missing { display:inline-block; margin:4px 6px 4px 0; padding:7px 10px; font-size:0.78rem; border-radius:999px; background:#f3f4f6; color:#9ca3af; border:1px dashed #e6eef6; }
-        .docs-count { display:block; margin-bottom:8px; font-size:0.75rem; color:#374151; }
-        .doc-col { max-width:380px; word-break:break-word; }
-        @media(max-width:900px){ .doc-col { max-width:220px } }
-
-        /* Action buttons */
-        .action-btns .btn { margin-left:6px; margin-right:2px; }
-        .action-btns .btn i { margin-right:6px; }
-
-        /* Activity badge */
-        .badge-activity { padding:6px 10px; border-radius:999px; font-weight:700; color:#fff; }
-        .history-card { margin-top: 24px; }
-        .history-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
-        .history-title { margin:0; font-size:1rem; font-weight:800; color:#0d1f3c; }
-        .history-subtitle { margin:4px 0 0; color:#64748b; font-size:0.82rem; }
+        .lra-approval-stack { display: grid; gap: 1.25rem; }
+        .dashboard-card {
+            background: #ffffff;
+            padding: 1.25rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+        .approval-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .approval-card-title { margin: 0; font-size: 1rem; font-weight: 800; color: #0d1f3c; }
+        .approval-card-subtitle { margin: 0.25rem 0 0; color: #64748b; font-size: 0.82rem; }
+        .approval-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 34px;
+            padding: 0 0.8rem;
+            border-radius: 999px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-size: 0.78rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .table-shell {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #edf1f5;
+            border-radius: 10px;
+        }
+        .data-table {
+            min-width: 920px;
+            margin: 0;
+            font-size: 13px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .data-table thead { background: #f8fafc; }
+        .data-table th {
+            color: #0d1f3c;
+            font-weight: 800;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.85rem 0.9rem;
+            white-space: nowrap;
+        }
+        .data-table td {
+            padding: 0.95rem 0.9rem;
+            vertical-align: middle;
+            font-weight: 500;
+            background: #fff;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .data-table tbody tr:last-child td { border-bottom: 0; }
+        .data-table tbody tr:hover td { background: #fbfdff; }
+        .employer-cell { min-width: 190px; color: #0f172a; }
+        .date-cell { color: #475569; white-space: nowrap; }
+        .doc-col { width: 42%; min-width: 340px; word-break: break-word; }
+        .docs-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 0.55rem;
+            color: #334155;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .doc-chip-group { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+        .doc-badge,
+        .doc-missing {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            min-height: 30px;
+            margin: 0;
+            padding: 0.35rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .doc-badge { text-decoration: none; border: 0; transition: transform .12s ease, box-shadow .12s ease; }
+        .doc-badge i { font-size: 0.88rem; }
+        .doc-badge:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(15,23,42,0.09); }
+        .doc-missing { background: #f8fafc; color: #94a3b8; border: 1px dashed #dbe4ee; }
+        .action-cell { min-width: 250px; }
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+        }
+        .action-btns .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            min-height: 32px;
+            margin: 0;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .action-btns .btn i { margin-right: 0; }
+        .badge-activity {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 46px;
+            padding: 0.42rem 0.65rem;
+            border-radius: 999px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.3px;
+        }
+        .history-card { margin-top: 0; }
         .status-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-size:0.76rem; font-weight:800; text-transform:capitalize; }
         .status-pill--approved { background:#dcfce7; color:#166534; }
         .status-pill--rejected { background:#fee2e2; color:#991b1b; }
@@ -51,12 +145,39 @@
 
         /* Modal preview sizing */
         #docPreviewContainer { min-height: 40vh; }
+        .empty-approval-state {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .empty-approval-state i { font-size: 1.25rem; margin-top: 0.1rem; }
+        @media(max-width: 768px) {
+            .dashboard-card { padding: 1rem; }
+            .approval-count { width: 100%; justify-content: center; }
+        }
         @media(min-width:1200px){ #docPreviewContainer iframe { height:70vh; } }
     </style>
 
-    <div class="dashboard-card">
+    <div class="lra-approval-stack">
+        <div class="dashboard-card">
+            <div class="approval-card-header">
+                <div>
+                    <h2 class="approval-card-title">Pending Requests</h2>
+                    <p class="approval-card-subtitle">Review submitted documents and take action on active LRA/SRA requests.</p>
+                </div>
+                <span class="approval-count">
+                    <i class="bi bi-hourglass-split"></i>
+                    {{ $pendingRequests->count() }} pending
+                </span>
+            </div>
             @if($pendingRequests->count() > 0)
                 <!-- Approvals Table -->
+                <div class="table-shell">
                 <table class="table data-table w-100">
                     <thead>
                         <tr>
@@ -73,48 +194,46 @@
                                 <td>
                                     <span class="badge badge-activity bg-info">{{ strtoupper($request->activity_type) }}</span>
                                 </td>
-                                <td><strong>{{ Str::limit($request->employer?->name ?? 'N/A', 20) }}</strong></td>
+                                <td class="employer-cell"><strong>{{ Str::limit($request->employer?->name ?? 'N/A', 28) }}</strong></td>
                                 <td class="doc-col">
-                                    <small>
-                                        @php
-                                            $commonDocs = [
-                                                ['label' => 'LOI', 'field' => 'letter_of_intent_path'],
-                                                ['label' => 'Company Profile', 'field' => 'company_profile_path'],
-                                            ];
+                                    @php
+                                        $commonDocs = [
+                                            ['label' => 'LOI', 'field' => 'letter_of_intent_path'],
+                                            ['label' => 'Company Profile', 'field' => 'company_profile_path'],
+                                        ];
 
-                                            $lraDocs = [
-                                                ['label' => 'Business Permit', 'field' => 'business_permit_path'],
-                                                ['label' => 'Recruitment Officer ID', 'field' => 'lra_recruitment_officer_id_path'],
-                                                ['label' => 'Job Vacancies', 'field' => 'job_vacancies_path'],
-                                            ];
+                                        $lraDocs = [
+                                            ['label' => 'Business Permit', 'field' => 'business_permit_path'],
+                                            ['label' => 'Recruitment Officer ID', 'field' => 'lra_recruitment_officer_id_path'],
+                                            ['label' => 'Job Vacancies', 'field' => 'job_vacancies_path'],
+                                        ];
 
-                                            $sraDocs = [
-                                                ['label' => 'DMW Certificate', 'field' => 'dmw_certificate_path'],
-                                                ['label' => 'Recruitment Officer ID', 'field' => 'recruitment_officer_id_path'],
-                                                ['label' => 'Job Order Balance', 'field' => 'job_order_balance_path'],
-                                            ];
+                                        $sraDocs = [
+                                            ['label' => 'DMW Certificate', 'field' => 'dmw_certificate_path'],
+                                            ['label' => 'Recruitment Officer ID', 'field' => 'recruitment_officer_id_path'],
+                                            ['label' => 'Job Order Balance', 'field' => 'job_order_balance_path'],
+                                        ];
 
-                                            $docsToShow = $commonDocs;
-                                            if ($request->activity_type === 'lra') {
-                                                $docsToShow = array_merge($docsToShow, $lraDocs);
-                                            } elseif ($request->activity_type === 'sra') {
-                                                $docsToShow = array_merge($docsToShow, $sraDocs);
+                                        $docsToShow = $commonDocs;
+                                        if ($request->activity_type === 'lra') {
+                                            $docsToShow = array_merge($docsToShow, $lraDocs);
+                                        } elseif ($request->activity_type === 'sra') {
+                                            $docsToShow = array_merge($docsToShow, $sraDocs);
+                                        }
+
+                                        $totalDocs = count($docsToShow);
+                                        $present = array_filter($docsToShow, function($d) use ($request) {
+                                            if ($d['field'] === 'job_vacancies_path') {
+                                                return !empty($request->job_vacancies_path) || !empty($request->job_vacancies_text);
                                             }
-                                        @endphp
+                                            return !empty($request->{$d['field']});
+                                        });
+                                        $presentCount = count($present);
+                                    @endphp
 
-                                        @php
-                                            $totalDocs = count($docsToShow);
-                                            $present = array_filter($docsToShow, function($d) use ($request) {
-                                                if ($d['field'] === 'job_vacancies_path') {
-                                                    return !empty($request->job_vacancies_path) || !empty($request->job_vacancies_text);
-                                                }
-                                                return !empty($request->{$d['field']});
-                                            });
-                                            $presentCount = count($present);
-                                        @endphp
+                                    <span class="docs-count"><i class="bi bi-paperclip"></i><strong>{{ $presentCount }}</strong>/{{ $totalDocs }} uploaded</span>
 
-                                        <span class="docs-count"><strong>{{ $presentCount }}</strong>/{{ $totalDocs }} uploaded</span>
-
+                                    <div class="doc-chip-group">
                                         @foreach($docsToShow as $doc)
                                             @if($doc['field'] === 'job_vacancies_path')
                                                 @if(!empty($request->job_vacancies_path))
@@ -153,18 +272,18 @@
                                                 @endif
                                             @endif
                                         @endforeach
+                                    </div>
 
-                                        {{-- Hidden vacancy text (for preview modal) --}}
-                                        @if(!empty($request->job_vacancies_text))
-                                            <div id="vacancy-text-{{ $request->id }}" class="d-none">
-                                                {!! nl2br(e($request->job_vacancies_text)) !!}
-                                            </div>
-                                        @endif
-                                    </small>
+                                    {{-- Hidden vacancy text (for preview modal) --}}
+                                    @if(!empty($request->job_vacancies_text))
+                                        <div id="vacancy-text-{{ $request->id }}" class="d-none">
+                                            {!! nl2br(e($request->job_vacancies_text)) !!}
+                                        </div>
+                                    @endif
                                 </td>
-                                <td><small>{{ $request->created_at->format('d M, Y') }}</small></td>
-                                <td class="text-center">
-                                    <form method="POST" class="d-inline-flex gap-2 align-items-center action-btns">
+                                <td class="date-cell"><small>{{ $request->created_at->format('d M, Y') }}</small></td>
+                                <td class="text-center action-cell">
+                                    <form method="POST" class="action-btns">
                                         @csrf
                                         <a href="{{ route('admin.lra-sra.review', $request) }}"
                                            class="btn btn-sm btn-info" title="Review this request">
@@ -218,6 +337,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
 
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-4">
@@ -245,23 +365,26 @@
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <strong>All caught up!</strong> No pending LRA/SRA approvals to review.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="empty-approval-state" role="alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <strong>All caught up!</strong>
+                        <div>No pending LRA/SRA approvals to review.</div>
+                    </div>
                 </div>
             @endif
         </div>
 
         <div class="dashboard-card history-card">
-            <div class="history-header">
+            <div class="approval-card-header">
                 <div>
-                    <h2 class="history-title">Recent Request History</h2>
-                    <p class="history-subtitle">Latest approved and rejected LRA/SRA requests, including issued certificates.</p>
+                    <h2 class="approval-card-title">Recent Request History</h2>
+                    <p class="approval-card-subtitle">Latest approved and rejected LRA/SRA requests, including issued certificates.</p>
                 </div>
             </div>
 
             @if($recentRequests->count() > 0)
+                <div class="table-shell">
                 <table class="table data-table w-100">
                     <thead>
                         <tr>
@@ -315,16 +438,19 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
+                                    <div class="action-btns">
                                     <a href="{{ route('admin.lra-sra.review', $request) }}"
                                        class="btn btn-sm btn-outline-primary"
                                        title="View request details">
                                         <i class="bi bi-eye"></i> Details
                                     </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             @else
                 <div class="alert alert-light border mb-0" role="alert">
                     <i class="bi bi-clock-history me-2"></i>
@@ -332,6 +458,7 @@
                 </div>
             @endif
         </div>
+    </div>
     </div>
 
 @endsection
