@@ -109,9 +109,9 @@
         }
 
         /* Bagong Pilipinas logo is wider/rectangular — constrain it smaller */
-        .header-logo-bagong {
-            width: 52px;
-            height: 52px;
+.header-logo-bagong {
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             flex-shrink: 0;
         }
