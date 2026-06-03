@@ -163,27 +163,113 @@ class OfwController extends Controller
     {
         Log::info('DMW download requested', ['ip' => $request->ip(), 'user_id' => optional($request->user())->id]);
 
-        $validated = array_merge($request->session()->get('dmw_form_draft', []), $this->validateDmwDraftRequest($request));
-        if (empty($validated['signature_date'])) {
-            $validated['signature_date'] = now()->toDateString();
-        }
-
-        if (empty($validated['assistance']) || ! is_array($validated['assistance'])) {
-            $validated['assistance'] = [];
-        }
-
         $user = $request->user();
 
+        // Collect all form inputs directly from the builder's field names
+        $builderData = $request->only([
+            // OFW fields (Section A)
+            'ofw_lastname', 'ofw_firstname', 'ofw_middlename',
+            'ofw_birthdate', 'ofw_sex', 'civil_status',
+            'ofw_passport', 'ofw_address_abroad', 'ofw_address_ph',
+            'ofw_contact', 'ofw_email',
+            // Mode / referral
+            'mode', 'referral_by',
+            // Family/Relative fields (Section B)
+            'fam_lastname', 'fam_firstname', 'fam_middlename',
+            'fam_birthdate', 'relationship', 'relationship_others',
+            'fam_id', 'fam_address', 'fam_contact', 'fam_email',
+            // Section C - assistance
+            'assistance', 'assistance_others',
+            // Section D - narrative
+            'narrative',
+            // Section E - bank
+            'has_bank', 'bank_account_no', 'bank_name', 'bank_branch', 'bank_account_name',
+            // Hidden mapped fields (fallback)
+            'name_first', 'name_last', 'name_middle',
+            'birthdate', 'sex', 'passport_number', 'phone', 'email',
+            'request_details', 'request_type',
+            'signature_date', 'signature_printed',
+            'relative_last', 'relative_first', 'relative_middle',
+            'relative_birthdate', 'relative_relationship',
+            'relative_id_no', 'relative_address_ph', 'relative_mobile', 'relative_email',
+            'account_name', 'address_abroad', 'address_ph',
+            'assistance_others_text',
+        ]);
+
+        // Map builder field names to normalized names for the PDF template
+        $formData = [
+            'name_last'     => $builderData['ofw_lastname']  ?? ($builderData['name_last'] ?? ''),
+            'name_first'    => $builderData['ofw_firstname'] ?? ($builderData['name_first'] ?? ''),
+            'name_middle'   => $builderData['ofw_middlename'] ?? ($builderData['name_middle'] ?? ''),
+            'birthdate'     => $builderData['ofw_birthdate'] ?? ($builderData['birthdate'] ?? ''),
+            'sex'           => $builderData['ofw_sex']       ?? ($builderData['sex'] ?? ''),
+            'civil_status'  => is_array($builderData['civil_status'] ?? null)
+                                ? ($builderData['civil_status'][0] ?? '')
+                                : ($builderData['civil_status'] ?? ''),
+            'passport_number' => $builderData['ofw_passport'] ?? ($builderData['passport_number'] ?? ''),
+            'address_abroad'  => $builderData['ofw_address_abroad'] ?? ($builderData['address_abroad'] ?? ''),
+            'address_ph'      => $builderData['ofw_address_ph'] ?? ($builderData['address_ph'] ?? ''),
+            'phone'           => $builderData['ofw_contact'] ?? ($builderData['phone'] ?? ''),
+            'email'           => $builderData['ofw_email']   ?? ($builderData['email'] ?? ''),
+
+            // Determine request mode
+            'request_type'  => is_array($builderData['mode'] ?? null)
+                                ? ($builderData['mode'][0] ?? '')
+                                : ($builderData['mode'] ?? ($builderData['request_type'] ?? '')),
+            'referral_by'   => $builderData['referral_by'] ?? '',
+
+            // Section B - Relative
+            'relative_last'         => $builderData['fam_lastname']  ?? ($builderData['relative_last'] ?? ''),
+            'relative_first'        => $builderData['fam_firstname'] ?? ($builderData['relative_first'] ?? ''),
+            'relative_middle'       => $builderData['fam_middlename'] ?? ($builderData['relative_middle'] ?? ''),
+            'relative_birthdate'    => $builderData['fam_birthdate'] ?? ($builderData['relative_birthdate'] ?? ''),
+            'relative_relationship' => is_array($builderData['relationship'] ?? null)
+                                        ? ($builderData['relationship'][0] ?? '')
+                                        : ($builderData['relationship'] ?? ($builderData['relative_relationship'] ?? '')),
+            'relationship_others'   => $builderData['relationship_others'] ?? '',
+            'relative_id_no'        => $builderData['fam_id'] ?? ($builderData['relative_id_no'] ?? ''),
+            'relative_address_ph'   => $builderData['fam_address'] ?? ($builderData['relative_address_ph'] ?? ''),
+            'relative_mobile'       => $builderData['fam_contact'] ?? ($builderData['relative_mobile'] ?? ''),
+            'relative_email'        => $builderData['fam_email']   ?? ($builderData['relative_email'] ?? ''),
+
+            // Section C - Assistance
+            'assistance'            => is_array($builderData['assistance'] ?? null)
+                                        ? array_filter($builderData['assistance'])
+                                        : [],
+            'assistance_others_text' => $builderData['assistance_others'] ?? ($builderData['assistance_others_text'] ?? ''),
+
+            // Section D - Narrative
+            'request_details' => $builderData['narrative'] ?? ($builderData['request_details'] ?? ''),
+
+            // Section E - Bank
+            'bank_account_no'  => $builderData['bank_account_no'] ?? '',
+            'bank_name'        => $builderData['bank_name'] ?? '',
+            'bank_branch'      => $builderData['bank_branch'] ?? '',
+            'account_name'     => $builderData['bank_account_name'] ?? ($builderData['account_name'] ?? ''),
+
+            // Signature
+            'signature_printed' => $builderData['signature_printed'] ?? '',
+            'signature_date'    => $builderData['signature_date'] ?? now()->toDateString(),
+        ];
+
+        // Handle file attachments
+        if ($request->hasFile('contract_attachment')) {
+            $this->storeOfwAttachments($request, [$request->file('contract_attachment')]);
+        }
+        if ($request->hasFile('passport_attachment')) {
+            $this->storeOfwAttachments($request, [$request->file('passport_attachment')]);
+        }
         if ($request->hasFile('attachments')) {
             $this->storeOfwAttachments($request, $request->file('attachments'));
         }
 
         $attachments = $this->readAttachments($user->id);
-        $draft = array_merge($request->session()->get('dmw_form_draft', []), $validated);
-        $request->session()->put('dmw_form_draft', $draft);
+
+        // Save draft for future use
+        $request->session()->put('dmw_form_draft', $formData);
 
         try {
-            return $this->renderDmwPdf($user->id, $draft, $attachments);
+            return $this->renderDmwPdf($user->id, $formData, $attachments);
         } catch (\Throwable $e) {
             Log::error('DMW render failed', ['user_id' => $user->id, 'error' => $e->getMessage()]);
             throw $e;
@@ -501,86 +587,20 @@ class OfwController extends Controller
 
     protected function renderDmwPdf(int $userId, array $formData, array $attachments)
     {
-        $mainForm = public_path('forms/DMW REQUEST FOR ASSISTANCE FORM.pdf');
-        if (! file_exists($mainForm)) {
-            Log::error('DMW form PDF not found: ' . $mainForm);
-            abort(404, 'Form template not found.');
-        }
+        $html = view('ofw.dmwpdf', [
+            'formData'    => $formData,
+            'attachments' => $attachments,
+        ])->render();
 
-        $tmpDir = storage_path('app/tmp/ofw_forms');
-        if (! is_dir($tmpDir)) {
-            mkdir($tmpDir, 0777, true);
-        }
+        /** @var \Barryvdh\DomPDF\PDF $pdf */
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('defaultFont', 'sans-serif');
 
-        $fpdiClass = '\\setasign\\Fpdi\\Fpdi';
-        if (! class_exists($fpdiClass)) {
-            Log::warning('FPDI not installed; serving main form only.');
-            return response()->download($mainForm, 'DMW_REQUEST_FOR_ASSISTANCE.pdf');
-        }
-
-        try {
-            /** @var \setasign\Fpdi\Fpdi $fpdi */
-            $fpdi = new $fpdiClass();
-        } catch (\Throwable $e) {
-            Log::error('Failed to instantiate FPDI: ' . $e->getMessage());
-            return response()->download($mainForm, 'DMW_REQUEST_FOR_ASSISTANCE.pdf');
-        }
-
-        $templatePages = $fpdi->setSourceFile($mainForm);
-        $fieldCoords = $this->resolveDmwFieldCoords();
-
-        for ($pageNumber = 1; $pageNumber <= $templatePages; $pageNumber++) {
-            try {
-                $templateId = $fpdi->importPage($pageNumber);
-                $size = $fpdi->getTemplateSize($templateId);
-                $orientation = $size['width'] > $size['height'] ? 'L' : 'P';
-                $fpdi->AddPage($orientation, [$size['width'], $size['height']]);
-                $fpdi->useTemplate($templateId);
-
-                if ($pageNumber === 1) {
-                    $this->writeDmwFields($fpdi, $formData, $fieldCoords, $size['width'], $size['height']);
-                }
-            } catch (\Throwable $e) {
-                Log::error('Failed rendering DMW template page ' . $pageNumber . ': ' . $e->getMessage());
-            }
-        }
-
-        foreach ($attachments as $index => $attachmentPath) {
-            $attachmentFullPath = storage_path('app/public/' . $attachmentPath);
-            if (! file_exists($attachmentFullPath)) {
-                continue;
-            }
-            $mime = mime_content_type($attachmentFullPath) ?: '';
-
-            // If attachment is already a PDF, append it directly. If it's an image, convert to PDF first.
-            if (strtolower($mime) === 'application/pdf' || str_ends_with($attachmentFullPath, '.pdf')) {
-                $pdfToAppend = $attachmentFullPath;
-            } else {
-                $pdfToAppend = $this->attachmentImageToPdf($attachmentFullPath, $tmpDir, $userId, $index);
-            }
-
-            if (! $pdfToAppend || ! file_exists($pdfToAppend)) {
-                continue;
-            }
-
-            try {
-                $pageCount = $fpdi->setSourceFile($pdfToAppend);
-                for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
-                    $templateId = $fpdi->importPage($pageNumber);
-                    $size = $fpdi->getTemplateSize($templateId);
-                    $orientation = $size['width'] > $size['height'] ? 'L' : 'P';
-                    $fpdi->AddPage($orientation, [$size['width'], $size['height']]);
-                    $fpdi->useTemplate($templateId);
-                }
-            } catch (\Throwable $e) {
-                Log::error('Failed appending attachment page ' . $pdfToAppend . ': ' . $e->getMessage());
-            }
-        }
-
-        $mergedPath = $tmpDir . '/dmw_merged_' . $userId . '_' . time() . '.pdf';
-        $fpdi->Output($mergedPath, 'F');
-
-        return response()->download($mergedPath, 'DMW_REQUEST_FOR_ASSISTANCE.pdf')->deleteFileAfterSend(true);
+        return $pdf->download('DMW_REQUEST_FOR_ASSISTANCE.pdf');
     }
 
     protected function attachmentImageToPdf(string $imagePath, string $tmpDir, int $userId, int $index): ?string
@@ -605,145 +625,7 @@ class OfwController extends Controller
         return $pdfPath;
     }
 
-    protected function writeDmwFields(\setasign\Fpdi\Fpdi $pdf, array $formData, array $fieldCoords, float $pageWidth, float $pageHeight): void
-    {
-        $fieldValues = [
-            'name' => $formData['applicant_name'] ?? '',
-            'birthdate' => $formData['birthdate'] ?? '',
-            'sex' => ucfirst((string) ($formData['sex'] ?? '')),
-            'passport' => $formData['passport_number'] ?? '',
-            'contact' => $formData['phone'] ?? '',
-            'email' => $formData['email'] ?? '',
-            // 'employer' removed from form
-            'contract' => trim(implode(' to ', array_filter([
-                $formData['contract_start'] ?? '',
-                $formData['contract_end'] ?? '',
-            ]))),
-            'narrative' => $formData['request_details'] ?? '',
-            'civil_status' => $formData['civil_status'] ?? '',
-            'address_abroad' => $formData['address_abroad'] ?? '',
-            'address_ph' => $formData['address_ph'] ?? '',
-            'relative_name' => trim(implode(' ', array_filter([$formData['relative_last'] ?? '', $formData['relative_first'] ?? '', $formData['relative_middle'] ?? '']))),
-            'relative_relationship' => $formData['relative_relationship'] ?? '',
-            'relative_contact' => $formData['relative_mobile'] ?? '',
-            'bank_account_no' => $formData['bank_account_no'] ?? '',
-            'bank_name' => $formData['bank_name'] ?? '',
-            'bank_branch' => $formData['bank_branch'] ?? '',
-            'account_name' => $formData['account_name'] ?? '',
-            'signature_printed' => $formData['signature_printed'] ?? '',
-        ];
-
-        $pdf->SetTextColor(0, 0, 0);
-
-        foreach ($fieldValues as $fieldKey => $value) {
-            if ($value === '') {
-                continue;
-            }
-
-            $coords = $fieldCoords[$fieldKey] ?? [];
-            $this->writeDmwText($pdf, (string) $value, $coords, $pageWidth, $pageHeight, $fieldKey === 'narrative');
-        }
-
-        $assistance = array_map('strtolower', $formData['assistance'] ?? []);
-        $assistKeys = [
-            'legal', 'medical', 'repatriation', 'rescue', 'welfare_senior', 'shipment', 'compassionate', 'food', 'transportation', 'temporary_shelter', 'others'
-        ];
-
-        foreach ($assistKeys as $option) {
-            $coords = $fieldCoords['help-' . $option] ?? [];
-            if (in_array($option, $assistance, true)) {
-                $this->writeDmwText($pdf, 'X', $coords, $pageWidth, $pageHeight, false);
-            }
-        }
-
-        // Additional single-line fields
-        foreach (['civil_status', 'address_abroad', 'address_ph', 'relative_name', 'relative_relationship', 'relative_contact', 'bank_account_no', 'bank_name', 'bank_branch', 'account_name', 'signature_printed'] as $fieldKey) {
-            $value = $fieldValues[$fieldKey] ?? '';
-            if ($value !== '') {
-                $coords = $fieldCoords[$fieldKey] ?? [];
-                $this->writeDmwText($pdf, (string) $value, $coords, $pageWidth, $pageHeight, false);
-            }
-        }
-    }
-
-    protected function writeDmwText(\setasign\Fpdi\Fpdi $pdf, string $text, array $coords, float $pageWidth, float $pageHeight, bool $multiline = false): void
-    {
-        $left = (float) ($coords['left'] ?? 0);
-        $top = (float) ($coords['top'] ?? 0);
-        $width = (float) ($coords['width'] ?? 20);
-        $fontSize = (float) ($coords['fontSize'] ?? 10);
-
-        $x = ($pageWidth * $left) / 100;
-        $y = ($pageHeight * $top) / 100;
-        $w = max(10, ($pageWidth * $width) / 100);
-
-        $pdf->SetFont('Helvetica', '', $fontSize);
-        $pdf->SetXY($x, $y);
-
-        if ($multiline) {
-            $pdf->MultiCell($w, 4.5, $this->sanitizePdfText($text), 0, 'L');
-            return;
-        }
-
-        $pdf->Cell($w, 4.5, $this->sanitizePdfText($text), 0, 0, 'L');
-    }
-
-    protected function sanitizePdfText(string $text): string
-    {
-        $clean = html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8');
-        return preg_replace('/[\r\n]+/', ' ', $clean) ?? $clean;
-    }
-
-    protected function resolveDmwFieldCoords(): array
-    {
-        $defaults = $this->dmwFieldDefaults();
-        $saved = $this->readFieldCoords();
-
-        foreach ($saved as $key => $coords) {
-            if (! isset($defaults[$key])) {
-                continue;
-            }
-
-            $defaults[$key] = array_merge($defaults[$key], is_array($coords) ? $coords : []);
-        }
-
-        return $defaults;
-    }
-
-    protected function dmwFieldDefaults(): array
-    {
-        return [
-            'name' => ['page' => 1, 'left' => 10, 'top' => 12, 'width' => 70, 'fontSize' => 12],
-            'birthdate' => ['page' => 1, 'left' => 10, 'top' => 18, 'width' => 30, 'fontSize' => 10],
-            'sex' => ['page' => 1, 'left' => 60, 'top' => 18, 'width' => 20, 'fontSize' => 10],
-            'passport' => ['page' => 1, 'left' => 10, 'top' => 24, 'width' => 35, 'fontSize' => 10],
-            'contact' => ['page' => 1, 'left' => 10, 'top' => 30, 'width' => 45, 'fontSize' => 10],
-            'email' => ['page' => 1, 'left' => 10, 'top' => 34, 'width' => 55, 'fontSize' => 10],
-            // employer default removed
-            'contract' => ['page' => 1, 'left' => 10, 'top' => 50, 'width' => 70, 'fontSize' => 10],
-            'narrative' => ['page' => 1, 'left' => 6, 'top' => 60, 'width' => 88, 'fontSize' => 10],
-            'civil_status' => ['page' => 1, 'left' => 10, 'top' => 22, 'width' => 45, 'fontSize' => 10],
-            'address_abroad' => ['page' => 1, 'left' => 10, 'top' => 38, 'width' => 88, 'fontSize' => 10],
-            'address_ph' => ['page' => 1, 'left' => 10, 'top' => 42, 'width' => 88, 'fontSize' => 10],
-            'relative_name' => ['page' => 1, 'left' => 10, 'top' => 54, 'width' => 70, 'fontSize' => 10],
-            'relative_relationship' => ['page' => 1, 'left' => 10, 'top' => 58, 'width' => 40, 'fontSize' => 10],
-            'relative_contact' => ['page' => 1, 'left' => 52, 'top' => 58, 'width' => 42, 'fontSize' => 10],
-            'bank_account_no' => ['page' => 1, 'left' => 10, 'top' => 80, 'width' => 30, 'fontSize' => 10],
-            'bank_name' => ['page' => 1, 'left' => 42, 'top' => 80, 'width' => 30, 'fontSize' => 10],
-            'bank_branch' => ['page' => 1, 'left' => 74, 'top' => 80, 'width' => 20, 'fontSize' => 10],
-            'account_name' => ['page' => 1, 'left' => 10, 'top' => 84, 'width' => 60, 'fontSize' => 10],
-            'signature_printed' => ['page' => 1, 'left' => 10, 'top' => 90, 'width' => 50, 'fontSize' => 10],
-            'help-repatriation' => ['page' => 1, 'left' => 10, 'top' => 52, 'width' => 5, 'fontSize' => 10],
-            'help-legal' => ['page' => 1, 'left' => 28, 'top' => 52, 'width' => 5, 'fontSize' => 10],
-            'help-medical' => ['page' => 1, 'left' => 46, 'top' => 52, 'width' => 5, 'fontSize' => 10],
-            'help-rescue' => ['page' => 1, 'left' => 64, 'top' => 52, 'width' => 5, 'fontSize' => 10],
-            'help-welfare_senior' => ['page' => 1, 'left' => 10, 'top' => 56, 'width' => 5, 'fontSize' => 10],
-            'help-shipment' => ['page' => 1, 'left' => 28, 'top' => 56, 'width' => 5, 'fontSize' => 10],
-            'help-compassionate' => ['page' => 1, 'left' => 46, 'top' => 56, 'width' => 5, 'fontSize' => 10],
-            'help-food' => ['page' => 1, 'left' => 64, 'top' => 56, 'width' => 5, 'fontSize' => 10],
-            'help-transportation' => ['page' => 1, 'left' => 10, 'top' => 60, 'width' => 5, 'fontSize' => 10],
-            'help-temporary_shelter' => ['page' => 1, 'left' => 28, 'top' => 60, 'width' => 5, 'fontSize' => 10],
-            'help-others' => ['page' => 1, 'left' => 46, 'top' => 60, 'width' => 30, 'fontSize' => 10],
-        ];
-    }
+    // NOTE: The old FPDI-based writeDmwFields, writeDmwText, sanitizePdfText,
+    // resolveDmwFieldCoords, and dmwFieldDefaults methods have been removed.
+    // PDF generation now uses DomPDF with the ofw.dmwpdf Blade template.
 }

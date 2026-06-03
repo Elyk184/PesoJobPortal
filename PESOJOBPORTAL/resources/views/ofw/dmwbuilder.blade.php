@@ -501,6 +501,12 @@
 @section('content')
 <div class="dmw-builder-shell">
 
+<form method="POST" action="{{ route('ofw.dmw-download') }}" enctype="multipart/form-data">
+    @csrf
+
+    {{-- Signature date for the PDF --}}
+    <input type="hidden" name="signature_date" value="{{ now()->toDateString() }}">
+
 <div id="dmwPdfPages">
 
 {{-- ══════════════════════════════════════════════════════ --}}
@@ -889,18 +895,18 @@
 {{-- DOWNLOAD BAR --}}
 {{-- ══════════════════════════════════════════════════════ --}}
 <div class="download-bar">
-    <button class="btn-download" id="btnDownload" onclick="downloadPDF()">
+    <button class="btn-download" id="btnDownload" type="submit">
         ⬇ Download as PDF
     </button>
-    <span id="downloadProgress">Generating PDF, please wait…</span>
-    <span id="downloadHint">Fill out all fields before downloading</span>
+    <span id="downloadProgress" style="display:none;">Generating PDF, please wait…</span>
+    <span id="downloadHint">Fill out required fields before downloading</span>
 </div>
+
 </div>
+</form>
 @endsection
 
 @push('scripts')
-{{-- html2pdf library for client-side PDF download --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 /* ──────────────────────────────────────────────────────
    IMAGE UPLOAD PREVIEW
@@ -954,53 +960,15 @@ document.querySelectorAll('input[name="civil_status"]').forEach(function (cb) {
     });
 });
 
-/* ──────────────────────────────────────────────────────
-   PDF DOWNLOAD via html2pdf.js
-   - A4 size: 210 mm × 297 mm
-   - Hides the download bar during capture
-   - Captures all 4 pages as separate PDF pages
-────────────────────────────────────────────────────── */
-function downloadPDF() {
-    const btn      = document.getElementById('btnDownload');
-    const progress = document.getElementById('downloadProgress');
-    const hint     = document.getElementById('downloadHint');
-    const bar      = document.querySelector('.download-bar');
-
-    btn.disabled = true;
-    progress.style.display = 'inline';
-    hint.style.display = 'none';
-
-    /* Temporarily hide the bar so it doesn't appear in the PDF */
-    bar.style.display = 'none';
-
-    const element = document.getElementById('dmwPdfPages');
-
-    const opt = {
-        margin: 0,
-        filename: 'RFA_Form_DMW.pdf',
-        image: { type: 'jpeg', quality: 0.97 },
-        html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            windowWidth: 794, /* 210mm @ 96 dpi ≈ A4 width */
-        },
-        jsPDF: {
-            unit: 'mm',
-            format: 'a4',
-            orientation: 'portrait',
-        },
-        bar.style.display = 'flex';
-        btn.disabled = false;
-        progress.style.display = 'none';
-        hint.style.display = 'inline';
-    }).catch(function (err) {
-        console.error(err);
-        bar.style.display = 'flex';
-        btn.disabled = false;
-        progress.style.display = 'none';
-        hint.style.display = 'inline';
+// Single-select for relationship checkboxes
+document.querySelectorAll('input[name="relationship"]').forEach(function (cb) {
+    cb.addEventListener('change', function () {
+        if (this.checked) {
+            document.querySelectorAll('input[name="relationship"]').forEach(function (o) {
+                if (o !== cb) o.checked = false;
+            });
+        }
     });
-}
+});
 </script>
 @endpush
