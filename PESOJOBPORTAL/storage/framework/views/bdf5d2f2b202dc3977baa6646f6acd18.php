@@ -10,7 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Georgia', 'Times New Roman', serif;
             background: #f5f5f5;
@@ -19,7 +19,7 @@
         :root {
             --org-gap: 1rem; /* vertical gap above organization line — adjust as needed */
         }
-        
+
         .document-container {
             max-width: 850px;
             margin: 0 auto;
@@ -29,7 +29,7 @@
             height: 11in;
             padding: 1.2in;
         }
-        
+
         .content {
             position: relative;
             z-index: 1;
@@ -37,13 +37,13 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .header {
             text-align: center;
             margin-bottom: 0;
             padding-bottom: 0;
         }
-        
+
         .header-line {
             font-size: 11px;
             font-weight: 600;
@@ -52,13 +52,13 @@
             line-height: 1.4;
             white-space: nowrap;
         }
-        
+
         .header-line.peso-office {
             font-size: 15px;
             font-weight: 700;
             white-space: nowrap;
         }
-        
+
         .title {
             font-size: 44px;
             font-weight: 560;
@@ -68,7 +68,7 @@
             text-transform: uppercase;
             text-align: center;
         }
-        
+
         .subtitle {
             font-size: 12px;
             font-weight: 700;
@@ -76,7 +76,7 @@
             margin-bottom: 1rem;
             text-transform: uppercase;
         }
-        
+
         .info-section {
             margin: 0.1rem 0;
             display: flex;
@@ -85,7 +85,7 @@
             flex-direction: column;
             text-align: center;
         }
-        
+
         .info-label {
             font-size: 12px;
             font-weight: 700;
@@ -95,7 +95,7 @@
             margin-bottom: 0.3rem;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
-        
+
         .info-value {
             font-size: 32px;
             font-weight: 600;
@@ -104,7 +104,7 @@
             font-family: 'Georgia', 'Times New Roman', serif;
             padding-bottom: 0.5rem;
         }
-        
+
         .subject-line {
             font-size: 12px;
             font-weight: 600;
@@ -112,7 +112,7 @@
             text-transform: uppercase;
             text-align: center;
         }
-        
+
         .body-text {
             font-size: 13px;
             line-height: 1.8;
@@ -181,7 +181,7 @@
             word-break: break-word;
             text-align: left;
         }
-        
+
         .clearance-statement {
             background: transparent;
             padding: 0.5rem 0;
@@ -193,7 +193,7 @@
             text-align: justify;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
-        
+
         .footer-section {
             margin-top: auto;
             display: grid;
@@ -201,11 +201,11 @@
             gap: 2rem;
             margin-top: 1.5rem;
         }
-        
+
         .signature-block {
             text-align: center;
         }
-        
+
         .signature-line {
             border-top: none;
             margin-top: 2rem;
@@ -214,7 +214,7 @@
             font-weight: 600;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
-        
+
         .office-info {
             margin-top: 0.35rem;
             margin-left: -1.2in;
@@ -258,13 +258,13 @@
             height: 25px;
             object-fit: cover;
         }
-        
+
         .logo {
             width: 90px;
             height: auto;
             flex-shrink: 0;
         }
-        
+
         .logo-left {
             width: 90px;
             height: auto;
@@ -285,7 +285,7 @@
             margin-bottom: 0;
             padding-bottom: 0;
         }
-        
+
         .clearance-number {
             font-size: 12px;
             font-weight: 700;
@@ -293,7 +293,7 @@
             letter-spacing: 1px;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
-        
+
         .print-button {
             padding: 0.75rem 1.5rem;
             background: #003366;
@@ -345,11 +345,11 @@
             align-items: center;
             gap: 0.45rem;
         }
-        
+
         .print-button:hover {
             background: #002244;
         }
-        
+
         .back-button {
             position: fixed;
             top: 1rem;
@@ -368,11 +368,11 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .back-button:hover {
             background: #4b5563;
         }
-        
+
         .approved-by {
             font-size: 11px;
             font-weight: 600;
@@ -380,7 +380,7 @@
             margin-bottom: 0.5rem;
             font-family: 'Georgia', 'Times New Roman', serif;
         }
-        
+
         .or-number {
             font-size: 12px;
             font-weight: 600;
@@ -396,7 +396,7 @@
             margin-top: 0.75rem;
             margin-bottom: 0 !important;
         }
-        
+
         .placeholder-uppercase {
             text-transform: uppercase;
             text-decoration: underline;
@@ -433,7 +433,7 @@
                 background: white;
                 padding: 0;
             }
-            
+
             .document-container {
                 max-width: 100%;
                 box-shadow: none;
@@ -442,7 +442,7 @@
                 margin: 0;
                 padding: 1in;
             }
-            
+
             .document-actions, .back-button {
                 display: none;
             }
@@ -481,37 +481,37 @@
                 </div>
                 <img src="data:image/png;base64,<?php echo e(base64_encode(file_get_contents(resource_path('logos/BAGONG-PILIPINAS-LOGO-1-1.png')))); ?>" alt="Bagong Pilipinas Logo" class="logo">
             </div>
-            
+
             <div class="title">PESO CLEARANCE</div>
-            
+
             <div class="info-section">
                 <div>
                     <div class="info-value"><?php echo e(strtoupper($clearance->user?->name ?? 'APPLICANT NAME')); ?></div>
                     <div class="info-label">Name</div>
                 </div>
             </div>
-            
+
             <div class="info-section">
                 <div style="width: 100%; margin-top: 0.2rem;">
                     <div id="residence-address-preview" class="capitalize-words" style="font-size: 24px; font-weight: 600; text-decoration: underline;"><?php echo e($autoResidenceAddress ?? 'Manolo Fortich, Bukidnon'); ?></div>
                 </div>
             </div>
-            
+
             <div class="clearance-statement">
                 <strong>REGISTRY THIS IS TO CERTIFY THAT</strong> the above-named person has been entered in the MANPOWER SKILLS REGISTRY of MANOLO FORTICH, and may be employed in accordance with the Labor Code of the Philippines under Presidential Decree No.: 442, as amended and defined in the ff. Chapter 1, Art. 60-61, Chapter II, Art. 139 (a,b,c).
             </div>
-            
+
             <div class="body-text">
                 <strong>THIS CERTIFIES FURTHER THAT</strong> based on the clearances issued by the BARANGAY <span id="residence-address-body" class="capitalize-words<?php echo e($residenceAddress ? ' typed-style' : ''); ?>">
-                    <?php if($clearance->status === 'pending'): ?>
-                        <span id="residence-address-inline" class="clearance-inline-editor clearance-inline-editor--barangay" contenteditable="true" role="textbox" aria-label="Residence address" data-placeholder="TYPE BARANGAY HERE"><?php echo e(old('residence_address', $residenceAddress)); ?></span>
+                        <?php if($clearance->status === 'pending'): ?>
+                        <span id="residence-address-inline" class="clearance-inline-editor clearance-inline-editor--barangay" contenteditable="true" role="textbox" aria-label="Residence address" data-placeholder="TYPE BARANGAY / ADDRESS HERE"><?php echo e(old('residence_address', $residenceAddress)); ?></span>
                     <?php else: ?>
-                        <?php echo $residenceAddress ? e($residenceAddress) : '<span class="placeholder-uppercase">TYPE BARANGAY HERE</span>'; ?>
+                        <?php echo $residenceAddress ? e($residenceAddress) : '<span class="placeholder-uppercase">TYPE BARANGAY / ADDRESS HERE</span>'; ?>
 
                     <?php endif; ?>
                 </span> herein subject person has <strong>NO DEROGATORY RECORD.</strong>
             </div>
-            
+
             <div class="body-text spaced-paragraph">
                 This EMPLOYMENT CLEARANCE is issued in connection with the desire of <?php echo e($objectivePronoun); ?> to work at:
             </div>
@@ -543,13 +543,13 @@
                     </div>
                 </div>
             </div>
-            
+
 
 <div style="padding-top: 0.6rem; text-align: center; margin-bottom: 0; font-style: italic; font-weight: bold;">"Lupad Manolo Fortich"</div>
 <div style="text-align:center; margin-top:-2px; margin-bottom:0.1rem; font-size:0.78rem; font-weight:500; color:#666; letter-spacing:0.8px; text-transform:uppercase;">SOAR HIGH MANOLO FORTICH</div>
 
             <div class="office-info">
-               
+
                 <div class="contact-line">
                     <span class="contact-item">✉ peso@manolofortich.gov.ph</span>
                     <span>|</span>
@@ -693,4 +693,5 @@
         }
     })();
 </script>
-</html><?php /**PATH C:\Users\63965\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/clearance-document-view.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH C:\Users\63965\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/clearance-document-view.blade.php ENDPATH**/ ?>

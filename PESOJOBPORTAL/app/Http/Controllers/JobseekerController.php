@@ -555,8 +555,10 @@ class JobseekerController extends Controller
         $clearance = PesoClearance::query()
             ->where('user_id', $userId)
             ->whereIn('status', ['active', 'expired'])
+            ->with(['issuedClearance'])
             ->latest('id')
             ->first();
+
 
         $pendingRequest = PesoClearance::query()
             ->where('user_id', $userId)
@@ -585,9 +587,117 @@ class JobseekerController extends Controller
         ]);
     }
 
+    public function viewPesoClearanceDocument(): View
+    {
+        $userId = (int) Auth::id();
+
+        $clearance = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->whereIn('status', ['active', 'expired'])
+            ->with(['issuedClearance'])
+            ->latest('id')
+            ->first();
+
+        if (! $clearance) {
+            abort(404);
+        }
+
+        $issuedClearance = $clearance->issuedClearance;
+        $hasDocument = !empty($issuedClearance?->document_path) || !empty($clearance->document_path);
+
+        if (! $hasDocument) {
+            return back()->with('error', 'Clearance document not generated yet.');
+        }
+
+        // Reuse the admin HTML view ("copied" behavior).
+        $sexRecord = JobseekerPersonalInformation::query()
+            ->where('user_id', $clearance->user_id)
+            ->first();
+
+        $sex = $sexRecord?->sex ?? null;
+
+        $possessivePronoun = 'their';
+        $objectivePronoun = 'him/her';
+
+        if ($sex) {
+            $s = strtolower($sex);
+            if (in_array($s, ['male', 'm', 'man'])) {
+                $possessivePronoun = 'his';
+                $objectivePronoun = 'him';
+            } elseif (in_array($s, ['female', 'f', 'woman'])) {
+                $possessivePronoun = 'her';
+                $objectivePronoun = 'her';
+            }
+        }
+
+        $residenceAddress = $issuedClearance?->residence_address ?? $clearance->residence_address ?? '';
+        $companyName = $issuedClearance?->company_name ?? $clearance->company_name ?? '';
+
+        // Admin view expects these keys.
+        return view('admin.clearance-document-view', [
+            'clearance' => $clearance,
+            'autoResidenceAddress' => $this->formatJobseekerAutoResidenceAddress($clearance),
+            'residenceAddress' => $residenceAddress,
+            'companyName' => $companyName,
+            'possessivePronoun' => $possessivePronoun,
+            'objectivePronoun' => $objectivePronoun,
+        ]);
+    }
+
+    public function downloadPesoClearanceDocument()
+    {
+        $userId = (int) Auth::id();
+
+        $clearance = PesoClearance::query()
+            ->where('user_id', $userId)
+            ->whereIn('status', ['active', 'expired'])
+            ->with(['issuedClearance'])
+            ->latest('id')
+            ->first();
+
+        if (! $clearance) {
+            abort(404);
+        }
+
+        $issuedClearance = $clearance->issuedClearance;
+        $documentPath = $issuedClearance?->document_path ?: $clearance->document_path;
+
+        if (! $documentPath) {
+            return back()->with('error', 'Document not found.');
+        }
+
+        if (! \Illuminate\Support\Facades\Storage::disk('local')->exists($documentPath)) {
+            return back()->with('error', 'Document not found.');
+        }
+
+        return \Illuminate\Support\Facades\Storage::download(
+            $documentPath,
+            'clearance-' . $clearance->clearance_number . '.pdf'
+        );
+    }
+
+    private function formatJobseekerAutoResidenceAddress(PesoClearance $clearance): string
+    {
+        $presentAddress = JobseekerAddress::query()
+            ->where('user_id', $clearance->user_id)
+            ->whereIn('type', ['present', 'permanent'])
+            ->orderByRaw("CASE WHEN type='present' THEN 0 ELSE 1 END")
+            ->latest('updated_at')
+            ->first();
+
+        $parts = array_filter([
+            $presentAddress?->barangay,
+            $presentAddress?->municipality,
+            $presentAddress?->province,
+        ], fn ($value) => filled($value));
+
+        return $parts ? ucwords(strtolower(implode(', ', $parts))) : 'Manolo Fortich, Bukidnon';
+    }
+
     public function requestPesoClearance(Request $request): RedirectResponse
     {
         $user = $request->user();
+
 
         $request->validate([
             'remarks' => ['nullable', 'string', 'max:500'],

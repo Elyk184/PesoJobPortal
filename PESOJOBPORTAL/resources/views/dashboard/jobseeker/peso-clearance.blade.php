@@ -258,9 +258,27 @@
 						</div>
 
 						<div class="mt-3 mt-lg-4">
-							<div class="card border-0 shadow-sm clearance-panel">
-								<div class="card-body p-4">
-									<div class="row g-3 g-lg-4">
+													<div class="card border-0 shadow-sm clearance-panel">
+														<div class="card-body p-4">
+															<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 gap-md-3 mb-3">
+																<div>
+																	<div class="small text-muted">Your PESO Clearance</div>
+																	<div class="fw-bold fs-5">{{ $clearance->clearance_number }}</div>
+																</div>
+
+																@if(!empty($clearance->issuedClearance?->document_path) || !empty($clearance->document_path))
+																	<div class="d-flex flex-wrap gap-2">
+																		<a class="btn btn-outline-primary" href="{{ route('jobseeker.peso-clearance.view-document') }}">
+																			<i class="bi bi-eye"></i> View Certificate
+																		</a>
+																		<a class="btn btn-primary" href="{{ route('jobseeker.peso-clearance.download-document') }}">
+																			<i class="bi bi-download"></i> Download PDF
+																		</a>
+																	</div>
+																@endif
+															</div>
+
+															<div class="row g-3 g-lg-4">
 										<div class="col-12 col-md-6">
 											<div class="clearance-item h-100">
 												<div class="small text-muted mb-1">Clearance Number</div>
