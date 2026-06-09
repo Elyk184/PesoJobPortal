@@ -58,4 +58,4 @@
         </div>
     </div>
 </section>
-<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/components/services.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\63965\PesoJobPortal\PESOJOBPORTAL\resources\views/components/services.blade.php ENDPATH**/ ?>

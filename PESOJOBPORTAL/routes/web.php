@@ -58,6 +58,11 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/peso-clearance', [JobseekerController::class, 'pesoClearance'])->name('peso-clearance');
     Route::post('/peso-clearance/request', [JobseekerController::class, 'requestPesoClearance'])->name('peso-clearance.request');
 
+    Route::get('/peso-clearance/document', [JobseekerController::class, 'viewPesoClearanceDocument'])->name('peso-clearance.view-document');
+    Route::get('/peso-clearance/download', [JobseekerController::class, 'downloadPesoClearanceDocument'])->name('peso-clearance.download-document');
+
+
+
     Route::get('/resume-builder', [JobseekerController::class, 'resumeBuilder'])->name('resume-builder');
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
