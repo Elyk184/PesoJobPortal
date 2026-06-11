@@ -75,10 +75,12 @@
 			<div class="row g-3">
 				<?php $__currentLoopData = $recommendations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 					<?php
-						$job = $item['job'];
-						$score = (int) ($item['score'] ?? 0);
+						$job = data_get($item, 'job');
+						$score = (int) data_get($item, 'score', 0);
 						$badgeClass = $score >= 80 ? 'success' : ($score >= 60 ? 'primary' : 'warning');
 					?>
+
+					<?php if($job): ?>
 
 					<div class="col-12 col-xl-6">
 						<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-3">
@@ -105,25 +107,52 @@
 
 							<p class="mb-0 small text-muted"><?php echo e(\Illuminate\Support\Str::limit($job->description, 150)); ?></p>
 
-							<?php if(! empty($item['matched_skills'])): ?>
+							<?php if(! empty(data_get($item, 'matched_skills'))): ?>
 								<div class="d-flex flex-wrap gap-2">
-									<?php $__currentLoopData = $item['matched_skills']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									<?php $__currentLoopData = data_get($item, 'matched_skills', []); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 										<span class="badge rounded-pill text-bg-light border"><?php echo e($skill); ?></span>
 									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 								</div>
 							<?php endif; ?>
 
-							<?php if(! empty($item['reasons'])): ?>
+							<?php if(! empty(data_get($item, 'reasons'))): ?>
 								<ul class="small text-muted mb-0 ps-3">
-									<?php $__currentLoopData = $item['reasons']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									<?php $__currentLoopData = data_get($item, 'reasons', []); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reason): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 										<li><?php echo e($reason); ?></li>
 									<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 								</ul>
 							<?php endif; ?>
 						</article>
 					</div>
+					<?php endif; ?>
 				<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 			</div>
+
+			<?php if(isset($adminRecommendations) && $adminRecommendations->isNotEmpty()): ?>
+				<div class="mt-4 pt-4 border-top">
+					<div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+						<h3 class="h5 mb-0 fw-bold"><i class="bi bi-megaphone me-2"></i>Admin Recommendations</h3>
+						<a href="<?php echo e(route('jobseeker.notifications')); ?>" class="btn btn-sm btn-outline-primary">View Notifications</a>
+					</div>
+					<div class="row g-3">
+						<?php $__currentLoopData = $adminRecommendations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $recommendation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<div class="col-12 col-xl-6">
+								<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-2 border-start border-4" style="border-color: #2d6be0;">
+									<div class="d-flex align-items-start justify-content-between gap-2">
+										<div>
+											<h4 class="h6 mb-1 fw-bold text-dark"><?php echo e($recommendation['title']); ?></h4>
+											<div class="small text-muted">Sent by the admin portal</div>
+										</div>
+										<span class="badge text-bg-info">Admin</span>
+									</div>
+									<p class="mb-0 small text-muted"><?php echo e($recommendation['message']); ?></p>
+									<div class="small text-secondary"><?php echo e(optional($recommendation['created_at'])->format('M d, Y h:i A')); ?></div>
+								</article>
+							</div>
+						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+					</div>
+				</div>
+			<?php endif; ?>
 		<?php endif; ?>
 	</div>
 </section>

@@ -366,6 +366,25 @@ class JobseekerController extends Controller
         $user = $request->user();
         $profile = $user?->profile;
         $recommendations = $this->buildProfileBasedRecommendations($profile);
+        $adminRecommendations = UserNotification::query()
+            ->where('user_id', (int) $user->id)
+            ->with('portalNotification')
+            ->latest('id')
+            ->get()
+            ->filter(function (UserNotification $notification) {
+                return str_starts_with((string) data_get($notification, 'portalNotification.title', ''), 'Job Recommendation:');
+            })
+            ->map(function (UserNotification $notification) {
+                $portalNotification = $notification->portalNotification;
+
+                return [
+                    'title' => (string) data_get($portalNotification, 'title', 'Job Recommendation'),
+                    'message' => (string) data_get($portalNotification, 'message', ''),
+                    'created_at' => $notification->created_at,
+                    'read_at' => $notification->read_at,
+                ];
+            })
+            ->values();
         $profileHasSkills = $this->hasSkillsDetails($profile);
         $activeJobsCount = PesoJob::query()
             ->where('status', 'active')
@@ -374,7 +393,8 @@ class JobseekerController extends Controller
 
         return view('dashboard.jobseeker.recommendations', [
             'recommendations' => $recommendations,
-            'recommendedCount' => $recommendations->count(),
+            'adminRecommendations' => $adminRecommendations,
+            'recommendedCount' => $recommendations->count() + $adminRecommendations->count(),
             'activeJobsCount' => $activeJobsCount,
             'appliedJobsCount' => $appliedJobsCount,
             'profileHasSkills' => $profileHasSkills,
@@ -587,7 +607,7 @@ class JobseekerController extends Controller
         ]);
     }
 
-    public function viewPesoClearanceDocument(): View
+    public function viewPesoClearanceDocument(): View|RedirectResponse
     {
         $userId = (int) Auth::id();
 
@@ -1842,14 +1862,15 @@ class JobseekerController extends Controller
                 $job = $item['job'];
 
                 return [
+                    'job' => $job,
                     'title' => $job->title,
                     'location' => $job->location,
                     'employer_name' => $job->employer_name,
                     'salary_range' => $job->salary_range,
                     'description' => $job->description,
                     'requirements_list' => $this->extractJobRequirements($job),
-                    'match_score' => $item['score'],
-                    'match_reasons' => $item['match_reasons'],
+                    'score' => $item['score'],
+                    'reasons' => $item['match_reasons'],
                 ];
             })
             ->values();
