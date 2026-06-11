@@ -106,15 +106,24 @@
                 <span>Notifications</span>
                 <?php
                     $userUnread = 0;
+                    $userRecommendationUnread = 0;
                     if ($user) {
                         $userUnread = \App\Models\UserNotification::query()
                             ->where('user_id', $user->id)
                             ->whereNull('read_at')
                             ->count();
+
+                        $userRecommendationUnread = \App\Models\UserNotification::query()
+                            ->where('user_id', $user->id)
+                            ->whereNull('read_at')
+                            ->whereHas('portalNotification', function ($q) {
+                                $q->where('title', 'like', 'Job Recommendation:%');
+                            })
+                            ->count();
                     }
                 ?>
                 <?php if($userUnread > 0): ?>
-                    <span id="notificationUnreadBadge" class="sidebar-badge"><?php echo e($userUnread); ?></span>
+                    <span id="notificationUnreadBadge" class="sidebar-badge <?php echo e($userRecommendationUnread > 0 ? 'recommend' : ''); ?>"><?php echo e($userUnread); ?></span>
                 <?php else: ?>
                     <span id="notificationUnreadBadge" class="sidebar-badge visually-hidden" aria-hidden="true"></span>
                 <?php endif; ?>

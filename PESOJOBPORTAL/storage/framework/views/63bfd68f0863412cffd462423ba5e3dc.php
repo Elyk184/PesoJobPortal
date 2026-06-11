@@ -334,6 +334,7 @@
 					$title = (string) data_get($notification, 'portalNotification.title', 'Notification');
 					$message = (string) data_get($notification, 'portalNotification.message', '');
 					$createdAt = data_get($notification, 'portalNotification.created_at');
+					$isAdminRecommendation = str_starts_with($title, 'Job Recommendation:');
 				?>
 				<div class="gmail-row <?php echo e($isUnread ? 'unread' : 'read'); ?>" data-notification-id="<?php echo e($notification->id); ?>">
 					<?php if($isUnread): ?>
@@ -346,7 +347,7 @@
 					<div class="gmail-subject"><?php echo e($title); ?></div>
 					<div class="gmail-message"><?php echo e($message); ?></div>
 					<span class="gmail-time"><?php echo e(optional($createdAt)->diffForHumans() ?? 'Now'); ?></span>
-					<span class="gmail-badge">PESO</span>
+					<span class="gmail-badge"><?php echo e($isAdminRecommendation ? 'RECOMMEND' : 'PESO'); ?></span>
 
 					<?php if($isUnread): ?>
 						<button type="button" class="mark-read-btn gmail-action" data-mark-read data-id="<?php echo e($notification->id); ?>">Mark Read</button>
@@ -394,6 +395,16 @@
 					sidebarUnread.textContent = '';
 					sidebarUnread.classList.add('visually-hidden');
 					sidebarUnread.setAttribute('aria-hidden', 'true');
+				}
+
+				// Toggle recommend marker if there are any unread admin recommendation rows.
+				const unreadRecommendExists = Array.from(document.querySelectorAll('.gmail-row.unread .gmail-badge'))
+					.some(el => (el.textContent || '').trim() === 'RECOMMEND');
+
+				if (unreadRecommendExists) {
+					sidebarUnread.classList.add('recommend');
+				} else {
+					sidebarUnread.classList.remove('recommend');
 				}
 			}
 		}
@@ -471,15 +482,17 @@
 			row.className = 'gmail-row unread';
 			row.setAttribute('data-notification-id', item.id);
 
+			const badgeText = (item.title || '').startsWith('Job Recommendation:') ? 'RECOMMEND' : 'PESO';
+
 			row.innerHTML = `
-				<span class="unread-dot" aria-hidden="true"></span>
-				<span class="gmail-type-icon" aria-hidden="true"><i class="bi bi-bell"></i></span>
-				<div class="gmail-subject">${escapeHtml(item.title || 'Notification')}</div>
-				<div class="gmail-message">${escapeHtml(item.message || '')}</div>
-				<span class="gmail-time">Just now</span>
-				<span class="gmail-badge">PESO</span>
-				<button type="button" class="mark-read-btn gmail-action" data-mark-read data-id="${item.id}">Mark Read</button>
-			`;
+					<span class="unread-dot" aria-hidden="true"></span>
+					<span class="gmail-type-icon" aria-hidden="true"><i class="bi bi-bell"></i></span>
+					<div class="gmail-subject">${escapeHtml(item.title || 'Notification')}</div>
+					<div class="gmail-message">${escapeHtml(item.message || '')}</div>
+					<span class="gmail-time">Just now</span>
+					<span class="gmail-badge">${escapeHtml(badgeText)}</span>
+					<button type="button" class="mark-read-btn gmail-action" data-mark-read data-id="${item.id}">Mark Read</button>
+				`;
 
 			return row;
 		}
@@ -509,6 +522,11 @@
 							list.prepend(notificationNode);
 							bindReadButtons(notificationNode);
 						});
+
+						// If any of the new items are admin recommendations, mark sidebar badge.
+						if (items.some(i => (i.title || '').startsWith('Job Recommendation:'))) {
+							if (sidebarUnread) sidebarUnread.classList.add('recommend');
+						}
 
 						updateTotalCount(totalCount + items.length);
 					}
