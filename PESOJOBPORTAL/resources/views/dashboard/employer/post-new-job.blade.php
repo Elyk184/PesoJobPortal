@@ -565,7 +565,7 @@
                     <div class="mb-3">
                         <textarea class="form-control bullet-field @error('key_responsibilities') is-invalid @enderror"
                                   id="key_responsibilities" name="key_responsibilities" rows="5"
-                                  placeholder="List the main duties and responsibilities for this role...">{{ old('key_responsibilities') }}</textarea>
+                                  placeholder="List the main duties and responsibilities for this role..." required>{{ old('key_responsibilities') }}</textarea>
                         @error('key_responsibilities')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -588,7 +588,7 @@
                     <div class="mb-3">
                         <textarea class="form-control bullet-field @error('qualifications') is-invalid @enderror"
                                   id="qualifications" name="qualifications" rows="5"
-                                  placeholder="List the required qualifications...">{{ old('qualifications') }}</textarea>
+                                  placeholder="List the required qualifications..." required>{{ old('qualifications') }}</textarea>
                         @error('qualifications')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -611,7 +611,7 @@
                     <div class="mb-3">
                         <textarea class="form-control bullet-field @error('preferred_skills') is-invalid @enderror"
                                   id="preferred_skills" name="preferred_skills" rows="4"
-                                  placeholder="List the required skills for this position...">{{ old('preferred_skills') }}</textarea>
+                                  placeholder="List the required skills for this position..." required>{{ old('preferred_skills') }}</textarea>
                         @error('preferred_skills')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -634,7 +634,7 @@
                     <div class="mb-3">
                         <textarea class="form-control bullet-field @error('experience') is-invalid @enderror"
                                   id="experience" name="experience" rows="4"
-                                  placeholder="e.g. 2-3 years of experience in software development...">{{ old('experience') }}</textarea>
+                                  placeholder="e.g. 2-3 years of experience in software development..." required>{{ old('experience') }}</textarea>
                         @error('experience')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -657,7 +657,7 @@
                     <div class="mb-3">
                         <textarea class="form-control @error('education') is-invalid @enderror"
                                   id="education" name="education" rows="4"
-                                  placeholder="e.g. Bachelor's degree in Computer Science or related field...">{{ old('education') }}</textarea>
+                                  placeholder="e.g. Bachelor's degree in Computer Science or related field..." required>{{ old('education') }}</textarea>
                         @error('education')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -680,7 +680,7 @@
                     <div class="mb-3">
                         <textarea class="form-control bullet-field @error('benefits') is-invalid @enderror"
                                   id="benefits" name="benefits" rows="4"
-                                  placeholder="List the benefits and perks...">{{ old('benefits') }}</textarea>
+                                  placeholder="List the benefits and perks..." required>{{ old('benefits') }}</textarea>
                         @error('benefits')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -706,12 +706,12 @@
                             <input type="number" class="form-control @error('salary_min') is-invalid @enderror"
                                    id="salary_min" name="salary_min"
                                    placeholder="Min"
-                                   value="{{ old('salary_min') }}" min="0" step="1000">
+                                   value="{{ old('salary_min') }}" min="0" step="1000" required>
                             <span class="salary-separator">to</span>
-                            <input type="number" class="form-control @error('salary_max') is-invalid @enderror"
-                                   id="salary_max" name="salary_max"
+                            <input type="number" class="form-control @error('salary_max') is-invalid @enderror" required
+                                    id="salary_max" name="salary_max"
                                    placeholder="Max"
-                                   value="{{ old('salary_max') }}" min="0" step="1000">
+                                   value="{{ old('salary_max') }}" min="0" step="1000" required>
                         </div>
                         @error('salary_min')
                             <div class="text-danger small mt-1">{{ $message }}</div>
@@ -739,7 +739,7 @@
                         <label for="application_deadline" class="form-label">Last Date to Apply</label>
                         <input type="date" class="form-control @error('application_deadline') is-invalid @enderror"
                                id="application_deadline" name="application_deadline"
-                               value="{{ old('application_deadline') }}"
+                               value="{{ old('application_deadline') }}" required
                                min="{{ date('Y-m-d', strtotime('+1 day')) }}">
                         @error('application_deadline')
                             <div class="invalid-feedback">{{ $message }}</div>

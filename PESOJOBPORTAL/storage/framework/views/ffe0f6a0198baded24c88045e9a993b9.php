@@ -642,7 +642,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="key_responsibilities" name="key_responsibilities" rows="5"
-                                  placeholder="List the main duties and responsibilities for this role..."><?php echo e(old('key_responsibilities')); ?></textarea>
+                                  placeholder="List the main duties and responsibilities for this role..." required><?php echo e(old('key_responsibilities')); ?></textarea>
                         <?php $__errorArgs = ['key_responsibilities'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -679,7 +679,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="qualifications" name="qualifications" rows="5"
-                                  placeholder="List the required qualifications..."><?php echo e(old('qualifications')); ?></textarea>
+                                  placeholder="List the required qualifications..." required><?php echo e(old('qualifications')); ?></textarea>
                         <?php $__errorArgs = ['qualifications'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -716,7 +716,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="preferred_skills" name="preferred_skills" rows="4"
-                                  placeholder="List the required skills for this position..."><?php echo e(old('preferred_skills')); ?></textarea>
+                                  placeholder="List the required skills for this position..." required><?php echo e(old('preferred_skills')); ?></textarea>
                         <?php $__errorArgs = ['preferred_skills'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -753,7 +753,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="experience" name="experience" rows="4"
-                                  placeholder="e.g. 2-3 years of experience in software development..."><?php echo e(old('experience')); ?></textarea>
+                                  placeholder="e.g. 2-3 years of experience in software development..." required><?php echo e(old('experience')); ?></textarea>
                         <?php $__errorArgs = ['experience'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -790,7 +790,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="education" name="education" rows="4"
-                                  placeholder="e.g. Bachelor's degree in Computer Science or related field..."><?php echo e(old('education')); ?></textarea>
+                                  placeholder="e.g. Bachelor's degree in Computer Science or related field..." required><?php echo e(old('education')); ?></textarea>
                         <?php $__errorArgs = ['education'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -827,7 +827,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                   id="benefits" name="benefits" rows="4"
-                                  placeholder="List the benefits and perks..."><?php echo e(old('benefits')); ?></textarea>
+                                  placeholder="List the benefits and perks..." required><?php echo e(old('benefits')); ?></textarea>
                         <?php $__errorArgs = ['benefits'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -867,7 +867,7 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                    id="salary_min" name="salary_min"
                                    placeholder="Min"
-                                   value="<?php echo e(old('salary_min')); ?>" min="0" step="1000">
+                                   value="<?php echo e(old('salary_min')); ?>" min="0" step="1000" required>
                             <span class="salary-separator">to</span>
                             <input type="number" class="form-control <?php $__errorArgs = ['salary_max'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -876,10 +876,10 @@ if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>"
-                                   id="salary_max" name="salary_max"
+unset($__errorArgs, $__bag); ?>" required
+                                    id="salary_max" name="salary_max"
                                    placeholder="Max"
-                                   value="<?php echo e(old('salary_max')); ?>" min="0" step="1000">
+                                   value="<?php echo e(old('salary_max')); ?>" min="0" step="1000" required>
                         </div>
                         <?php $__errorArgs = ['salary_min'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -928,7 +928,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                id="application_deadline" name="application_deadline"
-                               value="<?php echo e(old('application_deadline')); ?>"
+                               value="<?php echo e(old('application_deadline')); ?>" required
                                min="<?php echo e(date('Y-m-d', strtotime('+1 day'))); ?>">
                         <?php $__errorArgs = ['application_deadline'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');

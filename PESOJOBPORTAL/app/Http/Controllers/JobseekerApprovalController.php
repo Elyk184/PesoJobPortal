@@ -148,31 +148,31 @@ class JobseekerApprovalController extends Controller
 
         // Create a portal notification
         try {
-            $notification = \App\Models\PortalNotification::create([
+            $portalNotification = \App\Models\PortalNotification::create([
                 'title' => "Job Recommendation: {$job->title}",
                 'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
                 'created_by' => auth()->id(),
             ]);
 
             Log::info('PortalNotification created for recommendJob', [
-                'portal_notification_id' => $notification->id,
-                'title' => $notification->title,
-                'created_by' => $notification->created_by,
+                'portal_notification_id' => $portalNotification->id,
+                'title' => $portalNotification->title,
+                'created_by' => $portalNotification->created_by,
             ]);
 
             // Attach to the jobseeker
-            $userNotif = $jobseeker->userNotifications()->create([
-                'portal_notification_id' => $notification->id,
+            $jobseeker->userNotifications()->create([
+                'portal_notification_id' => $portalNotification->id,
+                'user_id' => $jobseeker->id,
             ]);
 
             Log::info('UserNotification created for recommendJob', [
-                'user_notification_id' => $userNotif->id ?? null,
                 'user_id' => $jobseeker->id,
-                'portal_notification_id' => $notification->id,
+                'portal_notification_id' => $portalNotification->id,
             ]);
 
-            return back()->with('success', "Job recommendation sent to {$jobseeker->name}!");
-        } catch (\Exception $e) {
+            return back()->with('success', "Job recommendation sent to {$jobseeker->name}! ");
+        } catch (\Throwable $e) {
             Log::error('Failed to create recommendation notification', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
