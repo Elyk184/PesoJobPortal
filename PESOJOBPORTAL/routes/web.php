@@ -167,6 +167,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
         Route::get('/{jobseeker}', [JobseekerApprovalController::class, 'show'])->name('show');
+        Route::post('/{jobseeker}', [JobseekerApprovalController::class, 'recommendApplicant'])->name('recommend-applicant-legacy');
         Route::post('/{jobseeker}/recommend-job', [JobseekerApprovalController::class, 'recommendJob'])->name('recommend-job');
         Route::post('/{jobseeker}/recommend-applicant', [JobseekerApprovalController::class, 'recommendApplicant'])->name('recommend-applicant');
     });

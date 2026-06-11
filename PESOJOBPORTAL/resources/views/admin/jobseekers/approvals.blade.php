@@ -469,7 +469,7 @@
                     <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Applicant to Employer</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form id="recommendForm" method="POST">
+                <form id="recommendForm" method="POST" action="">
                     @csrf
                     <div class="modal-body" style="padding: 2.5rem; background: #ffffff;">
                         <p style="font-size: 1.1rem; color: #0d1f3c; margin-bottom: 1.5rem;">Recommending: <span id="jobseekerName" style="color: #d72638; font-weight: 700; font-size: 1.3rem;">N/A</span></p>
@@ -949,7 +949,7 @@
                     jobseekerNameSpan.textContent = jobseekerName;
 
                     // Update form action for applicant recommendation
-                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
+                    recommendForm.action = @json(route('admin.jobseekers.recommend-applicant', ['jobseeker' => '__JOBSEEKER_ID__'])).replace('__JOBSEEKER_ID__', jobseekerId);
                     console.log('Form action set to:', recommendForm.action);
                     console.log('Jobseeker:', jobseekerId, jobseekerName);
                     

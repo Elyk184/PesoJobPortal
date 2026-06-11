@@ -1,6 +1,4 @@
-@extends('layouts.admin-dashboard')
-
-@section('title', $jobseeker->name . ' | Jobseeker Profile | PESO Admin')
+<?php $__env->startSection('title', $jobseeker->name . ' | Jobseeker Profile | PESO Admin'); ?>
 
 <?php
     $pageTitle = $jobseeker->name;
@@ -9,24 +7,26 @@
     $hideAdminTopbar = true;
 ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="admin-dashboard">
-    {{-- Success/Error Messages --}}
-    @if(session('success'))
+    
+    <?php if(session('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #10b981;">
             <i class="bi bi-check-circle me-2"></i>
-            <strong>Success!</strong> {{ session('success') }}
+            <strong>Success!</strong> <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
-    @if(session('error'))
+    <?php if(session('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; border-radius: 8px; border-left: 4px solid #ef4444;">
             <i class="bi bi-exclamation-circle me-2"></i>
-            <strong>Error!</strong> {{ session('error') }}
+            <strong>Error!</strong> <?php echo e(session('error')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <style>
         .admin-dashboard {
@@ -587,7 +587,7 @@
         }
     </style>
 
-    @php
+    <?php
         $displayName = $personalInformation?->first_name
             ? trim(implode(' ', array_filter([
                 $personalInformation?->first_name,
@@ -636,48 +636,48 @@
         $filledCount = collect($completionItems)->filter()->count();
         $totalCount = count($completionItems);
         $profileCompletion = $totalCount ? (int) round(($filledCount / $totalCount) * 100) : 0;
-    @endphp
+    ?>
 
     <div class="top-action-bar">
-        <a href="{{ route('admin.jobseekers.index') }}" class="btn-back-top">
+        <a href="<?php echo e(route('admin.jobseekers.index')); ?>" class="btn-back-top">
             <i class="bi bi-arrow-left"></i> Back to List
         </a>
     </div>
 
     <div class="profile-header">
         <div class="profile-card">
-            <div class="profile-completion-bubble" style="--p: {{ $profileCompletion }}%;">
-                <div class="profile-completion-inner">{{ $profileCompletion }}%</div>
+            <div class="profile-completion-bubble" style="--p: <?php echo e($profileCompletion); ?>%;">
+                <div class="profile-completion-inner"><?php echo e($profileCompletion); ?>%</div>
             </div>
             <div class="header-stack">
                 <div class="profile-heading">
                     <div class="profile-kicker"><i class="bi bi-person-badge"></i>Jobseeker profile</div>
                     <div class="profile-avatar">
-                        <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="{{ $displayName }}">
+                        <img src="https://i.pinimg.com/736x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg" alt="<?php echo e($displayName); ?>">
                     </div>
 
                     <div class="profile-info">
-                        <h3>{{ $displayName }}</h3>
-                        <p><i class="bi bi-envelope-paper me-2"></i>{{ $jobseeker->email }}</p>
-                        <p><i class="bi bi-calendar3 me-2"></i>Member since {{ $jobseeker->created_at->format('M d, Y') }}</p>
-                        <p><i class="bi bi-geo-alt-fill me-2"></i>{{ $presentAddressLine }}</p>
+                        <h3><?php echo e($displayName); ?></h3>
+                        <p><i class="bi bi-envelope-paper me-2"></i><?php echo e($jobseeker->email); ?></p>
+                        <p><i class="bi bi-calendar3 me-2"></i>Member since <?php echo e($jobseeker->created_at->format('M d, Y')); ?></p>
+                        <p><i class="bi bi-geo-alt-fill me-2"></i><?php echo e($presentAddressLine); ?></p>
                     </div>
                 </div>
             </div>
 
             <div class="profile-meta-grid">
-                <div class="profile-meta-item"><i class="bi bi-send"></i><span>{{ $jobseeker->applications->count() }} Applications</span></div>
-                <div class="profile-meta-item"><i class="bi bi-mortarboard-fill"></i><span>{{ $educationRows->count() }} Education Records</span></div>
-                <div class="profile-meta-item"><i class="bi bi-stars"></i><span>{{ $skillsCount }} Skills Listed</span></div>
-                <div class="profile-meta-item"><i class="bi bi-briefcase-fill"></i><span>{{ $availableJobs->count() }} Jobs Available</span></div>
+                <div class="profile-meta-item"><i class="bi bi-send"></i><span><?php echo e($jobseeker->applications->count()); ?> Applications</span></div>
+                <div class="profile-meta-item"><i class="bi bi-mortarboard-fill"></i><span><?php echo e($educationRows->count()); ?> Education Records</span></div>
+                <div class="profile-meta-item"><i class="bi bi-stars"></i><span><?php echo e($skillsCount); ?> Skills Listed</span></div>
+                <div class="profile-meta-item"><i class="bi bi-briefcase-fill"></i><span><?php echo e($availableJobs->count()); ?> Jobs Available</span></div>
             </div>
             <div class="profile-progress" style="margin-top:1rem;">
                 <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;color:#334155;font-weight:700;">
                     <span>Profile Completion</span>
-                    <span style="color:#0f172a;">{{ $profileCompletion }}%</span>
+                    <span style="color:#0f172a;"><?php echo e($profileCompletion); ?>%</span>
                 </div>
                 <div style="background:#eef3f8;border-radius:999px;height:12px;overflow:hidden;">
-                    <div style="width:{{ $profileCompletion }}%;height:100%;background:linear-gradient(90deg,#4c7bd9 0%,#67b7ff 100%);box-shadow:inset 0 -2px 6px rgba(0,0,0,0.06);"></div>
+                    <div style="width:<?php echo e($profileCompletion); ?>%;height:100%;background:linear-gradient(90deg,#4c7bd9 0%,#67b7ff 100%);box-shadow:inset 0 -2px 6px rgba(0,0,0,0.06);"></div>
                 </div>
             </div>
         </div>
@@ -687,19 +687,19 @@
         <div class="dashboard-card section-span-12 compact-section">
             <h5><i class="bi bi-person-lines-fill"></i>Personal Information <span class="section-badge"><i class="bi bi-person-vcard"></i>Identity</span></h5>
             <div class="row g-3">
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge"></i>First Name</div><div class="info-value">{{ $personalInformation?->first_name ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge-fill"></i>Middle Initial</div><div class="info-value">{{ $personalInformation?->middle_initial ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-vcard-fill"></i>Surname</div><div class="info-value">{{ $personalInformation?->surname ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-award"></i>Suffix</div><div class="info-value">{{ $personalInformation?->suffix ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-calendar-heart"></i>Date of Birth</div><div class="info-value">{{ $personalInformation?->date_of_birth ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-gender-ambiguous"></i>Sex</div><div class="info-value">{{ $personalInformation?->sex ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-heart-pulse"></i>Civil Status</div><div class="info-value">{{ $personalInformation?->civil_status ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-stars"></i>Religion</div><div class="info-value">{{ $personalInformation?->religion ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-rulers"></i>Height</div><div class="info-value">{{ $personalInformation?->height ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-upc-scan"></i>TIN</div><div class="info-value">{{ $personalInformation?->tin ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-telephone"></i>Contact Number</div><div class="info-value">{{ $personalInformation?->contact_number ?: 'N/A' }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-envelope-at"></i>Email Address</div><div class="info-value">{{ $personalInformation?->email_address ?: $jobseeker->email }}</div></div></div>
-            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-journal-check"></i>In School</div><div class="info-value">{{ ($personalInformation?->currently_in_school ?? false) ? 'Yes' : 'No' }}</div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge"></i>First Name</div><div class="info-value"><?php echo e($personalInformation?->first_name ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-badge-fill"></i>Middle Initial</div><div class="info-value"><?php echo e($personalInformation?->middle_initial ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-vcard-fill"></i>Surname</div><div class="info-value"><?php echo e($personalInformation?->surname ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-award"></i>Suffix</div><div class="info-value"><?php echo e($personalInformation?->suffix ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-calendar-heart"></i>Date of Birth</div><div class="info-value"><?php echo e($personalInformation?->date_of_birth ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-gender-ambiguous"></i>Sex</div><div class="info-value"><?php echo e($personalInformation?->sex ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-heart-pulse"></i>Civil Status</div><div class="info-value"><?php echo e($personalInformation?->civil_status ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-stars"></i>Religion</div><div class="info-value"><?php echo e($personalInformation?->religion ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-rulers"></i>Height</div><div class="info-value"><?php echo e($personalInformation?->height ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-upc-scan"></i>TIN</div><div class="info-value"><?php echo e($personalInformation?->tin ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-telephone"></i>Contact Number</div><div class="info-value"><?php echo e($personalInformation?->contact_number ?: 'N/A'); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-envelope-at"></i>Email Address</div><div class="info-value"><?php echo e($personalInformation?->email_address ?: $jobseeker->email); ?></div></div></div>
+            <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-journal-check"></i>In School</div><div class="info-value"><?php echo e(($personalInformation?->currently_in_school ?? false) ? 'Yes' : 'No'); ?></div></div></div>
             </div>
         </div>
 
@@ -709,13 +709,13 @@
                 <div class="col-12">
                     <div class="info-row">
                         <div class="info-label"><i class="bi bi-house-door"></i>Present Address</div>
-                        <div class="info-value">{{ $presentAddressLine }}</div>
+                        <div class="info-value"><?php echo e($presentAddressLine); ?></div>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="info-row">
                         <div class="info-label"><i class="bi bi-house-heart"></i>Permanent Address</div>
-                        <div class="info-value">{{ $permanentAddressLine }}</div>
+                        <div class="info-value"><?php echo e($permanentAddressLine); ?></div>
                     </div>
                 </div>
             </div>
@@ -723,200 +723,205 @@
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-mortarboard"></i>Education <span class="section-badge"><i class="bi bi-book-half"></i>Learning</span></h5>
-            @forelse($educationRows as $education)
+            <?php $__empty_1 = true; $__currentLoopData = $educationRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $education): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="info-row">
-                    <div class="info-label"><i class="bi bi-building"></i>{{ $education->school ?: 'Record ' . $loop->iteration }}</div>
+                    <div class="info-label"><i class="bi bi-building"></i><?php echo e($education->school ?: 'Record ' . $loop->iteration); ?></div>
                     <div class="info-value">
-                        {{ $education->course ?: 'N/A' }} @if($education->year) | {{ $education->year }} @endif
+                        <?php echo e($education->course ?: 'N/A'); ?> <?php if($education->year): ?> | <?php echo e($education->year); ?> <?php endif; ?>
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="empty-state"><p>No education records available.</p></div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card section-span-12 compact-section">
             <h5><i class="bi bi-briefcase"></i>Work Experience <span class="section-badge"><i class="bi bi-clipboard2-data"></i>History</span></h5>
-            @forelse($experienceRows as $experience)
+            <?php $__empty_1 = true; $__currentLoopData = $experienceRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $experience): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="experience-card">
-                    <div class="profile-entry-kicker">Work Experience #{{ $loop->iteration }}</div>
+                    <div class="profile-entry-kicker">Work Experience #<?php echo e($loop->iteration); ?></div>
 
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="info-label">Company Name <span class="text-danger">*</span></div>
-                            <div class="info-value">{{ $experience->company ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->company ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="info-label">Position/Job Title <span class="text-danger">*</span></div>
-                            <div class="info-value">{{ $experience->title ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->title ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="info-label">Location (City) <span class="text-danger">*</span></div>
-                            <div class="info-value">{{ $experience->location ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->location ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-1">
                             <div class="info-label">Status</div>
-                            <div class="info-value">{{ $experience->status ? 'Yes' : 'No' }}</div>
+                            <div class="info-value"><?php echo e($experience->status ? 'Yes' : 'No'); ?></div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="info-label">From Date</div>
-                            <div class="info-value">{{ $experience->from_date ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->from_date ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="info-label">To Date</div>
-                            <div class="info-value">{{ $experience->to_date ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->to_date ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="info-label">Salary Amount</div>
-                            <div class="info-value">{{ $experience->salary_amount ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->salary_amount ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="info-label">Salary Type</div>
-                            <div class="info-value">{{ $experience->salary_type ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->salary_type ?: 'N/A'); ?></div>
                         </div>
 
                         <div class="col-12">
                             <div class="info-label">Reason Left / Duties</div>
-                            <div class="info-value">{{ $experience->details ?: 'N/A' }}</div>
+                            <div class="info-value"><?php echo e($experience->details ?: 'N/A'); ?></div>
                         </div>
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="empty-state"><p>No work experience records available.</p></div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-journal-bookmark"></i>Training <span class="section-badge"><i class="bi bi-award-fill"></i>Courses</span></h5>
-            @forelse($trainingRows as $training)
+            <?php $__empty_1 = true; $__currentLoopData = $trainingRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $training): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="info-row">
-                    <div class="info-label"><i class="bi bi-patch-check"></i>{{ $training->course ?: 'Training ' . $loop->iteration }}</div>
+                    <div class="info-label"><i class="bi bi-patch-check"></i><?php echo e($training->course ?: 'Training ' . $loop->iteration); ?></div>
                     <div class="info-value">
-                        {{ collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A' }}
+                        <?php echo e(collect([$training->institution, $training->inclusive_dates, $training->skills_acquired, $training->certificates])->filter()->join(' | ') ?: 'N/A'); ?>
+
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="empty-state"><p>No training records available.</p></div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-patch-check"></i>Eligibility <span class="section-badge"><i class="bi bi-shield-check"></i>Credentials</span></h5>
-            @forelse($eligibilityRows as $eligibility)
+            <?php $__empty_1 = true; $__currentLoopData = $eligibilityRows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $eligibility): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="info-row">
-                    <div class="info-label"><i class="bi bi-award"></i>{{ $eligibility->eligibility ?: 'Eligibility ' . $loop->iteration }}</div>
+                    <div class="info-label"><i class="bi bi-award"></i><?php echo e($eligibility->eligibility ?: 'Eligibility ' . $loop->iteration); ?></div>
                     <div class="info-value">
-                        {{ collect([$eligibility->date_taken, $eligibility->license, $eligibility->valid_until])->filter()->join(' | ') ?: 'N/A' }}
+                        <?php echo e(collect([$eligibility->date_taken, $eligibility->license, $eligibility->valid_until])->filter()->join(' | ') ?: 'N/A'); ?>
+
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="empty-state"><p>No eligibility records available.</p></div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-stars"></i>Skills <span class="section-badge"><i class="bi bi-lightning-charge"></i>Capabilities</span></h5>
             <div class="row g-3">
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-tools"></i>Trade / Manual</div><div class="info-value">{{ collect($otherSkills['trade_manual'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-cpu"></i>IT / Technical</div><div class="info-value">{{ collect($otherSkills['it_technical'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-chat-square-heart"></i>Soft Skills</div><div class="info-value">{{ collect($otherSkills['soft_skills'] ?? [])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-chat-square-text"></i>Other Skill</div><div class="info-value">{{ $otherSkills['other_text'] ?? 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-patch-check-fill"></i>With Certificate</div><div class="info-value">{{ !is_null($otherSkills['with_certificate'] ?? null) ? (($otherSkills['with_certificate'] ? 'Yes' : 'No')) : 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-clock-history"></i>By Experience</div><div class="info-value">{{ !is_null($otherSkills['by_experience'] ?? null) ? (($otherSkills['by_experience'] ? 'Yes' : 'No')) : 'N/A' }}</div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-tools"></i>Trade / Manual</div><div class="info-value"><?php echo e(collect($otherSkills['trade_manual'] ?? [])->filter()->join(', ') ?: 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-cpu"></i>IT / Technical</div><div class="info-value"><?php echo e(collect($otherSkills['it_technical'] ?? [])->filter()->join(', ') ?: 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-chat-square-heart"></i>Soft Skills</div><div class="info-value"><?php echo e(collect($otherSkills['soft_skills'] ?? [])->filter()->join(', ') ?: 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-chat-square-text"></i>Other Skill</div><div class="info-value"><?php echo e($otherSkills['other_text'] ?? 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-patch-check-fill"></i>With Certificate</div><div class="info-value"><?php echo e(!is_null($otherSkills['with_certificate'] ?? null) ? (($otherSkills['with_certificate'] ? 'Yes' : 'No')) : 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-clock-history"></i>By Experience</div><div class="info-value"><?php echo e(!is_null($otherSkills['by_experience'] ?? null) ? (($otherSkills['by_experience'] ? 'Yes' : 'No')) : 'N/A'); ?></div></div></div>
             </div>
         </div>
 
-        @if(!empty($jobseeker->profile->skills))
+        <?php if(!empty($jobseeker->profile->skills)): ?>
             <div class="info-row">
                 <div class="info-label">Skills</div>
-                <div class="info-value">{{ is_array($jobseeker->profile->skills) ? implode(', ', $jobseeker->profile->skills) : $jobseeker->profile->skills }}</div>
+                <div class="info-value"><?php echo e(is_array($jobseeker->profile->skills) ? implode(', ', $jobseeker->profile->skills) : $jobseeker->profile->skills); ?></div>
             </div>
-        @endif
+        <?php endif; ?>
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-person-check"></i>Employment & Preferences <span class="section-badge"><i class="bi bi-funnel"></i>Match</span></h5>
             <div class="row g-3">
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-briefcase"></i>Has Work Experience</div><div class="info-value">{{ !is_null($employmentStatus?->has_work_experience) ? ($employmentStatus->has_work_experience ? 'Yes' : 'No') : 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-cash-stack"></i>Wage Employed</div><div class="info-value">{{ $employmentStatus?->wage_employed ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-person-workspace"></i>Self Employed</div><div class="info-value">{{ $employmentStatus?->self_employed ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-search"></i>Unemployed</div><div class="info-value">{{ $employmentStatus?->unemployed ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-diagram-3"></i>Occupation</div><div class="info-value">{{ $jobPreferences?->occupation_text ?: 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-flag"></i>Work Preference</div><div class="info-value">{{ collect([$jobPreferences?->part_time ? 'Part Time' : null, $jobPreferences?->full_time ? 'Full Time' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
-                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-pin-map"></i>Location Preference</div><div class="info-value">{{ collect([$jobPreferences?->local ? 'Local' : null, $jobPreferences?->overseas ? 'Overseas' : null])->filter()->join(', ') ?: 'N/A' }}</div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-briefcase"></i>Has Work Experience</div><div class="info-value"><?php echo e(!is_null($employmentStatus?->has_work_experience) ? ($employmentStatus->has_work_experience ? 'Yes' : 'No') : 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-cash-stack"></i>Wage Employed</div><div class="info-value"><?php echo e($employmentStatus?->wage_employed ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-person-workspace"></i>Self Employed</div><div class="info-value"><?php echo e($employmentStatus?->self_employed ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-search"></i>Unemployed</div><div class="info-value"><?php echo e($employmentStatus?->unemployed ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-diagram-3"></i>Occupation</div><div class="info-value"><?php echo e($jobPreferences?->occupation_text ?: 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-flag"></i>Work Preference</div><div class="info-value"><?php echo e(collect([$jobPreferences?->part_time ? 'Part Time' : null, $jobPreferences?->full_time ? 'Full Time' : null])->filter()->join(', ') ?: 'N/A'); ?></div></div></div>
+                <div class="col-12"><div class="info-row"><div class="info-label"><i class="bi bi-pin-map"></i>Location Preference</div><div class="info-value"><?php echo e(collect([$jobPreferences?->local ? 'Local' : null, $jobPreferences?->overseas ? 'Overseas' : null])->filter()->join(', ') ?: 'N/A'); ?></div></div></div>
             </div>
         </div>
 
         <div class="dashboard-card section-span-6 compact-section">
             <h5><i class="bi bi-translate"></i>Languages <span class="section-badge"><i class="bi bi-chat-dots"></i>Fluency</span></h5>
-            @forelse($languages as $language)
+            <?php $__empty_1 = true; $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $language): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="info-row">
-                    <div class="info-label"><i class="bi bi-globe2"></i>{{ $language->language ?: 'Language ' . $loop->iteration }}</div>
+                    <div class="info-label"><i class="bi bi-globe2"></i><?php echo e($language->language ?: 'Language ' . $loop->iteration); ?></div>
                     <div class="info-value">
-                        {{ collect([
+                        <?php echo e(collect([
                             $language->can_read ? 'Read' : null,
                             $language->can_write ? 'Write' : null,
                             $language->can_speak ? 'Speak' : null,
                             $language->can_understand ? 'Understand' : null,
                             $language->other_specify ?: null,
-                        ])->filter()->join(', ') ?: 'N/A' }}
+                        ])->filter()->join(', ') ?: 'N/A'); ?>
+
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="empty-state"><p>No language records available.</p></div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card section-span-12 compact-section">
             <h5><i class="bi bi-universal-access"></i>Disability <span class="section-badge"><i class="bi bi-heart-pulse"></i>Support</span></h5>
             <div class="row g-3">
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-eye"></i>Visual</div><div class="info-value">{{ $disability?->visual ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-chat-right-text"></i>Speech</div><div class="info-value">{{ $disability?->speech ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-brain"></i>Mental</div><div class="info-value">{{ $disability?->mental ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-ear"></i>Hearing</div><div class="info-value">{{ $disability?->hearing ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-walking"></i>Physical</div><div class="info-value">{{ $disability?->physical ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-question-circle"></i>Other</div><div class="info-value">{{ $disability?->other ? 'Yes' : 'No' }}</div></div></div>
-                <div class="col-md-12"><div class="info-row"><div class="info-label"><i class="bi bi-card-text"></i>Other Text</div><div class="info-value">{{ $disability?->other_text ?: 'N/A' }}</div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-eye"></i>Visual</div><div class="info-value"><?php echo e($disability?->visual ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-chat-right-text"></i>Speech</div><div class="info-value"><?php echo e($disability?->speech ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-brain"></i>Mental</div><div class="info-value"><?php echo e($disability?->mental ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-ear"></i>Hearing</div><div class="info-value"><?php echo e($disability?->hearing ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-person-walking"></i>Physical</div><div class="info-value"><?php echo e($disability?->physical ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-4"><div class="info-row"><div class="info-label"><i class="bi bi-question-circle"></i>Other</div><div class="info-value"><?php echo e($disability?->other ? 'Yes' : 'No'); ?></div></div></div>
+                <div class="col-md-12"><div class="info-row"><div class="info-label"><i class="bi bi-card-text"></i>Other Text</div><div class="info-value"><?php echo e($disability?->other_text ?: 'N/A'); ?></div></div></div>
             </div>
         </div>
 
         <div class="dashboard-card section-span-12 compact-section">
             <h5><i class="bi bi-file-earmark-text"></i>Applications History <span class="section-badge"><i class="bi bi-timeline"></i>Timeline</span></h5>
 
-        @if($jobseeker->applications->count() > 0)
-            @foreach($jobseeker->applications as $application)
+        <?php if($jobseeker->applications->count() > 0): ?>
+            <?php $__currentLoopData = $jobseeker->applications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $application): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="application-item">
-                    <div class="application-title"><i class="bi bi-briefcase-fill me-2 text-primary"></i>{{ $application->job->title ?? 'N/A' }}</div>
+                    <div class="application-title"><i class="bi bi-briefcase-fill me-2 text-primary"></i><?php echo e($application->job->title ?? 'N/A'); ?></div>
                     <div class="application-company">
-                        <i class="bi bi-building me-1"></i>{{ $application->job->employer->companyProfile->company_name ?? $application->job->employer->name ?? 'Unknown Company' }}
+                        <i class="bi bi-building me-1"></i><?php echo e($application->job->employer->companyProfile->company_name ?? $application->job->employer->name ?? 'Unknown Company'); ?>
+
                     </div>
                     <div>
-                        <span class="application-status status-applied">{{ ucfirst($application->status ?? 'pending') }}</span>
+                        <span class="application-status status-applied"><?php echo e(ucfirst($application->status ?? 'pending')); ?></span>
                         <span style="font-size: 12px; color: #9ca3af; margin-left: 1rem;">
-                            <i class="bi bi-calendar2-event me-1"></i>Applied on {{ $application->created_at->format('M d, Y') }}
+                            <i class="bi bi-calendar2-event me-1"></i>Applied on <?php echo e($application->created_at->format('M d, Y')); ?>
+
                         </span>
                     </div>
                 </div>
-            @endforeach
-        @else
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php else: ?>
             <div class="empty-state">
                 <i class="bi bi-inbox"></i>
                 <p>No Applications Yet</p>
                 <small>This jobseeker hasn't applied to any positions</small>
             </div>
-        @endif
+        <?php endif; ?>
         </div>
     </div>
-                <form id="recommendForm" method="POST" action="{{ route('admin.jobseekers.recommend-applicant', $jobseeker) }}">
-                    @csrf
+                <form id="recommendForm" method="POST" action="<?php echo e(route('admin.jobseekers.recommend-applicant', $jobseeker)); ?>">
+                    <?php echo csrf_field(); ?>
                     <div class="modal-body" style="padding: 2rem; background: #ffffff;">
-                        <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;">{{ $jobseeker->name ?? 'N/A' }}</span></p>
+                        <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;"><?php echo e($jobseeker->name ?? 'N/A'); ?></span></p>
 
                         <div class="row mb-3">
                             <!-- Step 1: Select Employer -->
@@ -926,7 +931,7 @@
                                 </label>
                                 <select id="employerSelect" name="employer_id" class="form-control" required style="border-radius: 10px; border: 1px solid #cbd5e1; padding: 0.75rem; font-size: 1rem; color: #0f172a; background: #fff;">
                                     <option value="" style="color: #999;">-- Select Employer --</option>
-                                    @php
+                                    <?php
                                         // Get all employers, not just those with active jobs
                                         $employers = \App\Models\User::where('role', 'employer')
                                             ->with('companyProfile')
@@ -939,10 +944,10 @@
                                                     'company_name' => $user->companyProfile?->company_name ?? $user->name
                                                 ];
                                             });
-                                    @endphp
-                                    @foreach($employers as $employer)
-                                        <option value="{{ $employer['id'] }}">{{ $employer['company_name'] }}</option>
-                                    @endforeach
+                                    ?>
+                                    <?php $__currentLoopData = $employers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $employer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($employer['id']); ?>"><?php echo e($employer['company_name']); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
 
@@ -1288,7 +1293,7 @@
             </div>
         </div>
     </div>
-    @php
+    <?php
         $jobsByEmployerData = $availableJobs->groupBy('employer_id')->map(function($jobs) {
             return $jobs->map(function($job) {
                 return [
@@ -1313,9 +1318,9 @@
                 ];
             })->values();
         });
-    @endphp
+    ?>
     <script>
-        const jobsByEmployer = @json($jobsByEmployerData);
+        const jobsByEmployer = <?php echo json_encode($jobsByEmployerData, 15, 512) ?>;
     </script>
 
     <script>
@@ -1404,7 +1409,7 @@
                     jobseekerNameSpan.textContent = jobseekerName;
 
                     // Update form action for applicant recommendation
-                    recommendForm.action = @json(route('admin.jobseekers.recommend-applicant', ['jobseeker' => '__JOBSEEKER_ID__'])).replace('__JOBSEEKER_ID__', jobseekerId);
+                    recommendForm.action = <?php echo json_encode(route('admin.jobseekers.recommend-applicant', ['jobseeker' => '__JOBSEEKER_ID__']), 512) ?>.replace('__JOBSEEKER_ID__', jobseekerId);
                     console.log('Form action set to:', recommendForm.action);
                     console.log('Jobseeker:', jobseekerId, jobseekerName);
 
@@ -1574,4 +1579,6 @@
     </script>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin-dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/jobseekers/profile.blade.php ENDPATH**/ ?>
