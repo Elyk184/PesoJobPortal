@@ -267,7 +267,7 @@ class EmployerController extends Controller
             'employer' => $employer,
             'companyProfile' => $companyProfile,
             'logoFullPath' => $logoFullPath,
-            'generatedAt' => now(),
+            'generatedAt' => now('Asia/Manila'),
         ])->setPaper('a4');
 
         return $pdf->download(sprintf(
@@ -307,11 +307,12 @@ class EmployerController extends Controller
             'password' => ['nullable', 'confirmed', 'min:8'],
             'company_name' => ['nullable', 'string', 'max:255'],
             'business_name' => ['required', 'string', 'max:255'],
-            'trade_name' => ['nullable', 'string', 'max:255'],
-            'acronym_abbreviation' => ['nullable', 'string', 'max:100'],
+            'company_information' => ['required', 'string', 'max:5000'],
+            'trade_name' => ['required', 'string', 'max:255'],
+            'acronym_abbreviation' => ['required', 'string', 'max:100'],
             'established_year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . now()->year],
             'office_type' => ['required', 'in:main_office,branch'],
-            'tin' => ['nullable', 'string', 'max:50'],
+            'tin' => ['required', 'string', 'max:50'],
             'employer_type_detail' => ['required', 'in:national_gov,local_gov,gocc,state_college,direct_hire,local_recruitment,overseas_recruitment,do174'],
             'workforce_size' => ['required', 'in:micro,small,medium,large'],
             'line_of_business' => ['required', 'string', 'max:255'],
@@ -322,7 +323,7 @@ class EmployerController extends Controller
             'establishment_contact_person' => ['required', 'string', 'max:255'],
             'contact_person_name' => ['required', 'string', 'max:255'],
             'establishment_contact_position' => ['required', 'string', 'max:255'],
-            'establishment_phone' => ['nullable', 'string', 'max:50'],
+            'establishment_phone' => ['required', 'string', 'max:50'],
             'contact_person_phone' => ['required', 'string', 'max:50'],
             'establishment_email' => ['required', 'email', 'max:255'],
             'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
@@ -363,6 +364,7 @@ class EmployerController extends Controller
         $fieldMapping = [
             'company_name' => 'company_name',
             'business_name' => 'business_name',
+            'company_information' => 'company_information',
             'trade_name' => 'trade_name',
             'acronym_abbreviation' => 'acronym_abbreviation',
             'established_year' => 'established_year',
@@ -387,6 +389,10 @@ class EmployerController extends Controller
             if (array_key_exists($input, $validated) && $validated[$input] !== null) {
                 $profileData[$column] = $validated[$input];
             }
+        }
+
+        if (array_key_exists('company_information', $validated)) {
+            $profileData['company_information'] = $validated['company_information'];
         }
 
         // Use business_name as company_name if not explicitly provided

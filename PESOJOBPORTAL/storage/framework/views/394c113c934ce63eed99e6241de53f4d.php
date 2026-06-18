@@ -200,7 +200,7 @@
     </style>
 </head>
 <body>
-    @php
+    <?php
         $hasLogoFile = !empty($logoFullPath) && file_exists($logoFullPath);
         $companyName = $companyProfile?->company_name ?? $employer->name;
         $companyInformation = filled($companyProfile?->company_information)
@@ -213,16 +213,16 @@
             $companyProfile?->city_municipality ?? null,
             $companyProfile?->province ?? null,
         ]))) ?: 'N/A';
-    @endphp
+    ?>
 
     <div class="header">
         <div class="brand">
             <h1>Company Profile</h1>
-            <p>{{ $companyName }}</p>
+            <p><?php echo e($companyName); ?></p>
         </div>
         <div class="stamp">
             <strong>Generated</strong>
-            {{ $generatedAt->format('M d, Y h:i A') }} PHT
+            <?php echo e($generatedAt->format('M d, Y h:i A')); ?> PHT
         </div>
     </div>
 
@@ -230,16 +230,16 @@
         <table class="summary-table">
             <tr>
                 <td class="summary-logo">
-                    @if($hasLogoFile)
-                        <img class="logo" src="{{ $logoFullPath }}" alt="Company logo">
-                    @else
-                        <div class="logo-placeholder">{{ strtoupper(substr($companyName ?? 'P', 0, 1)) }}</div>
-                    @endif
+                    <?php if($hasLogoFile): ?>
+                        <img class="logo" src="<?php echo e($logoFullPath); ?>" alt="Company logo">
+                    <?php else: ?>
+                        <div class="logo-placeholder"><?php echo e(strtoupper(substr($companyName ?? 'P', 0, 1))); ?></div>
+                    <?php endif; ?>
                     <div class="logo-caption">Company Logo</div>
                 </td>
                 <td class="summary-info">
                     <h2 class="summary-heading">Company Information</h2>
-                    <p class="summary-text preline">{{ $companyInformation }}</p>
+                    <p class="summary-text preline"><?php echo e($companyInformation); ?></p>
                 </td>
             </tr>
         </table>
@@ -253,43 +253,43 @@
                     <table class="info-grid">
                         <tr>
                             <td class="label">Company Name</td>
-                            <td class="value">{{ $companyName }}</td>
+                            <td class="value"><?php echo e($companyName); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Business Name</td>
-                            <td class="value">{{ $companyProfile?->business_name ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->business_name ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Year Established</td>
-                            <td class="value">{{ $companyProfile?->established_year ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->established_year ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Trade Name</td>
-                            <td class="value">{{ $companyProfile?->trade_name ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->trade_name ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Acronym</td>
-                            <td class="value">{{ $companyProfile?->acronym_abbreviation ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->acronym_abbreviation ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Office Type</td>
-                            <td class="value">{{ $formatValue($companyProfile?->office_type) }}</td>
+                            <td class="value"><?php echo e($formatValue($companyProfile?->office_type)); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Employer Type</td>
-                            <td class="value">{{ $formatValue($companyProfile?->employer_type_detail) }}</td>
+                            <td class="value"><?php echo e($formatValue($companyProfile?->employer_type_detail)); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Workforce Size</td>
-                            <td class="value">{{ $formatValue($companyProfile?->workforce_size) }}</td>
+                            <td class="value"><?php echo e($formatValue($companyProfile?->workforce_size)); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Line of Business</td>
-                            <td class="value">{{ $companyProfile?->line_of_business ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->line_of_business ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">TIN</td>
-                            <td class="value">{{ $companyProfile?->tin ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->tin ?? 'N/A'); ?></td>
                         </tr>
                     </table>
                 </div>
@@ -301,32 +301,32 @@
                         <tr>
                             <td class="label">Address</td>
                             <td class="value">
-                                <p class="address">{{ $fullAddress }}</p>
+                                <p class="address"><?php echo e($fullAddress); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <td class="label">Owner / President</td>
-                            <td class="value">{{ $companyProfile?->establishment_contact_person ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->establishment_contact_person ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Contact Person</td>
-                            <td class="value">{{ $companyProfile?->contact_person_name ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->contact_person_name ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Position</td>
-                            <td class="value">{{ $companyProfile?->establishment_contact_position ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->establishment_contact_position ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Telephone</td>
-                            <td class="value">{{ $companyProfile?->establishment_phone ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->establishment_phone ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">Mobile</td>
-                            <td class="value">{{ $companyProfile?->contact_person_phone ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->contact_person_phone ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
                             <td class="label">E-mail</td>
-                            <td class="value">{{ $companyProfile?->establishment_email ?? 'N/A' }}</td>
+                            <td class="value"><?php echo e($companyProfile?->establishment_email ?? 'N/A'); ?></td>
                         </tr>
                     </table>
                 </div>
@@ -336,3 +336,4 @@
 
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/employer/company-profile-pdf.blade.php ENDPATH**/ ?>
