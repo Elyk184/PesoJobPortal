@@ -19,6 +19,7 @@
         display: block;
         width: 100%;
         min-height: calc(100vh - 180px);
+        background: #f5f8fb;
     }
     .profile-sidebar {
         display: none;
@@ -26,11 +27,71 @@
     .profile-content {
         width: 100%;
         padding-right: 360px;
+        padding-top: 10px;
+        padding-bottom: 24px;
     }
     .profile-content > form {
         width: 100%;
         display: grid;
         gap: 16px;
+    }
+
+    .profile-hero {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 24px;
+        background: #ffffff;
+        border: 1px solid #d8e5f1;
+        border-left: 6px solid #0f766e;
+        border-radius: 14px;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
+    }
+
+    .profile-hero-title {
+        margin: 0;
+        color: #10243f;
+        font-size: 1.55rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .profile-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #eef7f6;
+        color: #0f5f58;
+        border: 1px solid #cce7e3;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .profile-chip.is-muted {
+        background: #f4f7fb;
+        color: #475569;
+        border-color: #d8e1ea;
+    }
+
+    .profile-hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
     .profile-nav {
         position: sticky;
@@ -56,7 +117,7 @@
     .form-section {
         scroll-margin-top: 100px;
         margin: 0;
-        padding: 16px;
+        padding: 20px;
         background: var(--panel, #fff);
         border: 1px solid var(--line, #dbe4ee);
         border-radius: 14px;
@@ -74,23 +135,31 @@
         margin-bottom: 0;
     }
     .section-heading {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e3a5f;
+        font-size: 18px;
+        font-weight: 800;
+        color: #10243f;
         margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #2d5aa0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dbe8f5;
         display: flex;
         align-items: center;
         gap: 10px;
     }
     .section-heading i {
-        font-size: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #eef7f6;
+        color: #0f766e;
+        font-size: 17px;
     }
 
     .form-label-custom {
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 800;
         color: #334155;
         margin-bottom: 6px;
         letter-spacing: 0.01em;
@@ -101,10 +170,11 @@
     .form-select {
         border-radius: 12px;
         border: 1px solid #cdd9e5;
-        padding: 10px 12px;
+        padding: 11px 12px;
         box-shadow: none;
         transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         background: #fbfdff;
+        color: #10243f;
     }
 
     .form-control-custom:focus,
@@ -113,6 +183,18 @@
         border-color: #2563eb;
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
         background: #ffffff;
+    }
+
+    textarea.form-control-custom {
+        min-height: 118px;
+        resize: vertical;
+    }
+
+    .form-error-custom {
+        margin-top: 6px;
+        color: #b91c1c;
+        font-size: 0.85rem;
+        font-weight: 700;
     }
 
     .btn {
@@ -170,10 +252,15 @@
 
     .profile-actions {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
         gap: 14px;
         margin-top: 4px;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06);
     }
 
     .profile-actions .btn {
@@ -187,15 +274,104 @@
     }
 
     .workforce-card {
+        position: relative;
+        display: block;
+        height: 100%;
+        padding: 14px;
         border-radius: 12px;
         border: 1px solid #d6e0ea;
+        background: #fbfdff;
+        cursor: pointer;
         transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .workforce-card input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .workforce-card:has(input:checked) {
+        border-color: #0f766e;
+        background: #eef7f6;
+        box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+
+    .workforce-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .workforce-name {
+        color: #10243f;
+        font-size: 0.98rem;
+        font-weight: 800;
+    }
+
+    .workforce-range {
+        color: #64748b;
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-top: 2px;
     }
 
     .workforce-card:hover {
         border-color: #93c5fd;
         box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
         transform: translateY(-1px);
+    }
+
+    .office-type-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .office-type-group .form-check,
+    .employer-type-container .form-check {
+        margin: 0;
+        padding: 10px 12px 10px 36px;
+        border: 1px solid #d6e0ea;
+        border-radius: 12px;
+        background: #fbfdff;
+    }
+
+    .office-type-group .form-check-input,
+    .employer-type-container .form-check-input {
+        margin-left: -24px;
+    }
+
+    .office-type-group .form-check:has(.form-check-input:checked),
+    .employer-type-container .form-check:has(.form-check-input:checked) {
+        border-color: #0f766e;
+        background: #eef7f6;
+        box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+    }
+
+    .employer-type-container {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .employer-type-column {
+        padding: 14px;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        background: #f8fbff;
+    }
+
+    .employer-type-column .form-check + .form-check {
+        margin-top: 9px;
+    }
+
+    .employer-type-heading {
+        margin-bottom: 10px;
+        color: #0f4c8a;
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
     }
 
     .profile-completion-summary {
@@ -208,6 +384,7 @@
         z-index: 90;
         max-height: calc(100vh - 140px);
         overflow-y: auto;
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.09);
     }
 
     .completion-meta {
@@ -288,6 +465,17 @@
 
         .profile-content {
             padding-right: 0;
+            padding-top: 0;
+        }
+
+        .profile-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .profile-hero-actions {
+            width: 100%;
+            justify-content: flex-start;
         }
 
         .profile-completion-summary {
@@ -301,6 +489,11 @@
 
         .form-section {
             padding: 14px;
+        }
+
+        .workforce-buttons,
+        .employer-type-container {
+            grid-template-columns: 1fr;
         }
 
         .btn {
@@ -326,6 +519,30 @@
             @csrf
             @method('PUT')
             <input type="hidden" id="logo_only" name="logo_only" value="0">
+
+            <div class="profile-hero">
+                <div>
+                    <h1 class="profile-hero-title">{{ $companyProfile?->company_name ?? $companyProfile?->business_name ?? $user->name ?? 'Company Profile' }}</h1>
+                    <div class="profile-hero-meta">
+                        <span class="profile-chip">
+                            <i class="bi bi-building-check"></i>
+                            {{ $companyProfile?->verification_status ? ucwords(str_replace('_', ' ', $companyProfile->verification_status)) : 'Pending' }}
+                        </span>
+                        <span class="profile-chip is-muted">
+                            <i class="bi bi-envelope"></i>
+                            {{ $companyProfile?->establishment_email ?? $user->email ?? 'No email yet' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="profile-hero-actions">
+                    <a href="{{ route('employer.company-profile.download') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-download me-2"></i>Download PDF
+                    </a>
+                    <button type="submit" class="btn btn-primary-solid">
+                        <i class="bi bi-check-circle me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
 
             @if(session('success'))
             <div class="alert alert-success m-3 mb-0 alert-dismissible fade show" role="alert">

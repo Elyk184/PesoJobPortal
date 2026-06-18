@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title', 'Company Profile - PESO'); ?>
 <?php $__env->startSection('hide_header', true); ?>
 
@@ -17,6 +19,7 @@
         display: block;
         width: 100%;
         min-height: calc(100vh - 180px);
+        background: #f5f8fb;
     }
     .profile-sidebar {
         display: none;
@@ -24,11 +27,71 @@
     .profile-content {
         width: 100%;
         padding-right: 360px;
+        padding-top: 10px;
+        padding-bottom: 24px;
     }
     .profile-content > form {
         width: 100%;
         display: grid;
         gap: 16px;
+    }
+
+    .profile-hero {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 24px;
+        background: #ffffff;
+        border: 1px solid #d8e5f1;
+        border-left: 6px solid #0f766e;
+        border-radius: 14px;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
+    }
+
+    .profile-hero-title {
+        margin: 0;
+        color: #10243f;
+        font-size: 1.55rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .profile-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #eef7f6;
+        color: #0f5f58;
+        border: 1px solid #cce7e3;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .profile-chip.is-muted {
+        background: #f4f7fb;
+        color: #475569;
+        border-color: #d8e1ea;
+    }
+
+    .profile-hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
     .profile-nav {
         position: sticky;
@@ -54,7 +117,7 @@
     .form-section {
         scroll-margin-top: 100px;
         margin: 0;
-        padding: 16px;
+        padding: 20px;
         background: var(--panel, #fff);
         border: 1px solid var(--line, #dbe4ee);
         border-radius: 14px;
@@ -72,23 +135,31 @@
         margin-bottom: 0;
     }
     .section-heading {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e3a5f;
+        font-size: 18px;
+        font-weight: 800;
+        color: #10243f;
         margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #2d5aa0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dbe8f5;
         display: flex;
         align-items: center;
         gap: 10px;
     }
     .section-heading i {
-        font-size: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #eef7f6;
+        color: #0f766e;
+        font-size: 17px;
     }
 
     .form-label-custom {
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 800;
         color: #334155;
         margin-bottom: 6px;
         letter-spacing: 0.01em;
@@ -99,10 +170,11 @@
     .form-select {
         border-radius: 12px;
         border: 1px solid #cdd9e5;
-        padding: 10px 12px;
+        padding: 11px 12px;
         box-shadow: none;
         transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         background: #fbfdff;
+        color: #10243f;
     }
 
     .form-control-custom:focus,
@@ -111,6 +183,18 @@
         border-color: #2563eb;
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
         background: #ffffff;
+    }
+
+    textarea.form-control-custom {
+        min-height: 118px;
+        resize: vertical;
+    }
+
+    .form-error-custom {
+        margin-top: 6px;
+        color: #b91c1c;
+        font-size: 0.85rem;
+        font-weight: 700;
     }
 
     .btn {
@@ -168,10 +252,15 @@
 
     .profile-actions {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
         gap: 14px;
         margin-top: 4px;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06);
     }
 
     .profile-actions .btn {
@@ -185,15 +274,104 @@
     }
 
     .workforce-card {
+        position: relative;
+        display: block;
+        height: 100%;
+        padding: 14px;
         border-radius: 12px;
         border: 1px solid #d6e0ea;
+        background: #fbfdff;
+        cursor: pointer;
         transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .workforce-card input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .workforce-card:has(input:checked) {
+        border-color: #0f766e;
+        background: #eef7f6;
+        box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+
+    .workforce-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .workforce-name {
+        color: #10243f;
+        font-size: 0.98rem;
+        font-weight: 800;
+    }
+
+    .workforce-range {
+        color: #64748b;
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-top: 2px;
     }
 
     .workforce-card:hover {
         border-color: #93c5fd;
         box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
         transform: translateY(-1px);
+    }
+
+    .office-type-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .office-type-group .form-check,
+    .employer-type-container .form-check {
+        margin: 0;
+        padding: 10px 12px 10px 36px;
+        border: 1px solid #d6e0ea;
+        border-radius: 12px;
+        background: #fbfdff;
+    }
+
+    .office-type-group .form-check-input,
+    .employer-type-container .form-check-input {
+        margin-left: -24px;
+    }
+
+    .office-type-group .form-check:has(.form-check-input:checked),
+    .employer-type-container .form-check:has(.form-check-input:checked) {
+        border-color: #0f766e;
+        background: #eef7f6;
+        box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+    }
+
+    .employer-type-container {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .employer-type-column {
+        padding: 14px;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        background: #f8fbff;
+    }
+
+    .employer-type-column .form-check + .form-check {
+        margin-top: 9px;
+    }
+
+    .employer-type-heading {
+        margin-bottom: 10px;
+        color: #0f4c8a;
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
     }
 
     .profile-completion-summary {
@@ -206,6 +384,7 @@
         z-index: 90;
         max-height: calc(100vh - 140px);
         overflow-y: auto;
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.09);
     }
 
     .completion-meta {
@@ -286,6 +465,17 @@
 
         .profile-content {
             padding-right: 0;
+            padding-top: 0;
+        }
+
+        .profile-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .profile-hero-actions {
+            width: 100%;
+            justify-content: flex-start;
         }
 
         .profile-completion-summary {
@@ -299,6 +489,11 @@
 
         .form-section {
             padding: 14px;
+        }
+
+        .workforce-buttons,
+        .employer-type-container {
+            grid-template-columns: 1fr;
         }
 
         .btn {
@@ -325,6 +520,32 @@
             <?php echo method_field('PUT'); ?>
             <input type="hidden" id="logo_only" name="logo_only" value="0">
 
+            <div class="profile-hero">
+                <div>
+                    <h1 class="profile-hero-title"><?php echo e($companyProfile?->company_name ?? $companyProfile?->business_name ?? $user->name ?? 'Company Profile'); ?></h1>
+                    <div class="profile-hero-meta">
+                        <span class="profile-chip">
+                            <i class="bi bi-building-check"></i>
+                            <?php echo e($companyProfile?->verification_status ? ucwords(str_replace('_', ' ', $companyProfile->verification_status)) : 'Pending'); ?>
+
+                        </span>
+                        <span class="profile-chip is-muted">
+                            <i class="bi bi-envelope"></i>
+                            <?php echo e($companyProfile?->establishment_email ?? $user->email ?? 'No email yet'); ?>
+
+                        </span>
+                    </div>
+                </div>
+                <div class="profile-hero-actions">
+                    <a href="<?php echo e(route('employer.company-profile.download')); ?>" class="btn btn-outline-primary">
+                        <i class="bi bi-download me-2"></i>Download PDF
+                    </a>
+                    <button type="submit" class="btn btn-primary-solid">
+                        <i class="bi bi-check-circle me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+
             <?php if(session('success')): ?>
             <div class="alert alert-success m-3 mb-0 alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle me-2"></i><?php echo e(session('success')); ?>
@@ -338,8 +559,12 @@
                     ['key' => 'name', 'label' => 'Full Name', 'section' => 'account-info-section', 'filled' => filled(old('name', $user->name ?? null))],
                     ['key' => 'email', 'label' => 'Email Address', 'section' => 'account-info-section', 'filled' => filled(old('email', $user->email ?? null))],
                     ['key' => 'business_name', 'label' => 'Business Name', 'section' => 'establishment-details-section', 'filled' => filled(old('business_name', $companyProfile->business_name ?? null))],
+                    ['key' => 'company_information', 'label' => 'Company Information', 'section' => 'establishment-details-section', 'filled' => filled(old('company_information', $companyProfile->company_information ?? null))],
                     ['key' => 'established_year', 'label' => 'Year Established', 'section' => 'establishment-details-section', 'filled' => filled(old('established_year', $companyProfile->established_year ?? null))],
+                    ['key' => 'trade_name', 'label' => 'Trade Name', 'section' => 'establishment-details-section', 'filled' => filled(old('trade_name', $companyProfile->trade_name ?? null))],
+                    ['key' => 'acronym_abbreviation', 'label' => 'Acronym / Abbreviation', 'section' => 'establishment-details-section', 'filled' => filled(old('acronym_abbreviation', $companyProfile->acronym_abbreviation ?? null))],
                     ['key' => 'office_type', 'label' => 'Office Type', 'section' => 'establishment-details-section', 'filled' => filled(old('office_type', $companyProfile->office_type ?? (empty($companyProfile) ? 'main_office' : null)))],
+                    ['key' => 'tin', 'label' => 'Tax Identification Number (TIN)', 'section' => 'establishment-details-section', 'filled' => filled(old('tin', $companyProfile->tin ?? null))],
                     ['key' => 'employer_type_detail', 'label' => 'Employer Type', 'section' => 'establishment-details-section', 'filled' => filled(old('employer_type_detail', $companyProfile->employer_type_detail ?? null))],
                     ['key' => 'workforce_size', 'label' => 'Total Work Force', 'section' => 'establishment-details-section', 'filled' => filled(old('workforce_size', $companyProfile->workforce_size ?? null))],
                     ['key' => 'line_of_business', 'label' => 'Line of Business / Industry', 'section' => 'establishment-details-section', 'filled' => filled(old('line_of_business', $companyProfile->line_of_business ?? null))],
@@ -350,6 +575,7 @@
                     ['key' => 'establishment_contact_person', 'label' => 'Name of Owner / President', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_contact_person', $companyProfile->establishment_contact_person ?? null))],
                     ['key' => 'contact_person_name', 'label' => 'Contact Person', 'section' => 'contact-details-section', 'filled' => filled(old('contact_person_name', $companyProfile->contact_person_name ?? null))],
                     ['key' => 'establishment_contact_position', 'label' => 'Position', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_contact_position', $companyProfile->establishment_contact_position ?? null))],
+                    ['key' => 'establishment_phone', 'label' => 'Telephone Number', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_phone', $companyProfile->establishment_phone ?? null))],
                     ['key' => 'contact_person_phone', 'label' => 'Mobile Number', 'section' => 'contact-details-section', 'filled' => filled(old('contact_person_phone', $companyProfile->contact_person_phone ?? null))],
                     ['key' => 'establishment_email', 'label' => 'E-mail Address', 'section' => 'contact-details-section', 'filled' => filled(old('establishment_email', $companyProfile->establishment_email ?? null))],
                     // Username is optional and not included in required profile fields
@@ -570,7 +796,7 @@ unset($__errorArgs, $__bag); ?>
                 </div>
 
                 <div class="mb-4">
-                    <label for="company_information" class="form-label-custom">Company Information <span class="text-muted">optional</span></label>
+                    <label for="company_information" class="form-label-custom">Company Information <span class="text-danger">*</span></label>
                     <textarea class="form-control form-control-custom <?php $__errorArgs = ['company_information'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -580,7 +806,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                               id="company_information" name="company_information" rows="4"
-                              placeholder="Briefly describe your company, services, products, or operations"><?php echo e(old('company_information', $companyProfile->company_information ?? '')); ?></textarea>
+                              placeholder="Briefly describe your company, services, products, or operations" required><?php echo e(old('company_information', $companyProfile->company_information ?? '')); ?></textarea>
                     <?php $__errorArgs = ['company_information'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -620,7 +846,7 @@ unset($__errorArgs, $__bag); ?>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label for="trade_name" class="form-label-custom">Trade Name <span class="text-muted">optional</span></label>
+                            <label for="trade_name" class="form-label-custom">Trade Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-custom <?php $__errorArgs = ['trade_name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -630,7 +856,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                    id="trade_name" name="trade_name" value="<?php echo e(old('trade_name', $companyProfile->trade_name ?? '')); ?>"
-                                   placeholder="Trade or brand name">
+                                   placeholder="Trade or brand name" required>
                             <?php $__errorArgs = ['trade_name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -645,7 +871,7 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label for="acronym_abbreviation" class="form-label-custom">Acronym / Abbreviation <span class="text-muted">optional</span></label>
+                            <label for="acronym_abbreviation" class="form-label-custom">Acronym / Abbreviation <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-custom <?php $__errorArgs = ['acronym_abbreviation'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -655,7 +881,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                    id="acronym_abbreviation" name="acronym_abbreviation" value="<?php echo e(old('acronym_abbreviation', $companyProfile->acronym_abbreviation ?? '')); ?>"
-                                   placeholder="e.g. DMPI">
+                                   placeholder="e.g. DMPI" required>
                             <?php $__errorArgs = ['acronym_abbreviation'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -688,7 +914,7 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label for="tin" class="form-label-custom">Tax Identification Number (TIN) <span class="text-muted">optional</span></label>
+                            <label for="tin" class="form-label-custom">Tax Identification Number (TIN) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-custom <?php $__errorArgs = ['tin'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -698,7 +924,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                    id="tin" name="tin" value="<?php echo e(old('tin', $companyProfile->tin ?? '')); ?>"
-                                   placeholder="000-000-000-000">
+                                   placeholder="000-000-000-000" required>
                             <?php $__errorArgs = ['tin'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -1044,7 +1270,7 @@ unset($__errorArgs, $__bag); ?>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label for="establishment_phone" class="form-label-custom">Telephone Number <span class="text-muted">optional</span></label>
+                            <label for="establishment_phone" class="form-label-custom">Telephone Number <span class="text-danger">*</span></label>
                             <input type="tel" class="form-control form-control-custom <?php $__errorArgs = ['establishment_phone'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -1055,7 +1281,7 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                    id="establishment_phone" name="establishment_phone"
                                    value="<?php echo e(old('establishment_phone', $companyProfile->establishment_phone ?? '')); ?>"
-                                   placeholder="(088) 000-0000">
+                                   placeholder="(088) 000-0000" required>
                             <?php $__errorArgs = ['establishment_phone'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -1149,8 +1375,12 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'name', label: 'Full Name', sectionId: 'account-info-section', type: 'input', selector: '#name' },
         { key: 'email', label: 'Email Address', sectionId: 'account-info-section', type: 'input', selector: '#email' },
         { key: 'business_name', label: 'Business Name', sectionId: 'establishment-details-section', type: 'input', selector: '#business_name' },
+        { key: 'company_information', label: 'Company Information', sectionId: 'establishment-details-section', type: 'input', selector: '#company_information' },
         { key: 'established_year', label: 'Year Established', sectionId: 'establishment-details-section', type: 'input', selector: '#established_year' },
+        { key: 'trade_name', label: 'Trade Name', sectionId: 'establishment-details-section', type: 'input', selector: '#trade_name' },
+        { key: 'acronym_abbreviation', label: 'Acronym / Abbreviation', sectionId: 'establishment-details-section', type: 'input', selector: '#acronym_abbreviation' },
         { key: 'office_type', label: 'Office Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="office_type"]' },
+        { key: 'tin', label: 'Tax Identification Number (TIN)', sectionId: 'establishment-details-section', type: 'input', selector: '#tin' },
         { key: 'employer_type_detail', label: 'Employer Type', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="employer_type_detail"]' },
         { key: 'workforce_size', label: 'Total Work Force', sectionId: 'establishment-details-section', type: 'radio', selector: 'input[name="workforce_size"]' },
         { key: 'line_of_business', label: 'Line of Business / Industry', sectionId: 'establishment-details-section', type: 'input', selector: '#line_of_business' },
@@ -1161,6 +1391,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'establishment_contact_person', label: 'Name of Owner / President', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_person' },
         { key: 'contact_person_name', label: 'Contact Person', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_name' },
         { key: 'establishment_contact_position', label: 'Position', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_contact_position' },
+        { key: 'establishment_phone', label: 'Telephone Number', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_phone' },
         { key: 'contact_person_phone', label: 'Mobile Number', sectionId: 'contact-details-section', type: 'input', selector: '#contact_person_phone' },
         { key: 'establishment_email', label: 'E-mail Address', sectionId: 'contact-details-section', type: 'input', selector: '#establishment_email' }
     ];
@@ -1343,6 +1574,7 @@ function handleCompanyLogoChange(input) {
 </script>
 <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>
+
 
 
 <?php echo $__env->make('dashboard.employer.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/employer/company-profile.blade.php ENDPATH**/ ?>
