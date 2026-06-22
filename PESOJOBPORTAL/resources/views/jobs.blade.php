@@ -459,7 +459,19 @@ body{
                         <td>
                             <div class="job-title">{{ $job->title }}</div>
                         </td>
-                        <td><strong>{{ $job->employer_name ?? $job->employer?->name ?? 'N/A' }}</strong></td>
+<td>
+    @php
+        $employerId = $job->employer_id ?? null;
+        $employerName = $job->employer_name ?? $job->employer?->name ?? 'N/A';
+    @endphp
+    @if($employerId)
+        <a href="{{ route('companies.preview', $employerId) }}" class="text-decoration-none" style="color:inherit; font-weight:800;">
+            {{ $employerName }}
+        </a>
+    @else
+        <strong>{{ $employerName }}</strong>
+    @endif
+</td>
                         <td><i class="bi bi-geo-alt"></i> {{ $job->location ?? '—' }}</td>
                         <td><span class="badge-type">{{ $job->job_type ?? '—' }}</span></td>
                         <td><strong>{{ $job->salary_range ?? ($job->salary ? '₱'.number_format($job->salary) : 'Negotiable') }}</strong></td>

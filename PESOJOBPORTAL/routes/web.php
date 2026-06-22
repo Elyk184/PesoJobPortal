@@ -158,6 +158,11 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 
+// Public company preview (click company name from jobs landing page)
+Route::get('/companies/{employer}', [\App\Http\Controllers\EmployerController::class, 'companyPreview'])
+    ->name('companies.preview');
+
+
 Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerController::class, 'applyJob'])->name('jobs.show');
 
 // Admin routes (protected)

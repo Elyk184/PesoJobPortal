@@ -28,6 +28,38 @@ class EmployerController extends Controller
 {
     use AuthorizesRequests;
 
+    /**
+     * Public company preview (used from jobs landing page)
+     */
+    public function companyPreview(Request $request, User $employer): View
+    {
+        // Load company profile and basic job/company info
+        $companyProfile = $employer->companyProfile;
+
+        $logoUrl = null;
+        if ($companyProfile?->logo_path && Storage::disk('public')->exists($companyProfile->logo_path)) {
+            $logoUrl = asset('storage/' . $companyProfile->logo_path);
+        }
+
+        $companyName = $companyProfile?->company_name
+            ?? $companyProfile?->business_name
+            ?? $employer->name
+            ?? 'Company';
+
+        // Use full company information for preview
+        $companyInformation = $companyProfile?->company_information;
+
+        return view('companies.preview', [
+            'employer' => $employer,
+            'companyProfile' => $companyProfile,
+            'companyName' => $companyName,
+            'logoUrl' => $logoUrl,
+            'companyInformationPreview' => $companyInformation,
+        ]);
+    }
+
+
+
     public function dashboard(Request $request): View
     {
         $employer = $request->user()->loadMissing('companyProfile');

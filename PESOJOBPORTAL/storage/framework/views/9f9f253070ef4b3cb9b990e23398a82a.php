@@ -459,7 +459,20 @@ body{
                         <td>
                             <div class="job-title"><?php echo e($job->title); ?></div>
                         </td>
-                        <td><strong><?php echo e($job->employer_name ?? $job->employer?->name ?? 'N/A'); ?></strong></td>
+<td>
+    <?php
+        $employerId = $job->employer_id ?? null;
+        $employerName = $job->employer_name ?? $job->employer?->name ?? 'N/A';
+    ?>
+    <?php if($employerId): ?>
+        <a href="<?php echo e(route('companies.preview', $employerId)); ?>" class="text-decoration-none" style="color:inherit; font-weight:800;">
+            <?php echo e($employerName); ?>
+
+        </a>
+    <?php else: ?>
+        <strong><?php echo e($employerName); ?></strong>
+    <?php endif; ?>
+</td>
                         <td><i class="bi bi-geo-alt"></i> <?php echo e($job->location ?? '—'); ?></td>
                         <td><span class="badge-type"><?php echo e($job->job_type ?? '—'); ?></span></td>
                         <td><strong><?php echo e($job->salary_range ?? ($job->salary ? '₱'.number_format($job->salary) : 'Negotiable')); ?></strong></td>
