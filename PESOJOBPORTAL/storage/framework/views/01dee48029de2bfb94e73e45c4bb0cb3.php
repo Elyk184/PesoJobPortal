@@ -110,10 +110,23 @@
 
     .btn-row {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 0.75rem;
         flex-wrap: wrap;
-        justify-content: flex-end;
         margin-top: 1.25rem;
+    }
+
+    .btn-row .left-note {
+        flex: 1 1 240px;
+    }
+
+    .btn-row .actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        flex: 1 1 280px;
     }
 
     .text-muted { color: #64748b !important; font-size: 0.82rem; font-weight: 500; }
@@ -126,6 +139,7 @@
                 <h2 class="hero-title">Edit Job Posting</h2>
                 <p class="hero-subtitle">Update the details of your job listing.</p>
             </div>
+
 
             <div class="job-form-card">
                 <form action="<?php echo e(route('employer.jobs.update', $job)); ?>" method="POST" id="jobPostForm">
@@ -452,16 +466,23 @@ unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="btn-row">
-                        <a href="<?php echo e(route('employer.jobs.manage', ['status' => $job->status === 'closed' ? 'archived' : $job->status])); ?>" class="btn-cancel">
-                            <i class="bi bi-arrow-left me-2"></i>Back
-                        </a>
-                        <button type="submit" name="save_as_draft" value="1" class="btn-save-draft">
-                            <i class="bi bi-file-earmark me-2"></i>Save as Draft
-                        </button>
-                        <button type="submit" class="btn-post-job">
-                            <i class="bi bi-check-lg me-2"></i>Update Job
-                        </button>
+                        <div class="left-note">
+                            <p class="text-muted mb-0"><i class="bi bi-info-circle me-1"></i>Tip: Fill required fields (*) then update.</p>
+                        </div>
+
+                        <div class="actions">
+                            <a href="<?php echo e(route('employer.jobs.manage', ['status' => $job->status === 'closed' ? 'archived' : $job->status])); ?>" class="btn-cancel">
+                                <i class="bi bi-arrow-left me-2"></i>Back
+                            </a>
+                            <button type="submit" name="save_as_draft" value="1" class="btn-save-draft">
+                                <i class="bi bi-file-earmark me-2"></i>Save as Draft
+                            </button>
+                            <button type="submit" class="btn-post-job">
+                                <i class="bi bi-check-lg me-2"></i>Update Job
+                            </button>
+                        </div>
                     </div>
+
                 </form>
             </div>
         </div>
