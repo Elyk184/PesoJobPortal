@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Company Profile - PESO'); ?>
 <?php $__env->startSection('hide_header', true); ?>
 
@@ -185,9 +183,14 @@
         background: #ffffff;
     }
 
-    textarea.form-control-custom {
+textarea.form-control-custom {
         min-height: 118px;
         resize: vertical;
+    }
+
+    /* Make Company Information textarea larger */
+    #company_information.form-control-custom {
+        min-height: 220px;
     }
 
     .form-error-custom {
