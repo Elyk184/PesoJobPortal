@@ -888,16 +888,16 @@
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
 
-                                    {{-- Duplicate --}}
-                                    <form action="{{ route('employer.jobs.duplicate', $job) }}" method="POST" class="d-inline" style="display:contents">
-                                        @csrf
-                                        <button type="submit"
-                                                class="icon-btn duplicate"
-                                                title="Duplicate Job"
-                                                aria-label="Duplicate Job">
-                                            <i class="bi bi-copy"></i>
-                                        </button>
-                                    </form>
+                                    {{-- Edit --}}
+                                    <a href="{{ route('employer.jobs.edit', $job) }}"
+                                       class="icon-btn view"
+                                       title="Edit Job"
+                                       aria-label="Edit Job">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+
+
+
 
                                     {{-- Mark as Filled --}}
                                     @if(($job->status ?? null) !== 'closed')

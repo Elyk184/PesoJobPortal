@@ -896,15 +896,15 @@
                                     </a>
 
                                     
-                                    <form action="<?php echo e(route('employer.jobs.duplicate', $job)); ?>" method="POST" class="d-inline" style="display:contents">
-                                        <?php echo csrf_field(); ?>
-                                        <button type="submit"
-                                                class="icon-btn duplicate"
-                                                title="Duplicate Job"
-                                                aria-label="Duplicate Job">
-                                            <i class="bi bi-copy"></i>
-                                        </button>
-                                    </form>
+                                    <a href="<?php echo e(route('employer.jobs.edit', $job)); ?>"
+                                       class="icon-btn view"
+                                       title="Edit Job"
+                                       aria-label="Edit Job">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+
+
+
 
                                     
                                     <?php if(($job->status ?? null) !== 'closed'): ?>

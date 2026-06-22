@@ -768,6 +768,83 @@ class EmployerController extends Controller
         return back()->with('success', 'Job posting duplicated.');
     }
 
+    public function editJobPage(Request $request, PesoJob $job): View
+    {
+        $this->assertJobOwnership($request, $job);
+
+        $employmentTypes = $this->employmentTypes();
+
+        return view('dashboard.employer.edit-job', [
+            'job' => $job,
+            'employmentTypes' => $employmentTypes,
+        ]);
+    }
+
+    public function updateJob(Request $request, PesoJob $job): RedirectResponse
+    {
+        $this->assertJobOwnership($request, $job);
+
+        $isDraft = $request->boolean('save_as_draft');
+
+        $status = $isDraft ? 'draft' : 'pending';
+        $status = $this->normalizeJobStatusForStorage($status);
+
+        $rules = [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'location' => ['required', 'string', 'max:255'],
+            'employment_type' => ['required', 'string', 'in:full_time,part_time,contract,temporary,internship,freelance'],
+            'vacancies' => ['required', 'integer', 'min:1', 'max:999'],
+            'key_responsibilities' => ['nullable', 'string'],
+            'qualifications' => ['nullable', 'string'],
+            'preferred_skills' => ['nullable', 'string'],
+            'experience' => ['nullable', 'string'],
+            'education' => ['nullable', 'string'],
+            'benefits' => ['nullable', 'string'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0'],
+            'application_deadline' => ['nullable', 'date', 'after:today'],
+        ];
+
+        $validated = $request->validate($rules);
+
+        $jobData = [
+            'title' => $validated['title'],
+            'position' => $validated['title'],
+            'description' => $validated['description'],
+            'qualifications' => $validated['qualifications'] ?? $validated['description'],
+            'location' => $validated['location'],
+            'job_type' => $validated['employment_type'],
+            'vacancies' => $validated['vacancies'],
+            'key_responsibilities' => $validated['key_responsibilities'],
+            'preferred_skills' => $validated['preferred_skills'],
+            'experience' => $validated['experience'],
+            'education' => $validated['education'],
+            'benefits' => $validated['benefits'],
+            'status' => $status,
+        ];
+
+        if (isset($validated['salary_min']) || isset($validated['salary_max'])) {
+            $jobData['salary_range'] = ($validated['salary_min'] ?? '') . ' - ' . ($validated['salary_max'] ?? '');
+            $jobData['salary'] = $jobData['salary_range'];
+        }
+
+        if ($validated['application_deadline']) {
+            $jobData['application_end_date'] = $validated['application_deadline'];
+        }
+
+        // Keep update compatible with environments where some optional columns are missing.
+        $jobColumns = array_flip(Schema::getColumnListing('peso_jobs'));
+        $jobData = array_intersect_key($jobData, $jobColumns);
+
+        $job->update($jobData);
+
+        $message = $isDraft ? 'Job updated as draft successfully.' : 'Job updated successfully and is awaiting admin approval.';
+
+        return back()->with('success', $message);
+    }
+
+
     public function markJobFilled(Request $request, PesoJob $job): RedirectResponse
     {
         $this->assertJobOwnership($request, $job);

@@ -92,8 +92,11 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::post('/jobs', [EmployerController::class, 'storeJob'])->name('jobs.store');
     Route::patch('/jobs/{job}/extend', [EmployerController::class, 'extendJob'])->name('jobs.extend');
     Route::patch('/jobs/{job}/archive', [EmployerController::class, 'archiveJob'])->name('jobs.archive');
+    Route::get('/jobs/{job}/edit', [EmployerController::class, 'editJobPage'])->name('jobs.edit');
+    Route::patch('/jobs/{job}', [EmployerController::class, 'updateJob'])->name('jobs.update');
     Route::post('/jobs/{job}/duplicate', [EmployerController::class, 'duplicateJob'])->name('jobs.duplicate');
     Route::patch('/jobs/{job}/filled', [EmployerController::class, 'markJobFilled'])->name('jobs.filled');
+
 
     Route::post('/recruitment-activities', [EmployerController::class, 'requestRecruitmentActivity'])
         ->name('recruitment.request');
