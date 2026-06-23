@@ -49,7 +49,7 @@ class EmployerController extends Controller
         // Use full company information for preview
         $companyInformation = $companyProfile?->company_information;
 
-        return view('companies.preview', [
+        return view('dashboard.employer.companies.preview', [
             'employer' => $employer,
             'companyProfile' => $companyProfile,
             'companyName' => $companyName,

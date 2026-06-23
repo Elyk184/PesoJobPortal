@@ -5,7 +5,11 @@
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <style>
-    body { background: #f5f8fb; }
+    body{
+        background: #eef2f7;
+        color:#23374f;
+    }
+
     .company-preview-wrap {
         max-width: 980px;
         margin: 28px auto;
@@ -18,14 +22,15 @@
         box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
         overflow: hidden;
     }
-    .preview-hero {
-        padding: 22px 22px 18px;
-        background: linear-gradient(120deg, #0f2d52 0%, #1f4b8f 55%, #0f766e 100%);
-        color: #fff;
-        display: flex;
-        gap: 16px;
-        align-items: center;
-        flex-wrap: wrap;
+.preview-hero{
+        padding:22px 22px 18px;
+        background:linear-gradient(120deg,#0f2d52 0%,#1f4b8f 100%);
+        color:#fff;
+        display:flex;
+        gap:16px;
+        align-items:center;
+        flex-wrap:wrap;
+        box-shadow:0 12px 30px rgba(10,35,80,.15);
     }
     .logo {
         width: 80px;
