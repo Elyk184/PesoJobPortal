@@ -146,16 +146,9 @@
                                     <span class="badge app-status-pill text-bg-<?php echo e($statusClass); ?>"><?php echo e($statusLabel); ?></span>
                                 </td>
                                 <td class="text-end">
-                                    <div class="small text-muted">
-                                        <?php if(! empty($job?->salary_range)): ?>
-                                            <?php echo e($job->salary_range); ?>
-
-                                        <?php elseif(! empty($application->notes)): ?>
-                                            Has notes
-                                        <?php else: ?>
-                                            -
-                                        <?php endif; ?>
-                                    </div>
+                                    <a href="<?php echo e(route('jobseeker.application.details', $application)); ?>" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
                                 </td>
                             </tr>
                             <tr class="applications-mobile-row">

@@ -148,15 +148,9 @@
                                     <span class="badge app-status-pill text-bg-{{ $statusClass }}">{{ $statusLabel }}</span>
                                 </td>
                                 <td class="text-end">
-                                    <div class="small text-muted">
-                                        @if (! empty($job?->salary_range))
-                                            {{ $job->salary_range }}
-                                        @elseif (! empty($application->notes))
-                                            Has notes
-                                        @else
-                                            -
-                                        @endif
-                                    </div>
+                                    <a href="{{ route('jobseeker.application.details', $application) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
                                 </td>
                             </tr>
                             <tr class="applications-mobile-row">

@@ -361,6 +361,44 @@ class JobseekerController extends Controller
         ]);
     }
 
+    public function viewApplicationDetails(JobApplication $application): View|RedirectResponse
+    {
+        $user = Auth::user();
+
+        if ((int) $application->user_id !== (int) $user->id) {
+            abort(403);
+        }
+
+        $application->load('job');
+
+        $status = strtolower((string) ($application->status ?? 'pending'));
+        $statusLabel = match ($status) {
+            'pending' => 'Pending',
+            'reviewing' => 'Reviewing',
+            'shortlisted' => 'Shortlisted',
+            'interview', 'interviewed' => 'Interview',
+            'hired' => 'Hired',
+            'rejected' => 'Rejected',
+            default => ucfirst($status),
+        };
+        $statusClass = match ($status) {
+            'pending' => 'warning',
+            'reviewing' => 'info',
+            'shortlisted' => 'success',
+            'interview', 'interviewed' => 'primary',
+            'hired' => 'success',
+            'rejected' => 'danger',
+            default => 'secondary',
+        };
+
+        return view('dashboard.jobseeker.application-details', [
+            'application' => $application,
+            'job' => $application->job,
+            'statusLabel' => $statusLabel,
+            'statusClass' => $statusClass,
+        ]);
+    }
+
     public function recommendations(Request $request): View
     {
         $user = $request->user();

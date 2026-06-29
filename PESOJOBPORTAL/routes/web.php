@@ -46,6 +46,7 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
 
     Route::get('/apply/{job}', [JobseekerController::class, 'applyJob'])->name('apply-job');
     Route::post('/apply/{job}', [JobseekerController::class, 'submitApplication'])->name('submit-application');
+    Route::get('/application/{application}/details', [JobseekerController::class, 'viewApplicationDetails'])->name('application.details');
 
     Route::get('/profile', [JobseekerController::class, 'profile'])->name('profile');
     Route::post('/profile', [JobseekerController::class, 'saveProfile'])->name('profile.save');
