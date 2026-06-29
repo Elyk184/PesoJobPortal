@@ -1,8 +1,6 @@
-@extends('layouts.dashboard')
+<?php $__env->startSection('title', 'Jobseeker Dashboard | PESO Job Portal'); ?>
 
-@section('title', 'Jobseeker Dashboard | PESO Job Portal')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
@@ -753,9 +751,9 @@
         }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     (function () {
         requestAnimationFrame(function () {
@@ -797,17 +795,17 @@
         });
     })();
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <section class="jobseeker-dashboard" aria-label="Jobseeker dashboard">
     <div class="dashboard-section-card dashboard-hero p-3 p-lg-4 mb-4">
         <div class="row g-3 align-items-center">
             <div class="col-12 col-lg-8">
                 <div class="dashboard-hero-meta">Overview</div>
-                <h2 class="h4 mb-1 fw-bold">Welcome back, {{ auth()->user()->name ?? 'Jobseeker' }}!</h2>
+                <h2 class="h4 mb-1 fw-bold">Welcome back, <?php echo e(auth()->user()->name ?? 'Jobseeker'); ?>!</h2>
                 <p class="mb-0 text-muted">
-                    Your profile is {{ $profileCompletionPercent ?? 0 }}% complete.
+                    Your profile is <?php echo e($profileCompletionPercent ?? 0); ?>% complete.
                     Keep it updated to receive relevant job recommendations.
                 </p>
             </div>
@@ -819,9 +817,9 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon"><i class="bi bi-briefcase"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $availableJobsCount ?? 0 }}">{{ $availableJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="<?php echo e($availableJobsCount ?? 0); ?>"><?php echo e($availableJobsCount ?? 0); ?></div>
                     <div class="dashboard-stat-label">Available Jobs</div>
-                    <div class="dashboard-stat-trend">+{{ $kpiTrends['jobsThisWeek'] ?? 0 }} this week</div>
+                    <div class="dashboard-stat-trend">+<?php echo e($kpiTrends['jobsThisWeek'] ?? 0); ?> this week</div>
                 </div>
             </div>
         </div>
@@ -829,9 +827,9 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-apps"><i class="bi bi-send"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $applicationStatusCounts['total'] ?? 0 }}">{{ $applicationStatusCounts['total'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="<?php echo e($applicationStatusCounts['total'] ?? 0); ?>"><?php echo e($applicationStatusCounts['total'] ?? 0); ?></div>
                     <div class="dashboard-stat-label">Applications Sent</div>
-                    <div class="dashboard-stat-trend">+{{ $kpiTrends['applicationsThisWeek'] ?? 0 }} in 7 days</div>
+                    <div class="dashboard-stat-trend">+<?php echo e($kpiTrends['applicationsThisWeek'] ?? 0); ?> in 7 days</div>
                 </div>
             </div>
         </div>
@@ -839,11 +837,11 @@
             <div class="dashboard-stat-card p-3 d-flex align-items-center gap-3">
                 <div class="dashboard-stat-icon stat-saved"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="dashboard-stat-number" data-counter-target="{{ $savedJobsCount ?? 0 }}">{{ $savedJobsCount ?? 0 }}</div>
+                    <div class="dashboard-stat-number" data-counter-target="<?php echo e($savedJobsCount ?? 0); ?>"><?php echo e($savedJobsCount ?? 0); ?></div>
                     <div class="dashboard-stat-label">Saved Jobs</div>
                     <div class="dashboard-stat-trend">Bookmark jobs to apply later</div>
                 </div>
-                <a href="{{ route('jobseeker.saved-jobs') }}" class="stretched-link" aria-label="View saved jobs"></a>
+                <a href="<?php echo e(route('jobseeker.saved-jobs')); ?>" class="stretched-link" aria-label="View saved jobs"></a>
             </div>
         </div>
     </div>
@@ -851,7 +849,7 @@
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 140px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head mb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clipboard-data me-2"></i>Application Status</h3>
-            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
+            <a href="<?php echo e(route('jobseeker.applications')); ?>" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
         </div>
 
         <div class="status-legend mb-3" aria-label="Application status legend">
@@ -866,16 +864,16 @@
                 <div class="dashboard-stat-card p-3 h-100">
                     <div class="dashboard-stat-icon stat-saved mb-3"><i class="bi bi-hourglass-split"></i></div>
                     <div class="dashboard-stat-label">Pending Review</div>
-                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['pending'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number"><?php echo e($applicationStatusCounts['pending'] ?? 0); ?></div>
                     <div class="small text-muted">Waiting for screening</div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="dashboard-stat-card p-3 h-100 position-relative">
-                    <a href="{{ route('jobseeker.applications', ['status' => 'interviewed']) }}" class="stretched-link" aria-label="View interview applications"></a>
+                    <a href="<?php echo e(route('jobseeker.applications', ['status' => 'interviewed'])); ?>" class="stretched-link" aria-label="View interview applications"></a>
                     <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
                     <div class="dashboard-stat-label mt-3">Interview</div>
-                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['interview'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number"><?php echo e($applicationStatusCounts['interview'] ?? 0); ?></div>
                     <div class="small text-muted">Interview stage applications</div>
                 </div>
             </div>
@@ -883,16 +881,16 @@
                 <div class="dashboard-stat-card p-3 h-100">
                     <div class="dashboard-stat-icon" style="background: rgba(34, 197, 94, 0.12); color: #15803d;"><i class="bi bi-person-check"></i></div>
                     <div class="dashboard-stat-label mt-3">Hired</div>
-                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['hired'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number"><?php echo e($applicationStatusCounts['hired'] ?? 0); ?></div>
                     <div class="small text-muted">Successfully placed</div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
                 <div class="dashboard-stat-card p-3 h-100 position-relative">
-                    <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="stretched-link" aria-label="View reviewed applications"></a>
+                    <a href="<?php echo e(route('jobseeker.applications', ['status' => 'reviewing'])); ?>" class="stretched-link" aria-label="View reviewed applications"></a>
                     <div class="dashboard-stat-icon" style="background: rgba(168, 85, 247, 0.12); color: #7c3aed;"><i class="bi bi-stars"></i></div>
                     <div class="dashboard-stat-label mt-3">Reviewed</div>
-                    <div class="dashboard-stat-number">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
+                    <div class="dashboard-stat-number"><?php echo e($applicationStatusCounts['recommended'] ?? 0); ?></div>
                     <div class="small text-muted">Checked by recruiters</div>
                 </div>
             </div>
@@ -902,24 +900,24 @@
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 160px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head mb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-activity me-2"></i>Activity &amp; Insights</h3>
-            <a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
+            <a href="<?php echo e(route('jobseeker.applications')); ?>" class="btn btn-sm btn-outline-primary dashboard-section-action">View Applications</a>
         </div>
 
         <div class="row g-3 align-items-stretch">
             <div class="col-12 col-lg-5">
                 <div class="dashboard-stat-card h-100 p-3 position-relative">
-                    <a href="{{ route('jobseeker.profile') }}" class="stretched-link" aria-label="Go to profile"></a>
+                    <a href="<?php echo e(route('jobseeker.profile')); ?>" class="stretched-link" aria-label="Go to profile"></a>
                     <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
                         <div>
                             <div class="dashboard-stat-label mb-1">Profile progress</div>
-                            <div class="h4 mb-1 fw-bold">{{ $profileCompletionPercent ?? 0 }}%</div>
-                            <div class="small text-muted">{{ $profileCompletionLabel ?? 'Getting Started' }}</div>
+                            <div class="h4 mb-1 fw-bold"><?php echo e($profileCompletionPercent ?? 0); ?>%</div>
+                            <div class="small text-muted"><?php echo e($profileCompletionLabel ?? 'Getting Started'); ?></div>
                         </div>
                         <div class="dashboard-stat-icon" style="background: rgba(30, 64, 175, 0.12); color: #1e40af;"><i class="bi bi-person-check"></i></div>
                     </div>
 
                     <div class="progress mb-3" style="height: 8px; border-radius: 999px; background: #e8eef6;">
-                        <div class="progress-bar" style="width: {{ $profileCompletionPercent ?? 0 }}%; background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-blue-300) 100%);"></div>
+                        <div class="progress-bar" style="width: <?php echo e($profileCompletionPercent ?? 0); ?>%; background: linear-gradient(90deg, var(--land-blue-900) 0%, var(--land-blue-800) 60%, var(--land-blue-300) 100%);"></div>
                     </div>
 
                     <div class="small text-muted">
@@ -932,28 +930,28 @@
                 <div class="row g-3 h-100">
                     <div class="col-12 col-md-4">
                         <div class="dashboard-stat-card p-3 h-100 position-relative">
-                            <a href="{{ route('jobseeker.applications') }}" class="stretched-link" aria-label="View applications"></a>
+                            <a href="<?php echo e(route('jobseeker.applications')); ?>" class="stretched-link" aria-label="View applications"></a>
                             <div class="dashboard-stat-icon stat-apps mb-3"><i class="bi bi-send"></i></div>
                             <div class="dashboard-stat-label">Applications this week</div>
-                            <div class="dashboard-stat-number">{{ $kpiTrends['applicationsThisWeek'] ?? 0 }}</div>
+                            <div class="dashboard-stat-number"><?php echo e($kpiTrends['applicationsThisWeek'] ?? 0); ?></div>
                             <div class="small text-muted">Recent submissions and follow-ups</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="dashboard-stat-card p-3 h-100 position-relative">
-                            <a href="{{ route('jobseeker.applications', ['status' => 'interviewed']) }}" class="stretched-link" aria-label="View interview applications"></a>
+                            <a href="<?php echo e(route('jobseeker.applications', ['status' => 'interviewed'])); ?>" class="stretched-link" aria-label="View interview applications"></a>
                             <div class="dashboard-stat-icon" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;"><i class="bi bi-mic"></i></div>
                             <div class="dashboard-stat-label mt-3">Interview activity</div>
-                            <div class="dashboard-stat-number">{{ $kpiTrends['interviewsThisWeek'] ?? 0 }}</div>
+                            <div class="dashboard-stat-number"><?php echo e($kpiTrends['interviewsThisWeek'] ?? 0); ?></div>
                             <div class="small text-muted">Updates in the last 7 days</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="dashboard-stat-card p-3 h-100 position-relative">
-                            <a href="{{ route('jobseeker.applications', ['status' => 'reviewing']) }}" class="stretched-link" aria-label="View reviewed applications"></a>
+                            <a href="<?php echo e(route('jobseeker.applications', ['status' => 'reviewing'])); ?>" class="stretched-link" aria-label="View reviewed applications"></a>
                             <div class="dashboard-stat-icon stat-saved mb-3"><i class="bi bi-stars"></i></div>
                             <div class="dashboard-stat-label">Pending review</div>
-                            <div class="dashboard-stat-number">{{ $applicationStatusCounts['recommended'] ?? 0 }}</div>
+                            <div class="dashboard-stat-number"><?php echo e($applicationStatusCounts['recommended'] ?? 0); ?></div>
                             <div class="small text-muted">Applications waiting for action</div>
                         </div>
                     </div>
@@ -965,10 +963,10 @@
     <div class="dashboard-section-card p-3 p-lg-4 mb-4 dashboard-skeleton" style="--skeleton-height: 120px;">
         <div class="d-flex align-items-center justify-content-between gap-3 section-head">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-diagram-3 me-2"></i>Skill Gap Analysis</h3>
-            <a href="{{ route('jobseeker.skill-gap') }}" class="btn btn-sm btn-outline-primary dashboard-section-action">View Full Analysis</a>
+            <a href="<?php echo e(route('jobseeker.skill-gap')); ?>" class="btn btn-sm btn-outline-primary dashboard-section-action">View Full Analysis</a>
         </div>
 
-        @if (($skillGapAnalysis['hasData'] ?? false) && ($skillGapAnalysis['totalMarketSkills'] ?? 0) > 0)
+        <?php if(($skillGapAnalysis['hasData'] ?? false) && ($skillGapAnalysis['totalMarketSkills'] ?? 0) > 0): ?>
             <div class="skill-gap-summary p-3 p-lg-4 mb-3">
                 <div class="row g-3 align-items-center">
                     <div class="col-12 col-lg-5">
@@ -978,23 +976,23 @@
                             </div>
                             <div>
                                 <div class="skill-gap-summary-label mb-1">Market coverage</div>
-                                <div class="skill-gap-summary-score">{{ $skillGapAnalysis['coveragePercent'] }}%</div>
+                                <div class="skill-gap-summary-score"><?php echo e($skillGapAnalysis['coveragePercent']); ?>%</div>
                                 <div class="small text-muted mt-1">How closely your profile matches in-demand skills.</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-12 col-lg-7">
-                        @php
+                        <?php
                             $progressClass = ($skillGapAnalysis['coveragePercent'] ?? 0) >= 70 ? '' : (($skillGapAnalysis['coveragePercent'] ?? 0) >= 40 ? 'medium' : 'low');
-                        @endphp
+                        ?>
                         <div class="skill-gap-progress mb-2" style="margin-bottom: 10px;">
-                            <div class="skill-gap-progress-fill {{ $progressClass }}" style="width: {{ $skillGapAnalysis['coveragePercent'] }}%;"></div>
+                            <div class="skill-gap-progress-fill <?php echo e($progressClass); ?>" style="width: <?php echo e($skillGapAnalysis['coveragePercent']); ?>%;"></div>
                         </div>
                         <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                            <span class="skill-gap-chip matched"><i class="bi bi-check2-circle"></i>{{ count($skillGapAnalysis['matchedSkills'] ?? []) }} matched</span>
-                            <span class="skill-gap-chip missing"><i class="bi bi-exclamation-circle"></i>{{ count($skillGapAnalysis['missingSkills'] ?? []) }} missing</span>
-                            <span class="skill-gap-chip market"><i class="bi bi-briefcase"></i>{{ $skillGapAnalysis['totalMarketSkills'] }} market skills</span>
+                            <span class="skill-gap-chip matched"><i class="bi bi-check2-circle"></i><?php echo e(count($skillGapAnalysis['matchedSkills'] ?? [])); ?> matched</span>
+                            <span class="skill-gap-chip missing"><i class="bi bi-exclamation-circle"></i><?php echo e(count($skillGapAnalysis['missingSkills'] ?? [])); ?> missing</span>
+                            <span class="skill-gap-chip market"><i class="bi bi-briefcase"></i><?php echo e($skillGapAnalysis['totalMarketSkills']); ?> market skills</span>
                         </div>
                     </div>
                 </div>
@@ -1006,7 +1004,7 @@
                         <div class="dashboard-stat-icon" style="background: rgba(30, 64, 175, 0.12); color: #1e40af;"><i class="bi bi-check-circle"></i></div>
                         <div>
                             <div class="dashboard-stat-label">Matched Skills</div>
-                            <div class="dashboard-stat-number">{{ count($skillGapAnalysis['matchedSkills'] ?? []) }}</div>
+                            <div class="dashboard-stat-number"><?php echo e(count($skillGapAnalysis['matchedSkills'] ?? [])); ?></div>
                             <div class="small text-muted">Skills already in demand</div>
                         </div>
                     </div>
@@ -1016,7 +1014,7 @@
                         <div class="dashboard-stat-icon" style="background: rgba(191, 219, 254, 0.55); color: #2563eb;"><i class="bi bi-exclamation-triangle"></i></div>
                         <div>
                             <div class="dashboard-stat-label">Skills to Consider</div>
-                            <div class="dashboard-stat-number">{{ count($skillGapAnalysis['missingSkills'] ?? []) }}</div>
+                            <div class="dashboard-stat-number"><?php echo e(count($skillGapAnalysis['missingSkills'] ?? [])); ?></div>
                             <div class="small text-muted">Gaps to close next</div>
                         </div>
                     </div>
@@ -1026,7 +1024,7 @@
                         <div class="dashboard-stat-icon" style="background: rgba(147, 197, 253, 0.28); color: #1e3a8a;"><i class="bi bi-stars"></i></div>
                         <div>
                             <div class="dashboard-stat-label">Total Market Skills</div>
-                            <div class="dashboard-stat-number">{{ $skillGapAnalysis['totalMarketSkills'] }}</div>
+                            <div class="dashboard-stat-number"><?php echo e($skillGapAnalysis['totalMarketSkills']); ?></div>
                             <div class="small text-muted">Current job demand snapshot</div>
                         </div>
                     </div>
@@ -1037,60 +1035,64 @@
                 <div class="col-12 col-lg-5">
                     <div class="dashboard-section-card p-3 h-100" style="border-radius: 16px;">
                         <h4 class="h6 fw-bold mb-3"><i class="bi bi-person-badge me-2"></i>Your Current Skills</h4>
-                        @if (! empty($skillGapAnalysis['userSkills']))
+                        <?php if(! empty($skillGapAnalysis['userSkills'])): ?>
                             <div class="skill-gap-chip-row">
-                                @foreach ($skillGapAnalysis['userSkills'] as $skill)
-                                    <span class="skill-gap-chip matched"><i class="bi bi-check2"></i>{{ ucwords($skill) }}</span>
-                                @endforeach
+                                <?php $__currentLoopData = $skillGapAnalysis['userSkills']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <span class="skill-gap-chip matched"><i class="bi bi-check2"></i><?php echo e(ucwords($skill)); ?></span>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="text-muted small">No skills found in your profile. Add skills to see the comparison.</div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <div class="col-12 col-lg-7">
                     <div class="dashboard-section-card p-3 h-100" style="border-radius: 16px;">
-                        @if (! empty($skillGapAnalysis['missingSkills']))
+                        <?php if(! empty($skillGapAnalysis['missingSkills'])): ?>
                             <h4 class="h6 fw-bold mb-3"><i class="bi bi-lightning-charge me-2" style="color: #1e40af;"></i>Skills in Demand You May Be Missing</h4>
                             <div class="skill-gap-chip-row">
-                                @foreach ($skillGapAnalysis['missingSkills'] as $skill)
+                                <?php $__currentLoopData = $skillGapAnalysis['missingSkills']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <span class="skill-gap-chip missing">
-                                        <i class="bi bi-plus-circle"></i>{{ ucwords($skill) }}
+                                        <i class="bi bi-plus-circle"></i><?php echo e(ucwords($skill)); ?>
+
                                     </span>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
                             <div class="alert alert-info mt-3 mb-0 small">
                                 <i class="bi bi-lightbulb me-1"></i> Consider upskilling in these areas to improve your job match rate.
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <i class="bi bi-check-circle-fill" style="color: #1e40af; font-size: 1.3rem;"></i>
                                 <span class="fw-bold h5 mb-0" style="color: #1e3a8a;">Excellent Coverage!</span>
                             </div>
                             <p class="text-muted mb-0">Your skillset covers all top market demands. Keep your profile updated as new roles are posted.</p>
-                        @endif
+                        <?php endif; ?>
 
-                        @if (! empty($skillGapAnalysis['matchedSkills']))
+                        <?php if(! empty($skillGapAnalysis['matchedSkills'])): ?>
                             <h4 class="h6 fw-bold mb-3 mt-4"><i class="bi bi-check2-circle me-2" style="color: #1e40af;"></i>Skills You Have That Are In Demand</h4>
                             <div class="skill-gap-chip-row">
-                                @foreach ($skillGapAnalysis['matchedSkills'] as $skill)
+                                <?php $__currentLoopData = $skillGapAnalysis['matchedSkills']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $skill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <span class="skill-gap-chip matched">
-                                        <i class="bi bi-check2"></i>{{ ucwords($skill) }}
+                                        <i class="bi bi-check2"></i><?php echo e(ucwords($skill)); ?>
+
                                     </span>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
-        @else
+        <?php else: ?>
             <div class="d-flex align-items-center justify-content-between gap-3">
                 <div class="text-muted small">Complete your profile to see how your skills compare with market demand.</div>
-                <a href="{{ route('jobseeker.profile') }}" class="btn btn-sm btn-outline-secondary">Go to Profile</a>
+                <a href="<?php echo e(route('jobseeker.profile')); ?>" class="btn btn-sm btn-outline-secondary">Go to Profile</a>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
 
 </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/jobseeker/dashboard.blade.php ENDPATH**/ ?>

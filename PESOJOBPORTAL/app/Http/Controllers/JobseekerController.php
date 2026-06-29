@@ -145,7 +145,7 @@ class JobseekerController extends Controller
                 'icon' => 'bi-mic',
                 'title' => 'Interview updates available',
                 'message' => 'You have ' . $applicationStatusCounts['interview'] . ' application(s) in interview status.',
-                'url' => route('jobseeker.applications', ['status' => 'interview']),
+                'url' => route('jobseeker.applications', ['status' => 'interviewed']),
                 'created_at' => now()->subMinutes(10),
             ]);
         }

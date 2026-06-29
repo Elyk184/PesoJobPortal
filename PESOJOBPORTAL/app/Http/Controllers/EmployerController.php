@@ -1050,17 +1050,25 @@ class EmployerController extends Controller
 
         // Support a simple `status` payload from the UI for common stages, keep backward compatibility
         $validated = $request->validate([
-            'status' => ['nullable', 'in:pending,reviewing,shortlisted,interview,hired,rejected'],
+            'status' => ['nullable', 'in:pending,reviewing,recommended,interviewed,hired,rejected'],
             'employer_status' => ['nullable', 'in:interview_scheduled,hired,not_selected'],
             'final_decision' => ['nullable', 'in:pending,hired,not_selected'],
             'employer_feedback' => ['nullable', 'string'],
             'interview_scheduled_at' => ['nullable', 'date'],
         ]);
 
+        // Additional validation: interview date is required when status is interviewed
+        if (($validated['status'] ?? null) === 'interviewed' && empty($validated['interview_scheduled_at'])) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Interview date and time is required when status is Interview.'], 422);
+            }
+            return back()->withInput()->with('error', 'Interview date and time is required when status is Interview.');
+        }
+
         $newStatus = $validated['status'] ?? null;
         $update = [
             'employer_feedback' => $validated['employer_feedback'] ?? $application->employer_feedback,
-            'interview_scheduled_at' => $application->interview_scheduled_at,
+            'interview_scheduled_at' => null,
         ];
 
         if ($newStatus !== null) {
@@ -1075,24 +1083,22 @@ class EmployerController extends Controller
                     $update['final_decision'] = 'not_selected';
                     $update['status'] = 'rejected';
                     break;
-                case 'interview':
+                case 'interviewed':
                     $update['employer_status'] = 'interview_scheduled';
                     $update['final_decision'] = 'pending';
-                    $update['status'] = 'interview';
-                    $update['interview_scheduled_at'] = $validated['interview_scheduled_at'] ?? $application->interview_scheduled_at;
+                    $update['status'] = 'interviewed';
+                    $update['interview_scheduled_at'] = $validated['interview_scheduled_at'] ?? null;
                     break;
                 case 'reviewing':
                 case 'shortlisted':
                     $update['final_decision'] = 'pending';
                     $update['status'] = $newStatus;
                     // keep employer_status unchanged for these intermediate states
-                    $update['interview_scheduled_at'] = null;
                     break;
                 case 'pending':
                 default:
                     $update['final_decision'] = 'pending';
                     $update['status'] = 'pending';
-                    $update['interview_scheduled_at'] = null;
                     break;
             }
         } else {
@@ -1104,7 +1110,9 @@ class EmployerController extends Controller
                 $update['final_decision'] = $validated['final_decision'];
                 $update['status'] = $validated['final_decision'] === 'hired' ? 'hired' : ($validated['final_decision'] === 'not_selected' ? 'rejected' : 'interviewed');
             }
-            if (($update['status'] ?? null) !== 'interview') {
+            if (($update['status'] ?? null) === 'interviewed') {
+                $update['interview_scheduled_at'] = $validated['interview_scheduled_at'] ?? null;
+            } else {
                 $update['interview_scheduled_at'] = null;
             }
         }
@@ -1120,7 +1128,7 @@ class EmployerController extends Controller
                     $statusLabel
                 );
 
-                if ($application->status === 'interview' && ! empty($application->interview_scheduled_at)) {
+                if ($application->status === 'interviewed' && ! empty($application->interview_scheduled_at)) {
                     $message .= ' Interview scheduled for ' . $application->interview_scheduled_at->format('M d, Y h:i A') . '.';
                 }
 

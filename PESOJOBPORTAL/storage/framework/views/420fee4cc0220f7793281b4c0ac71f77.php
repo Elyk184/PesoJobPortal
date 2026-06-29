@@ -1,10 +1,8 @@
-@extends('dashboard.employer.layout')
+<?php $__env->startSection('title', 'Applicant Details - PESO'); ?>
+<?php $__env->startSection('page-title', 'Applicant Details'); ?>
+<?php $__env->startSection('page-subtitle', 'Review and manage this applicant'); ?>
 
-@section('title', 'Applicant Details - PESO')
-@section('page-title', 'Applicant Details')
-@section('page-subtitle', 'Review and manage this applicant')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .applicant-show-page {
         --as-primary: #1f4f8f;
@@ -201,39 +199,39 @@
         .profile-header { padding-bottom: 1.25rem; }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="applicant-show-page">
-@if(session('success'))
+<?php if(session('success')): ?>
 <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
     <i class="bi bi-check-circle-fill me-2"></i>
-    <div>{{ session('success') }}</div>
+    <div><?php echo e(session('success')); ?></div>
     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
 </div>
-@endif
+<?php endif; ?>
 
 <div class="row">
     <div class="col-lg-8">
         <div class="profile-header">
             <div class="d-flex align-items-center gap-3">
-                @if(!empty($application->applicant->avatar))
+                <?php if(!empty($application->applicant->avatar)): ?>
                     <div class="user-avatar">
-                        <img src="{{ Storage::url($application->applicant->avatar) }}" alt="{{ $application->applicant->name }}">
+                        <img src="<?php echo e(Storage::url($application->applicant->avatar)); ?>" alt="<?php echo e($application->applicant->name); ?>">
                     </div>
-                @else
-                    <div class="user-avatar user-initials" aria-hidden="true">{{ strtoupper(substr($application->applicant->name ?? '', 0, 1)) }}</div>
-                @endif
+                <?php else: ?>
+                    <div class="user-avatar user-initials" aria-hidden="true"><?php echo e(strtoupper(substr($application->applicant->name ?? '', 0, 1))); ?></div>
+                <?php endif; ?>
                 <div style="flex: 1;">
-                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;">{{ $application->applicant->name }}</h3>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;">{{ $application->applicant->email ?? 'No email on file' }}</p>
+                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;"><?php echo e($application->applicant->name); ?></h3>
+                    <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;"><?php echo e($application->applicant->email ?? 'No email on file'); ?></p>
                     <div style="display:flex; gap:0.75rem; align-items:center; margin-top:0.6rem;">
                         <div class="meta-card" aria-hidden="true">
                             <i class="bi bi-briefcase-fill"></i>
-                            <span>Applied for: {{ $application->jobPost->title }}</span>
+                            <span>Applied for: <?php echo e($application->jobPost->title); ?></span>
                         </div>
                         <div>
-                            @php
+                            <?php
                                 $sclass = match($application->status) {
                                     'pending' => 'status-pending',
                                     'reviewing' => 'status-reviewing',
@@ -243,8 +241,8 @@
                                     'rejected' => 'status-rejected',
                                     default => 'status-pending'
                                 };
-                            @endphp
-                            <span class="status-chip {{ $sclass }}" aria-label="Application status: {{ $application->status }}">{{ ucfirst($application->status) }}</span>
+                            ?>
+                            <span class="status-chip <?php echo e($sclass); ?>" aria-label="Application status: <?php echo e($application->status); ?>"><?php echo e(ucfirst($application->status)); ?></span>
                         </div>
                     </div>
                 </div>
@@ -256,71 +254,71 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <span class="label-muted">Applied Date</span>
-                    <p class="mb-0" style="font-weight: 600; font-size: 0.95rem;">{{ optional($application->applied_at)->format('F d, Y') }}</p>
+                    <p class="mb-0" style="font-weight: 600; font-size: 0.95rem;"><?php echo e(optional($application->applied_at)->format('F d, Y')); ?></p>
                 </div>
                 <div class="col-md-6">
                     <span class="label-muted">Current Status</span>
                     <div>
-                        @switch($application->status)
-                            @case('pending')
+                        <?php switch($application->status):
+                            case ('pending'): ?>
                                 <span class="status-chip status-pending">Pending</span>
-                                @break
-                            @case('reviewing')
+                                <?php break; ?>
+                            <?php case ('reviewing'): ?>
                                 <span class="status-chip status-reviewing">Reviewing</span>
-                                @break
-                            @case('recommended')
+                                <?php break; ?>
+                            <?php case ('recommended'): ?>
                                 <span class="status-chip status-shortlisted">Recommended</span>
-                                @break
-                            @case('interviewed')
+                                <?php break; ?>
+                            <?php case ('interviewed'): ?>
                                 <span class="status-chip status-interview">Interview</span>
-                                @break
-                            @case('hired')
+                                <?php break; ?>
+                            <?php case ('hired'): ?>
                                 <span class="status-chip status-hired">Hired</span>
-                                @break
-                            @case('rejected')
+                                <?php break; ?>
+                            <?php case ('rejected'): ?>
                                 <span class="status-chip status-rejected">Rejected</span>
-                                @break
-                        @endswitch
+                                <?php break; ?>
+                        <?php endswitch; ?>
                     </div>
                 </div>
             </div>
 
-            @if($application->cover_letter)
+            <?php if($application->cover_letter): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <span class="label-muted">Cover Letter / Notes</span>
-                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;">{{ $application->cover_letter }}</p>
+                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->cover_letter); ?></p>
             </div>
-            @endif
+            <?php endif; ?>
 
-            @if($application->resume_path)
+            <?php if($application->resume_path): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
+                <a href="<?php echo e(route('employer.applications.resume.download', $application->id)); ?>" class="btn btn-primary">
                     <i class="bi bi-download"></i> Download Resume
                 </a>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <div class="info-card">
             <h5 class="mb-3 section-title"><i class="bi bi-chat-dots text-primary"></i>Leave Feedback</h5>
 
-            @if($feedback)
+            <?php if($feedback): ?>
             <div class="alert alert-info mb-4" style="background: #dbeafe; border-color: #93c5fd; color: #1e40af; border-radius: 12px; padding: 1rem;">
                 <h6 class="alert-heading mb-2" style="font-weight: 700;">Previous Feedback</h6>
-                <p class="mb-2">{{ $feedback->feedback }}</p>
-                @if($feedback->rating)
+                <p class="mb-2"><?php echo e($feedback->feedback); ?></p>
+                <?php if($feedback->rating): ?>
                 <div style="margin-bottom: 0.5rem;">
-                    @for($i = 1; $i <= 5; $i++)
-                        <i class="bi bi-star{{ $i <= $feedback->rating ? '-fill' : '' }}" style="color: #ffc107; font-size: 0.9rem;"></i>
-                    @endfor
+                    <?php for($i = 1; $i <= 5; $i++): ?>
+                        <i class="bi bi-star<?php echo e($i <= $feedback->rating ? '-fill' : ''); ?>" style="color: #ffc107; font-size: 0.9rem;"></i>
+                    <?php endfor; ?>
                 </div>
-                @endif
-                <small style="opacity: 0.85;">Type: {{ ucfirst(str_replace('_', ' ', $feedback->feedback_type)) }}</small>
+                <?php endif; ?>
+                <small style="opacity: 0.85;">Type: <?php echo e(ucfirst(str_replace('_', ' ', $feedback->feedback_type))); ?></small>
             </div>
-            @endif
+            <?php endif; ?>
 
-            <form id="feedbackForm" action="{{ route('employer.applications.feedback', $application->id) }}" method="POST">
-                @csrf
+            <form id="feedbackForm" action="<?php echo e(route('employer.applications.feedback', $application->id)); ?>" method="POST">
+                <?php echo csrf_field(); ?>
                 <div class="mb-4">
                     <label class="form-label">Feedback Type</label>
                     <select id="feedbackType" name="feedback_type" class="form-select">
@@ -348,9 +346,9 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
-                    @if($application->resume_path)
-                        <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-outline-primary">Download Resume</a>
-                    @endif
+                    <?php if($application->resume_path): ?>
+                        <a href="<?php echo e(route('employer.applications.resume.download', $application->id)); ?>" class="btn btn-outline-primary">Download Resume</a>
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
@@ -360,18 +358,18 @@
         <div class="right-sticky">
         <div class="info-card">
             <h5 class="mb-4 section-title"><i class="bi bi-pencil-square text-primary"></i>Update Status</h5>
-            <form id="statusForm" action="{{ route('employer.applications.update', $application->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
+            <form id="statusForm" action="<?php echo e(route('employer.applications.update', $application->id)); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PATCH'); ?>
                 <div class="mb-4">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select" id="statusSelect">
-                        <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="reviewing" {{ $application->status == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
-                        <option value="recommended" {{ $application->status == 'recommended' ? 'selected' : '' }}>Recommended</option>
-                        <option value="interviewed" {{ $application->status == 'interviewed' ? 'selected' : '' }}>Interview</option>
-                        <option value="hired" {{ $application->status == 'hired' ? 'selected' : '' }}>Hired</option>
-                        <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Not Selected</option>
+                        <option value="pending" <?php echo e($application->status == 'pending' ? 'selected' : ''); ?>>Pending</option>
+                        <option value="reviewing" <?php echo e($application->status == 'reviewing' ? 'selected' : ''); ?>>Reviewing</option>
+                        <option value="recommended" <?php echo e($application->status == 'recommended' ? 'selected' : ''); ?>>Recommended</option>
+                        <option value="interviewed" <?php echo e($application->status == 'interviewed' ? 'selected' : ''); ?>>Interview</option>
+                        <option value="hired" <?php echo e($application->status == 'hired' ? 'selected' : ''); ?>>Hired</option>
+                        <option value="rejected" <?php echo e($application->status == 'rejected' ? 'selected' : ''); ?>>Not Selected</option>
                     </select>
                 </div>
                 <div id="interviewDateField">
@@ -382,14 +380,14 @@
                         </h6>
                         <div class="mb-3">
                             <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                            <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
+                            <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
                             <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
                         </div>
                     </div>
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Notes (Optional)</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this applicant..." style="resize: vertical;">{{ $application->notes }}</textarea>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this applicant..." style="resize: vertical;"><?php echo e($application->notes); ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-check-lg"></i> Update Status
@@ -400,12 +398,12 @@
         <div class="info-card">
             <h5 class="mb-4 section-title"><i class="bi bi-briefcase text-primary"></i>Job Information</h5>
             <div style="padding: 0.5rem 0;">
-                <p style="margin: 0 0 0.75rem 0; font-weight: 700; font-size: 1rem; color: #0f172a;">{{ $application->jobPost->title }}</p>
-                <p style="margin: 0 0 0.5rem 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-geo-alt me-2" style="color: #075cb2;"></i>{{ $application->jobPost->location }}</p>
-                <p style="margin: 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-briefcase me-2" style="color: #075cb2;"></i>{{ ucfirst(str_replace('_', ' ', $application->jobPost->employment_type)) }}</p>
+                <p style="margin: 0 0 0.75rem 0; font-weight: 700; font-size: 1rem; color: #0f172a;"><?php echo e($application->jobPost->title); ?></p>
+                <p style="margin: 0 0 0.5rem 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-geo-alt me-2" style="color: #075cb2;"></i><?php echo e($application->jobPost->location); ?></p>
+                <p style="margin: 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-briefcase me-2" style="color: #075cb2;"></i><?php echo e(ucfirst(str_replace('_', ' ', $application->jobPost->employment_type))); ?></p>
             </div>
             <hr style="margin: 1.25rem 0;">
-            <a href="{{ route('employer.jobs.manage') }}" class="btn btn-outline-primary btn-sm w-100">
+            <a href="<?php echo e(route('employer.jobs.manage')); ?>" class="btn btn-outline-primary btn-sm w-100">
                 <i class="bi bi-arrow-left"></i> Back to Jobs
             </a>
         </div>
@@ -414,9 +412,9 @@
 </div>
 
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     function toggleInterviewDate() {
         const status = document.getElementById('statusSelect')?.value;
@@ -527,4 +525,6 @@
         }
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('dashboard.employer.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/employer/show-applicant.blade.php ENDPATH**/ ?>
