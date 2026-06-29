@@ -19,6 +19,7 @@ use App\Models\JobseekerTraining;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class JobseekerApprovalController extends Controller
 {
@@ -104,7 +105,7 @@ class JobseekerApprovalController extends Controller
             $presentAddress?->municipality,
             $presentAddress?->province,
         ])));
-        
+
         // Get available jobs from employers (active or pending jobs)
         $availableJobs = \App\Models\PesoJob::whereIn('status', ['active', 'pending'])
             ->with('employer.companyProfile')
@@ -140,24 +141,45 @@ class JobseekerApprovalController extends Controller
         ]);
 
         $job = \App\Models\PesoJob::with('employer.companyProfile')->findOrFail($request->job_id);
-        
+
         // Get employer and company information
         $employerName = $job->employer?->name ?? 'Unknown Employer';
         $companyName = $job->employer?->companyProfile?->company_name ?? $employerName;
 
         // Create a portal notification
-        $notification = \App\Models\PortalNotification::create([
-            'title' => "Job Recommendation: {$job->title}",
-            'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
-            'created_by' => auth()->id(),
-        ]);
+        try {
+            $portalNotification = \App\Models\PortalNotification::create([
+                'title' => "Job Recommendation: {$job->title}",
+                'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
+                'created_by' => auth()->id(),
+            ]);
 
-        // Attach to the jobseeker
-        $jobseeker->userNotifications()->create([
-            'portal_notification_id' => $notification->id,
-        ]);
+            Log::info('PortalNotification created for recommendJob', [
+                'portal_notification_id' => $portalNotification->id,
+                'title' => $portalNotification->title,
+                'created_by' => $portalNotification->created_by,
+            ]);
 
-        return back()->with('success', "Job recommendation sent to {$jobseeker->name}!");
+            // Attach to the jobseeker
+            $jobseeker->userNotifications()->create([
+                'portal_notification_id' => $portalNotification->id,
+                'user_id' => $jobseeker->id,
+            ]);
+
+            Log::info('UserNotification created for recommendJob', [
+                'user_id' => $jobseeker->id,
+                'portal_notification_id' => $portalNotification->id,
+            ]);
+
+            return back()->with('success', "Job recommendation sent to {$jobseeker->name}! ");
+        } catch (\Throwable $e) {
+            Log::error('Failed to create recommendation notification', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Failed to send recommendation notification: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -165,7 +187,7 @@ class JobseekerApprovalController extends Controller
      */
     public function recommendApplicant(Request $request, User $jobseeker): \Illuminate\Http\RedirectResponse
     {
-        \Log::info('recommendApplicant called', [
+        Log::info('recommendApplicant called', [
             'jobseeker_id' => $jobseeker->id,
             'jobseeker_name' => $jobseeker->name,
             'request_data' => $request->all(),
@@ -177,15 +199,15 @@ class JobseekerApprovalController extends Controller
             'message' => 'nullable|string|max:1000',
         ]);
 
-        \Log::info('Validation passed', $validated);
+        Log::info('Validation passed', $validated);
 
         try {
             // Get the job and verify it belongs to the selected employer
             $job = \App\Models\PesoJob::findOrFail($validated['job_id']);
-            \Log::info('Job found', ['job_id' => $job->id, 'job_title' => $job->title, 'employer_id' => $job->employer_id]);
-            
+            Log::info('Job found', ['job_id' => $job->id, 'job_title' => $job->title, 'employer_id' => $job->employer_id]);
+
             if ($job->employer_id != $validated['employer_id']) {
-                \Log::warning('Job does not belong to employer', [
+                Log::warning('Job does not belong to employer', [
                     'job_employer_id' => $job->employer_id,
                     'requested_employer_id' => $validated['employer_id']
                 ]);
@@ -204,7 +226,7 @@ class JobseekerApprovalController extends Controller
                 'status' => 'pending',
             ]);
 
-            \Log::info('Recommendation created', [
+            Log::info('Recommendation created', [
                 'recommendation_id' => $recommendation->id,
                 'jobseeker' => $jobseeker->name,
                 'job_id' => $validated['job_id']
@@ -213,7 +235,7 @@ class JobseekerApprovalController extends Controller
             // Create notification for employer
             $employer = User::findOrFail($validated['employer_id']);
             $companyName = $employer->companyProfile?->company_name ?? $employer->name;
-            
+
             // Create portal notification first
             $portalNotif = \App\Models\PortalNotification::create([
                 'title' => "Applicant Recommendation: {$jobseeker->name}",
@@ -226,7 +248,7 @@ class JobseekerApprovalController extends Controller
                 'portal_notification_id' => $portalNotif->id,
             ]);
 
-            \Log::info('Notification created', [
+            Log::info('Notification created', [
                 'notification_id' => $notification->id,
                 'portal_notification_id' => $portalNotif->id,
                 'employer_id' => $validated['employer_id'],
@@ -234,11 +256,11 @@ class JobseekerApprovalController extends Controller
             ]);
 
             $successMsg = "{$jobseeker->name} has been recommended to {$companyName}!";
-            \Log::info('Recommendation successful', ['message' => $successMsg]);
-            
+            Log::info('Recommendation successful', ['message' => $successMsg]);
+
             return back()->with('success', $successMsg);
         } catch (\Exception $e) {
-            \Log::error('Recommendation failed', [
+            Log::error('Recommendation failed', [
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),

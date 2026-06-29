@@ -913,10 +913,10 @@
         @endif
         </div>
     </div>
-                <form id="recommendForm" method="POST">
+                <form id="recommendForm" method="POST" action="{{ route('admin.jobseekers.recommend-applicant', $jobseeker) }}">
                     @csrf
                     <div class="modal-body" style="padding: 2rem; background: #ffffff;">
-                        <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;">N/A</span></p>
+                        <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;">{{ $jobseeker->name ?? 'N/A' }}</span></p>
 
                         <div class="row mb-3">
                             <!-- Step 1: Select Employer -->
@@ -1404,7 +1404,7 @@
                     jobseekerNameSpan.textContent = jobseekerName;
 
                     // Update form action for applicant recommendation
-                    recommendForm.action = '/admin/jobseekers/' + jobseekerId + '/recommend-applicant';
+                    recommendForm.action = @json(route('admin.jobseekers.recommend-applicant', ['jobseeker' => '__JOBSEEKER_ID__'])).replace('__JOBSEEKER_ID__', jobseekerId);
                     console.log('Form action set to:', recommendForm.action);
                     console.log('Jobseeker:', jobseekerId, jobseekerName);
 

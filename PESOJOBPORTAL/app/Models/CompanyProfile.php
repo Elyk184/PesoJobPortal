@@ -17,6 +17,7 @@ class CompanyProfile extends Model
         'user_id',
         'company_name',
         'business_name',
+        'company_information',
         'trade_name',
         'acronym_abbreviation',
         'established_year',

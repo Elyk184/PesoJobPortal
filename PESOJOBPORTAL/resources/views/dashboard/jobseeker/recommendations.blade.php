@@ -77,10 +77,12 @@
 			<div class="row g-3">
 				@foreach ($recommendations as $item)
 					@php
-						$job = $item['job'];
-						$score = (int) ($item['score'] ?? 0);
+						$job = data_get($item, 'job');
+						$score = (int) data_get($item, 'score', 0);
 						$badgeClass = $score >= 80 ? 'success' : ($score >= 60 ? 'primary' : 'warning');
 					@endphp
+
+					@if ($job)
 
 					<div class="col-12 col-xl-6">
 						<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-3">
@@ -104,25 +106,52 @@
 
 							<p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($job->description, 150) }}</p>
 
-							@if (! empty($item['matched_skills']))
+							@if (! empty(data_get($item, 'matched_skills')))
 								<div class="d-flex flex-wrap gap-2">
-									@foreach ($item['matched_skills'] as $skill)
+									@foreach (data_get($item, 'matched_skills', []) as $skill)
 										<span class="badge rounded-pill text-bg-light border">{{ $skill }}</span>
 									@endforeach
 								</div>
 							@endif
 
-							@if (! empty($item['reasons']))
+							@if (! empty(data_get($item, 'reasons')))
 								<ul class="small text-muted mb-0 ps-3">
-									@foreach ($item['reasons'] as $reason)
+									@foreach (data_get($item, 'reasons', []) as $reason)
 										<li>{{ $reason }}</li>
 									@endforeach
 								</ul>
 							@endif
 						</article>
 					</div>
+					@endif
 				@endforeach
 			</div>
+
+			@if (isset($adminRecommendations) && $adminRecommendations->isNotEmpty())
+				<div class="mt-4 pt-4 border-top">
+					<div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+						<h3 class="h5 mb-0 fw-bold"><i class="bi bi-megaphone me-2"></i>Admin Recommendations</h3>
+						<a href="{{ route('jobseeker.notifications') }}" class="btn btn-sm btn-outline-primary">View Notifications</a>
+					</div>
+					<div class="row g-3">
+						@foreach ($adminRecommendations as $recommendation)
+							<div class="col-12 col-xl-6">
+								<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-2 border-start border-4" style="border-color: #2d6be0;">
+									<div class="d-flex align-items-start justify-content-between gap-2">
+										<div>
+											<h4 class="h6 mb-1 fw-bold text-dark">{{ $recommendation['title'] }}</h4>
+											<div class="small text-muted">Sent by the admin portal</div>
+										</div>
+										<span class="badge text-bg-info">Admin</span>
+									</div>
+									<p class="mb-0 small text-muted">{{ $recommendation['message'] }}</p>
+									<div class="small text-secondary">{{ optional($recommendation['created_at'])->format('M d, Y h:i A') }}</div>
+								</article>
+							</div>
+						@endforeach
+					</div>
+				</div>
+			@endif
 		@endif
 	</div>
 </section>

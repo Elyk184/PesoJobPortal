@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 
     Route::get('/request-lra-sra', [EmployerController::class, 'requestLraSraPage'])->name('recruitment.index');
     Route::get('/request-lra-sra/{recruitmentActivityRequest}', [EmployerController::class, 'viewRecruitmentActivity'])->name('recruitment.show');
+    Route::get('/request-lra-sra/{recruitmentActivityRequest}/view-certificate', [EmployerController::class, 'viewRecruitmentActivityCertificate'])->name('recruitment.view-certificate');
     Route::get('/request-lra-sra/{recruitmentActivityRequest}/download-certificate', [EmployerController::class, 'downloadRecruitmentActivityCertificate'])->name('recruitment.download-certificate');
     Route::get('/submit-documents', [EmployerController::class, 'submitDocumentsPage'])->name('documents.index');
 
@@ -91,8 +92,11 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::post('/jobs', [EmployerController::class, 'storeJob'])->name('jobs.store');
     Route::patch('/jobs/{job}/extend', [EmployerController::class, 'extendJob'])->name('jobs.extend');
     Route::patch('/jobs/{job}/archive', [EmployerController::class, 'archiveJob'])->name('jobs.archive');
+    Route::get('/jobs/{job}/edit', [EmployerController::class, 'editJobPage'])->name('jobs.edit');
+    Route::patch('/jobs/{job}', [EmployerController::class, 'updateJob'])->name('jobs.update');
     Route::post('/jobs/{job}/duplicate', [EmployerController::class, 'duplicateJob'])->name('jobs.duplicate');
     Route::patch('/jobs/{job}/filled', [EmployerController::class, 'markJobFilled'])->name('jobs.filled');
+
 
     Route::post('/recruitment-activities', [EmployerController::class, 'requestRecruitmentActivity'])
         ->name('recruitment.request');
@@ -154,6 +158,11 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
 // Public jobs route
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 
+// Public company preview (click company name from jobs landing page)
+Route::get('/companies/{employer}', [\App\Http\Controllers\EmployerController::class, 'companyPreview'])
+    ->name('companies.preview');
+
+
 Route::middleware(['auth', 'role:jobseeker'])->get('/jobs/{job}', [JobseekerController::class, 'applyJob'])->name('jobs.show');
 
 // Admin routes (protected)
@@ -166,6 +175,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {
         Route::get('/', [JobseekerApprovalController::class, 'index'])->name('index');
         Route::get('/{jobseeker}', [JobseekerApprovalController::class, 'show'])->name('show');
+        Route::post('/{jobseeker}', [JobseekerApprovalController::class, 'recommendApplicant'])->name('recommend-applicant-legacy');
         Route::post('/{jobseeker}/recommend-job', [JobseekerApprovalController::class, 'recommendJob'])->name('recommend-job');
         Route::post('/{jobseeker}/recommend-applicant', [JobseekerApprovalController::class, 'recommendApplicant'])->name('recommend-applicant');
     });

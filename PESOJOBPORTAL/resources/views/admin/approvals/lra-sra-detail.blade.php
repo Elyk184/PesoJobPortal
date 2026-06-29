@@ -74,6 +74,18 @@
                                     <span class="lra-doc-missing">Not provided</span>
                                 @endif
                             </div>
+                            <div class="lra-doc-item">
+                                <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--red"></i>
+                                <p class="lra-doc-name">Company Profile</p>
+                                @if($activityRequest->company_profile_path)
+                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'company_profile_path']) }}"
+                                       class="lra-dl-btn" target="_blank">
+                                        <i class="bi bi-download me-1"></i>Download
+                                    </a>
+                                @else
+                                    <span class="lra-doc-missing">Not provided</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -340,6 +352,38 @@
                         </div>
                     </div>
 
+                    @if($activityRequest->certification_path)
+                        <div class="lra-card mt-3">
+                            <div class="lra-card-head">
+                                <i class="bi bi-certificate"></i>
+                                <span class="lra-card-head-label">Certificate Given</span>
+                            </div>
+                            <div class="lra-card-body lra-card-body--compact">
+                                <div class="lra-cert-status lra-cert-status--ok">
+                                    <div class="lra-cert-title">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Certification available
+                                    </div>
+                                    <div class="lra-cert-sub">
+                                        @if($activityRequest->certification_generated_at)
+                                            {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
+                                            &mdash;
+                                        @endif
+                                        {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
+                                    </div>
+                                </div>
+                                <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}"
+                                   class="lra-action-btn lra-action-btn--view"
+                                   target="_blank">
+                                    <i class="bi bi-eye me-1"></i>View certificate
+                                </a>
+                                <a href="{{ route('admin.lra-sra.download-certification', $activityRequest) }}"
+                                   class="lra-action-btn lra-action-btn--generate">
+                                    <i class="bi bi-download me-1"></i>Download certificate
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                 @endif
 
             </div>{{-- /sidebar --}}
@@ -506,5 +550,92 @@
 .lra-status-block--rejected .lra-status-title{color:var(--red)}
 .lra-status-detail{font-size:0.78rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px}
 .lra-status-reason{font-size:0.8rem;color:#7f1d1d;font-style:italic;line-height:1.4}
+
+/* Alignment polish */
+.dashboard-card {
+    padding: 1.25rem;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+}
+.lra-topbar {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+.lra-page-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+.lra-back-btn {
+    justify-content: center;
+    min-height: 34px;
+    font-weight: 700;
+    background: #f8fafc;
+    border-color: var(--card-border);
+}
+.lra-back-btn:hover {
+    background: #eef6ff;
+    border-color: #cfe3f7;
+}
+.lra-layout {
+    grid-template-columns: minmax(0,1fr) 320px;
+}
+.lra-card {
+    border-radius: 10px;
+}
+.lra-card-head {
+    min-height: 46px;
+}
+.lra-meta-cell {
+    min-width: 0;
+}
+.lra-meta-val {
+    word-break: break-word;
+}
+.lra-doc-grid {
+    grid-template-columns: repeat(auto-fill,minmax(165px,1fr));
+}
+.lra-doc-item {
+    min-height: 142px;
+    justify-content: flex-start;
+}
+.lra-doc-name {
+    min-height: 34px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+.lra-doc-missing,
+.lra-dl-btn {
+    min-height: 31px;
+    margin-top: auto;
+}
+.lra-doc-missing {
+    display: inline-flex;
+    align-items: center;
+}
+.lra-dl-btn {
+    justify-content: center;
+    font-weight: 700;
+}
+.lra-info-row {
+    display: grid;
+    grid-template-columns: 104px minmax(0,1fr);
+    align-items: start;
+    padding: 9px 0;
+}
+
+@media(max-width:640px){
+    .dashboard-card{padding:1rem}
+    .lra-topbar{align-items:stretch}
+    .lra-back-btn{width:100%}
+    .lra-meta-strip{grid-template-columns:1fr}
+    .lra-meta-cell{border-right:none;border-bottom:1px solid rgba(0,0,0,0.04)}
+    .lra-meta-cell:last-child{border-bottom:none}
+    .lra-info-row{grid-template-columns:1fr}
+    .lra-info-val{text-align:left}
+}
 </style>
 @endsection

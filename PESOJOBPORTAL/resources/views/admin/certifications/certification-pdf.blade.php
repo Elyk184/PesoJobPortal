@@ -41,7 +41,7 @@
         .tagline {
             text-align: center;
             font-style: italic;
-            font-size: 28px;
+            font-size: 18px;
             font-weight: 600;
             margin: 0 0 5px 0;
             letter-spacing: 0.02em;
@@ -49,7 +49,7 @@
 
         .tagline-sub {
             text-align: center;
-            font-size: 10px;
+            font-size: 7px;
             letter-spacing: 0.2em;
             color: #333;
             margin-bottom: 3px;

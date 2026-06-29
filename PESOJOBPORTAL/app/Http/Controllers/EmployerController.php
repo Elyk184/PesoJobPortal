@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserNotification;
 use App\Models\UserProfile;
 use App\Models\CompanyProfile;
+use App\Services\CertificationService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,38 @@ use Illuminate\View\View;
 class EmployerController extends Controller
 {
     use AuthorizesRequests;
+
+    /**
+     * Public company preview (used from jobs landing page)
+     */
+    public function companyPreview(Request $request, User $employer): View
+    {
+        // Load company profile and basic job/company info
+        $companyProfile = $employer->companyProfile;
+
+        $logoUrl = null;
+        if ($companyProfile?->logo_path && Storage::disk('public')->exists($companyProfile->logo_path)) {
+            $logoUrl = asset('storage/' . $companyProfile->logo_path);
+        }
+
+        $companyName = $companyProfile?->company_name
+            ?? $companyProfile?->business_name
+            ?? $employer->name
+            ?? 'Company';
+
+        // Use full company information for preview
+        $companyInformation = $companyProfile?->company_information;
+
+        return view('dashboard.employer.companies.preview', [
+            'employer' => $employer,
+            'companyProfile' => $companyProfile,
+            'companyName' => $companyName,
+            'logoUrl' => $logoUrl,
+            'companyInformationPreview' => $companyInformation,
+        ]);
+    }
+
+
 
     public function dashboard(Request $request): View
     {
@@ -192,6 +225,21 @@ class EmployerController extends Controller
         return response()->download($filePath, "LRA_SRA_Certificate_{$recruitmentActivityRequest->id}.pdf");
     }
 
+    public function viewRecruitmentActivityCertificate(Request $request, RecruitmentActivityRequest $recruitmentActivityRequest)
+    {
+        // Ensure employer can only view their own certificates
+        if ($recruitmentActivityRequest->employer_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access to this certificate.');
+        }
+
+        try {
+            $certService = new CertificationService();
+            return $certService->viewCertification($recruitmentActivityRequest);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Certificate not available for viewing.');
+        }
+    }
+
     public function submitDocumentsPage(Request $request): View
     {
         $defaultActivityType = $request->query('activity_type');
@@ -251,7 +299,7 @@ class EmployerController extends Controller
             'employer' => $employer,
             'companyProfile' => $companyProfile,
             'logoFullPath' => $logoFullPath,
-            'generatedAt' => now(),
+            'generatedAt' => now('Asia/Manila'),
         ])->setPaper('a4');
 
         return $pdf->download(sprintf(
@@ -291,11 +339,12 @@ class EmployerController extends Controller
             'password' => ['nullable', 'confirmed', 'min:8'],
             'company_name' => ['nullable', 'string', 'max:255'],
             'business_name' => ['required', 'string', 'max:255'],
-            'trade_name' => ['nullable', 'string', 'max:255'],
-            'acronym_abbreviation' => ['nullable', 'string', 'max:100'],
+            'company_information' => ['required', 'string', 'max:5000'],
+            'trade_name' => ['required', 'string', 'max:255'],
+            'acronym_abbreviation' => ['required', 'string', 'max:100'],
             'established_year' => ['required', 'integer', 'digits:4', 'min:1900', 'max:' . now()->year],
             'office_type' => ['required', 'in:main_office,branch'],
-            'tin' => ['nullable', 'string', 'max:50'],
+            'tin' => ['required', 'string', 'max:50'],
             'employer_type_detail' => ['required', 'in:national_gov,local_gov,gocc,state_college,direct_hire,local_recruitment,overseas_recruitment,do174'],
             'workforce_size' => ['required', 'in:micro,small,medium,large'],
             'line_of_business' => ['required', 'string', 'max:255'],
@@ -306,7 +355,7 @@ class EmployerController extends Controller
             'establishment_contact_person' => ['required', 'string', 'max:255'],
             'contact_person_name' => ['required', 'string', 'max:255'],
             'establishment_contact_position' => ['required', 'string', 'max:255'],
-            'establishment_phone' => ['nullable', 'string', 'max:50'],
+            'establishment_phone' => ['required', 'string', 'max:50'],
             'contact_person_phone' => ['required', 'string', 'max:50'],
             'establishment_email' => ['required', 'email', 'max:255'],
             'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif', 'max:10240'],
@@ -347,6 +396,7 @@ class EmployerController extends Controller
         $fieldMapping = [
             'company_name' => 'company_name',
             'business_name' => 'business_name',
+            'company_information' => 'company_information',
             'trade_name' => 'trade_name',
             'acronym_abbreviation' => 'acronym_abbreviation',
             'established_year' => 'established_year',
@@ -371,6 +421,10 @@ class EmployerController extends Controller
             if (array_key_exists($input, $validated) && $validated[$input] !== null) {
                 $profileData[$column] = $validated[$input];
             }
+        }
+
+        if (array_key_exists('company_information', $validated)) {
+            $profileData['company_information'] = $validated['company_information'];
         }
 
         // Use business_name as company_name if not explicitly provided
@@ -745,6 +799,83 @@ class EmployerController extends Controller
 
         return back()->with('success', 'Job posting duplicated.');
     }
+
+    public function editJobPage(Request $request, PesoJob $job): View
+    {
+        $this->assertJobOwnership($request, $job);
+
+        $employmentTypes = $this->employmentTypes();
+
+        return view('dashboard.employer.edit-job', [
+            'job' => $job,
+            'employmentTypes' => $employmentTypes,
+        ]);
+    }
+
+    public function updateJob(Request $request, PesoJob $job): RedirectResponse
+    {
+        $this->assertJobOwnership($request, $job);
+
+        $isDraft = $request->boolean('save_as_draft');
+
+        $status = $isDraft ? 'draft' : 'pending';
+        $status = $this->normalizeJobStatusForStorage($status);
+
+        $rules = [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'location' => ['required', 'string', 'max:255'],
+            'employment_type' => ['required', 'string', 'in:full_time,part_time,contract,temporary,internship,freelance'],
+            'vacancies' => ['required', 'integer', 'min:1', 'max:999'],
+            'key_responsibilities' => ['nullable', 'string'],
+            'qualifications' => ['nullable', 'string'],
+            'preferred_skills' => ['nullable', 'string'],
+            'experience' => ['nullable', 'string'],
+            'education' => ['nullable', 'string'],
+            'benefits' => ['nullable', 'string'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0'],
+            'application_deadline' => ['nullable', 'date', 'after:today'],
+        ];
+
+        $validated = $request->validate($rules);
+
+        $jobData = [
+            'title' => $validated['title'],
+            'position' => $validated['title'],
+            'description' => $validated['description'],
+            'qualifications' => $validated['qualifications'] ?? $validated['description'],
+            'location' => $validated['location'],
+            'job_type' => $validated['employment_type'],
+            'vacancies' => $validated['vacancies'],
+            'key_responsibilities' => $validated['key_responsibilities'],
+            'preferred_skills' => $validated['preferred_skills'],
+            'experience' => $validated['experience'],
+            'education' => $validated['education'],
+            'benefits' => $validated['benefits'],
+            'status' => $status,
+        ];
+
+        if (isset($validated['salary_min']) || isset($validated['salary_max'])) {
+            $jobData['salary_range'] = ($validated['salary_min'] ?? '') . ' - ' . ($validated['salary_max'] ?? '');
+            $jobData['salary'] = $jobData['salary_range'];
+        }
+
+        if ($validated['application_deadline']) {
+            $jobData['application_end_date'] = $validated['application_deadline'];
+        }
+
+        // Keep update compatible with environments where some optional columns are missing.
+        $jobColumns = array_flip(Schema::getColumnListing('peso_jobs'));
+        $jobData = array_intersect_key($jobData, $jobColumns);
+
+        $job->update($jobData);
+
+        $message = $isDraft ? 'Job updated as draft successfully.' : 'Job updated successfully and is awaiting admin approval.';
+
+        return back()->with('success', $message);
+    }
+
 
     public function markJobFilled(Request $request, PesoJob $job): RedirectResponse
     {
