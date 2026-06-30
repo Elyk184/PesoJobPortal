@@ -406,6 +406,8 @@
         .table tbody td:nth-child(4) { text-align: center; }
         .table thead th:nth-child(5),
         .table tbody td:nth-child(5) { text-align: center; }
+        .table thead th:nth-child(6),
+        .table tbody td:nth-child(6) { text-align: center; }
     }
     .table tbody tr {
         transition: all 0.2s ease;
@@ -846,6 +848,7 @@
                                 <th><span class="th-label"><i class="bi bi-briefcase"></i>Job Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-calendar-event"></i>Date Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-activity"></i>Status</span></th>
+                                <th><span class="th-label"><i class="bi bi-diagram-3"></i>Timeline</span></th>
                                 <th><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                             </tr>
                         </thead>
@@ -903,6 +906,29 @@
                                         <?php echo e($application->status); ?>
 
                                     </span>
+                                </td>
+                                <td>
+                                    <div class="timeline-mini" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem;">
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #2b67b1;"></div>
+                                            <span style="font-size: 0.75rem; color: #637892; white-space: nowrap;"><?php echo e($dateApplied->format('M d')); ?></span>
+                                        </div>
+                                        <div style="flex: 1; height: 2px; background: linear-gradient(90deg, #2b67b1 0%, #d8e6f6 100%); min-width: 30px;"></div>
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                            <?php
+                                                $statusColor = match($application->status) {
+                                                    'hired' => '#28a745',
+                                                    'rejected' => '#dc3545',
+                                                    'interviewed' => '#6c757d',
+                                                    'recommended' => '#2b67b1',
+                                                    'reviewing' => '#3498db',
+                                                    default => '#ff9800'
+                                                };
+                                            ?>
+                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: <?php echo e($statusColor); ?>;"></div>
+                                            <span style="font-size: 0.75rem; color: #637892; white-space: nowrap;">Now</span>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="table-actions">
