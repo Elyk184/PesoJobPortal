@@ -374,16 +374,37 @@
                         <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Not Selected</option>
                     </select>
                 </div>
-                <div id="interviewDateField">
-                    <div class="interview-schedule-pane">
-                        <h6 style="margin: 0 0 1rem 0; font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                            <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
-                            📅 Schedule Interview
-                        </h6>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                            <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
-                            <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                <!-- Interview Schedule Modal Trigger -->
+                <div id="interviewDateField" style="display: none;">
+                    <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#interviewScheduleModal" id="openInterviewModal">
+                        <i class="bi bi-calendar-event-fill"></i> Schedule Interview
+                    </button>
+                </div>
+
+                <!-- Interview Schedule Modal -->
+                <div class="modal fade" id="interviewScheduleModal" tabindex="-1" aria-labelledby="interviewScheduleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 16px; border: 3px solid #ff9800;">
+                            <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107; border-radius: 13px 13px 0 0;">
+                                <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
+                                    📅 Schedule Interview
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
+                                    <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
+                                    <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107; border-radius: 0 0 13px 13px;">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
+                                    <i class="bi bi-check-lg"></i> Save Interview Date
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -486,6 +507,16 @@
 
                 if (feedbackText.trim().length > 0 || rating || feedbackType) {
                     e.preventDefault();
+
+                    // Validate interview date before submitting feedback
+                    if (status === 'interviewed' && !interviewDate) {
+                        alert('Please select an interview date and time before updating the status to Interview.');
+                        const interviewField = document.getElementById('interviewDateField');
+                        if (interviewField) interviewField.style.display = 'block';
+                        document.getElementById('interviewScheduledAt')?.focus();
+                        return;
+                    }
+
                     const data = new FormData(feedbackForm);
                     try {
                         await fetch(feedbackForm.action, {

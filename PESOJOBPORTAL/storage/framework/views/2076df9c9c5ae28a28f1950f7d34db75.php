@@ -848,7 +848,7 @@
                                 <th><span class="th-label"><i class="bi bi-briefcase"></i>Job Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-calendar-event"></i>Date Applied</span></th>
                                 <th><span class="th-label"><i class="bi bi-activity"></i>Status</span></th>
-                                <th><span class="th-label"><i class="bi bi-diagram-3"></i>Timeline</span></th>
+                                <th><span class="th-label"><i class="bi bi-clock-history"></i>Timeline</span></th>
                                 <th><span class="th-label"><i class="bi bi-lightning-charge"></i>Actions</span></th>
                             </tr>
                         </thead>
@@ -908,27 +908,31 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="timeline-mini" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem;">
-                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
-                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #2b67b1;"></div>
-                                            <span style="font-size: 0.75rem; color: #637892; white-space: nowrap;"><?php echo e($dateApplied->format('M d')); ?></span>
-                                        </div>
-                                        <div style="flex: 1; height: 2px; background: linear-gradient(90deg, #2b67b1 0%, #d8e6f6 100%); min-width: 30px;"></div>
-                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
-                                            <?php
-                                                $statusColor = match($application->status) {
-                                                    'hired' => '#28a745',
-                                                    'rejected' => '#dc3545',
-                                                    'interviewed' => '#6c757d',
-                                                    'recommended' => '#2b67b1',
-                                                    'reviewing' => '#3498db',
-                                                    default => '#ff9800'
-                                                };
-                                            ?>
-                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: <?php echo e($statusColor); ?>;"></div>
-                                            <span style="font-size: 0.75rem; color: #637892; white-space: nowrap;">Now</span>
-                                        </div>
-                                    </div>
+                                    <?php
+                                        $now = now();
+                                        $diff = (int) abs($dateApplied->diffInDays($now));
+                                        if ($diff == 0) {
+                                            $timelineText = 'Today';
+                                        } elseif ($diff == 1) {
+                                            $timelineText = '1 day ago';
+                                        } elseif ($diff < 7) {
+                                            $timelineText = $diff . ' days ago';
+                                        } elseif ($diff < 14) {
+                                            $timelineText = '1 week ago';
+                                        } elseif ($diff < 30) {
+                                            $weeks = floor($diff / 7);
+                                            $timelineText = $weeks . ' weeks ago';
+                                        } elseif ($diff < 60) {
+                                            $timelineText = '1 month ago';
+                                        } else {
+                                            $months = floor($diff / 30);
+                                            $timelineText = $months . ' months ago';
+                                        }
+                                    ?>
+                                    <span style="font-size: 0.85rem; color: #637892; font-weight: 600;">
+                                        <i class="bi bi-clock" style="font-size: 0.8rem; margin-right: 0.3rem;"></i><?php echo e($timelineText); ?>
+
+                                    </span>
                                 </td>
                                 <td>
                                     <div class="table-actions">
