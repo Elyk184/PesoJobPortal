@@ -8,6 +8,34 @@
         .application-details-page {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .application-details-page::before,
+        .application-details-page::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(0);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .application-details-page::before {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(47, 111, 213, 0.15) 0%, rgba(47, 111, 213, 0) 70%);
+            top: -70px;
+            right: -40px;
+        }
+
+        .application-details-page::after {
+            width: 190px;
+            height: 190px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.12) 0%, rgba(22, 163, 74, 0) 70%);
+            bottom: 60px;
+            left: -45px;
         }
 
         .page-header {
@@ -16,6 +44,19 @@
             border-radius: 16px;
             padding: 1.75rem;
             margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            inset: auto -30px -30px auto;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(23, 54, 93, 0.16) 0%, rgba(23, 54, 93, 0) 75%);
+            pointer-events: none;
         }
 
         .page-title {
@@ -30,6 +71,31 @@
             margin: 0.5rem 0 0;
             color: #5f728b;
             font-size: 0.95rem;
+        }
+
+        .page-header-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .header-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.48rem 0.82rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid #cfe0f7;
+            background: rgba(255, 255, 255, 0.85);
+            color: #2f4f79;
+        }
+
+        .header-chip i {
+            color: #2f6fd5;
         }
 
         .detail-card {
@@ -256,12 +322,161 @@
             margin-top: 1.25rem;
         }
 
+        .summary-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 0.9rem;
+            margin-top: 1.25rem;
+        }
+
+        .summary-item {
+            border-radius: 12px;
+            border: 1px solid #d9e8fb;
+            background: linear-gradient(165deg, #ffffff 0%, #f6faff 100%);
+            padding: 0.9rem 1rem;
+        }
+
+        .summary-item .info-label {
+            margin-bottom: 0.2rem;
+        }
+
+        .summary-item .summary-value {
+            color: #153a69;
+            font-weight: 900;
+            font-size: 0.96rem;
+        }
+
+        .status-progress {
+            margin-bottom: 1.1rem;
+            padding: 1.1rem;
+            border: 1px solid #dbe8f9;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #fbfdff 0%, #f4f9ff 100%);
+        }
+
+        .status-progress-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #5f728b;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+        }
+
+        .status-steps {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.65rem;
+            position: relative;
+            align-items: start;
+        }
+
+        .status-step {
+            text-align: center;
+            position: relative;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .status-step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 auto 0.45rem;
+            border: 2px solid #bdd3f0;
+            background: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 0.55rem;
+            color: transparent;
+            font-weight: 900;
+        }
+
+        .status-step-text {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #6d7f98;
+            line-height: 1.2;
+            min-height: 2.1em;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .status-step.complete .status-step-dot {
+            background: #1f7ae0;
+            border-color: #1f7ae0;
+            color: #fff;
+        }
+
+        .status-step.complete .status-step-text {
+            color: #1d4d84;
+        }
+
+        .status-step.active .status-step-dot {
+            border-color: #1f7ae0;
+            box-shadow: 0 0 0 4px rgba(31, 122, 224, 0.16);
+        }
+
+        .status-step.active .status-step-text {
+            color: #17365d;
+        }
+
+        .status-step.rejected .status-step-dot {
+            border-color: #dc2626;
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-step.rejected .status-step-text {
+            color: #991b1b;
+        }
+
+        .status-step::after {
+            content: '';
+            position: absolute;
+            left: calc(50% + 12px);
+            top: 9px;
+            width: calc(100% - 24px);
+            height: 2px;
+            background: #d7e4f6;
+            z-index: -1;
+        }
+
+        .status-step:last-child::after {
+            display: none;
+        }
+
+        .status-step.complete::after {
+            background: #1f7ae0;
+        }
+
+        .rejection-alert {
+            margin-top: 0.9rem;
+            border-radius: 12px;
+            border: 1px solid #fecaca;
+            background: #fff5f5;
+            color: #9f1239;
+            padding: 0.8rem 0.95rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .application-meta-item {
             background: #f8fbff;
             border: 1px solid #e5edf8;
             border-radius: 12px;
             padding: 1.25rem;
             transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         .application-meta-item:hover {
@@ -277,6 +492,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            min-height: 1.6rem;
+            flex-wrap: wrap;
         }
 
         .notes-card {
@@ -334,6 +551,15 @@
             .application-meta {
                 grid-template-columns: 1fr;
             }
+
+            .status-steps {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                row-gap: 1rem;
+            }
+
+            .status-step::after {
+                display: none;
+            }
         }
 
         @media (max-width: 575.98px) {
@@ -353,6 +579,11 @@
                 width: 100%;
                 justify-content: flex-start;
             }
+
+            .page-header-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 
@@ -366,6 +597,22 @@
         <div class="page-header">
             <h1 class="page-title">{{ $job->title ?? 'Job no longer available' }}</h1>
             <p class="page-subtitle">Application details and job information</p>
+            <div class="page-header-meta">
+                <span class="header-chip">
+                    <i class="bi bi-patch-check"></i>
+                    {{ $statusLabel }}
+                </span>
+                <span class="header-chip">
+                    <i class="bi bi-calendar-check"></i>
+                    Applied {{ optional($application->applied_at ?? $application->created_at)->format('M d, Y') }}
+                </span>
+                @if($job->application_end_date)
+                    <span class="header-chip">
+                        <i class="bi bi-hourglass-split"></i>
+                        Deadline {{ $job->application_end_date->format('M d, Y') }}
+                    </span>
+                @endif
+            </div>
         </div>
 
         <!-- Job Details Card -->
@@ -468,6 +715,25 @@
                     </div>
                 @endif
             </div>
+
+            <div class="summary-strip">
+                <div class="summary-item">
+                    <div class="info-label">Application ID</div>
+                    <div class="summary-value">#{{ $application->id }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="info-label">Employer</div>
+                    <div class="summary-value">{{ $job->employer_name ?? 'N/A' }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="info-label">Job Type</div>
+                    <div class="summary-value">{{ ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A')) }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="info-label">Last Activity</div>
+                    <div class="summary-value">{{ $application->updated_at?->diffForHumans() ?? 'N/A' }}</div>
+                </div>
+            </div>
         </article>
 
         <!-- Application Status Card -->
@@ -476,6 +742,58 @@
                 <i class="bi bi-clipboard-check" style="color: #2f6fd5;"></i>
                 Application Status
             </h2>
+
+            @php
+                $statusFlow = [
+                    'pending' => 'Submitted',
+                    'reviewing' => 'Review',
+                    'recommended' => 'Shortlisted',
+                    'interviewed' => 'Interview',
+                    'hired' => 'Hired',
+                    'rejected' => 'Rejected',
+                ];
+                $currentStatus = $application->status ?? 'pending';
+                $flowKeys = array_keys($statusFlow);
+                $currentIndex = array_search($currentStatus, $flowKeys, true);
+            @endphp
+
+            <div class="status-progress" role="group" aria-label="Application progress tracker">
+                <div class="status-progress-label">Progress Tracker</div>
+                <div class="status-steps">
+                    @foreach($statusFlow as $statusKey => $statusText)
+                        @php
+                            $stepIndex = array_search($statusKey, $flowKeys, true);
+                            $stepClass = 'status-step';
+
+                            if ($statusKey === $currentStatus) {
+                                $stepClass .= $currentStatus === 'rejected' ? ' active rejected' : ' active';
+                            } elseif ($currentStatus === 'rejected' && in_array($statusKey, ['pending', 'reviewing', 'recommended', 'interviewed'], true)) {
+                                $stepClass .= ' complete';
+                            } elseif ($currentStatus === 'hired' && in_array($statusKey, ['pending', 'reviewing', 'recommended', 'interviewed'], true)) {
+                                $stepClass .= ' complete';
+                            } elseif ($currentIndex !== false && $stepIndex < $currentIndex) {
+                                $stepClass .= ' complete';
+                            }
+                        @endphp
+                        <div class="{{ $stepClass }}">
+                            <div class="status-step-dot">
+                                @if(str_contains($stepClass, 'complete'))
+                                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                @elseif(str_contains($stepClass, 'rejected'))
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                @endif
+                            </div>
+                            <div class="status-step-text">{{ $statusText }}</div>
+                        </div>
+                    @endforeach
+                </div>
+                @if($currentStatus === 'rejected')
+                    <div class="rejection-alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        This application is marked as not selected.
+                    </div>
+                @endif
+            </div>
 
             <div class="application-meta">
                 <div class="application-meta-item">

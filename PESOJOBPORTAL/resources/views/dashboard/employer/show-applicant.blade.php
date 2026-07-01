@@ -20,6 +20,24 @@
         margin-bottom: 2rem;
         box-shadow: 0 16px 30px rgba(30, 70, 180, 0.28);
     }
+    .profile-top-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .profile-main {
+        flex: 1;
+        min-width: 230px;
+    }
+    .profile-meta-wrap {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
     .user-avatar {
         width: 96px;
         height: 96px;
@@ -96,6 +114,9 @@
         margin-top: 0.8rem;
         font-weight: 600;
         color: #f7fbff;
+    }
+    .meta-card i {
+        font-size: 0.95rem;
     }
     .star-rating {
         display: inline-flex;
@@ -187,6 +208,10 @@
             align-items: flex-start !important;
             gap: 1rem;
         }
+        .profile-top-row {
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
         .info-card {
             padding: 1.5rem;
             margin-bottom: 1.5rem;
@@ -199,6 +224,10 @@
     @media (max-width: 575.98px) {
         .right-sticky { position: static; }
         .profile-header { padding-bottom: 1.25rem; }
+        .meta-card {
+            width: 100%;
+            justify-content: flex-start;
+        }
     }
 </style>
 @endpush
@@ -224,13 +253,11 @@
                 @else
                     <div class="user-avatar user-initials" aria-hidden="true">{{ strtoupper(substr($application->applicant->name ?? '', 0, 1)) }}</div>
                 @endif
-                <div style="flex: 1;">
-                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;">{{ $application->applicant->name }}</h3>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;">{{ $application->applicant->email ?? 'No email on file' }}</p>
-                    <div style="display:flex; gap:0.75rem; align-items:center; margin-top:0.6rem;">
-                        <div class="meta-card" aria-hidden="true">
-                            <i class="bi bi-briefcase-fill"></i>
-                            <span>Applied for: {{ $application->jobPost->title }}</span>
+                <div class="profile-main">
+                    <div class="profile-top-row">
+                        <div>
+                            <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;">{{ $application->applicant->name }}</h3>
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.95rem;">{{ $application->applicant->email ?? 'No email on file' }}</p>
                         </div>
                         <div>
                             @php
@@ -245,6 +272,13 @@
                                 };
                             @endphp
                             <span class="status-chip {{ $sclass }}" aria-label="Application status: {{ $application->status }}">{{ ucfirst($application->status) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-meta-wrap">
+                        <div class="meta-card" aria-hidden="true">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <span>Applied for: {{ $application->jobPost->title }}</span>
                         </div>
                     </div>
                 </div>
@@ -285,18 +319,18 @@
                 </div>
             </div>
 
-            @if($application->cover_letter)
-            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <span class="label-muted">Cover Letter / Notes</span>
-                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;">{{ $application->cover_letter }}</p>
-            </div>
-            @endif
-
             @if($application->resume_path)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
                     <i class="bi bi-download"></i> Download Resume
                 </a>
+            </div>
+            @endif
+
+            @if($application->cover_letter)
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
+                <span class="label-muted">Cover Letter</span>
+                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;">{{ $application->cover_letter }}</p>
             </div>
             @endif
         </div>
@@ -376,7 +410,7 @@
                 </div>
                 <!-- Interview Schedule Modal Trigger -->
                 <div id="interviewDateField" style="display: none;">
-                    <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#interviewScheduleModal" id="openInterviewModal">
+                    <button type="button" class="btn btn-warning w-100" id="openInterviewModal">
                         <i class="bi bi-calendar-event-fill"></i> Schedule Interview
                     </button>
                 </div>
@@ -409,8 +443,8 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label">Notes (Optional)</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this applicant..." style="resize: vertical;">{{ $application->notes }}</textarea>
+                    <label class="form-label">Status Notes for Applicant (Optional)</label>
+                    <textarea name="employer_feedback" class="form-control" rows="3" placeholder="Add employer notes for this status update..." style="resize: vertical;">{{ old('employer_feedback', $application->employer_feedback) }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-check-lg"></i> Update Status
@@ -463,25 +497,47 @@
         const statusSelect = document.getElementById('statusSelect');
         const feedbackForm = document.getElementById('feedbackForm');
         const statusForm = document.getElementById('statusForm');
+        const interviewField = document.getElementById('interviewDateField');
+        const interviewModalEl = document.getElementById('interviewScheduleModal');
+        const openInterviewModalBtn = document.getElementById('openInterviewModal');
+        const interviewModal = (window.bootstrap && interviewModalEl)
+            ? window.bootstrap.Modal.getOrCreateInstance(interviewModalEl)
+            : null;
 
-        // Initialize interview field visibility
-        toggleInterviewDate();
+        // Hide interview field on initial page load - only show when user selects Interview status
+        if (interviewField) {
+            interviewField.style.display = 'none';
+        }
+
+        if (openInterviewModalBtn) {
+            openInterviewModalBtn.addEventListener('click', function () {
+                if (statusSelect?.value !== 'interviewed') return;
+
+                // Set default date to 1 hour from now when opening modal.
+                const interviewDateInput = document.getElementById('interviewScheduledAt');
+                if (interviewDateInput && !interviewDateInput.value) {
+                    const now = new Date();
+                    now.setHours(now.getHours() + 1);
+                    now.setMinutes(0);
+                    const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    interviewDateInput.value = localIso;
+                }
+
+                interviewModal?.show();
+            });
+        }
 
         if (statusSelect) {
             // Show/hide interview date field when status changes
             statusSelect.addEventListener('change', function () {
-                toggleInterviewDate();
+                if (!interviewField) return;
 
-                // If Interview is selected, set default date to 1 hour from now
+                // Only show interview field when Interview status is selected
                 if (this.value === 'interviewed') {
-                    const interviewDateInput = document.getElementById('interviewScheduledAt');
-                    if (interviewDateInput && !interviewDateInput.value) {
-                        const now = new Date();
-                        now.setHours(now.getHours() + 1);
-                        now.setMinutes(0);
-                        const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-                        interviewDateInput.value = localIso;
-                    }
+                    interviewField.style.display = 'block';
+                } else {
+                    interviewField.style.display = 'none';
+                    interviewModal?.hide();
                 }
             });
         }

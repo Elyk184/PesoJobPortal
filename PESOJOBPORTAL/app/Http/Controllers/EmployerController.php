@@ -180,9 +180,11 @@ class EmployerController extends Controller
         return view('dashboard.employer.view-applicants', [
             'referredApplications' => $referredApplications,
             'totalApplicants' => $filteredApplications->count(),
-            'pendingReview' => $filteredApplications->whereNull('employer_status')->count(),
-            'approved' => $filteredApplications->where('employer_status', 'hired')->count(),
-            'rejected' => $filteredApplications->where('employer_status', 'not_selected')->count(),
+            // Keep stat cards aligned with status filters and table status badges.
+            'pendingReview' => $filteredApplications->where('status', 'pending')->count(),
+            'recommended' => $filteredApplications->where('status', 'recommended')->count(),
+            'approved' => $filteredApplications->where('status', 'hired')->count(),
+            'rejected' => $filteredApplications->where('status', 'rejected')->count(),
             'jobs' => $this->getEmployerJobs($request->user()->id),
             'isVerifiedEmployer' => $isVerifiedEmployer,
         ]);
@@ -854,6 +856,8 @@ class EmployerController extends Controller
             'education' => $validated['education'],
             'benefits' => $validated['benefits'],
             'status' => $status,
+            // Resubmitting or saving an archived post should return it to normal tab filters.
+            'archived_at' => null,
         ];
 
         if (isset($validated['salary_min']) || isset($validated['salary_max'])) {

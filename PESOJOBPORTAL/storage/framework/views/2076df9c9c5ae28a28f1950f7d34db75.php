@@ -532,18 +532,6 @@
         border-color: transparent !important;
     }
     .action-btn.btn-outline-primary:hover { background: #04645e; }
-    .action-btn.btn-outline-success {
-        background: #2d8f3a;
-        color: #ffffff;
-        border-color: transparent !important;
-    }
-    .action-btn.btn-outline-success:hover { background: #26762f; }
-    .action-btn.btn-outline-danger {
-        background: #c92b2b;
-        color: #ffffff;
-        border-color: transparent !important;
-    }
-    .action-btn.btn-outline-danger:hover { background: #a22424; }
     .empty-state {
         padding: 5rem 2rem;
         text-align: center;
@@ -939,35 +927,13 @@
                                         <?php if($isRecommendation): ?>
                                             <button type="button" class="btn btn-sm btn-outline-primary action-btn" title="View Details" onclick="alert('Recommendation Details\n\nFrom: <?php echo e($application->recommendedBy->name ?? 'Admin'); ?>\n\nMessage: <?php echo e($application->recommendation_reason ?? 'No message provided'); ?>')">
                                                 <i class="bi bi-eye-fill"></i>
-                                                <span class="action-text">View</span>
+                                                <span class="action-text">Review</span>
                                             </button>
                                         <?php else: ?>
                                             <a href="<?php echo e(route('employer.applications.show', $application->id)); ?>" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
                                                 <i class="bi bi-eye-fill"></i>
-                                                <span class="action-text">View</span>
+                                                <span class="action-text">Review</span>
                                             </a>
-                                            <?php if($application->status != 'hired'): ?>
-                                            <form method="POST" action="<?php echo e(route('employer.applications.update', $application->id)); ?>" class="ajax-status-form" data-application-id="<?php echo e($application->id); ?>" data-action="<?php echo e(route('employer.applications.update', $application->id)); ?>" style="display: inline;">
-                                                <?php echo csrf_field(); ?>
-                                                <?php echo method_field('PATCH'); ?>
-                                                <input type="hidden" name="status" value="hired">
-                                                <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="Mark as Hired" onclick="return confirm('Are you sure you want to mark this applicant as hired?')">
-                                                    <i class="bi bi-check-lg"></i>
-                                                    <span class="action-text">Hire</span>
-                                                </button>
-                                            </form>
-                                            <?php endif; ?>
-                                            <?php if($application->status != 'rejected'): ?>
-                                            <form method="POST" action="<?php echo e(route('employer.applications.update', $application->id)); ?>" class="ajax-status-form" data-application-id="<?php echo e($application->id); ?>" data-action="<?php echo e(route('employer.applications.update', $application->id)); ?>" style="display: inline;">
-                                                <?php echo csrf_field(); ?>
-                                                <?php echo method_field('PATCH'); ?>
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="Reject Applicant" onclick="return confirm('Are you sure you want to reject this applicant?')">
-                                                    <i class="bi bi-x-lg"></i>
-                                                    <span class="action-text">Reject</span>
-                                                </button>
-                                            </form>
-                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -985,63 +951,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const csrf = '<?php echo e(csrf_token()); ?>';
-    function mapStatusToClasses(status) {
-        const map = {
-            pending: 'bg-light text-dark',
-            reviewing: 'bg-info bg-opacity-25 text-info-emphasis',
-            recommended: 'bg-primary bg-opacity-25 text-primary-emphasis',
-            interviewed: 'bg-secondary bg-opacity-25 text-secondary-emphasis',
-            hired: 'bg-success bg-opacity-25 text-success-emphasis',
-            rejected: 'bg-danger bg-opacity-25 text-danger-emphasis'
-        };
-        return map[status] || 'bg-light text-dark';
-    }
-
-    document.querySelectorAll('form.ajax-status-form').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            if (!confirm('Are you sure you want to change this applicant\'s status?')) return;
-            const action = form.dataset.action;
-            const applicationId = form.dataset.applicationId;
-            const formData = new FormData(form);
-            fetch(action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrf,
-                    'Accept': 'application/json'
-                },
-                body: formData
-            })
-            .then(r => r.json())
-            .then(json => {
-                if (json.success) {
-                    // find the table row for this application
-                    const row = document.querySelector('form.ajax-status-form[data-application-id="' + applicationId + '"]').closest('tr');
-                    if (!row) return;
-                    const badge = row.querySelector('.status-badge');
-                    if (badge) {
-                        // update text
-                        badge.textContent = '';
-                        const icon = document.createElement('i');
-                        icon.className = 'bi bi-circle-fill';
-                        icon.style.fontSize = '0.45rem';
-                        badge.appendChild(icon);
-                        badge.append(' ' + json.application.status);
-                        // replace classes
-                        badge.className = 'status-badge ' + mapStatusToClasses(json.application.status);
-                    }
-                } else {
-                    alert(json.message || 'Failed to update status');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('An error occurred while updating status');
-            });
-        });
-    });
-
     // Handle clickable stat cards
     document.querySelectorAll('.stat-card.clickable-stat').forEach(card => {
         card.addEventListener('click', function() {

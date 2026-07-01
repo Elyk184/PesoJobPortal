@@ -18,6 +18,24 @@
         margin-bottom: 2rem;
         box-shadow: 0 16px 30px rgba(30, 70, 180, 0.28);
     }
+    .profile-top-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .profile-main {
+        flex: 1;
+        min-width: 230px;
+    }
+    .profile-meta-wrap {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
     .user-avatar {
         width: 96px;
         height: 96px;
@@ -94,6 +112,9 @@
         margin-top: 0.8rem;
         font-weight: 600;
         color: #f7fbff;
+    }
+    .meta-card i {
+        font-size: 0.95rem;
     }
     .star-rating {
         display: inline-flex;
@@ -185,6 +206,10 @@
             align-items: flex-start !important;
             gap: 1rem;
         }
+        .profile-top-row {
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
         .info-card {
             padding: 1.5rem;
             margin-bottom: 1.5rem;
@@ -197,6 +222,10 @@
     @media (max-width: 575.98px) {
         .right-sticky { position: static; }
         .profile-header { padding-bottom: 1.25rem; }
+        .meta-card {
+            width: 100%;
+            justify-content: flex-start;
+        }
     }
 </style>
 <?php $__env->stopPush(); ?>
@@ -222,13 +251,11 @@
                 <?php else: ?>
                     <div class="user-avatar user-initials" aria-hidden="true"><?php echo e(strtoupper(substr($application->applicant->name ?? '', 0, 1))); ?></div>
                 <?php endif; ?>
-                <div style="flex: 1;">
-                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;"><?php echo e($application->applicant->name); ?></h3>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.9; font-size: 0.95rem;"><?php echo e($application->applicant->email ?? 'No email on file'); ?></p>
-                    <div style="display:flex; gap:0.75rem; align-items:center; margin-top:0.6rem;">
-                        <div class="meta-card" aria-hidden="true">
-                            <i class="bi bi-briefcase-fill"></i>
-                            <span>Applied for: <?php echo e($application->jobPost->title); ?></span>
+                <div class="profile-main">
+                    <div class="profile-top-row">
+                        <div>
+                            <h3 style="margin: 0 0 0.35rem 0; font-size: 1.65rem; font-weight: 800;"><?php echo e($application->applicant->name); ?></h3>
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.95rem;"><?php echo e($application->applicant->email ?? 'No email on file'); ?></p>
                         </div>
                         <div>
                             <?php
@@ -243,6 +270,13 @@
                                 };
                             ?>
                             <span class="status-chip <?php echo e($sclass); ?>" aria-label="Application status: <?php echo e($application->status); ?>"><?php echo e(ucfirst($application->status)); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="profile-meta-wrap">
+                        <div class="meta-card" aria-hidden="true">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <span>Applied for: <?php echo e($application->jobPost->title); ?></span>
                         </div>
                     </div>
                 </div>
@@ -283,18 +317,18 @@
                 </div>
             </div>
 
-            <?php if($application->cover_letter): ?>
-            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <span class="label-muted">Cover Letter / Notes</span>
-                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->cover_letter); ?></p>
-            </div>
-            <?php endif; ?>
-
             <?php if($application->resume_path): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <a href="<?php echo e(route('employer.applications.resume.download', $application->id)); ?>" class="btn btn-primary">
                     <i class="bi bi-download"></i> Download Resume
                 </a>
+            </div>
+            <?php endif; ?>
+
+            <?php if($application->cover_letter): ?>
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
+                <span class="label-muted">Cover Letter / Notes</span>
+                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->cover_letter); ?></p>
             </div>
             <?php endif; ?>
         </div>
@@ -372,16 +406,37 @@
                         <option value="rejected" <?php echo e($application->status == 'rejected' ? 'selected' : ''); ?>>Not Selected</option>
                     </select>
                 </div>
-                <div id="interviewDateField">
-                    <div class="interview-schedule-pane">
-                        <h6 style="margin: 0 0 1rem 0; font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                            <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
-                            📅 Schedule Interview
-                        </h6>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                            <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
-                            <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                <!-- Interview Schedule Modal Trigger -->
+                <div id="interviewDateField" style="display: none;">
+                    <button type="button" class="btn btn-warning w-100" id="openInterviewModal">
+                        <i class="bi bi-calendar-event-fill"></i> Schedule Interview
+                    </button>
+                </div>
+
+                <!-- Interview Schedule Modal -->
+                <div class="modal fade" id="interviewScheduleModal" tabindex="-1" aria-labelledby="interviewScheduleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 16px; border: 3px solid #ff9800;">
+                            <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107; border-radius: 13px 13px 0 0;">
+                                <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
+                                    📅 Schedule Interview
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
+                                    <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
+                                    <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107; border-radius: 0 0 13px 13px;">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
+                                    <i class="bi bi-check-lg"></i> Save Interview Date
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -440,25 +495,47 @@
         const statusSelect = document.getElementById('statusSelect');
         const feedbackForm = document.getElementById('feedbackForm');
         const statusForm = document.getElementById('statusForm');
+        const interviewField = document.getElementById('interviewDateField');
+        const interviewModalEl = document.getElementById('interviewScheduleModal');
+        const openInterviewModalBtn = document.getElementById('openInterviewModal');
+        const interviewModal = (window.bootstrap && interviewModalEl)
+            ? window.bootstrap.Modal.getOrCreateInstance(interviewModalEl)
+            : null;
 
-        // Initialize interview field visibility
-        toggleInterviewDate();
+        // Hide interview field on initial page load - only show when user selects Interview status
+        if (interviewField) {
+            interviewField.style.display = 'none';
+        }
+
+        if (openInterviewModalBtn) {
+            openInterviewModalBtn.addEventListener('click', function () {
+                if (statusSelect?.value !== 'interviewed') return;
+
+                // Set default date to 1 hour from now when opening modal.
+                const interviewDateInput = document.getElementById('interviewScheduledAt');
+                if (interviewDateInput && !interviewDateInput.value) {
+                    const now = new Date();
+                    now.setHours(now.getHours() + 1);
+                    now.setMinutes(0);
+                    const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    interviewDateInput.value = localIso;
+                }
+
+                interviewModal?.show();
+            });
+        }
 
         if (statusSelect) {
             // Show/hide interview date field when status changes
             statusSelect.addEventListener('change', function () {
-                toggleInterviewDate();
+                if (!interviewField) return;
 
-                // If Interview is selected, set default date to 1 hour from now
+                // Only show interview field when Interview status is selected
                 if (this.value === 'interviewed') {
-                    const interviewDateInput = document.getElementById('interviewScheduledAt');
-                    if (interviewDateInput && !interviewDateInput.value) {
-                        const now = new Date();
-                        now.setHours(now.getHours() + 1);
-                        now.setMinutes(0);
-                        const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-                        interviewDateInput.value = localIso;
-                    }
+                    interviewField.style.display = 'block';
+                } else {
+                    interviewField.style.display = 'none';
+                    interviewModal?.hide();
                 }
             });
         }
@@ -484,6 +561,16 @@
 
                 if (feedbackText.trim().length > 0 || rating || feedbackType) {
                     e.preventDefault();
+
+                    // Validate interview date before submitting feedback
+                    if (status === 'interviewed' && !interviewDate) {
+                        alert('Please select an interview date and time before updating the status to Interview.');
+                        const interviewField = document.getElementById('interviewDateField');
+                        if (interviewField) interviewField.style.display = 'block';
+                        document.getElementById('interviewScheduledAt')?.focus();
+                        return;
+                    }
+
                     const data = new FormData(feedbackForm);
                     try {
                         await fetch(feedbackForm.action, {

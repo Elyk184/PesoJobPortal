@@ -449,6 +449,7 @@ class AdminController extends Controller
 
         $job->update([
             'status' => 'active',
+            'archived_at' => null,
             'approved_at' => now(),
             'approved_by' => Auth::id(),
         ]);
