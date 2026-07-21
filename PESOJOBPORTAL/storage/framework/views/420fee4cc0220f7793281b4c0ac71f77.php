@@ -195,6 +195,28 @@
         margin-bottom: 1rem;
         box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
     }
+    .interview-popup {
+        position: fixed;
+        inset: 0;
+        z-index: 1060;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.55);
+    }
+    .interview-popup.is-open {
+        display: flex;
+    }
+    .interview-popup-card {
+        width: 100%;
+        max-width: 560px;
+        border-radius: 16px;
+        border: 3px solid #ff9800;
+        background: #fffbf0;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+        overflow: hidden;
+    }
     @media (max-width: 991.98px) {
         .profile-header {
             padding: 1.75rem 1.5rem;
@@ -327,7 +349,7 @@
 
             <?php if($application->cover_letter): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <span class="label-muted">Cover Letter / Notes</span>
+                <span class="label-muted">Cover Letter</span>
                 <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->cover_letter); ?></p>
             </div>
             <?php endif; ?>
@@ -397,7 +419,7 @@
                 <?php echo method_field('PATCH'); ?>
                 <div class="mb-4">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select" id="statusSelect">
+                    <select name="status" class="form-select" id="statusSelect" onchange="window.__handleInterviewStatusChange && window.__handleInterviewStatusChange(this.value)">
                         <option value="pending" <?php echo e($application->status == 'pending' ? 'selected' : ''); ?>>Pending</option>
                         <option value="reviewing" <?php echo e($application->status == 'reviewing' ? 'selected' : ''); ?>>Reviewing</option>
                         <option value="recommended" <?php echo e($application->status == 'recommended' ? 'selected' : ''); ?>>Recommended</option>
@@ -406,43 +428,29 @@
                         <option value="rejected" <?php echo e($application->status == 'rejected' ? 'selected' : ''); ?>>Not Selected</option>
                     </select>
                 </div>
-                <!-- Interview Schedule Modal Trigger -->
-                <div id="interviewDateField" style="display: none;">
-                    <button type="button" class="btn btn-warning w-100" id="openInterviewModal">
-                        <i class="bi bi-calendar-event-fill"></i> Schedule Interview
-                    </button>
-                </div>
-
-                <!-- Interview Schedule Modal -->
-                <div class="modal fade" id="interviewScheduleModal" tabindex="-1" aria-labelledby="interviewScheduleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 16px; border: 3px solid #ff9800;">
-                            <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107; border-radius: 13px 13px 0 0;">
-                                <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
-                                    📅 Schedule Interview
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
-                                <div class="mb-3">
-                                    <label class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                                    <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
-                                    <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
-                                </div>
-                            </div>
-                            <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107; border-radius: 0 0 13px 13px;">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
-                                    <i class="bi bi-check-lg"></i> Save Interview Date
-                                </button>
+                <div id="interviewScheduleModal" class="interview-popup" aria-hidden="true">
+                    <div class="interview-popup-card" role="dialog" aria-modal="true" aria-labelledby="interviewScheduleModalLabel">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107;">
+                            <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
+                                📅 Schedule Interview
+                            </h5>
+                            <button type="button" class="btn-close" id="closeInterviewModal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
+                            <div class="mb-3">
+                                <label for="interviewScheduledAt" class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
+                                <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
+                                <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
                             </div>
                         </div>
+                        <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107;">
+                            <button type="button" class="btn btn-secondary" id="cancelInterviewSchedule">Cancel</button>
+                            <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
+                                <i class="bi bi-check-lg"></i> Save Interview Date
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">Notes (Optional)</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this applicant..." style="resize: vertical;"><?php echo e($application->notes); ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-check-lg"></i> Update Status
@@ -471,11 +479,34 @@
 
 <?php $__env->startPush('scripts'); ?>
 <script>
-    function toggleInterviewDate() {
-        const status = document.getElementById('statusSelect')?.value;
-        const interviewField = document.getElementById('interviewDateField');
-        if (!interviewField) return;
-        interviewField.style.display = status === 'interviewed' ? 'block' : 'none';
+    function showInterviewModal() {
+        const status = String(document.getElementById('statusSelect')?.value || '').trim();
+        if (status !== 'interviewed') return;
+
+        const interviewModalEl = document.getElementById('interviewScheduleModal');
+        const interviewDateInput = document.getElementById('interviewScheduledAt');
+        if (!interviewModalEl) return;
+
+        if (interviewDateInput && !interviewDateInput.value) {
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            now.setMinutes(0);
+            const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            interviewDateInput.value = localIso;
+        }
+
+        interviewModalEl.classList.add('is-open');
+        interviewModalEl.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    }
+
+    function hideInterviewModal() {
+        const interviewModalEl = document.getElementById('interviewScheduleModal');
+        if (!interviewModalEl) return;
+
+        interviewModalEl.classList.remove('is-open');
+        interviewModalEl.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
     }
 
     function setRating(value) {
@@ -491,52 +522,40 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function initInterviewScheduler() {
         const statusSelect = document.getElementById('statusSelect');
         const feedbackForm = document.getElementById('feedbackForm');
         const statusForm = document.getElementById('statusForm');
-        const interviewField = document.getElementById('interviewDateField');
-        const interviewModalEl = document.getElementById('interviewScheduleModal');
-        const openInterviewModalBtn = document.getElementById('openInterviewModal');
-        const interviewModal = (window.bootstrap && interviewModalEl)
-            ? window.bootstrap.Modal.getOrCreateInstance(interviewModalEl)
-            : null;
 
-        // Hide interview field on initial page load - only show when user selects Interview status
-        if (interviewField) {
-            interviewField.style.display = 'none';
-        }
+        hideInterviewModal();
 
-        if (openInterviewModalBtn) {
-            openInterviewModalBtn.addEventListener('click', function () {
-                if (statusSelect?.value !== 'interviewed') return;
+        window.__handleInterviewStatusChange = function (value) {
+            if (String(value || '').trim() === 'interviewed') {
+                showInterviewModal();
+            } else {
+                hideInterviewModal();
+            }
+        };
 
-                // Set default date to 1 hour from now when opening modal.
-                const interviewDateInput = document.getElementById('interviewScheduledAt');
-                if (interviewDateInput && !interviewDateInput.value) {
-                    const now = new Date();
-                    now.setHours(now.getHours() + 1);
-                    now.setMinutes(0);
-                    const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-                    interviewDateInput.value = localIso;
-                }
-
-                interviewModal?.show();
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function () {
+                window.__handleInterviewStatusChange(this.value);
             });
         }
 
-        if (statusSelect) {
-            // Show/hide interview date field when status changes
-            statusSelect.addEventListener('change', function () {
-                if (!interviewField) return;
+        const closeInterviewModalBtn = document.getElementById('closeInterviewModal');
+        const cancelInterviewScheduleBtn = document.getElementById('cancelInterviewSchedule');
+        if (closeInterviewModalBtn) {
+            closeInterviewModalBtn.addEventListener('click', hideInterviewModal);
+        }
+        if (cancelInterviewScheduleBtn) {
+            cancelInterviewScheduleBtn.addEventListener('click', hideInterviewModal);
+        }
 
-                // Only show interview field when Interview status is selected
-                if (this.value === 'interviewed') {
-                    interviewField.style.display = 'block';
-                } else {
-                    interviewField.style.display = 'none';
-                    interviewModal?.hide();
-                }
+        const saveInterviewDateBtn = document.getElementById('saveInterviewDate');
+        if (saveInterviewDateBtn) {
+            saveInterviewDateBtn.addEventListener('click', function () {
+                hideInterviewModal();
             });
         }
 
@@ -549,8 +568,7 @@
                 if (status === 'interviewed' && !interviewDate) {
                     e.preventDefault();
                     alert('Please select an interview date and time before updating the status to Interview.');
-                    const interviewField = document.getElementById('interviewDateField');
-                    if (interviewField) interviewField.style.display = 'block';
+                    showInterviewModal();
                     document.getElementById('interviewScheduledAt')?.focus();
                     return;
                 }
@@ -565,8 +583,7 @@
                     // Validate interview date before submitting feedback
                     if (status === 'interviewed' && !interviewDate) {
                         alert('Please select an interview date and time before updating the status to Interview.');
-                        const interviewField = document.getElementById('interviewDateField');
-                        if (interviewField) interviewField.style.display = 'block';
+                        showInterviewModal();
                         document.getElementById('interviewScheduledAt')?.focus();
                         return;
                     }
@@ -610,7 +627,13 @@
             st.addEventListener('focus', function () { this.classList.add('focus-visible'); });
             st.addEventListener('blur', function () { this.classList.remove('focus-visible'); });
         }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initInterviewScheduler);
+    } else {
+        initInterviewScheduler();
+    }
 </script>
 <?php $__env->stopPush(); ?>
 
