@@ -1093,109 +1093,36 @@
         eligibility: document.querySelectorAll('#eligibility-rows [data-row="eligibility"]').length,
     };
 
-        const permanentAddressCopyToggle = document.querySelector('[data-copy-present-address]');
+    const permanentAddressCopyToggle = document.querySelector('[data-copy-present-address]');
 
-        function initSkillGroupCollapsibles() {
-            const skillGroups = document.querySelectorAll('.profile-skill-group');
-
-            skillGroups.forEach(function (group) {
-                const title = group.querySelector('.profile-skill-group-title');
-                if (!title) return;
-
-                group.classList.remove('mobile-collapsed');
-                title.setAttribute('aria-expanded', 'true');
-            });
-        }
-
-        document.addEventListener('click', function (e) {
-            const title = e.target.closest('.profile-skill-group-title');
+    function initSkillGroupCollapsibles() {
+        document.querySelectorAll('.profile-skill-group').forEach(function (group) {
+            const title = group.querySelector('.profile-skill-group-title');
             if (!title) return;
-
-            const group = title.closest('.profile-skill-group');
-            if (!group) return;
-
-            e.preventDefault();
-            group.classList.toggle('mobile-collapsed');
-            const isExpanded = group.classList.contains('mobile-collapsed') === false;
-            title.setAttribute('aria-expanded', isExpanded);
+            group.classList.remove('mobile-collapsed');
+            title.setAttribute('aria-expanded', 'true');
         });
+    }
 
-        document.addEventListener('keydown', function (e) {
-            if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('profile-skill-group-title')) {
-                e.preventDefault();
-                e.target.click();
-            }
+    function copyPresentAddressToPermanent() {
+        if (!permanentAddressCopyToggle || !permanentAddressCopyToggle.checked) return;
+        document.querySelectorAll('[data-address-source="present"]').forEach(function (field) {
+            const target = document.querySelector('[data-address-target="' + field.getAttribute('data-address-field') + '"]');
+            if (target) target.value = field.value;
         });
-
-        function copyPresentAddressToPermanent() {
-            if (!permanentAddressCopyToggle || !permanentAddressCopyToggle.checked) return;
-            document.querySelectorAll('[data-address-source="present"]').forEach(function (field) {
-                const addressField = field.getAttribute('data-address-field');
-                const target = document.querySelector('[data-address-target="' + addressField + '"]');
-                if (target) target.value = field.value;
-            });
-        }
-
-        function addRow(type) {
-            const template = document.getElementById(type + '-template');
-            const container = document.getElementById(type + '-rows');
-            if (!template || !container) return;
-            const clone = template.content.cloneNode(true);
-            const row = clone.querySelector('[data-row="' + type + '"]');
-            const index = counters[type]++;
-            row.querySelectorAll('[data-field]').forEach(function (field) {
-                field.name = type + '[' + index + '][' + field.getAttribute('data-field') + ']';
-                if (field.tagName === 'TEXTAREA') field.value = '';
-            });
-            container.appendChild(clone);
-        }
-
-        document.querySelectorAll('[data-add-row]').forEach(function (button) {
-            button.addEventListener('click', function () {
-                addRow(button.getAttribute('data-add-row'));
-            });
-        });
-
-        document.addEventListener('click', function (event) {
-            if (event.target && event.target.matches('[data-remove-row]')) {
-                const row = event.target.closest('[data-row]');
-                if (row) row.remove();
-            }
-        });
-
-        if (permanentAddressCopyToggle) {
-            permanentAddressCopyToggle.addEventListener('change', function () {
-                copyPresentAddressToPermanent();
-            });
-        }
-
-        // Initialize skill group collapsibles on page load
-        initSkillGroupCollapsibles();
-
-        // Re-initialize on window resize (for responsive behavior)
-        let resizeTimeout;
-        window.addEventListener('resize', function () {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function () {
-                initSkillGroupCollapsibles();
-            }, 250);
-        });
-    })();
+    }
 
     function addRow(type) {
         const template  = document.getElementById(type + '-template');
         const container = document.getElementById(type + '-rows');
         if (!template || !container) return;
-
         const clone = template.content.cloneNode(true);
         const row   = clone.querySelector('[data-row="' + type + '"]');
         const index = counters[type]++;
-
         row.querySelectorAll('[data-field]').forEach(function (field) {
             field.name = type + '[' + index + '][' + field.getAttribute('data-field') + ']';
             if (field.tagName === 'TEXTAREA') field.value = '';
         });
-
         container.appendChild(clone);
     }
 
@@ -1204,9 +1131,27 @@
     });
 
     document.addEventListener('click', function (e) {
-        if (e.target && e.target.closest('[data-remove-row]')) {
-            const row = e.target.closest('[data-row]');
+        const removeBtn = e.target.closest('[data-remove-row]');
+        if (removeBtn) {
+            const row = removeBtn.closest('[data-row]');
             if (row) row.remove();
+            return;
+        }
+        const title = e.target.closest('.profile-skill-group-title');
+        if (title) {
+            e.preventDefault();
+            const group = title.closest('.profile-skill-group');
+            if (group) {
+                group.classList.toggle('mobile-collapsed');
+                title.setAttribute('aria-expanded', !group.classList.contains('mobile-collapsed'));
+            }
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('profile-skill-group-title')) {
+            e.preventDefault();
+            e.target.click();
         }
     });
 
@@ -1217,8 +1162,9 @@
     document.querySelectorAll('[data-address-source="present"]').forEach(function (field) {
         field.addEventListener('input', copyPresentAddressToPermanent);
     });
+
+    initSkillGroupCollapsibles();
 })();
->>>>>>> 688610144250bd4cd5749e5e75f952a904361859:PESOJOBPORTAL/resources/views/jobseeker/profile.blade.php
 </script>
 @endpush
 @endsection

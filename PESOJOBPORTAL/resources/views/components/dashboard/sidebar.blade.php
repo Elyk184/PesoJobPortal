@@ -90,7 +90,7 @@
             </a>
             <a href="{{ route('jobseeker.recommendations') }}" class="dashboard-nav-link {{ request()->routeIs('jobseeker.recommendations') ? 'is-active' : '' }}">
                 <i class="bi bi-stars"></i>
-                <span>Recommendations</span>
+                <span>Best Fit</span>
             </a>
         </div>
 

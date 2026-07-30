@@ -296,32 +296,31 @@ class JobseekerApprovalController extends Controller
         $employerName = $job->employer?->name ?? 'Unknown Employer';
         $companyName = $job->employer?->companyProfile?->company_name ?? $employerName;
 
-        // Create a portal notification
         try {
+            // Store a RecommendedApplicant record so the jobseeker Best Fit page can reliably link to the job
+            \App\Models\RecommendedApplicant::create([
+                'jobseeker_id'           => $jobseeker->id,
+                'job_application_id'     => null,
+                'peso_job_id'            => $job->id,
+                'recommended_by_user_id' => auth()->id(),
+                'recommended_to_user_id' => null,
+                'recommendation_reason'  => $request->message ?? null,
+                'recommendation_type'    => 'admin_to_jobseeker',
+                'status'                 => 'pending',
+            ]);
+
             $portalNotification = \App\Models\PortalNotification::create([
-                'title' => "Job Recommendation: {$job->title}",
-                'message' => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
+                'title'      => "Job Recommendation: {$job->title}",
+                'message'    => $request->message ?? "We recommend this job for you: {$job->title} at {$companyName}",
                 'created_by' => auth()->id(),
             ]);
 
-            Log::info('PortalNotification created for recommendJob', [
-                'portal_notification_id' => $portalNotification->id,
-                'title' => $portalNotification->title,
-                'created_by' => $portalNotification->created_by,
-            ]);
-
-            // Attach to the jobseeker
             $jobseeker->userNotifications()->create([
                 'portal_notification_id' => $portalNotification->id,
-                'user_id' => $jobseeker->id,
+                'user_id'                => $jobseeker->id,
             ]);
 
-            Log::info('UserNotification created for recommendJob', [
-                'user_id' => $jobseeker->id,
-                'portal_notification_id' => $portalNotification->id,
-            ]);
-
-            return back()->with('success', "Job recommendation sent to {$jobseeker->name}! ");
+            return back()->with('success', "Job recommendation sent to {$jobseeker->name}!");
         } catch (\Throwable $e) {
             Log::error('Failed to create recommendation notification', [
                 'error' => $e->getMessage(),

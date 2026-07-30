@@ -18,6 +18,7 @@ use App\Models\JobseekerPersonalInformation;
 use App\Models\JobseekerSkill;
 use App\Models\JobseekerSkillsMeta;
 use App\Models\JobseekerTraining;
+use App\Models\RecommendedApplicant;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
 use App\Models\PortalNotification;
@@ -405,22 +406,30 @@ class JobseekerController extends Controller
         $user = $request->user();
         $profile = $user?->profile;
         $recommendations = $this->buildProfileBasedRecommendations($profile);
-        $adminRecommendations = UserNotification::query()
-            ->where('user_id', (int) $user->id)
-            ->with('portalNotification')
+        $userId = (int) $user->id;
+        $adminRecommendations = \App\Models\RecommendedApplicant::query()
+            ->where('jobseeker_id', $userId)
+            ->where('recommendation_type', 'admin_to_jobseeker')
+            ->with('job')
             ->latest('id')
             ->get()
-            ->filter(function (UserNotification $notification) {
-                return str_starts_with((string) data_get($notification, 'portalNotification.title', ''), 'Job Recommendation:');
-            })
-            ->map(function (UserNotification $notification) {
-                $portalNotification = $notification->portalNotification;
+            ->map(function (\App\Models\RecommendedApplicant $rec) use ($userId) {
+                $job = $rec->job;
+                $alreadyApplied = $job
+                    ? JobApplication::query()
+                        ->where('user_id', $userId)
+                        ->where('peso_job_id', $job->id)
+                        ->exists()
+                    : false;
 
                 return [
-                    'title' => (string) data_get($portalNotification, 'title', 'Job Recommendation'),
-                    'message' => (string) data_get($portalNotification, 'message', ''),
-                    'created_at' => $notification->created_at,
-                    'read_at' => $notification->read_at,
+                    'title'          => $job ? "Job Recommendation: {$job->title}" : 'Job Recommendation',
+                    'job_title'      => $job?->title ?? '',
+                    'message'        => $rec->recommendation_reason ?? '',
+                    'created_at'     => $rec->created_at,
+                    'job'            => $job,
+                    'already_applied'=> $alreadyApplied,
+                    'status'         => $rec->status,
                 ];
             })
             ->values();

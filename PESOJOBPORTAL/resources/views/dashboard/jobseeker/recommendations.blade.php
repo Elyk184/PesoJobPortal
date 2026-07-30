@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Recommendations | Jobseeker')
+@section('title', 'Best Fit | Jobseeker')
 
 @section('content')
 <section aria-label="Job recommendations">
@@ -8,8 +8,8 @@
 	<div class="dashboard-section-card p-3 p-lg-4 mb-4">
 		<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
 			<div>
-				<h2 class="h4 mb-1 fw-bold">Your Most Suitable Job Opportunities</h2>
-				<p class="mb-0 text-muted">The admin can push these profile-based recommendations to your notifications for easier tracking.</p>
+				<h2 class="h4 mb-1 fw-bold">Your Best Fit Job Opportunities</h2>
+				<p class="mb-0 text-muted">Jobs matched to your profile and personally picked by the admin for you.</p>
 			</div>
 			<a href="{{ route('jobseeker.profile') }}" class="btn btn-primary px-3 shadow-sm">
 				<i class="bi bi-person-gear me-2"></i>Update Profile Skills
@@ -23,7 +23,7 @@
 				<div class="dashboard-stat-icon"><i class="bi bi-stars"></i></div>
 				<div>
 					<div class="dashboard-stat-number">{{ $recommendedCount }}</div>
-					<div class="dashboard-stat-label">Recommended Matches</div>
+					<div class="dashboard-stat-label">Best Fit Matches</div>
 				</div>
 			</div>
 		</div>
@@ -61,91 +61,135 @@
 
 	<div class="dashboard-section-card p-3 p-lg-4">
 		<div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-			<h3 class="h5 mb-0 fw-bold"><i class="bi bi-lightning-charge me-2"></i>Matched Job Posts</h3>
+			<h3 class="h5 mb-0 fw-bold"><i class="bi bi-lightning-charge me-2"></i>Profile-Matched Jobs</h3>
 			<a href="{{ route('jobseeker.browse-jobs') }}" class="btn btn-sm btn-outline-primary">Browse All Jobs</a>
 		</div>
 
-		@if ($recommendations->isEmpty())
+		@if ($recommendations->isEmpty() && $adminRecommendations->isEmpty())
 			<div class="dashboard-empty-state">
 				<div>
 					<div class="fs-1 mb-2">✦</div>
-					<div class="fw-semibold text-secondary">No recommendations found yet.</div>
+					<div class="fw-semibold text-secondary">No best fit jobs found yet.</div>
 					<div class="small">Try updating your skills and preferred occupation, then check again.</div>
 				</div>
 			</div>
 		@else
-			<div class="row g-3">
-				@foreach ($recommendations as $item)
-					@php
-						$job = data_get($item, 'job');
-						$score = (int) data_get($item, 'score', 0);
-						$badgeClass = $score >= 80 ? 'success' : ($score >= 60 ? 'primary' : 'warning');
-					@endphp
+			@if ($recommendations->isNotEmpty())
+				<div class="row g-3">
+					@foreach ($recommendations as $item)
+						@php
+							$job = data_get($item, 'job');
+							$score = (int) data_get($item, 'score', 0);
+							$badgeClass = $score >= 80 ? 'success' : ($score >= 60 ? 'primary' : 'warning');
+						@endphp
 
-					@if ($job)
-
-					<div class="col-12 col-xl-6">
-						<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-3">
-							<div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
-								<div>
-									<h4 class="h6 mb-1 fw-bold text-dark">{{ $job->title }}</h4>
-									<div class="small text-muted">
-										<i class="bi bi-building me-1"></i>{{ $job->employer_name }}
-										<span class="mx-1">|</span>
-										<i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
+						@if ($job)
+						<div class="col-12 col-xl-6">
+							<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-3">
+								<div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+									<div>
+										<h4 class="h6 mb-1 fw-bold text-dark">{{ $job->title }}</h4>
+										<div class="small text-muted">
+											<i class="bi bi-building me-1"></i>{{ $job->employer_name }}
+											<span class="mx-1">|</span>
+											<i class="bi bi-geo-alt me-1"></i>{{ $job->location }}
+										</div>
 									</div>
+									<span class="badge text-bg-{{ $badgeClass }}">{{ $score }}% Match</span>
 								</div>
-								<span class="badge text-bg-{{ $badgeClass }}">{{ $score }}% Match</span>
-							</div>
 
-							@if (! empty($job->salary_range))
-								<div class="small text-secondary">
-									<i class="bi bi-cash-stack me-1"></i>{{ $job->salary_range }}
+								@if (! empty($job->salary_range))
+									<div class="small text-secondary">
+										<i class="bi bi-cash-stack me-1"></i>{{ $job->salary_range }}
+									</div>
+								@endif
+
+								<p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($job->description, 150) }}</p>
+
+								@if (! empty(data_get($item, 'matched_skills')))
+									<div class="d-flex flex-wrap gap-2">
+										@foreach (data_get($item, 'matched_skills', []) as $skill)
+											<span class="badge rounded-pill text-bg-light border">{{ $skill }}</span>
+										@endforeach
+									</div>
+								@endif
+
+								@if (! empty(data_get($item, 'reasons')))
+									<ul class="small text-muted mb-0 ps-3">
+										@foreach (data_get($item, 'reasons', []) as $reason)
+											<li>{{ $reason }}</li>
+										@endforeach
+									</ul>
+								@endif
+
+								<div class="mt-auto">
+									<a href="{{ route('jobseeker.apply-job', $job->id) }}" class="btn btn-sm btn-primary">
+										<i class="bi bi-send me-1"></i>Apply Now
+									</a>
 								</div>
-							@endif
+							</article>
+						</div>
+						@endif
+					@endforeach
+				</div>
+			@endif
 
-							<p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($job->description, 150) }}</p>
-
-							@if (! empty(data_get($item, 'matched_skills')))
-								<div class="d-flex flex-wrap gap-2">
-									@foreach (data_get($item, 'matched_skills', []) as $skill)
-										<span class="badge rounded-pill text-bg-light border">{{ $skill }}</span>
-									@endforeach
-								</div>
-							@endif
-
-							@if (! empty(data_get($item, 'reasons')))
-								<ul class="small text-muted mb-0 ps-3">
-									@foreach (data_get($item, 'reasons', []) as $reason)
-										<li>{{ $reason }}</li>
-									@endforeach
-								</ul>
-							@endif
-						</article>
-					</div>
-					@endif
-				@endforeach
-			</div>
-
-			@if (isset($adminRecommendations) && $adminRecommendations->isNotEmpty())
-				<div class="mt-4 pt-4 border-top">
+			@if ($adminRecommendations->isNotEmpty())
+				<div class="{{ $recommendations->isNotEmpty() ? 'mt-4 pt-4 border-top' : '' }}">
 					<div class="d-flex align-items-center justify-content-between gap-3 mb-3">
-						<h3 class="h5 mb-0 fw-bold"><i class="bi bi-megaphone me-2"></i>Admin Recommendations</h3>
+						<h3 class="h5 mb-0 fw-bold"><i class="bi bi-megaphone me-2"></i>Picked for You by Admin</h3>
 						<a href="{{ route('jobseeker.notifications') }}" class="btn btn-sm btn-outline-primary">View Notifications</a>
 					</div>
 					<div class="row g-3">
-						@foreach ($adminRecommendations as $recommendation)
+						@foreach ($adminRecommendations as $rec)
 							<div class="col-12 col-xl-6">
 								<article class="dashboard-stat-card p-3 h-100 d-flex flex-column gap-2 border-start border-4" style="border-color: #2d6be0;">
 									<div class="d-flex align-items-start justify-content-between gap-2">
 										<div>
-											<h4 class="h6 mb-1 fw-bold text-dark">{{ $recommendation['title'] }}</h4>
-											<div class="small text-muted">Sent by the admin portal</div>
+											<h4 class="h6 mb-1 fw-bold text-dark">{{ $rec['job_title'] ?: $rec['title'] }}</h4>
+											@if ($rec['job'])
+												<div class="small text-muted">
+													<i class="bi bi-building me-1"></i>{{ $rec['job']->employer_name }}
+													<span class="mx-1">|</span>
+													<i class="bi bi-geo-alt me-1"></i>{{ $rec['job']->location }}
+												</div>
+											@else
+												<div class="small text-muted">Recommended by admin</div>
+											@endif
 										</div>
-										<span class="badge text-bg-info">Admin</span>
+										<span class="badge text-bg-info">Admin Pick</span>
 									</div>
-									<p class="mb-0 small text-muted">{{ $recommendation['message'] }}</p>
-									<div class="small text-secondary">{{ optional($recommendation['created_at'])->format('M d, Y h:i A') }}</div>
+
+									@if ($rec['job'] && $rec['job']->salary_range)
+										<div class="small text-secondary">
+											<i class="bi bi-cash-stack me-1"></i>{{ $rec['job']->salary_range }}
+										</div>
+									@endif
+
+									<p class="mb-0 small text-muted">{{ $rec['message'] }}</p>
+
+									@if ($rec['job'])
+										<p class="mb-0 small text-muted">{{ \Illuminate\Support\Str::limit($rec['job']->description, 120) }}</p>
+									@endif
+
+									<div class="small text-secondary">{{ optional($rec['created_at'])->format('M d, Y h:i A') }}</div>
+
+									@if ($rec['job'])
+										<div class="mt-auto d-flex gap-2">
+											@if ($rec['already_applied'])
+												<span class="btn btn-sm btn-success disabled">
+													<i class="bi bi-check-circle me-1"></i>Applied
+												</span>
+												<a href="{{ route('jobseeker.applications') }}" class="btn btn-sm btn-outline-secondary">
+													<i class="bi bi-eye me-1"></i>View Application
+												</a>
+											@else
+												<a href="{{ route('jobseeker.apply-job', $rec['job']->id) }}" class="btn btn-sm btn-primary">
+													<i class="bi bi-send me-1"></i>Apply Now
+												</a>
+											@endif
+										</div>
+									@endif
 								</article>
 							</div>
 						@endforeach

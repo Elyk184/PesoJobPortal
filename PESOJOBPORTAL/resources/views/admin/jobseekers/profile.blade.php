@@ -913,7 +913,7 @@
         @endif
         </div>
     </div>
-                <form id="recommendForm" method="POST" action="{{ route('admin.jobseekers.recommend-applicant', $jobseeker) }}">
+                <form id="recommendForm" method="POST" action="{{ route('admin.jobseekers.recommend-job', $jobseeker) }}">
                     @csrf
                     <div class="modal-body" style="padding: 2rem; background: #ffffff;">
                         <p style="font-size: 1rem; color: #334155; margin-bottom: 1.25rem;">Recommending: <span id="jobseekerName" style="color: #111827; font-weight: 700; font-size: 1.1rem;">{{ $jobseeker->name ?? 'N/A' }}</span></p>
