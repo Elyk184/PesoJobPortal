@@ -23,7 +23,7 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', 'in:employer,jobseeker'],
+            'role' => ['required', 'in:employer,jobseeker,ofw,association'],
             'password' => ['required', 'confirmed', 'min:8'],
             'policy_consent' => ['accepted'],
         ]);

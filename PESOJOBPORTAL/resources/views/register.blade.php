@@ -257,6 +257,8 @@
                     <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
                     <option value="jobseeker" {{ old('role') === 'jobseeker' ? 'selected' : '' }}>Jobseeker</option>
                     <option value="employer" {{ old('role') === 'employer' ? 'selected' : '' }}>Employer</option>
+                    <option value="ofw" {{ old('role') === 'ofw' ? 'selected' : '' }}>OFW</option>
+                    <option value="association" {{ old('role') === 'association' ? 'selected' : '' }}>Association</option>
                 </select>
             </div>
 
