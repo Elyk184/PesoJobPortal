@@ -466,7 +466,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border: none; border-radius: 12px;">
                 <div class="modal-header" style="background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%); border-bottom: none; border-radius: 12px 12px 0 0; padding: 1.5rem;">
-                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Applicant to Employer</h5>
+                    <h5 class="modal-title" style="color: white; font-weight: 800; font-size: 1.5rem;"><i class="bi bi-briefcase me-2"></i>Recommend Job to Jobseeker</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="recommendForm" method="POST" action="">
@@ -581,7 +581,7 @@
                     </div>
                     <div class="modal-footer" style="border-top: 2px solid #e5e7eb; padding: 1.5rem; background: #f8f9fa; border-radius: 0 0 12px 12px; display: flex; gap: 1rem; justify-content: flex-end;">
                         <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: #e5e7eb; color: #0d1f3c; border: none; cursor: pointer;">Cancel</button>
-                        <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Applicant</button>
+                        <button type="submit" class="btn" style="border-radius: 8px; padding: 0.75rem 2rem; font-weight: 600; font-size: 1rem; background: linear-gradient(135deg, #d72638 0%, #c91f32 100%); border: none; color: white; cursor: pointer;"><i class="bi bi-check-circle me-2"></i>Recommend Job</button>
                     </div>
                 </form>
             </div>
@@ -948,10 +948,10 @@
                     currentJobseekerId = jobseekerId;
                     jobseekerNameSpan.textContent = jobseekerName;
 
-                    // Update form action for applicant recommendation
-                    recommendForm.action = @json(route('admin.jobseekers.recommend-applicant', ['jobseeker' => '__JOBSEEKER_ID__'])).replace('__JOBSEEKER_ID__', jobseekerId);
-                    console.log('Form action set to:', recommendForm.action);
-                    console.log('Jobseeker:', jobseekerId, jobseekerName);
+                    // Update form action to recommend a job to the jobseeker (so it appears in Best Fit)
+                    recommendForm.action = @json(route('admin.jobseekers.recommend-job', ['jobseeker' => '__JOBSEEKER_ID__'])).replace('__JOBSEEKER_ID__', jobseekerId);
+                    console.log('Form action set to (recommend-job):', recommendForm.action);
+                    console.log('Jobseeker (recommend-job):', jobseekerId, jobseekerName);
                     
                     // Reset form fields
                     employerSelect.value = '';

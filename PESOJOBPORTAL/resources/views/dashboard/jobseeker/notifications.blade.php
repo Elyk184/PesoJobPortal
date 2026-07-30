@@ -351,8 +351,21 @@
 					<span class="gmail-time">{{ optional($createdAt)->diffForHumans() ?? 'Now' }}</span>
 					<span class="gmail-badge">{{ $isAdminRecommendation ? 'RECOMMEND' : 'PESO' }}</span>
 
+					@php
+						// Try to detect job id from portalNotification data (if stored)
+						$portalData = data_get($notification, 'portalNotification.data', null);
+						$linkedJobId = null;
+						if (is_array($portalData) && array_key_exists('peso_job_id', $portalData)) {
+							$linkedJobId = $portalData['peso_job_id'];
+						}
+					@endphp
+
 					@if ($isUnread)
-						<button type="button" class="mark-read-btn gmail-action" data-mark-read data-id="{{ $notification->id }}">Mark Read</button>
+						@if ($linkedJobId)
+							<a href="{{ route('jobseeker.apply-job', $linkedJobId) }}" class="mark-read-btn gmail-action">View Job</a>
+						@else
+							<button type="button" class="mark-read-btn gmail-action" data-mark-read data-id="{{ $notification->id }}">Mark Read</button>
+						@endif
 					@else
 						<span class="gmail-read-tag gmail-action"><i class="bi bi-check2-circle"></i>Read</span>
 					@endif
