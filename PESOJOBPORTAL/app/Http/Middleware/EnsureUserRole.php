@@ -20,7 +20,7 @@ class EnsureUserRole
         }
 
         if (! in_array($user->role, $roles, true)) {
-            return redirect($user->redirectToDashboard());
+            return redirect('/')->with('error', 'Access denied. You do not have permission for this section. Your role: ' . $user->role);
         }
 
         return $next($request);

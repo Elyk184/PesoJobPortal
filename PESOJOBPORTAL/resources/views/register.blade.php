@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register | PESO Job Portal</title>
+    <title>Register | Link Job Resource Portal</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -25,7 +25,7 @@
             display: grid;
             place-items: center;
             background: linear-gradient(rgba(246, 248, 252, 0.9), rgba(246, 248, 252, 0.9)),
-                        url('{{ asset('images/P1so.png') }}') center center / min(88vw, 980px) auto no-repeat,
+                        url("{{ asset('images/P1so.png') }}") center center / min(88vw, 980px) auto no-repeat,
                         #f6f8fc;
             position: relative;
             padding: 24px 16px;
@@ -112,6 +112,30 @@
             filter: brightness(1.05);
         }
 
+        .home-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--peso-blue-700);
+            border: 2px solid var(--peso-blue-700);
+            background: transparent;
+            font-size: 0.97rem;
+            margin: 1rem 0;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .home-button:hover {
+            background: var(--peso-blue-700);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(45, 101, 177, 0.3);
+            transform: translateY(-1px);
+        }
+
         .link-muted {
             color: #3186cc;
             text-decoration: none;
@@ -137,55 +161,146 @@
             font-weight: 700;
         }
 
+        .policy-consent {
+            margin-top: 10px;
+            padding: 12px 14px;
+            border: 1px solid #d7dfeb;
+            border-radius: 10px;
+            background: #f8fbff;
+        }
+
+        .policy-consent .form-check-label {
+            font-size: 0.92rem;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .policy-consent .form-check-input {
+            margin-top: 0.24rem;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 1.2em;
+            padding: 0 8px;
+            border-left: 1px solid #e5e7eb;
+            background: transparent;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--peso-blue-700);
+        }
+
         @media (max-width: 480px) {
             .register-card {
                 border-radius: 14px;
                 padding: 20px 16px;
             }
+
+            .password-toggle {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
 <body>
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId).querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
+
     <main class="register-card" aria-label="Registration form">
+
         <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="brand-logo">
         <h1 class="register-title">Create Account</h1>
         <p class="register-subtitle">Join PESO and find your perfect job</p>
 
-<form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register') }}" method="POST" autocomplete="on">
             @csrf
+
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="mb-3">
-                <label for="full_name" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Enter your full name" value="{{ old('name') }}" autocomplete="name" required>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" autocomplete="email" required>
             </div>
 
             <div class="mb-3">
                 <label for="role" class="form-label">Register as</label>
-                <select class="form-select" id="role" name="role" required>
-                    <option value="" selected disabled>Select your role</option>
-                    <option value="jobseeker">Jobseeker</option>
-                    <option value="employer">Employer</option>
-                    <option value="admin">Admin</option>
+                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" autocomplete="off" required>
+                    <option value="" disabled {{ old('role') ? '' : 'selected' }}>Select your role</option>
+                    <option value="jobseeker" {{ old('role') === 'jobseeker' ? 'selected' : '' }}>Jobseeker</option>
+                    <option value="employer" {{ old('role') === 'employer' ? 'selected' : '' }}>Employer</option>
                 </select>
             </div>
 
-            <div class="mb-3">
+<div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Create a secure password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create a secure password" autocomplete="new-password" required>
+                    <span class="input-group-text password-toggle" id="toggle-password-icon" onclick="togglePasswordVisibility('password', 'toggle-password-icon')">
+                        <i class="bi bi-eye"></i>
+                    </span>
+                </div>
             </div>
 
-            <div class="mb-4">
+<div class="mb-4">
                 <label for="password_confirmation" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" autocomplete="new-password" required>
+                    <span class="input-group-text password-toggle" id="toggle-password-confirm-icon" onclick="togglePasswordVisibility('password_confirmation', 'toggle-password-confirm-icon')">
+                        <i class="bi bi-eye"></i>
+                    </span>
+                </div>
             </div>
 
             <button type="submit" class="register-button">
                 <i class="bi bi-person-plus me-2"></i>Create Account
             </button>
+
+            <a href="{{ route('home') }}" class="home-button mb-3">
+                <i class="bi bi-house-door me-2"></i>Back to Home
+            </a>
+            <div class="policy-consent mb-3">
+                <div class="form-check">
+                    <input class="form-check-input @error('policy_consent') is-invalid @enderror" type="checkbox" value="1" id="policy_consent" name="policy_consent" {{ old('policy_consent') ? 'checked' : '' }} required>
+                    <label class="form-check-label" for="policy_consent">
+                        I agree to the
+                        <a href="{{ route('privacy-policy') }}" class="link-muted" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                        and
+                        <a href="{{ route('terms-of-service') }}" class="link-muted" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+                    </label>
+                    @error('policy_consent')
+                        <div class="invalid-feedback d-block">You must agree to the Privacy Policy and Terms of Service.</div>
+                    @enderror
+                </div>
+            </div>
         </form>
 
         <div class="divider"></div>
@@ -193,5 +308,7 @@
             Already have an account? <a href="{{ route('login') }}" class="link-muted">Login</a>
         </p>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

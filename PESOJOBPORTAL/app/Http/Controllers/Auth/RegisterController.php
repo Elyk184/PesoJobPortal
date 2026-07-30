@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserProfile;
+use App\Services\PesoClearanceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -22,8 +23,9 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', 'in:admin,employer,jobseeker'],
+            'role' => ['required', 'in:employer,jobseeker'],
             'password' => ['required', 'confirmed', 'min:8'],
+            'policy_consent' => ['accepted'],
         ]);
 
         $user = User::create([
@@ -33,9 +35,14 @@ class RegisterController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
+        // Auto-generate PESO clearance for new jobseekers
+        if ($user->role === 'jobseeker') {
+            $pesoClearanceService = new PesoClearanceService();
+            $pesoClearanceService->createAutoForJobseeker($user);
+        }
 
-        return redirect($user->redirectToDashboard());
+        return redirect()
+            ->route('login')
+            ->with('status', 'Account created successfully. Please sign in.');
     }
 }

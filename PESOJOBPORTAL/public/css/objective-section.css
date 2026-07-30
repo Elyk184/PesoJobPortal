@@ -3,139 +3,186 @@
    PESO Manolo Fortich
    ============================================== */
 
-.objective-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem 1.5rem;
-    min-height: 60vh;
+.objective-page {
+    --objective-blue: #0d3e72;
+    --objective-blue-2: #114a85;
+    --objective-red: #e61f23;
+    --objective-red-2: #f1383f;
+    --objective-gold: #ffd45d;
+    --objective-text: #0f3760;
+    --objective-surface: #ffffff;
+    --objective-page-bg: #efefef;
+    --objective-border: #d9e2ee;
+    --objective-muted: #496482;
     position: relative;
-    background: linear-gradient(135deg, #f4f7fb 0%, #eaf1fa 100%);
+    padding-top: 72px;
+    padding-bottom: 56px;
+    background: var(--objective-page-bg);
     overflow: hidden;
 }
 
-.objective-section::before {
+.objective-page::before {
     content: '';
     position: absolute;
-    top: -80px;
-    left: -80px;
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle at 60% 40%, #b3d8ff 0%, #eaf1fa 100%);
-    opacity: 0.18;
-    z-index: 0;
+    inset: 0;
+    background: none;
     pointer-events: none;
-    border-radius: 50%;
-    filter: blur(2px);
+}
+
+.objective-page > * {
+    position: relative;
+    z-index: 1;
+}
+
+.objective-hero {
+    text-align: center;
+    color: var(--objective-blue);
+    margin-bottom: 2.2rem;
+}
+
+.hero-kicker {
+    display: inline-block;
+    margin: 0;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(13, 62, 114, 0.22);
+    background: rgba(13, 62, 114, 0.08);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.objective-hero h1 {
+    margin: 0.85rem 0 0;
+    font-size: clamp(2rem, 4vw, 2.65rem);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--objective-blue);
+}
+
+.underline {
+    width: 90px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--objective-blue) 0%, var(--objective-gold) 100%);
+    margin: 0.8rem auto 1rem;
+    border-radius: 999px;
+}
+
+.hero-lead {
+    margin: 0 auto;
+    max-width: 920px;
+    font-size: clamp(1rem, 1.3vw, 1.08rem);
+    line-height: 1.8;
+    color: var(--objective-muted);
+}
+
+.objective-content {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.objectives-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
 }
 
 .objective-card {
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(10, 55, 100, 0.13);
-    border-left: 6px solid #2563eb;
-    border-top: 2px solid #eaf1fa;
-    padding: 2.5rem 2.2rem 2rem 2.2rem;
-    margin: 0 auto;
-    max-width: 700px;
-    width: 100%;
+    background: linear-gradient(180deg, var(--objective-surface) 0%, #f7faff 100%);
+    border: 1px solid var(--objective-border);
+    border-radius: 1rem;
+    padding: 1.35rem;
+    color: var(--objective-text);
+    box-shadow: 0 8px 20px rgba(9, 40, 73, 0.10);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
-    z-index: 1;
-    animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.objective-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--objective-blue), var(--objective-red-2));
 }
 
-.objective-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #0a3764;
-    margin: 0 0 0.75rem 0;
-    text-align: center;
-    letter-spacing: 0.01em;
-    text-shadow: 0 2px 8px rgba(36, 80, 164, 0.07);
+.objective-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 26px rgba(9, 40, 73, 0.16);
+}
+
+.objective-card:last-child {
+    grid-column: 1 / -1;
+}
+
+.card-number {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(120deg, var(--objective-blue), var(--objective-blue-2));
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.06em;
+}
+
+.objective-card h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--objective-blue);
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 .objective-divider {
-    width: 80px;
-    height: 5px;
-    background: linear-gradient(90deg, #0066cc 60%, #4fc3f7 100%);
-    border-radius: 3px;
-    margin: 0 auto 1.75rem auto;
-    box-shadow: 0 2px 8px rgba(0,102,204,0.10);
+    width: 52px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--objective-red), var(--objective-red-2));
+    border-radius: 999px;
+    margin: 0.8rem 0 0.95rem;
 }
 
-.objective-text {
-    font-size: 1.13rem;
-    line-height: 1.85;
-    color: #1e2b3a;
+.objective-card p {
     margin: 0;
-    text-align: justify;
-    hyphens: none !important;
-    -webkit-hyphens: none !important;
-    -ms-hyphens: none !important;
-    word-break: keep-all !important;
-    overflow-wrap: normal !important;
-    transition: color 0.2s;
-}
-.objective-text:focus {
-    outline: 2px solid #0066cc;
-    outline-offset: 2px;
+    color: var(--objective-muted);
+    line-height: 1.75;
 }
 
-/* ==============================================
-   Mobile — justify text for compact screens
-   ============================================== */
-@media (max-width: 767px) {
-    .objective-section {
-        padding: 2.5rem 0.5rem;
+@media (max-width: 992px) {
+    .objective-page {
+        padding-top: 64px;
+    }
+
+    .objectives-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .objective-card:last-child {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .objective-page {
+        padding-top: 56px;
+        padding-bottom: 40px;
+    }
+
+    .objective-hero {
+        margin-bottom: 1.35rem;
     }
 
     .objective-card {
-        padding: 1.25rem 0.75rem;
-        border-radius: 10px;
+        padding: 1.1rem;
     }
 
-    .objective-title {
-        font-size: 1.3rem;
-    }
-
-    .objective-divider {
-        width: 48px;
-        height: 3px;
-    }
-
-    .objective-text {
-        text-align: justify;
-        text-align-last: left;
-        font-size: 0.97rem;
-        line-height: 1.8;
-        hyphens: none !important;
-        -webkit-hyphens: none !important;
-        -ms-hyphens: none !important;
-        word-break: keep-all !important;
-        overflow-wrap: normal !important;
-    }
-}
-
-/* ==============================================
-   Tablet — optional middle ground
-   ============================================== */
-@media (min-width: 768px) and (max-width: 1024px) {
-    .objective-card {
-        padding: 2rem 1.25rem;
-    }
-
-    .objective-title {
-        font-size: 1.55rem;
+    .objective-card h3 {
+        font-size: 1rem;
     }
 }

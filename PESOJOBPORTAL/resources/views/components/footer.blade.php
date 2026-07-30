@@ -1,65 +1,101 @@
-<!-- FOOTER / CONTACT -->
-<footer id="contact" class="peso-footer" style="background: linear-gradient(90deg, #0f2d52, #1f4b8f); color: #dfe7f5; border-top: 3px solid #d72638; box-shadow: 0 -10px 28px rgba(10, 35, 80, 0.18);">
-    <div class="nav-container container py-5">
-        <div class="row g-4 align-items-start">
-            <div class="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="rounded-circle shadow-sm me-3" style="width: 48px; height: 42px; object-fit: cover;">
-                    <h4 class="footer-title mb-0" style="color: #f5f7fb; font-weight: 700;">PESO Manolo Fortich</h4>
-                </div>
-                <p class="text-blue-300 text-sm mb-3" style="color: #b3c6e0;">Public Employment Service Office — Connecting jobseekers with opportunities in Manolo Fortich, Bukidnon.</p>
-                <div class="d-flex align-items-center mt-3">
-                    <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="d-flex align-items-center gap-2" style="color: #b3c6e0; text-decoration: none;">
-                        <i class="bi bi-facebook" style="font-size: 1.2rem;"></i>
-                        <span>PESO Manolo Fortich</span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0">
-                <h4 class="footer-title" style="color: #f5f7fb; font-weight: 700;">Contact Us</h4>
-                <ul class="list-unstyled" style="color: #b3c6e0;">
-                    <li class="d-flex align-items-start gap-2 mb-2">
-                        <i class="bi bi-geo-alt-fill mt-1" style="font-size: 1rem;"></i>
-                        <span>Gen. Andres Bonifacio St. Cor. Albarece St., Brgy. Tankulan, Manolo Fortich, Bukidnon 8703,</span>
-                        <li>(In front of Tankulan Flea Market - Taboan)</li>
-                    </li>
-                    <li class="d-flex align-items-start gap-2 mb-2">
-                        <i class="bi bi-envelope-fill mt-1" style="font-size: 1rem;"></i>
-                        <span>peso@manolofortich.gov.ph</span>
-                    </li>
-                    <li class="d-flex align-items-start gap-2 mb-2">
-                        <i class="bi bi-telephone-fill mt-1" style="font-size: 1rem;"></i>
-                        <span>(088) 123-4567</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3 mb-4 mb-lg-0">
-                <h4 class="footer-title" style="color: #f5f7fb; font-weight: 700;">Quick Links</h4>
-                <ul class="list-unstyled" style="color: #b3c6e0;">
-                    <li class="mb-2"><a href="{{ url('/') }}" style="color: #b3c6e0; text-decoration: none;">Home</a></li>
-                    <li class="mb-2"><a href="{{ url('/#services') }}" style="color: #b3c6e0; text-decoration: none;">Services</a></li>
-                    <li class="mb-2"><a href="{{ url('/jobs') }}" style="color: #b3c6e0; text-decoration: none;">Job List</a></li>
-                    <li class="mb-2"><a href="{{ url('/contact') }}" style="color: #b3c6e0; text-decoration: none;">Contact</a></li>
-                </ul>
-            </div>
-            <div class="col-12 col-sm-6 col-lg-3">
-                <h4 class="footer-title" style="color: #f5f7fb; font-weight: 700;">Office Hours</h4>
-                <ul class="list-unstyled" style="color: #b3c6e0;">
-                    <li class="d-flex justify-content-between mb-2"><span>Monday - Thursday</span><span style="color: #fff;">7:30 AM - 6:00 PM</span></li>
-                    <li class="d-flex justify-content-between mb-2"><span>Friday</span><span style="color: #fff;">Closed</span></li>
-                    <li class="d-flex justify-content-between mb-2"><span>Saturday</span><span style="color: #fff;">Closed</span></li>
-                    <li class="d-flex justify-content-between mb-2"><span>Sunday</span><span style="color: #fff;">Closed</span></li>
-                </ul>
-                <div class="mt-4 pt-3 border-top" style="border-color: #1f4b8f !important;">
-                    <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-2 fw-medium" style="background: linear-gradient(120deg, #d72638, #f24b5d); color: #fff; text-decoration: none;">
-                        <i class="bi bi-facebook" style="font-size: 1rem;"></i>
-                        Visit our Facebook Page
-                    </a>
-                </div>
-            </div>
+<!-- PESO Footer - Fixed Alignment -->
+<footer class="peso-footer text-light py-5 mt-5 border-top border-danger" style="background: linear-gradient(90deg, #0f2d52, #1f4b8f); border-top: 3px solid #d72638 !important; box-shadow: 0 -8px 24px rgba(10,35,80,0.22);">
+  <style>
+    /* Force footer text to pure white for contrast, but preserve button/link CTAs */
+    .peso-footer,
+    .peso-footer h5,
+    .peso-footer p,
+    .peso-footer a:not(.btn),
+    .peso-footer li,
+    .peso-footer .small,
+    .peso-footer .fw-medium {
+      color: #ffffff !important;
+    }
+
+    /* Keep CTA buttons readable (they have white backgrounds) */
+    .peso-footer .btn {
+      color: #15386b !important;
+    }
+
+    .peso-footer a:not(.btn):hover {
+      color: #ffffff !important;
+      opacity: 0.9;
+      text-decoration: underline;
+    }
+  </style>
+  <div class="container-xl">
+    <div class="row g-4 g-lg-5 mb-5 align-items-start" style="min-height: 280px;">
+      <!-- About Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center mb-4 gap-3">
+          <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+          <div>
+            <h5 class="mb-1 text-white fw-bold" style="font-size: 1.1rem; letter-spacing: -0.5px;">PESO Manolo Fortich</h5>
+            <p class="mb-0 small text-white-50 fw-medium">Public Employment Service Office</p>
+          </div>
         </div>
-        <div class="text-center mt-4 pt-3" style="border-top: 1px solid #1f4b8f; color: #b3c6e0;">
-            <p class="mb-0">&copy; {{ date('Y') }} PESO Job Portal System — Manolo Fortich, Bukidnon. All rights reserved.</p>
+        <p class="text-light opacity-90 lh-lg small mb-4">Connecting jobseekers with verified employers and opportunities in Manolo Fortich, Bukidnon.</p>
+        <!-- Social icons removed -->
+      </div>
+
+      <!-- Contact Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Contact Information</h5>
+        <ul class="list-unstyled">
+          <li class="mb-3 d-flex align-items-start gap-3">
+            <i class="bi bi-geo-alt-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">Gen. Andres Bonifacio St. Cor. Albarece St., Brgy. Tankulan<br>Manolo Fortich, Bukidnon 8703</span>
+          </li>
+          <li class="mb-3 d-flex align-items-start gap-3">
+            <i class="bi bi-envelope-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">peso@manolofortich.gov.ph</span>
+          </li>
+          <li class="d-flex align-items-start gap-3">
+            <i class="bi bi-telephone-fill mt-1 flex-shrink-0" style="font-size: 1.1rem; color: #fff; background: #15386b; border-radius: 50%; padding: 2px;"></i>
+            <span class="small lh-lg">(088) 123-4567</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="/" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Home</a></li>
+          <li class="mb-2"><a href="/about" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">About</a></li>
+          <li class="mb-2"><a href="/jobs" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Jobs</a></li>
+          <li class="mb-2"><a href="/contact" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Contact</a></li>
+          <li class="mb-2"><a href="/login" class="text-light text-decoration-none small lh-lg" style="transition: color 0.2s;">Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Office Hours Column -->
+      <div class="col-lg-3 col-md-6 h-100 d-flex flex-column">
+        <h5 class="text-white fw-bold mb-4" style="letter-spacing: -0.5px;">Office Hours</h5>
+        <div class="mb-4">
+          <div class="d-flex justify-content-between small fw-medium" style="padding: 0.25rem 0;">
+            <span>Monday - Friday</span>
+            <span>8:00 AM - 5:00 PM</span>
+          </div>
+          <div class="d-flex justify-content-between small" style="padding: 0.25rem 0;">
+            <span>Saturday</span>
+            <span class="fw-medium text-white">Closed</span>
+          </div>
+          <div class="d-flex justify-content-between small" style="padding: 0.25rem 0;">
+            <span>Sunday</span>
+            <span class="fw-medium text-white">Closed</span>
+          </div>
         </div>
+        <a href="https://www.facebook.com/lgupesomanolofortich" target="_blank" class="btn px-4 py-2 w-100 fw-bold mb-3" style="background: #fff; color: #15386b; border: none; box-shadow: 0 2px 8px rgba(15,45,82,0.10); letter-spacing: 0.5px; font-size: 1.08rem;">
+          <i class="bi bi-facebook me-2" style="color: #15386b;"></i>
+          Visit Facebook
+        </a>
+      </div>
     </div>
+
+    <!-- Copyright -->
+    <div class="text-center border-top border-danger border-opacity-25 pt-4 mt-4 w-100">
+      <p class="mb-0 small text-light opacity-75">&copy; {{ date('Y') }} PESO Job Portal — Manolo Fortich, Bukidnon. All rights reserved.</p>
+    </div>
+  </div>
 </footer>

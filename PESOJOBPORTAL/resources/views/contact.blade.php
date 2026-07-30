@@ -78,7 +78,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="phone" class="form-label">Phone <span class="contact-hint fw-normal">(optional)</span></label>
-                                <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" maxlength="40" autocomplete="tel" placeholder="(088) 123-4567">
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" maxlength="40" autocomplete="tel" placeholder="09123456789">
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -258,7 +258,7 @@
             const dots = document.getElementById('chat-messages').lastChild;
 
             try {
-                const res = await fetch('{{ route('chatbot.chat') }}', {
+                const res = await fetch("{{ route('chatbot.chat') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
