@@ -20,6 +20,7 @@ use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class JobseekerApprovalController extends Controller
 {
@@ -50,37 +51,92 @@ class JobseekerApprovalController extends Controller
      */
     public function show(User $jobseeker): View
     {
-        $jobseeker->load('applications.job.employer.companyProfile');
+        $jobseeker->load('applications.job.employer.companyProfile', 'profile');
 
         $userId = $jobseeker->id;
+        $profile = $jobseeker->profile ?? UserProfile::where('user_id', $userId)->first();
 
-        $personalInformation = JobseekerPersonalInformation::where('user_id', $userId)->first();
+        $personalInformation = $this->tableExists('jobseeker_personal_information')
+            ? JobseekerPersonalInformation::where('user_id', $userId)->first()
+            : null;
+        $personalInformation ??= $this->profileObject($profile?->personal_information, $this->personalInformationDefaults([
+            'email_address' => $jobseeker->email,
+        ]));
 
-        $addresses = JobseekerAddress::where('user_id', $userId)
-            ->get()
-            ->keyBy('type');
+        $addresses = $this->tableExists('jobseeker_addresses')
+            ? JobseekerAddress::where('user_id', $userId)->get()->keyBy('type')
+            : collect();
 
-        $presentAddress = $addresses->get('present');
-        $permanentAddress = $addresses->get('permanent');
+        $addressDefaults = [
+            'house_no' => '',
+            'barangay' => '',
+            'municipality' => '',
+            'province' => '',
+        ];
 
-        $educationRows = JobseekerEducation::where('user_id', $userId)
-            ->orderBy('sort_order')
-            ->get(['school', 'course', 'year']);
+        $presentAddress = $addresses->get('present') ?? $this->profileObject($profile?->present_address, $addressDefaults);
+        $permanentAddress = $addresses->get('permanent') ?? $this->profileObject($profile?->permanent_address, $addressDefaults);
 
-        $trainingRows = JobseekerTraining::where('user_id', $userId)
-            ->orderBy('sort_order')
-            ->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates']);
+        $educationRows = $this->tableExists('jobseeker_education')
+            ? JobseekerEducation::where('user_id', $userId)->orderBy('sort_order')->get(['school', 'course', 'year'])
+            : collect();
+        $educationRows = $educationRows->isNotEmpty()
+            ? $educationRows
+            : $this->profileRows($profile?->education, fn (array $row): array => [
+                'school' => $row['school'] ?? '',
+                'course' => $row['course'] ?? '',
+                'year' => $row['year'] ?? '',
+            ]);
 
-        $experienceRows = JobseekerExperience::where('user_id', $userId)
-            ->orderBy('sort_order')
-            ->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']);
+        $trainingRows = $this->tableExists('jobseeker_training')
+            ? JobseekerTraining::where('user_id', $userId)->orderBy('sort_order')->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates'])
+            : collect();
+        $trainingRows = $trainingRows->isNotEmpty()
+            ? $trainingRows
+            : $this->profileRows($profile?->training, fn (array $row): array => [
+                'course' => $row['course'] ?? '',
+                'hours' => $row['hours'] ?? null,
+                'institution' => $row['institution'] ?? '',
+                'inclusive_dates' => $row['inclusive_dates'] ?? $row['dates'] ?? '',
+                'skills_acquired' => $row['skills_acquired'] ?? $row['skills'] ?? '',
+                'certificates' => $row['certificates'] ?? '',
+            ]);
 
-        $eligibilityRows = JobseekerEligibility::where('user_id', $userId)
-            ->orderBy('sort_order')
-            ->get(['eligibility', 'date_taken', 'license', 'valid_until']);
+        $experienceRows = $this->tableExists('jobseeker_experience')
+            ? JobseekerExperience::where('user_id', $userId)->orderBy('sort_order')->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details'])
+            : collect();
+        $experienceRows = $experienceRows->isNotEmpty()
+            ? $experienceRows
+            : $this->profileRows($profile?->experience, fn (array $row): array => [
+                'company' => $row['company'] ?? '',
+                'title' => $row['title'] ?? '',
+                'location' => $row['location'] ?? '',
+                'status' => $row['status'] ?? false,
+                'from_date' => $row['from_date'] ?? $row['period'] ?? '',
+                'to_date' => $row['to_date'] ?? '',
+                'salary_amount' => $row['salary_amount'] ?? '',
+                'salary_type' => $row['salary_type'] ?? '',
+                'details' => $row['details'] ?? '',
+            ]);
 
-        $skillRows = JobseekerSkill::where('user_id', $userId)->get();
-        $skillsMeta = JobseekerSkillsMeta::where('user_id', $userId)->first();
+        $eligibilityRows = $this->tableExists('jobseeker_eligibility')
+            ? JobseekerEligibility::where('user_id', $userId)->orderBy('sort_order')->get(['eligibility', 'date_taken', 'license', 'valid_until'])
+            : collect();
+        $eligibilityRows = $eligibilityRows->isNotEmpty()
+            ? $eligibilityRows
+            : $this->profileRows($profile?->eligibility, fn (array $row): array => [
+                'eligibility' => $row['eligibility'] ?? '',
+                'date_taken' => $row['date_taken'] ?? '',
+                'license' => $row['license'] ?? '',
+                'valid_until' => $row['valid_until'] ?? '',
+            ]);
+
+        $skillRows = $this->tableExists('jobseeker_skills')
+            ? JobseekerSkill::where('user_id', $userId)->get()
+            : collect();
+        $skillsMeta = $this->tableExists('jobseeker_skills_meta')
+            ? JobseekerSkillsMeta::where('user_id', $userId)->first()
+            : null;
 
         $otherSkills = [
             'trade_manual' => $skillRows->where('category', 'trade_manual')->pluck('skill')->all(),
@@ -92,12 +148,59 @@ class JobseekerApprovalController extends Controller
             'by_experience' => $skillsMeta?->by_experience,
         ];
 
-        $employmentStatusRow = JobseekerEmploymentStatus::where('user_id', $userId)->first();
-        $jobPreferenceRow = JobseekerJobPreference::where('user_id', $userId)->first();
-        $languages = JobseekerLanguage::where('user_id', $userId)
-            ->orderBy('sort_order')
-            ->get();
-        $disabilityRow = JobseekerDisability::where('user_id', $userId)->first();
+        if ($skillRows->isEmpty() && is_array($profile?->other_skills)) {
+            $otherSkills = array_merge($otherSkills, $profile->other_skills);
+        }
+
+        $employmentStatusRow = $this->tableExists('jobseeker_employment_status')
+            ? JobseekerEmploymentStatus::where('user_id', $userId)->first()
+            : null;
+        $employmentStatusRow ??= $this->profileObject($profile?->employment_status, [
+            'has_work_experience' => null,
+            'wage_employed' => false,
+            'wage_employed_specify' => '',
+            'self_employed' => false,
+            'self_employed_specify' => '',
+            'unemployed' => false,
+        ]);
+
+        $jobPreferenceRow = $this->tableExists('jobseeker_job_preferences')
+            ? JobseekerJobPreference::where('user_id', $userId)->first()
+            : null;
+        $jobPreferenceRow ??= $this->profileObject($profile?->job_preferences, [
+            'part_time' => false,
+            'full_time' => false,
+            'occupation_text' => '',
+            'local' => false,
+            'overseas' => false,
+        ]);
+
+        $languages = $this->tableExists('jobseeker_languages')
+            ? JobseekerLanguage::where('user_id', $userId)->orderBy('sort_order')->get()
+            : collect();
+        $languages = $languages->isNotEmpty()
+            ? $languages
+            : $this->profileRows($profile?->languages, fn (array $row): array => [
+                'language' => $row['language'] ?? '',
+                'can_read' => (bool) ($row['can_read'] ?? $row['read'] ?? false),
+                'can_write' => (bool) ($row['can_write'] ?? $row['write'] ?? false),
+                'can_speak' => (bool) ($row['can_speak'] ?? $row['speak'] ?? false),
+                'can_understand' => (bool) ($row['can_understand'] ?? $row['understand'] ?? false),
+                'other_specify' => $row['other_specify'] ?? $row['other'] ?? '',
+            ]);
+
+        $disabilityRow = $this->tableExists('jobseeker_disability')
+            ? JobseekerDisability::where('user_id', $userId)->first()
+            : null;
+        $disabilityRow ??= $this->profileObject($profile?->disability, [
+            'visual' => false,
+            'speech' => false,
+            'mental' => false,
+            'hearing' => false,
+            'physical' => false,
+            'other' => false,
+            'other_text' => '',
+        ]);
 
         $fullAddress = trim(implode(', ', array_filter([
             $presentAddress?->house_no,
@@ -128,6 +231,53 @@ class JobseekerApprovalController extends Controller
             'disability' => $disabilityRow,
             'fullAddress' => $fullAddress,
         ]);
+    }
+
+    private function tableExists(string $table): bool
+    {
+        static $cache = [];
+
+        return $cache[$table] ??= Schema::hasTable($table);
+    }
+
+    private function profileObject(mixed $data, array $defaults = []): ?object
+    {
+        if (! is_array($data)) {
+            return empty($defaults) ? null : (object) $defaults;
+        }
+
+        return (object) array_merge($defaults, $data);
+    }
+
+    private function profileRows(mixed $rows, ?callable $map = null)
+    {
+        if (! is_array($rows)) {
+            return collect();
+        }
+
+        return collect($rows)
+            ->filter(fn ($row) => is_array($row))
+            ->map(fn (array $row) => (object) ($map ? $map($row) : $row))
+            ->values();
+    }
+
+    private function personalInformationDefaults(array $overrides = []): array
+    {
+        return array_merge([
+            'first_name' => '',
+            'middle_initial' => '',
+            'surname' => '',
+            'suffix' => '',
+            'date_of_birth' => '',
+            'sex' => '',
+            'religion' => '',
+            'civil_status' => '',
+            'height' => '',
+            'tin' => '',
+            'contact_number' => '',
+            'email_address' => '',
+            'currently_in_school' => false,
+        ], $overrides);
     }
 
     /**
@@ -270,4 +420,3 @@ class JobseekerApprovalController extends Controller
         }
     }
 }
-

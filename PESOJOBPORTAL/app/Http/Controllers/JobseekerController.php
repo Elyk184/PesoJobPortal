@@ -28,6 +28,7 @@ use App\Models\JobseekerProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -850,7 +851,7 @@ class JobseekerController extends Controller
             'personal_information.sex' => ['nullable', 'in:Male,Female'],
             'personal_information.religion' => ['nullable', 'string', 'max:100'],
             'personal_information.civil_status' => ['nullable', 'string', 'max:50'],
-            'personal_information.height' => ['nullable', 'string', 'max:20'],
+            'personal_information.height' => ['nullable', 'numeric', 'min:0', 'max:999.99'],
             'personal_information.tin' => ['nullable', 'string', 'max:20'],
             'personal_information.contact_number' => ['nullable', 'string', 'max:50'],
             'personal_information.email_address' => ['nullable', 'email', 'max:255'],
@@ -1023,6 +1024,8 @@ class JobseekerController extends Controller
         $this->saveJobPreferences($userId, $validated['job_preferences'] ?? []);
         $this->saveLanguages($userId, $validated['languages'] ?? []);
         $this->saveDisability($userId, $validated['disability'] ?? []);
+
+        $this->syncProfileToUserProfile($user, $validated);
 
         return redirect()
             ->route('jobseeker.profile')
@@ -1325,6 +1328,88 @@ class JobseekerController extends Controller
         ];
     }
 
+    private function syncProfileToUserProfile(User $user, array $validated): void
+    {
+        $personal = $validated['personal_information'] ?? [];
+        $present  = $validated['present_address'] ?? [];
+        $permanent = $validated['permanent_address'] ?? [];
+
+        $fullName = collect([
+            $personal['first_name'] ?? '',
+            $personal['middle_initial'] ?? '',
+            $personal['surname'] ?? '',
+            $personal['suffix'] ?? '',
+        ])->filter()->join(' ');
+
+        $educationRows = $this->normalizeResumeSection(
+            $validated['education'] ?? [],
+            ['school', 'course', 'year']
+        );
+
+        $trainingRows = array_map(fn ($row) => [
+            'course'      => $row['course'] ?? '',
+            'hours'       => $row['hours'] ?? '',
+            'institution' => $row['institution'] ?? '',
+            'dates'       => $row['dates'] ?? '',
+            'skills'      => $row['skills'] ?? '',
+            'certificates'=> $row['certificates'] ?? '',
+        ], $this->normalizeResumeSection(
+            $validated['training'] ?? [],
+            ['course', 'hours', 'institution', 'dates', 'skills', 'certificates']
+        ));
+
+        $experienceRows = $this->normalizeResumeSection(
+            $validated['experience'] ?? [],
+            ['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details']
+        );
+
+        $eligibilityRows = $this->normalizeResumeSection(
+            $validated['eligibility'] ?? [],
+            ['eligibility', 'date_taken', 'license', 'valid_until']
+        );
+
+        $otherSkills = $validated['other_skills'] ?? [];
+        $skills = $this->buildSkillList($otherSkills);
+
+        $presentAddress = [
+            'house_no'     => $present['house_no'] ?? '',
+            'barangay'     => $present['barangay'] ?? '',
+            'municipality' => $present['municipality'] ?? '',
+            'province'     => $present['province'] ?? '',
+        ];
+
+        $permanentAddress = [
+            'same_as_present' => (bool) ($permanent['same_as_present'] ?? false),
+            'house_no'        => $permanent['house_no'] ?? '',
+            'barangay'        => $permanent['barangay'] ?? '',
+            'municipality'    => $permanent['municipality'] ?? '',
+            'province'        => $permanent['province'] ?? '',
+        ];
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'resume_name'         => $fullName ?: ($user->name ?? ''),
+                'resume_email'        => $personal['email_address'] ?? $user->email ?? '',
+                'phone'               => $personal['contact_number'] ?? null,
+                'address'             => collect([$present['house_no'] ?? '', $present['barangay'] ?? '', $present['municipality'] ?? '', $present['province'] ?? ''])->filter()->join(', '),
+                'personal_information'=> array_merge($personal, ['currently_in_school' => (bool) ($validated['education_currently_in_school'] ?? false)]),
+                'present_address'     => $presentAddress,
+                'permanent_address'   => $permanentAddress,
+                'education'           => $educationRows,
+                'training'            => $trainingRows,
+                'experience'          => $experienceRows,
+                'eligibility'         => $eligibilityRows,
+                'skills'              => $skills,
+                'other_skills'        => $otherSkills,
+                'employment_status'   => $validated['employment_status'] ?? [],
+                'job_preferences'     => $validated['job_preferences'] ?? [],
+                'languages'           => $validated['languages'] ?? [],
+                'disability'          => $validated['disability'] ?? [],
+            ]
+        );
+    }
+
     private function savePersonalInformation(int $userId, array $data): void
     {
         JobseekerPersonalInformation::updateOrCreate(
@@ -1339,7 +1424,7 @@ class JobseekerController extends Controller
                 'sex' => $data['sex'] ?? null,
                 'religion' => $data['religion'] ?? null,
                 'civil_status' => $data['civil_status'] ?? null,
-                'height' => $data['height'] ?? null,
+                'height' => is_numeric($data['height'] ?? null) ? (float) $data['height'] : null,
                 'tin' => $data['tin'] ?? null,
                 'contact_number' => $data['contact_number'] ?? null,
                 'email_address' => $data['email_address'] ?? null,
@@ -1512,87 +1597,128 @@ class JobseekerController extends Controller
         }
 
         $userId = $user->id;
-        $pi = JobseekerPersonalInformation::where('user_id', $userId)->first();
+        $profile = $user->profile ?? UserProfile::where('user_id', $userId)->first();
+        $profilePersonal = $profile?->personal_information ?? [];
+        $pi = $this->tableExists('jobseeker_personal_information')
+            ? JobseekerPersonalInformation::where('user_id', $userId)->first()
+            : null;
 
         $personalInformation = [
-            'first_name' => $pi?->first_name ?? '',
-            'middle_initial' => $pi?->middle_initial ?? '',
-            'surname' => $pi?->surname ?? '',
-            'suffix' => $pi?->suffix ?? '',
-            'date_of_birth' => $pi?->date_of_birth ?? '',
-            'sex' => $pi?->sex ?? '',
-            'religion' => $pi?->religion ?? '',
-            'civil_status' => $pi?->civil_status ?? '',
-            'height' => $pi?->height ?? '',
-            'tin' => $pi?->tin ?? '',
-            'contact_number' => $pi?->contact_number ?? '',
-            'email_address' => $pi?->email_address ?? $user->email ?? '',
-            'currently_in_school' => (bool) ($pi?->currently_in_school ?? false),
+            'first_name' => $pi?->first_name ?? data_get($profilePersonal, 'first_name', ''),
+            'middle_initial' => $pi?->middle_initial ?? data_get($profilePersonal, 'middle_initial', ''),
+            'surname' => $pi?->surname ?? data_get($profilePersonal, 'surname', ''),
+            'suffix' => $pi?->suffix ?? data_get($profilePersonal, 'suffix', ''),
+            'date_of_birth' => $pi?->date_of_birth ?? data_get($profilePersonal, 'date_of_birth', ''),
+            'sex' => $pi?->sex ?? data_get($profilePersonal, 'sex', ''),
+            'religion' => $pi?->religion ?? data_get($profilePersonal, 'religion', ''),
+            'civil_status' => $pi?->civil_status ?? data_get($profilePersonal, 'civil_status', ''),
+            'height' => $pi?->height ?? data_get($profilePersonal, 'height', ''),
+            'tin' => $pi?->tin ?? data_get($profilePersonal, 'tin', ''),
+            'contact_number' => $pi?->contact_number ?? data_get($profilePersonal, 'contact_number', ''),
+            'email_address' => $pi?->email_address ?? data_get($profilePersonal, 'email_address', $user->email ?? ''),
+            'currently_in_school' => (bool) ($pi?->currently_in_school ?? data_get($profilePersonal, 'currently_in_school', false)),
         ];
 
-        $addresses = JobseekerAddress::where('user_id', $userId)->get()->keyBy('type');
+        $addresses = $this->tableExists('jobseeker_addresses')
+            ? JobseekerAddress::where('user_id', $userId)->get()->keyBy('type')
+            : collect();
 
         $presentRow = $addresses->get('present');
         $permanentRow = $addresses->get('permanent');
+        $profilePresentAddress = $profile?->present_address ?? [];
+        $profilePermanentAddress = $profile?->permanent_address ?? [];
 
         $presentAddress = [
-            'house_no' => $presentRow?->house_no ?? '',
-            'barangay' => $presentRow?->barangay ?? '',
-            'municipality' => $presentRow?->municipality ?? '',
-            'province' => $presentRow?->province ?? '',
+            'house_no' => $presentRow?->house_no ?? data_get($profilePresentAddress, 'house_no', ''),
+            'barangay' => $presentRow?->barangay ?? data_get($profilePresentAddress, 'barangay', ''),
+            'municipality' => $presentRow?->municipality ?? data_get($profilePresentAddress, 'municipality', ''),
+            'province' => $presentRow?->province ?? data_get($profilePresentAddress, 'province', ''),
         ];
 
         $permanentAddress = [
-            'same_as_present' => false,
-            'house_no' => $permanentRow?->house_no ?? '',
-            'barangay' => $permanentRow?->barangay ?? '',
-            'municipality' => $permanentRow?->municipality ?? '',
-            'province' => $permanentRow?->province ?? '',
+            'same_as_present' => (bool) data_get($profilePermanentAddress, 'same_as_present', false),
+            'house_no' => $permanentRow?->house_no ?? data_get($profilePermanentAddress, 'house_no', ''),
+            'barangay' => $permanentRow?->barangay ?? data_get($profilePermanentAddress, 'barangay', ''),
+            'municipality' => $permanentRow?->municipality ?? data_get($profilePermanentAddress, 'municipality', ''),
+            'province' => $permanentRow?->province ?? data_get($profilePermanentAddress, 'province', ''),
         ];
 
-        $educationRows = JobseekerEducation::where('user_id', $userId)->orderBy('sort_order')->get(['school', 'course', 'year'])->toArray();
+        $educationRows = $this->tableExists('jobseeker_education')
+            ? JobseekerEducation::where('user_id', $userId)->orderBy('sort_order')->get(['school', 'course', 'year'])->toArray()
+            : [];
+
+        if (empty($educationRows)) {
+            $educationRows = $this->profileRows($profile?->education, ['school', 'course', 'year']);
+        }
 
         if (empty($educationRows)) {
             $educationRows = [['school' => '', 'course' => '', 'year' => '']];
         }
 
-        $trainingRows = JobseekerTraining::where('user_id', $userId)->orderBy('sort_order')->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates'])->map(fn ($row) => [
-            'course' => $row->course ?? '',
-            'hours' => (string) ($row->hours ?? ''),
-            'institution' => $row->institution ?? '',
-            'dates' => $row->inclusive_dates ?? '',
-            'skills' => $row->skills_acquired ?? '',
-            'certificates' => $row->certificates ?? '',
-        ])->toArray();
+        $trainingRows = $this->tableExists('jobseeker_training')
+            ? JobseekerTraining::where('user_id', $userId)->orderBy('sort_order')->get(['course', 'hours', 'institution', 'inclusive_dates', 'skills_acquired', 'certificates'])->map(fn ($row) => [
+                'course' => $row->course ?? '',
+                'hours' => (string) ($row->hours ?? ''),
+                'institution' => $row->institution ?? '',
+                'dates' => $row->inclusive_dates ?? '',
+                'skills' => $row->skills_acquired ?? '',
+                'certificates' => $row->certificates ?? '',
+            ])->toArray()
+            : [];
+
+        if (empty($trainingRows)) {
+            $trainingRows = $this->profileRows($profile?->training, ['course', 'hours', 'institution', 'dates', 'skills', 'certificates'], [
+                'dates' => ['dates', 'inclusive_dates'],
+                'skills' => ['skills', 'skills_acquired'],
+            ]);
+        }
 
         if (empty($trainingRows)) {
             $trainingRows = [['course' => '', 'hours' => '', 'institution' => '', 'dates' => '', 'skills' => '', 'certificates' => '']];
         }
 
-        $experienceRows = JobseekerExperience::where('user_id', $userId)->orderBy('sort_order')->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details'])->map(fn ($row) => [
-            'company' => $row->company ?? '',
-            'title' => $row->title ?? '',
-            'location' => $row->location ?? '',
-            'status' => $row->status ?? '',
-            'from_date' => $row->from_date ?? '',
-            'to_date' => $row->to_date ?? '',
-            'salary_amount' => $row->salary_amount !== null ? (string) $row->salary_amount : '',
-            'salary_type' => $row->salary_type ?? '',
-            'details' => $row->details ?? '',
-        ])->toArray();
+        $experienceRows = $this->tableExists('jobseeker_experience')
+            ? JobseekerExperience::where('user_id', $userId)->orderBy('sort_order')->get(['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details'])->map(fn ($row) => [
+                'company' => $row->company ?? '',
+                'title' => $row->title ?? '',
+                'location' => $row->location ?? '',
+                'status' => $row->status ?? '',
+                'from_date' => $row->from_date ?? '',
+                'to_date' => $row->to_date ?? '',
+                'salary_amount' => $row->salary_amount !== null ? (string) $row->salary_amount : '',
+                'salary_type' => $row->salary_type ?? '',
+                'details' => $row->details ?? '',
+            ])->toArray()
+            : [];
+
+        if (empty($experienceRows)) {
+            $experienceRows = $this->profileRows($profile?->experience, ['company', 'title', 'location', 'status', 'from_date', 'to_date', 'salary_amount', 'salary_type', 'details'], [
+                'from_date' => ['from_date', 'period'],
+            ]);
+        }
 
         if (empty($experienceRows)) {
             $experienceRows = [['company' => '', 'title' => '', 'location' => '', 'status' => '', 'from_date' => '', 'to_date' => '', 'salary_amount' => '', 'salary_type' => '', 'details' => '']];
         }
 
-        $eligibilityRows = JobseekerEligibility::where('user_id', $userId)->orderBy('sort_order')->get(['eligibility', 'date_taken', 'license', 'valid_until'])->toArray();
+        $eligibilityRows = $this->tableExists('jobseeker_eligibility')
+            ? JobseekerEligibility::where('user_id', $userId)->orderBy('sort_order')->get(['eligibility', 'date_taken', 'license', 'valid_until'])->toArray()
+            : [];
+
+        if (empty($eligibilityRows)) {
+            $eligibilityRows = $this->profileRows($profile?->eligibility, ['eligibility', 'date_taken', 'license', 'valid_until']);
+        }
 
         if (empty($eligibilityRows)) {
             $eligibilityRows = [['eligibility' => '', 'date_taken' => '', 'license' => '', 'valid_until' => '']];
         }
 
-        $skillRows = JobseekerSkill::where('user_id', $userId)->get();
-        $meta = JobseekerSkillsMeta::where('user_id', $userId)->first();
+        $skillRows = $this->tableExists('jobseeker_skills')
+            ? JobseekerSkill::where('user_id', $userId)->get()
+            : collect();
+        $meta = $this->tableExists('jobseeker_skills_meta')
+            ? JobseekerSkillsMeta::where('user_id', $userId)->first()
+            : null;
 
         $otherSkills = [
             'trade_manual' => $skillRows->where('category', 'trade_manual')->pluck('skill')->all(),
@@ -1604,55 +1730,80 @@ class JobseekerController extends Controller
             'by_experience' => $meta?->by_experience,
         ];
 
-        $es = JobseekerEmploymentStatus::where('user_id', $userId)->first();
+        if ($skillRows->isEmpty() && is_array($profile?->other_skills)) {
+            $otherSkills = array_merge($this->defaultOtherSkills(), $profile->other_skills);
+        }
+
+        $es = $this->tableExists('jobseeker_employment_status')
+            ? JobseekerEmploymentStatus::where('user_id', $userId)->first()
+            : null;
+        $profileEmploymentStatus = $profile?->employment_status ?? [];
 
         $employmentStatus = [
-            'has_work_experience' => $es?->has_work_experience,
-            'wage_employed' => (bool) ($es?->wage_employed ?? false),
-            'wage_employed_specify' => $es?->wage_employed_specify ?? '',
-            'self_employed' => (bool) ($es?->self_employed ?? false),
-            'self_employed_specify' => $es?->self_employed_specify ?? '',
-            'unemployed' => (bool) ($es?->unemployed ?? false),
+            'has_work_experience' => $es?->has_work_experience ?? data_get($profileEmploymentStatus, 'has_work_experience'),
+            'wage_employed' => (bool) ($es?->wage_employed ?? data_get($profileEmploymentStatus, 'wage_employed', false)),
+            'wage_employed_specify' => $es?->wage_employed_specify ?? data_get($profileEmploymentStatus, 'wage_employed_specify', ''),
+            'self_employed' => (bool) ($es?->self_employed ?? data_get($profileEmploymentStatus, 'self_employed', false)),
+            'self_employed_specify' => $es?->self_employed_specify ?? data_get($profileEmploymentStatus, 'self_employed_specify', ''),
+            'unemployed' => (bool) ($es?->unemployed ?? data_get($profileEmploymentStatus, 'unemployed', false)),
         ];
 
-        $jp = JobseekerJobPreference::where('user_id', $userId)->first();
+        $jp = $this->tableExists('jobseeker_job_preferences')
+            ? JobseekerJobPreference::where('user_id', $userId)->first()
+            : null;
+        $profileJobPreferences = $profile?->job_preferences ?? [];
 
         $jobPreferences = [
-            'part_time' => (bool) ($jp?->part_time ?? false),
-            'full_time' => (bool) ($jp?->full_time ?? false),
-            'local' => (bool) ($jp?->local ?? false),
-            'overseas' => (bool) ($jp?->overseas ?? false),
-            'occupation_text' => $jp?->occupation_text ?? '',
+            'part_time' => (bool) ($jp?->part_time ?? data_get($profileJobPreferences, 'part_time', false)),
+            'full_time' => (bool) ($jp?->full_time ?? data_get($profileJobPreferences, 'full_time', false)),
+            'local' => (bool) ($jp?->local ?? data_get($profileJobPreferences, 'local', false)),
+            'overseas' => (bool) ($jp?->overseas ?? data_get($profileJobPreferences, 'overseas', false)),
+            'occupation_text' => $jp?->occupation_text ?? data_get($profileJobPreferences, 'occupation_text', ''),
         ];
 
-        $languages = JobseekerLanguage::where('user_id', $userId)->orderBy('sort_order')->get()->map(fn ($row) => [
-            'language' => $row->language ?? '',
-            'read' => (bool) $row->can_read,
-            'write' => (bool) $row->can_write,
-            'speak' => (bool) $row->can_speak,
-            'understand' => (bool) $row->can_understand,
-            'other' => $row->other_specify ?? '',
-        ])->toArray();
+        $languages = $this->tableExists('jobseeker_languages')
+            ? JobseekerLanguage::where('user_id', $userId)->orderBy('sort_order')->get()->map(fn ($row) => [
+                'language' => $row->language ?? '',
+                'read' => (bool) $row->can_read,
+                'write' => (bool) $row->can_write,
+                'speak' => (bool) $row->can_speak,
+                'understand' => (bool) $row->can_understand,
+                'other' => $row->other_specify ?? '',
+            ])->toArray()
+            : [];
+
+        if (empty($languages)) {
+            $languages = $this->profileRows($profile?->languages, ['language', 'read', 'write', 'speak', 'understand', 'other'], [
+                'read' => ['read', 'can_read'],
+                'write' => ['write', 'can_write'],
+                'speak' => ['speak', 'can_speak'],
+                'understand' => ['understand', 'can_understand'],
+                'other' => ['other', 'other_specify'],
+            ]);
+        }
 
         if (empty($languages)) {
             $languages = $this->defaultLanguages();
         }
 
-        $dis = JobseekerDisability::where('user_id', $userId)->first();
+        $dis = $this->tableExists('jobseeker_disability')
+            ? JobseekerDisability::where('user_id', $userId)->first()
+            : null;
+        $profileDisability = $profile?->disability ?? [];
 
         $disability = [
-            'visual' => (bool) ($dis?->visual ?? false),
-            'speech' => (bool) ($dis?->speech ?? false),
-            'mental' => (bool) ($dis?->mental ?? false),
-            'hearing' => (bool) ($dis?->hearing ?? false),
-            'physical' => (bool) ($dis?->physical ?? false),
-            'other' => (bool) ($dis?->other ?? false),
-            'other_text' => $dis?->other_text ?? '',
+            'visual' => (bool) ($dis?->visual ?? data_get($profileDisability, 'visual', false)),
+            'speech' => (bool) ($dis?->speech ?? data_get($profileDisability, 'speech', false)),
+            'mental' => (bool) ($dis?->mental ?? data_get($profileDisability, 'mental', false)),
+            'hearing' => (bool) ($dis?->hearing ?? data_get($profileDisability, 'hearing', false)),
+            'physical' => (bool) ($dis?->physical ?? data_get($profileDisability, 'physical', false)),
+            'other' => (bool) ($dis?->other ?? data_get($profileDisability, 'other', false)),
+            'other_text' => $dis?->other_text ?? data_get($profileDisability, 'other_text', ''),
         ];
 
         return [
             'user' => $user,
-            'profile' => null,
+            'profile' => $profile,
             'personalInformation' => $personalInformation,
             'presentAddress' => $presentAddress,
             'permanentAddress' => $permanentAddress,
@@ -1668,6 +1819,44 @@ class JobseekerController extends Controller
             'resumeFileName' => null,
             'resumeFileUrl' => null,
         ];
+    }
+
+    private function tableExists(string $table): bool
+    {
+        static $cache = [];
+
+        return $cache[$table] ??= Schema::hasTable($table);
+    }
+
+    private function profileRows(mixed $rows, array $keys, array $aliases = []): array
+    {
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        return collect($rows)
+            ->filter(fn ($row) => is_array($row))
+            ->map(function (array $row) use ($keys, $aliases): array {
+                $normalized = [];
+
+                foreach ($keys as $key) {
+                    $lookupKeys = $aliases[$key] ?? [$key];
+                    $value = '';
+
+                    foreach ($lookupKeys as $lookupKey) {
+                        if (array_key_exists($lookupKey, $row)) {
+                            $value = $row[$lookupKey];
+                            break;
+                        }
+                    }
+
+                    $normalized[$key] = $value;
+                }
+
+                return $normalized;
+            })
+            ->values()
+            ->all();
     }
 
     private function blankProfileFormData(): array
