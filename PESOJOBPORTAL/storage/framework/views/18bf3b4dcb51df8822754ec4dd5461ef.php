@@ -446,6 +446,15 @@
     </style>
 </head>
 <body class="peso-body">
+    <?php
+        $dashboardUser = auth()->user();
+        $dashboardBrandTitle = match ($dashboardUser?->role) {
+            'ofw' => 'OFW Portal',
+            'employer' => 'Employer Portal',
+            'admin' => 'Admin Portal',
+            default => 'Jobseeker Portal',
+        };
+    ?>
     <div class="dashboard-shell">
         <div class="dashboard-backdrop" data-dashboard-backdrop></div>
         <?php echo $__env->make('components.dashboard.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -457,7 +466,7 @@
                 </button>
                 <div class="dashboard-mobile-brand">
                     <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PESO Logo">
-                    <span>Jobseeker Dashboard</span>
+                    <span><?php echo e($dashboardBrandTitle); ?></span>
                 </div>
                 <span style="width: 40px;"></span>
             </div>

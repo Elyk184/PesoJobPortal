@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\OfwController;
 use App\Http\Controllers\JobseekerApprovalController;
 use App\Http\Controllers\JobseekerController;
 use App\Http\Controllers\JobsController;
@@ -68,6 +69,18 @@ Route::middleware(['auth', 'role:jobseeker'])->prefix('jobseeker')->name('jobsee
     Route::get('/resume-builder/export', [JobseekerController::class, 'exportResumeBuilder'])->name('resume-builder.export');
     Route::post('/resume-builder', [JobseekerController::class, 'saveResumeBuilder'])->name('resume-builder.save');
     Route::delete('/resume-builder', [JobseekerController::class, 'resetResumeBuilder'])->name('resume-builder.reset');
+});
+
+// OFW routes (protected)
+Route::middleware(['auth', 'role:ofw'])->prefix('ofw')->name('ofw.')->group(function () {
+    Route::get('/dashboard', [OfwController::class, 'dashboard'])->name('dashboard');
+    Route::get('/owwa-request', [OfwController::class, 'owwaRequest'])->name('owwa-request');
+    Route::get('/rfa-form', [OfwController::class, 'rfaForm'])->name('rfa.form');
+    Route::post('/rfa-download', [OfwController::class, 'downloadRfa'])->name('rfa.download');
+    Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
+    Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
+    Route::get('/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('dmw-builder');
+    Route::post('/dmw-download', [OfwController::class, 'downloadDmw'])->name('dmw-download');
 });
 
 // Employer routes (protected)
