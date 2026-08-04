@@ -216,6 +216,8 @@ class JobseekerController extends Controller
 
     public function browseJobs(Request $request): View
     {
+        PesoJob::archiveExpiredPostings();
+
         $jobsQuery = PesoJob::query()
             ->activeApproved()
             ->with(['employer.companyProfile']);

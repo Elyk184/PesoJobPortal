@@ -125,6 +125,8 @@ class EmployerController extends Controller
         $employer = $request->user();
         $isVerifiedEmployer = (bool) $employer->is_employer_verified || ($employer->companyProfile?->verification_status === 'verified');
 
+        PesoJob::archiveExpiredPostings();
+
         if ($isVerifiedEmployer && ! $employer->is_employer_verified) {
             $employer->forceFill(['is_employer_verified' => true])->save();
         }

@@ -20,12 +20,14 @@ class JobsController extends Controller
             'freelance' => 'Freelance',
         ];
 
+        PesoJob::archiveExpiredPostings();
+
         $keyword = trim((string) request()->query('keyword', ''));
         $location = trim((string) request()->query('location', ''));
         $employmentType = trim((string) request()->query('employment_type', ''));
 
         $jobsQuery = PesoJob::query()
-            ->where('status', 'active');
+            ->activeApproved();
 
         if ($keyword !== '') {
             $jobsQuery->where(function ($query) use ($keyword) {
@@ -51,11 +53,7 @@ class JobsController extends Controller
             ->withQueryString();
 
         $activeJobsCount = PesoJob::query()
-            ->where('status', 'active')
-            ->notArchived()
-            ->where(function ($q) {
-                $q->whereNull('is_filled')->orWhere('is_filled', false);
-            })
+            ->activeApproved()
             ->count();
 
         $totalApplications = JobApplication::count();
