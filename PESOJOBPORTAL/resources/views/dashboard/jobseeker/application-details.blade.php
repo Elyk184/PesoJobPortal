@@ -317,7 +317,7 @@
 
         .application-meta {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 1rem;
             margin-top: 1.25rem;
         }
@@ -469,23 +469,40 @@
         }
 
         .application-meta-item {
-            background: #f8fbff;
-            border: 1px solid #e5edf8;
-            border-radius: 12px;
-            padding: 1.25rem;
+            background: linear-gradient(180deg, #fbfdff 0%, #f4f9ff 100%);
+            border: 1px solid #dbe7f6;
+            border-radius: 16px;
+            padding: 1.35rem;
             transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            min-height: 108px;
+            box-shadow: 0 8px 22px rgba(21, 58, 105, 0.06);
+        }
+
+        .application-meta-item--wide {
+            grid-column: 1 / -1;
+            padding: 1.45rem 1.5rem;
+            background: linear-gradient(135deg, #eaf2ff 0%, #dbeafe 100%);
+            border-color: #86b7fe;
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.12);
         }
 
         .application-meta-item:hover {
             background: #f0f7ff;
             border-color: #d0e2f8;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(21, 58, 105, 0.1);
         }
 
         .application-meta-item .info-label {
             margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 0.77rem;
+            font-weight: 800;
+            color: #6d82a1;
         }
 
         .application-meta-item .info-value {
@@ -494,6 +511,21 @@
             gap: 0.5rem;
             min-height: 1.6rem;
             flex-wrap: wrap;
+            line-height: 1.35;
+        }
+
+        .application-meta-item--wide .info-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1e40af;
+            font-size: 0.78rem;
+        }
+
+        .application-meta-item--wide .info-value {
+            color: #1e3a8a;
+            font-size: 1.02rem;
+            font-weight: 900;
         }
 
         .notes-card {
@@ -549,7 +581,7 @@
             }
 
             .application-meta {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .status-steps {
@@ -642,11 +674,19 @@
             .card-header {
                 align-items: flex-start;
             }
+
+            .application-meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 575.98px) {
             .posting-info {
                 text-align: left;
+            }
+
+            .application-meta {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -848,12 +888,12 @@
                     </div>
                 </div>
                 @if($application->interview_scheduled_at)
-                    <div class="application-meta-item" style="background: #eff6ff; border-color: #3b82f6;">
-                        <div class="info-label" style="color: #1e40af;">
+                    <div class="application-meta-item application-meta-item--wide">
+                        <div class="info-label">
                             <i class="bi bi-calendar-event" style="color: #2563eb;"></i>
                             Interview Scheduled
                         </div>
-                        <div class="info-value" style="color: #1e3a8a;">
+                        <div class="info-value">
                             <i class="bi bi-clock" style="color: #2563eb;"></i>
                             {{ $application->interview_scheduled_at->format('d M Y, h:i A') }}
                         </div>

@@ -54,7 +54,7 @@
     </div>
 
     <div class="dashboard-section-card p-3 p-lg-4">
-        <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+        <div class="d-flex flex-column gap-3 mb-3 border-bottom pb-3">
             <h3 class="h5 mb-0 fw-bold"><i class="bi bi-clipboard-check me-2"></i>Application Status</h3>
             <div class="d-flex flex-wrap gap-2 status-filter-wrap">
                 <a href="<?php echo e(route('jobseeker.applications')); ?>" class="btn btn-sm status-filter-btn <?php echo e($statusFilter === 'all' ? 'btn-primary' : 'btn-outline-primary'); ?>">All (<?php echo e($statusCounts['all'] ?? 0); ?>)</a>
@@ -209,13 +209,16 @@
     }
 
     .status-filter-wrap {
+        width: 100%;
         align-items: center;
     }
 
     .status-filter-btn {
+        flex: 1 1 0;
         border-radius: 999px;
         font-weight: 700;
         padding-inline: 0.75rem;
+        min-width: 0;
     }
 
     .applications-table thead th {

@@ -188,12 +188,12 @@
         opacity: 0.95;
     }
     .interview-schedule-pane {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-        border: 3px solid #ff9800;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1px solid #93c5fd;
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1rem;
-        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        box-shadow: 0 10px 28px rgba(37, 99, 235, 0.16);
     }
     .interview-popup {
         position: fixed;
@@ -203,7 +203,8 @@
         align-items: center;
         justify-content: center;
         padding: 1rem;
-        background: rgba(15, 23, 42, 0.55);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.58) 0%, rgba(30, 64, 175, 0.32) 100%);
+        backdrop-filter: blur(5px);
     }
     .interview-popup.is-open {
         display: flex;
@@ -212,10 +213,65 @@
         width: 100%;
         max-width: 560px;
         border-radius: 16px;
-        border: 3px solid #ff9800;
-        background: #fffbf0;
-        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+        border: 1px solid #93c5fd;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 28px 70px rgba(30, 64, 175, 0.28);
         overflow: hidden;
+    }
+    .interview-popup-card .modal-header {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+        border-bottom: 1px solid #93c5fd !important;
+        padding: 1rem 1.25rem;
+    }
+    .interview-popup-card .modal-title {
+        font-weight: 800 !important;
+        color: #1d4ed8 !important;
+        letter-spacing: 0.2px;
+    }
+    .interview-popup-card .modal-body {
+        padding: 1.5rem !important;
+        background: linear-gradient(180deg, #f8fbff 0%, #eff6ff 100%) !important;
+    }
+    .interview-popup-card .modal-footer {
+        background: #f8fbff !important;
+        border-top: 1px solid #bfdbfe !important;
+        padding: 1rem 1.25rem;
+    }
+    .interview-popup-card .form-label {
+        color: #1e3a8a;
+    }
+    .interview-popup-card .form-control {
+        border-color: #93c5fd;
+        background: #ffffff;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+    .interview-popup-card .form-control:focus {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+    }
+    .interview-popup-card .btn-close {
+        filter: brightness(0) saturate(100%) invert(33%) sepia(97%) saturate(1765%) hue-rotate(202deg) brightness(97%) contrast(96%);
+        opacity: 1;
+    }
+    .interview-popup-card .btn-outline-primary {
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+    .interview-popup-card .btn-outline-primary:hover {
+        background: #2563eb;
+        color: #fff;
+    }
+    .interview-popup-card .btn-primary,
+    .interview-popup-card .btn-warning {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        border-color: #1d4ed8 !important;
+        color: #fff !important;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    }
+    .interview-popup-card .btn-primary:hover,
+    .interview-popup-card .btn-warning:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+        border-color: #1e40af !important;
     }
     @media (max-width: 991.98px) {
         .profile-header {
@@ -248,6 +304,61 @@
             width: 100%;
             justify-content: flex-start;
         }
+    }
+
+    /* Additional alignment and spacing improvements */
+    .profile-top-row {
+        align-items: center;
+    }
+
+    .profile-main h3 {
+        margin-bottom: 0.25rem;
+        line-height: 1.05;
+    }
+
+    .profile-main p {
+        margin-bottom: 0;
+        color: rgba(255,255,255,0.95);
+    }
+
+    .info-card {
+        padding: 1.5rem;
+    }
+
+    .info-card .section-title {
+        margin-bottom: 1rem;
+    }
+
+    .right-sticky {
+        align-items: stretch;
+    }
+
+    .right-sticky .info-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .btn-primary.w-100 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.9rem;
+        min-width: 110px;
+        text-align: center;
+    }
+
+    @media (max-width: 991.98px) {
+        .profile-top-row { align-items: flex-start; }
+        .status-chip { min-width: auto; }
+        .profile-main { min-width: 0; }
     }
 </style>
 <?php $__env->stopPush(); ?>
@@ -341,16 +452,18 @@
 
             <?php if($application->resume_path): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <a href="<?php echo e(route('employer.applications.resume.download', $application->id)); ?>" class="btn btn-primary">
-                    <i class="bi bi-download"></i> Download Resume
-                </a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="<?php echo e(route('employer.applications.resume.view', $application->id)); ?>" class="btn btn-outline-primary" target="_blank" rel="noopener">
+                        <i class="bi bi-eye"></i> View Uploaded Resume
+                    </a>
+                </div>
             </div>
             <?php endif; ?>
 
-            <?php if($application->cover_letter): ?>
+            <?php if(! empty($application->notes)): ?>
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <span class="label-muted">Cover Letter</span>
-                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->cover_letter); ?></p>
+                <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: #334155;"><?php echo e($application->notes); ?></p>
             </div>
             <?php endif; ?>
         </div>
@@ -403,7 +516,7 @@
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
                     <?php if($application->resume_path): ?>
-                        <a href="<?php echo e(route('employer.applications.resume.download', $application->id)); ?>" class="btn btn-outline-primary">Download Resume</a>
+                        <a href="<?php echo e(route('employer.applications.resume.view', $application->id)); ?>" class="btn btn-outline-primary" target="_blank" rel="noopener">View Uploaded Resume</a>
                     <?php endif; ?>
                 </div>
             </form>
@@ -430,23 +543,23 @@
                 </div>
                 <div id="interviewScheduleModal" class="interview-popup" aria-hidden="true">
                     <div class="interview-popup-card" role="dialog" aria-modal="true" aria-labelledby="interviewScheduleModalLabel">
-                        <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107;">
-                            <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="interviewScheduleModalLabel" style="display: flex; align-items: center; gap: 0.5rem;">
                                 <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
                                 📅 Schedule Interview
                             </h5>
                             <button type="button" class="btn-close" id="closeInterviewModal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
+                        <div class="modal-body">
                             <div class="mb-3">
-                                <label for="interviewScheduledAt" class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                                <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
-                                <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                                <label for="interviewScheduledAt" class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
+                                <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="<?php echo e($application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : ''); ?>" style="border-radius: 12px; padding: 0.9rem 1rem; font-size: 1rem; background-color: #fff;">
+                                <small style="margin-top: 0.5rem; display: block; color: #1d4ed8; font-weight: 500;">⏰ Select the date and time for the interview.</small>
                             </div>
                         </div>
-                        <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107;">
-                            <button type="button" class="btn btn-secondary" id="cancelInterviewSchedule">Cancel</button>
-                            <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-primary" id="cancelInterviewSchedule">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveInterviewDate" style="font-weight: 600;">
                                 <i class="bi bi-check-lg"></i> Save Interview Date
                             </button>
                         </div>
@@ -466,9 +579,6 @@
                 <p style="margin: 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-briefcase me-2" style="color: #075cb2;"></i><?php echo e(ucfirst(str_replace('_', ' ', $application->jobPost->employment_type))); ?></p>
             </div>
             <hr style="margin: 1.25rem 0;">
-            <a href="<?php echo e(route('employer.jobs.manage')); ?>" class="btn btn-outline-primary btn-sm w-100">
-                <i class="bi bi-arrow-left"></i> Back to Jobs
-            </a>
         </div>
         </div>
     </div>
@@ -541,6 +651,8 @@
             statusSelect.addEventListener('change', function () {
                 window.__handleInterviewStatusChange(this.value);
             });
+
+            window.__handleInterviewStatusChange(statusSelect.value);
         }
 
         const closeInterviewModalBtn = document.getElementById('closeInterviewModal');
@@ -561,45 +673,60 @@
 
         if (statusForm && feedbackForm) {
             statusForm.addEventListener('submit', async function (e) {
-                const status = document.getElementById('statusSelect')?.value;
-                const interviewDate = document.getElementById('interviewScheduledAt')?.value;
+                e.preventDefault();
 
-                // Validate interview date is required when status is interviewed
+                const status = String(document.getElementById('statusSelect')?.value || '').trim();
+                const interviewDate = String(document.getElementById('interviewScheduledAt')?.value || '').trim();
+                const updateBtn = statusForm.querySelector('button[type="submit"]');
+
+                // Prevent double submit
+                if (updateBtn && updateBtn.dataset.submitting === '1') return;
+
+                // If status is 'interviewed', require interview date
                 if (status === 'interviewed' && !interviewDate) {
-                    e.preventDefault();
                     alert('Please select an interview date and time before updating the status to Interview.');
                     showInterviewModal();
                     document.getElementById('interviewScheduledAt')?.focus();
                     return;
                 }
 
+                // Prepare to disable button
+                if (updateBtn) {
+                    updateBtn.dataset.submitting = '1';
+                    updateBtn.disabled = true;
+                    updateBtn.classList.add('disabled');
+                    // preserve current text
+                    updateBtn.dataset.origHtml = updateBtn.innerHTML;
+                    updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating...';
+                }
+
+                // If feedback present, submit it first via AJAX so it is saved before status update
                 const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
                 const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
                 const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
 
-                if (feedbackText.trim().length > 0 || rating || feedbackType) {
-                    e.preventDefault();
-
-                    // Validate interview date before submitting feedback
-                    if (status === 'interviewed' && !interviewDate) {
-                        alert('Please select an interview date and time before updating the status to Interview.');
-                        showInterviewModal();
-                        document.getElementById('interviewScheduledAt')?.focus();
-                        return;
-                    }
-
-                    const data = new FormData(feedbackForm);
-                    try {
+                try {
+                    if (feedbackText.trim().length > 0 || rating || feedbackType) {
+                        const data = new FormData(feedbackForm);
+                        // include CSRF token if available (already in form)
                         await fetch(feedbackForm.action, {
                             method: 'POST',
                             body: data,
                             credentials: 'same-origin',
                             headers: { 'X-Requested-With': 'XMLHttpRequest' }
                         });
-                    } catch (err) {
-                        console.error('Failed to save feedback before status update', err);
                     }
+
+                    // Finally submit the status form (regular form submit to follow normal PATCH route)
                     statusForm.submit();
+                } catch (err) {
+                    console.error('Failed to update status', err);
+                    alert('An error occurred while updating the status. Please try again.');
+                    if (updateBtn) {
+                        updateBtn.disabled = false;
+                        updateBtn.dataset.submitting = '0';
+                        updateBtn.innerHTML = updateBtn.dataset.origHtml || 'Update Status';
+                    }
                 }
             });
         }
@@ -626,7 +753,7 @@
             });
             st.addEventListener('focus', function () { this.classList.add('focus-visible'); });
             st.addEventListener('blur', function () { this.classList.remove('focus-visible'); });
-        }
+        });
     }
 
     if (document.readyState === 'loading') {

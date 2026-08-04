@@ -190,12 +190,12 @@
         opacity: 0.95;
     }
     .interview-schedule-pane {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-        border: 3px solid #ff9800;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1px solid #93c5fd;
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1rem;
-        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        box-shadow: 0 10px 28px rgba(37, 99, 235, 0.16);
     }
     .interview-popup {
         position: fixed;
@@ -205,7 +205,8 @@
         align-items: center;
         justify-content: center;
         padding: 1rem;
-        background: rgba(15, 23, 42, 0.55);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.58) 0%, rgba(30, 64, 175, 0.32) 100%);
+        backdrop-filter: blur(5px);
     }
     .interview-popup.is-open {
         display: flex;
@@ -214,10 +215,65 @@
         width: 100%;
         max-width: 560px;
         border-radius: 16px;
-        border: 3px solid #ff9800;
-        background: #fffbf0;
-        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+        border: 1px solid #93c5fd;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 28px 70px rgba(30, 64, 175, 0.28);
         overflow: hidden;
+    }
+    .interview-popup-card .modal-header {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+        border-bottom: 1px solid #93c5fd !important;
+        padding: 1rem 1.25rem;
+    }
+    .interview-popup-card .modal-title {
+        font-weight: 800 !important;
+        color: #1d4ed8 !important;
+        letter-spacing: 0.2px;
+    }
+    .interview-popup-card .modal-body {
+        padding: 1.5rem !important;
+        background: linear-gradient(180deg, #f8fbff 0%, #eff6ff 100%) !important;
+    }
+    .interview-popup-card .modal-footer {
+        background: #f8fbff !important;
+        border-top: 1px solid #bfdbfe !important;
+        padding: 1rem 1.25rem;
+    }
+    .interview-popup-card .form-label {
+        color: #1e3a8a;
+    }
+    .interview-popup-card .form-control {
+        border-color: #93c5fd;
+        background: #ffffff;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+    .interview-popup-card .form-control:focus {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+    }
+    .interview-popup-card .btn-close {
+        filter: brightness(0) saturate(100%) invert(33%) sepia(97%) saturate(1765%) hue-rotate(202deg) brightness(97%) contrast(96%);
+        opacity: 1;
+    }
+    .interview-popup-card .btn-outline-primary {
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+    .interview-popup-card .btn-outline-primary:hover {
+        background: #2563eb;
+        color: #fff;
+    }
+    .interview-popup-card .btn-primary,
+    .interview-popup-card .btn-warning {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        border-color: #1d4ed8 !important;
+        color: #fff !important;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    }
+    .interview-popup-card .btn-primary:hover,
+    .interview-popup-card .btn-warning:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+        border-color: #1e40af !important;
     }
     @media (max-width: 991.98px) {
         .profile-header {
@@ -489,23 +545,23 @@
                 </div>
                 <div id="interviewScheduleModal" class="interview-popup" aria-hidden="true">
                     <div class="interview-popup-card" role="dialog" aria-modal="true" aria-labelledby="interviewScheduleModalLabel">
-                        <div class="modal-header" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-bottom: 2px solid #ffc107;">
-                            <h5 class="modal-title" id="interviewScheduleModalLabel" style="font-weight: 700; color: #856404; display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="interviewScheduleModalLabel" style="display: flex; align-items: center; gap: 0.5rem;">
                                 <i class="bi bi-calendar-event-fill" style="font-size: 1.3rem;"></i>
                                 📅 Schedule Interview
                             </h5>
                             <button type="button" class="btn-close" id="closeInterviewModal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body" style="padding: 1.5rem; background: #fffbf0;">
+                        <div class="modal-body">
                             <div class="mb-3">
-                                <label for="interviewScheduledAt" class="form-label" style="font-weight: 600; color: #856404; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
-                                <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}" style="border-radius: 10px; padding: 0.85rem 1rem; font-size: 1rem; border-color: #ffc107; background-color: #fff;">
-                                <small style="margin-top: 0.5rem; display: block; color: #856404; font-weight: 500;">⏰ Select the date and time for the interview.</small>
+                                <label for="interviewScheduledAt" class="form-label" style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Interview Date & Time <span style="color: #dc3545;">*</span></label>
+                                <input type="datetime-local" name="interview_scheduled_at" id="interviewScheduledAt" class="form-control" value="{{ $application->interview_scheduled_at ? $application->interview_scheduled_at->format('Y-m-d\\TH:i') : '' }}" style="border-radius: 12px; padding: 0.9rem 1rem; font-size: 1rem; background-color: #fff;">
+                                <small style="margin-top: 0.5rem; display: block; color: #1d4ed8; font-weight: 500;">⏰ Select the date and time for the interview.</small>
                             </div>
                         </div>
-                        <div class="modal-footer" style="background: #fffbf0; border-top: 1px solid #ffc107;">
-                            <button type="button" class="btn btn-secondary" id="cancelInterviewSchedule">Cancel</button>
-                            <button type="button" class="btn btn-warning" id="saveInterviewDate" style="background: #ff9800; border-color: #ff9800; font-weight: 600;">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-primary" id="cancelInterviewSchedule">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveInterviewDate" style="font-weight: 600;">
                                 <i class="bi bi-check-lg"></i> Save Interview Date
                             </button>
                         </div>
@@ -597,6 +653,8 @@
             statusSelect.addEventListener('change', function () {
                 window.__handleInterviewStatusChange(this.value);
             });
+
+            window.__handleInterviewStatusChange(statusSelect.value);
         }
 
         const closeInterviewModalBtn = document.getElementById('closeInterviewModal');
@@ -697,7 +755,7 @@
             });
             st.addEventListener('focus', function () { this.classList.add('focus-visible'); });
             st.addEventListener('blur', function () { this.classList.remove('focus-visible'); });
-        }
+        });
     }
 
     if (document.readyState === 'loading') {
