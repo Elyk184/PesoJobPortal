@@ -124,6 +124,9 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::get('/applications/{application}/resume/download', [EmployerController::class, 'downloadResume'])
         ->name('applications.resume.download');
 
+    Route::get('/applications/{application}/resume/view', [EmployerController::class, 'viewResume'])
+        ->name('applications.resume.view');
+
     Route::post('/applications/{application}/feedback', [EmployerController::class, 'storeFeedback'])
         ->name('applications.feedback');
 

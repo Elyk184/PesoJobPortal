@@ -620,6 +620,86 @@ class EmployerController extends Controller
         );
     }
 
+    public function viewResume(Request $request, JobApplication $application)
+    {
+        $employerId = $request->user()->id;
+
+        if (! $application->job || $application->job->employer_id !== $employerId) {
+            abort(403, 'You are not authorized to view this resume.');
+        }
+
+        if (! $application->resume_path) {
+            abort(404, 'Resume not found.');
+        }
+
+        if (str_starts_with($application->resume_path, 'builder:')) {
+            $user = $application->user;
+            $userProfile = $user->profile ?? $user->userProfile;
+
+            if (! $userProfile) {
+                abort(404, 'Resume builder data not found.');
+            }
+
+            $profilePersonal = $userProfile->personal_information ?? [];
+            $profileSkills = $userProfile->skills ?? [];
+            $profileEducationRows = $userProfile->education ?? [];
+            $profileTrainingRows = $userProfile->training ?? [];
+            $profileExperienceRows = $userProfile->experience ?? [];
+            $profileEligibilityRows = $userProfile->eligibility ?? [];
+
+            $resumeName = $userProfile->resume_name ?? $user->name;
+            $resumeEmail = $userProfile->resume_email ?? data_get($profilePersonal, 'email_address', $user->email ?? '');
+            $resumePhone = $userProfile->phone ?? data_get($profilePersonal, 'contact_number', '');
+            $resumeAddress = $userProfile->address ?? '';
+            $resumeObjective = $userProfile->objective ?? '';
+            $resumeSkills = implode(', ', $profileSkills ?: []);
+
+            $pdfData = [
+                'user' => $user,
+                'profile' => $userProfile,
+                'resumeName' => $resumeName,
+                'resumeEmail' => $resumeEmail,
+                'resumePhone' => $resumePhone,
+                'resumeAddress' => $resumeAddress,
+                'resumeObjective' => $resumeObjective,
+                'resumeSkills' => $resumeSkills,
+                'educationRows' => $profileEducationRows,
+                'trainingRows' => $profileTrainingRows,
+                'experienceRows' => $profileExperienceRows,
+                'eligibilityRows' => $profileEligibilityRows,
+                'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
+            ];
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $pdfData)
+                ->setPaper('a4', 'portrait');
+
+            $filename = trim(($resumeName ?: 'resume') . '-harvard-style.pdf');
+
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+        }
+
+        if (! Storage::disk('public')->exists($application->resume_path)) {
+            abort(404, 'Resume file not found.');
+        }
+
+        if ($application->resume_original_filename) {
+            $viewFilename = $application->resume_original_filename;
+        } elseif ($application->resume_file_extension) {
+            $viewFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.' . $application->resume_file_extension;
+        } else {
+            $viewFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
+        }
+
+        return response()->file(
+            Storage::disk('public')->path($application->resume_path),
+            [
+                'Content-Disposition' => 'inline; filename="' . $viewFilename . '"',
+            ]
+        );
+    }
+
     public function storeFeedback(Request $request, JobApplication $application): RedirectResponse
     {
         $employerId = $request->user()->id;

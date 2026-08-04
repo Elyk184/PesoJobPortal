@@ -398,9 +398,11 @@
 
             @if($application->resume_path)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
-                <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-primary">
-                    <i class="bi bi-download"></i> Download Resume
-                </a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('employer.applications.resume.view', $application->id) }}" class="btn btn-outline-primary" target="_blank" rel="noopener">
+                        <i class="bi bi-eye"></i> View Uploaded Resume
+                    </a>
+                </div>
             </div>
             @endif
 
@@ -460,7 +462,7 @@
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
                     @if($application->resume_path)
-                        <a href="{{ route('employer.applications.resume.download', $application->id) }}" class="btn btn-outline-primary">Download Resume</a>
+                        <a href="{{ route('employer.applications.resume.view', $application->id) }}" class="btn btn-outline-primary" target="_blank" rel="noopener">View Uploaded Resume</a>
                     @endif
                 </div>
             </form>
@@ -523,9 +525,6 @@
                 <p style="margin: 0; color: #637892; font-size: 0.9rem;"><i class="bi bi-briefcase me-2" style="color: #075cb2;"></i>{{ ucfirst(str_replace('_', ' ', $application->jobPost->employment_type)) }}</p>
             </div>
             <hr style="margin: 1.25rem 0;">
-            <a href="{{ route('employer.jobs.manage') }}" class="btn btn-outline-primary btn-sm w-100">
-                <i class="bi bi-arrow-left"></i> Back to Jobs
-            </a>
         </div>
         </div>
     </div>
