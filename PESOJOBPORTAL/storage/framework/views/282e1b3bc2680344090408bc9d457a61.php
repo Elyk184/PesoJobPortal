@@ -1,8 +1,6 @@
-@extends('layouts.dashboard')
+<?php $__env->startSection('title', ($job->title ?? 'Application Details') . ' | Jobseeker'); ?>
 
-@section('title', ($job->title ?? 'Application Details') . ' | Jobseeker')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <section aria-label="Application details" class="application-details-page">
     <style>
         .application-details-page {
@@ -587,7 +585,7 @@
         }
     </style>
 
-    <a href="{{ route('jobseeker.applications') }}" class="back-link">
+    <a href="<?php echo e(route('jobseeker.applications')); ?>" class="back-link">
         <i class="bi bi-arrow-left"></i>
         Back to Applications
     </a>
@@ -595,23 +593,26 @@
     <div class="application-details-page">
         <!-- Page Header -->
         <div class="page-header">
-            <h1 class="page-title">{{ $job->title ?? 'Job no longer available' }}</h1>
+            <h1 class="page-title"><?php echo e($job->title ?? 'Job no longer available'); ?></h1>
             <p class="page-subtitle">Application details and job information</p>
             <div class="page-header-meta">
                 <span class="header-chip">
                     <i class="bi bi-patch-check"></i>
-                    {{ $statusLabel }}
+                    <?php echo e($statusLabel); ?>
+
                 </span>
                 <span class="header-chip">
                     <i class="bi bi-calendar-check"></i>
-                    Applied {{ optional($application->applied_at ?? $application->created_at)->format('M d, Y') }}
+                    Applied <?php echo e(optional($application->applied_at ?? $application->created_at)->format('M d, Y')); ?>
+
                 </span>
-                @if($job->application_end_date)
+                <?php if($job->application_end_date): ?>
                     <span class="header-chip">
                         <i class="bi bi-hourglass-split"></i>
-                        Deadline {{ $job->application_end_date->format('M d, Y') }}
+                        Deadline <?php echo e($job->application_end_date->format('M d, Y')); ?>
+
                     </span>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
 
@@ -619,37 +620,42 @@
         <article class="detail-card">
             <div class="card-header">
                 <div style="flex: 1;">
-                    <h2 class="job-title">{{ $job->title ?? 'Job no longer available' }}</h2>
+                    <h2 class="job-title"><?php echo e($job->title ?? 'Job no longer available'); ?></h2>
                     <div class="job-meta">
                         <span class="job-pill">
                             <i class="bi bi-building"></i>
-                            {{ $job->employer_name ?? 'Employer unavailable' }}
+                            <?php echo e($job->employer_name ?? 'Employer unavailable'); ?>
+
                         </span>
                         <span class="job-pill">
                             <i class="bi bi-geo-alt"></i>
-                            {{ $job->location ?? 'Location unavailable' }}
+                            <?php echo e($job->location ?? 'Location unavailable'); ?>
+
                         </span>
                         <span class="job-pill">
                             <i class="bi bi-clock"></i>
-                            {{ ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A')) }}
+                            <?php echo e(ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A'))); ?>
+
                         </span>
-                        @if($job->salary_range)
+                        <?php if($job->salary_range): ?>
                             <span class="job-pill">
                                 <i class="bi bi-cash-stack"></i>
-                                {{ $job->salary_range }}
+                                <?php echo e($job->salary_range); ?>
+
                             </span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="posting-info">
                     <div class="posting-label">Posted</div>
-                    <div class="posting-value">{{ $job->created_at?->diffForHumans() ?? 'N/A' }}</div>
-                    @if($job->application_end_date)
+                    <div class="posting-value"><?php echo e($job->created_at?->diffForHumans() ?? 'N/A'); ?></div>
+                    <?php if($job->application_end_date): ?>
                         <div class="posting-label" style="margin-top: 0.75rem;">Deadline</div>
-                        <div class="posting-value {{ $job->application_end_date->isPast() ? 'expired' : 'active' }}">
-                            {{ $job->application_end_date->isPast() ? 'Expired' : $job->application_end_date->format('M d, Y') }}
+                        <div class="posting-value <?php echo e($job->application_end_date->isPast() ? 'expired' : 'active'); ?>">
+                            <?php echo e($job->application_end_date->isPast() ? 'Expired' : $job->application_end_date->format('M d, Y')); ?>
+
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -658,7 +664,7 @@
                     <i class="bi bi-file-text"></i>
                     Job Description
                 </h3>
-                <div class="detail-text">{{ $job->description ?? 'No description provided.' }}</div>
+                <div class="detail-text"><?php echo e($job->description ?? 'No description provided.'); ?></div>
             </div>
 
             <div class="divider"></div>
@@ -668,70 +674,70 @@
                     <i class="bi bi-check-circle"></i>
                     Qualifications
                 </h3>
-                <div class="detail-text">{{ $job->qualifications ?? 'No qualifications listed.' }}</div>
+                <div class="detail-text"><?php echo e($job->qualifications ?? 'No qualifications listed.'); ?></div>
             </div>
 
-            @if(! empty($job->key_responsibilities))
+            <?php if(! empty($job->key_responsibilities)): ?>
                 <div class="divider"></div>
                 <div class="detail-section">
                     <h3 class="section-title">
                         <i class="bi bi-list-check"></i>
                         Key Responsibilities
                     </h3>
-                    <div class="detail-text">{{ $job->key_responsibilities }}</div>
+                    <div class="detail-text"><?php echo e($job->key_responsibilities); ?></div>
                 </div>
-            @endif
+            <?php endif; ?>
 
-            @if(! empty($job->preferred_skills))
+            <?php if(! empty($job->preferred_skills)): ?>
                 <div class="divider"></div>
                 <div class="detail-section">
                     <h3 class="section-title">
                         <i class="bi bi-star"></i>
                         Preferred Skills
                     </h3>
-                    <div class="detail-text">{{ $job->preferred_skills }}</div>
+                    <div class="detail-text"><?php echo e($job->preferred_skills); ?></div>
                 </div>
-            @endif
+            <?php endif; ?>
 
             <div class="divider"></div>
 
             <div class="info-grid">
                 <div class="info-card">
                     <div class="info-label">Company</div>
-                    <div class="info-value">{{ $job->employer_name ?? 'N/A' }}</div>
+                    <div class="info-value"><?php echo e($job->employer_name ?? 'N/A'); ?></div>
                 </div>
                 <div class="info-card">
                     <div class="info-label">Vacancies</div>
-                    <div class="info-value">{{ $job->vacancies ?? 1 }}</div>
+                    <div class="info-value"><?php echo e($job->vacancies ?? 1); ?></div>
                 </div>
                 <div class="info-card">
                     <div class="info-label">Employment Type</div>
-                    <div class="info-value">{{ ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A')) }}</div>
+                    <div class="info-value"><?php echo e(ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A'))); ?></div>
                 </div>
-                @if($job->salary_range)
+                <?php if($job->salary_range): ?>
                     <div class="info-card">
                         <div class="info-label">Salary Range</div>
-                        <div class="info-value">{{ $job->salary_range }}</div>
+                        <div class="info-value"><?php echo e($job->salary_range); ?></div>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
 
             <div class="summary-strip">
                 <div class="summary-item">
                     <div class="info-label">Application ID</div>
-                    <div class="summary-value">#{{ $application->id }}</div>
+                    <div class="summary-value">#<?php echo e($application->id); ?></div>
                 </div>
                 <div class="summary-item">
                     <div class="info-label">Employer</div>
-                    <div class="summary-value">{{ $job->employer_name ?? 'N/A' }}</div>
+                    <div class="summary-value"><?php echo e($job->employer_name ?? 'N/A'); ?></div>
                 </div>
                 <div class="summary-item">
                     <div class="info-label">Job Type</div>
-                    <div class="summary-value">{{ ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A')) }}</div>
+                    <div class="summary-value"><?php echo e(ucfirst(str_replace('_', ' ', $job->job_type ?? 'N/A'))); ?></div>
                 </div>
                 <div class="summary-item">
                     <div class="info-label">Last Activity</div>
-                    <div class="summary-value">{{ $application->updated_at?->diffForHumans() ?? 'N/A' }}</div>
+                    <div class="summary-value"><?php echo e($application->updated_at?->diffForHumans() ?? 'N/A'); ?></div>
                 </div>
             </div>
         </article>
@@ -743,7 +749,7 @@
                 Application Status
             </h2>
 
-            @php
+            <?php
                 $statusFlow = [
                     'pending' => 'Submitted',
                     'reviewing' => 'Review',
@@ -755,7 +761,7 @@
                 $currentStatus = $application->status ?? 'pending';
                 $flowKeys = array_keys($statusFlow);
                 $currentIndex = array_search($currentStatus, $flowKeys, true);
-            @endphp
+            ?>
 
             <!-- Progress tracker removed as requested -->
 
@@ -763,9 +769,10 @@
                 <div class="application-meta-item">
                     <div class="info-label">Current Status</div>
                     <div class="info-value">
-                        <span class="status-badge {{ $statusClass }}">
+                        <span class="status-badge <?php echo e($statusClass); ?>">
                             <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
-                            {{ $statusLabel }}
+                            <?php echo e($statusLabel); ?>
+
                         </span>
                     </div>
                 </div>
@@ -773,17 +780,19 @@
                     <div class="info-label">Applied On</div>
                     <div class="info-value">
                         <i class="bi bi-calendar-check" style="color: #2f6fd5;"></i>
-                        {{ optional($application->applied_at ?? $application->created_at)->format('d M Y') }}
+                        <?php echo e(optional($application->applied_at ?? $application->created_at)->format('d M Y')); ?>
+
                     </div>
                 </div>
                 <div class="application-meta-item">
                     <div class="info-label">Last Updated</div>
                     <div class="info-value">
                         <i class="bi bi-clock-history" style="color: #2f6fd5;"></i>
-                        {{ $application->updated_at?->diffForHumans() ?? 'N/A' }}
+                        <?php echo e($application->updated_at?->diffForHumans() ?? 'N/A'); ?>
+
                     </div>
                 </div>
-                @if($application->interview_scheduled_at)
+                <?php if($application->interview_scheduled_at): ?>
                     <div class="application-meta-item" style="background: #eff6ff; border-color: #3b82f6;">
                         <div class="info-label" style="color: #1e40af;">
                             <i class="bi bi-calendar-event" style="color: #2563eb;"></i>
@@ -791,41 +800,45 @@
                         </div>
                         <div class="info-value" style="color: #1e3a8a;">
                             <i class="bi bi-clock" style="color: #2563eb;"></i>
-                            {{ $application->interview_scheduled_at->format('d M Y, h:i A') }}
+                            <?php echo e($application->interview_scheduled_at->format('d M Y, h:i A')); ?>
+
                         </div>
                     </div>
-                @endif
-                @if($application->resume_original_filename)
+                <?php endif; ?>
+                <?php if($application->resume_original_filename): ?>
                     <div class="application-meta-item">
                         <div class="info-label">Resume Submitted</div>
                         <div class="info-value">
                             <i class="bi bi-file-earmark-text" style="color: #2f6fd5;"></i>
-                            {{ $application->resume_original_filename }}
+                            <?php echo e($application->resume_original_filename); ?>
+
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
 
-            @if(! empty($application->notes))
+            <?php if(! empty($application->notes)): ?>
                 <div class="notes-card">
                     <div class="info-label">
                         <i class="bi bi-chat-square-text"></i>
                         Your Cover Letter / Notes
                     </div>
-                    <div class="detail-text">{{ $application->notes }}</div>
+                    <div class="detail-text"><?php echo e($application->notes); ?></div>
                 </div>
-            @endif
+            <?php endif; ?>
 
-            @if(! empty($application->employer_feedback))
+            <?php if(! empty($application->employer_feedback)): ?>
                 <div class="notes-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #93c5fd;">
                     <div class="info-label" style="color: #1d4ed8;">
                         <i class="bi bi-chat-dots"></i>
                         Employer Feedback
                     </div>
-                    <div class="detail-text" style="color: #1e3a8a; font-style: normal;">{{ $application->employer_feedback }}</div>
+                    <div class="detail-text" style="color: #1e3a8a; font-style: normal;"><?php echo e($application->employer_feedback); ?></div>
                 </div>
-            @endif
+            <?php endif; ?>
         </article>
     </div>
 </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/jobseeker/application-details.blade.php ENDPATH**/ ?>
