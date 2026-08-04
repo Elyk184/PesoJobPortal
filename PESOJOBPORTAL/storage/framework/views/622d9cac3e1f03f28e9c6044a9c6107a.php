@@ -1,13 +1,11 @@
-@extends('dashboard.employer.layout')
+<?php $__env->startSection('title', 'Manage Jobs - PESO'); ?>
+<?php $__env->startSection('hide_header', true); ?>
 
-@section('title', 'Manage Jobs - PESO')
-@section('hide_header', true)
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     :root {
         --mj-bg: #edf2fb;
@@ -631,100 +629,103 @@
 <div class="manage-jobs-wrap">
     <div class="manage-jobs-card">
 
-        {{-- Hero --}}
+        
         <div class="manage-hero">
             <div class="manage-heading">
                 <h4 class="manage-title">Manage Jobs</h4>
                 <p class="manage-subtitle">Monitor posting status, application flow, and hiring momentum in one view.</p>
                 <span class="hero-chip"><i class="bi bi-building"></i> Employer Portal</span>
             </div>
-            <a href="{{ route('employer.jobs.post') }}" class="btn-post-job">
+            <a href="<?php echo e(route('employer.jobs.post')); ?>" class="btn-post-job">
                 <i class="bi bi-plus-lg"></i> Post New Job
             </a>
         </div>
 
-        {{-- Stats Row --}}
-        @php
+        
+        <?php
             $totalApps = $jobs->sum(fn($j) => $j->applications_count ?? 0);
             $totalViews = $jobs->sum(fn($j) => $j->views ?? $j->view_count ?? 0);
             $expiringSoon = $jobs->filter(fn($j) =>
                 $j->application_end_date &&
                 \Carbon\Carbon::parse($j->application_end_date)->between(now(), now()->addDays(7))
             )->count();
-        @endphp
+        ?>
         <div class="stats-row">
             <div class="stat-card accent-blue">
                 <div class="stat-label"><i class="bi bi-briefcase-fill"></i> Active Jobs</div>
-                <div class="stat-val">{{ $tabCounts['active'] ?? 0 }}</div>
-                <div class="stat-sub">{{ $expiringSoon }} expiring within 7 days</div>
+                <div class="stat-val"><?php echo e($tabCounts['active'] ?? 0); ?></div>
+                <div class="stat-sub"><?php echo e($expiringSoon); ?> expiring within 7 days</div>
             </div>
             <div class="stat-card accent-green">
                 <div class="stat-label"><i class="bi bi-person-lines-fill"></i> Total Applications</div>
-                <div class="stat-val">{{ $totalApps }}</div>
+                <div class="stat-val"><?php echo e($totalApps); ?></div>
                 <div class="stat-sub">Across all active listings</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label"><i class="bi bi-eye-fill"></i> Total Views</div>
-                <div class="stat-val">{{ $totalViews ?: '—' }}</div>
-                <div class="stat-sub">{{ $totalViews ? 'Combined impressions' : 'Tracking pending' }}</div>
+                <div class="stat-val"><?php echo e($totalViews ?: '—'); ?></div>
+                <div class="stat-sub"><?php echo e($totalViews ? 'Combined impressions' : 'Tracking pending'); ?></div>
             </div>
             <div class="stat-card accent-teal">
                 <div class="stat-label"><i class="bi bi-check2-circle"></i> Positions Filled</div>
-                <div class="stat-val">{{ $tabCounts['filled'] ?? 0 }}</div>
-                <div class="stat-sub">{{ ($tabCounts['archived'] ?? 0) }} archived</div>
+                <div class="stat-val"><?php echo e($tabCounts['filled'] ?? 0); ?></div>
+                <div class="stat-sub"><?php echo e(($tabCounts['archived'] ?? 0)); ?> archived</div>
             </div>
         </div>
 
-        {{-- Tab Bar --}}
+        
         <div class="jobs-tabbar">
-            <a class="jobs-tab {{ $selectedTab === 'active'   ? 'active' : '' }}"
-               href="{{ route('employer.jobs.manage', ['status' => 'active']) }}">
+            <a class="jobs-tab <?php echo e($selectedTab === 'active'   ? 'active' : ''); ?>"
+               href="<?php echo e(route('employer.jobs.manage', ['status' => 'active'])); ?>">
                 <i class="bi bi-briefcase-fill"></i> Active Jobs
-                <span class="jobs-tab-badge">{{ $tabCounts['active'] ?? 0 }}</span>
+                <span class="jobs-tab-badge"><?php echo e($tabCounts['active'] ?? 0); ?></span>
             </a>
-            <a class="jobs-tab {{ $selectedTab === 'pending'  ? 'active' : '' }}"
-               href="{{ route('employer.jobs.manage', ['status' => 'pending']) }}">
+            <a class="jobs-tab <?php echo e($selectedTab === 'pending'  ? 'active' : ''); ?>"
+               href="<?php echo e(route('employer.jobs.manage', ['status' => 'pending'])); ?>">
                 <i class="bi bi-hourglass-split"></i> Pending Approval
-                <span class="jobs-tab-badge gray">{{ $tabCounts['pending'] ?? 0 }}</span>
+                <span class="jobs-tab-badge gray"><?php echo e($tabCounts['pending'] ?? 0); ?></span>
             </a>
-            <a class="jobs-tab {{ $selectedTab === 'draft'    ? 'active' : '' }}"
-               href="{{ route('employer.jobs.manage', ['status' => 'draft']) }}">
+            <a class="jobs-tab <?php echo e($selectedTab === 'draft'    ? 'active' : ''); ?>"
+               href="<?php echo e(route('employer.jobs.manage', ['status' => 'draft'])); ?>">
                 <i class="bi bi-file-earmark-text"></i> Drafts
-                <span class="jobs-tab-badge gray">{{ $tabCounts['draft'] ?? 0 }}</span>
+                <span class="jobs-tab-badge gray"><?php echo e($tabCounts['draft'] ?? 0); ?></span>
             </a>
-            <a class="jobs-tab {{ $selectedTab === 'archived' ? 'active' : '' }}"
-               href="{{ route('employer.jobs.manage', ['status' => 'archived']) }}">
+            <a class="jobs-tab <?php echo e($selectedTab === 'archived' ? 'active' : ''); ?>"
+               href="<?php echo e(route('employer.jobs.manage', ['status' => 'archived'])); ?>">
                 <i class="bi bi-archive"></i> Archived
-                <span class="jobs-tab-badge yellow">{{ $tabCounts['archived'] ?? 0 }}</span>
+                <span class="jobs-tab-badge yellow"><?php echo e($tabCounts['archived'] ?? 0); ?></span>
             </a>
-            <a class="jobs-tab {{ $selectedTab === 'filled'   ? 'active' : '' }}"
-               href="{{ route('employer.jobs.manage', ['status' => 'filled']) }}">
+            <a class="jobs-tab <?php echo e($selectedTab === 'filled'   ? 'active' : ''); ?>"
+               href="<?php echo e(route('employer.jobs.manage', ['status' => 'filled'])); ?>">
                 <i class="bi bi-check2-circle"></i> Position Filled
-                <span class="jobs-tab-badge teal">{{ $tabCounts['filled'] ?? 0 }}</span>
+                <span class="jobs-tab-badge teal"><?php echo e($tabCounts['filled'] ?? 0); ?></span>
             </a>
         </div>
 
-        {{-- Flash Messages --}}
-        @if(session('success'))
+        
+        <?php if(session('success')): ?>
             <div class="alert alert-success">
-                <i class="bi bi-check-circle-fill"></i>{{ session('success') }}
-            </div>
-        @endif
+                <i class="bi bi-check-circle-fill"></i><?php echo e(session('success')); ?>
 
-        @if(session('error'))
+            </div>
+        <?php endif; ?>
+
+        <?php if(session('error')): ?>
             <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle-fill"></i>{{ session('error') }}
-            </div>
-        @endif
+                <i class="bi bi-exclamation-triangle-fill"></i><?php echo e(session('error')); ?>
 
-        @if($errors->any())
+            </div>
+        <?php endif; ?>
+
+        <?php if($errors->any()): ?>
             <div class="alert alert-danger">
-                <i class="bi bi-exclamation-circle-fill"></i>{{ $errors->first() }}
-            </div>
-        @endif
+                <i class="bi bi-exclamation-circle-fill"></i><?php echo e($errors->first()); ?>
 
-        {{-- PHP helpers --}}
-        @php
+            </div>
+        <?php endif; ?>
+
+        
+        <?php
             $formatEmployment = fn ($type) =>
                 ucfirst(str_replace('_', '-', (string)($type ?: 'n-a')));
 
@@ -750,16 +751,17 @@
             };
 
             $isDeadlinePast = fn($date) => $date && \Carbon\Carbon::parse($date)->isPast();
-        @endphp
+        ?>
 
-        {{-- Table header / toolbar --}}
+        
         <div class="jobs-table-head">
             <div class="toolbar-left">
                 <h5 class="jobs-table-title">
                     <i class="bi bi-kanban-fill" style="color:#3571cc"></i> Job Listings
                 </h5>
                 <span class="jobs-table-meta">
-                    <i class="bi bi-stack"></i> {{ $jobs->count() }} {{ Str::plural('job', $jobs->count()) }}
+                    <i class="bi bi-stack"></i> <?php echo e($jobs->count()); ?> <?php echo e(Str::plural('job', $jobs->count())); ?>
+
                 </span>
             </div>
             <div class="jobs-search-wrap">
@@ -774,21 +776,21 @@
             </div>
         </div>
 
-        {{-- Table --}}
+        
         <div class="table-responsive jobs-table-wrap">
             <table class="jobs-grid mb-0" id="jobs-table">
                 <colgroup>
-                    <col style="width:13%">  {{-- Job Title --}}
-                    <col style="width:10%">  {{-- Company --}}
-                    <col style="width:10%">  {{-- Location --}}
-                    <col style="width:8%">   {{-- Employment --}}
-                    <col style="width:11%">  {{-- Salary --}}
-                    <col style="width:5%">   {{-- Vacancies --}}
-                    <col style="width:7%">   {{-- Applications --}}
-                    <col style="width:5%">   {{-- Views --}}
-                    <col style="width:9%">   {{-- Deadline --}}
-                    <col style="width:7%">   {{-- Status --}}
-                    <col style="width:15%">  {{-- Actions --}}
+                    <col style="width:13%">  
+                    <col style="width:10%">  
+                    <col style="width:10%">  
+                    <col style="width:8%">   
+                    <col style="width:11%">  
+                    <col style="width:5%">   
+                    <col style="width:7%">   
+                    <col style="width:5%">   
+                    <col style="width:9%">   
+                    <col style="width:7%">   
+                    <col style="width:15%">  
                 </colgroup>
                 <thead>
                     <tr>
@@ -806,97 +808,102 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($jobs as $job)
-                        @php
+                    <?php $__empty_1 = true; $__currentLoopData = $jobs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $job): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <?php
                             [$statusClass, $statusLabel] = $resolveStatus($job);
                             $salary = $formatSalary($job);
                             $appsCount = $job->applications_count ?? 0;
                             $viewCount = $job->views ?? $job->view_count ?? 0;
                             $deadline  = $job->application_end_date;
                             $isPast    = $isDeadlinePast($deadline);
-                        @endphp
+                        ?>
                         <tr>
-                            {{-- Job Title --}}
+                            
                             <td class="job-title-cell">
-                                <div class="job-title">{{ $job->title ?: ($job->position ?: 'Untitled Job') }}</div>
+                                <div class="job-title"><?php echo e($job->title ?: ($job->position ?: 'Untitled Job')); ?></div>
                             </td>
 
-                            {{-- Company --}}
+                            
                             <td class="cell-company">
-                                {{ $job->employer_name ?: (auth()->user()->profile?->company_name ?? auth()->user()->name) }}
+                                <?php echo e($job->employer_name ?: (auth()->user()->profile?->company_name ?? auth()->user()->name)); ?>
+
                             </td>
 
-                            {{-- Location --}}
+                            
                             <td>
                                 <div class="cell-location">
                                     <i class="bi bi-geo-alt-fill"></i>
-                                    {{ $job->location ?: '—' }}
+                                    <?php echo e($job->location ?: '—'); ?>
+
                                 </div>
                             </td>
 
-                            {{-- Employment --}}
+                            
                             <td>
                                 <span class="employment-pill">
                                     <i class="bi bi-clock"></i>
-                                    {{ $formatEmployment($job->job_type) }}
+                                    <?php echo e($formatEmployment($job->job_type)); ?>
+
                                 </span>
                             </td>
 
-                            {{-- Salary --}}
+                            
                             <td class="cell-salary">
-                                @if($salary)
+                                <?php if($salary): ?>
                                     <span class="salary-currency">PHP</span>
-                                    {{ $salary[0] }}{{ $salary[1] ? ' – ' . $salary[1] : '' }}
-                                @else
+                                    <?php echo e($salary[0]); ?><?php echo e($salary[1] ? ' – ' . $salary[1] : ''); ?>
+
+                                <?php else: ?>
                                     <span style="color:#a0aec0;font-weight:500">Not specified</span>
-                                @endif
+                                <?php endif; ?>
                             </td>
 
-                            {{-- Vacancies --}}
+                            
                             <td class="cell-num">
-                                <span style="font-weight:700;color:#1e3a6e">{{ $job->vacancies ?? 0 }}</span>
+                                <span style="font-weight:700;color:#1e3a6e"><?php echo e($job->vacancies ?? 0); ?></span>
                             </td>
 
-                            {{-- Applications --}}
+                            
                             <td class="cell-num">
-                                <span class="apps-pill {{ $appsCount === 0 ? 'zero' : '' }}">{{ $appsCount }}</span>
+                                <span class="apps-pill <?php echo e($appsCount === 0 ? 'zero' : ''); ?>"><?php echo e($appsCount); ?></span>
                             </td>
 
-                            {{-- Views --}}
+                            
                             <td class="cell-num">
-                                <span class="views-num">{{ $viewCount ?: '—' }}</span>
+                                <span class="views-num"><?php echo e($viewCount ?: '—'); ?></span>
                             </td>
 
-                            {{-- Deadline --}}
+                            
                             <td>
-                                @if($deadline)
-                                    <div class="cell-date {{ $isPast ? 'date-past' : '' }}">
-                                        <i class="bi bi-calendar-event{{ $isPast ? '-fill' : '' }}"></i>
-                                        {{ \Carbon\Carbon::parse($deadline)->format('M d, Y') }}
+                                <?php if($deadline): ?>
+                                    <div class="cell-date <?php echo e($isPast ? 'date-past' : ''); ?>">
+                                        <i class="bi bi-calendar-event<?php echo e($isPast ? '-fill' : ''); ?>"></i>
+                                        <?php echo e(\Carbon\Carbon::parse($deadline)->format('M d, Y')); ?>
+
                                     </div>
-                                @else
+                                <?php else: ?>
                                     <span style="color:#a0aec0;font-size:.8rem">No deadline</span>
-                                @endif
+                                <?php endif; ?>
                             </td>
 
-                            {{-- Status --}}
+                            
                             <td class="cell-status">
-                                <span class="status-chip {{ $statusClass }}">{{ $statusLabel }}</span>
+                                <span class="status-chip <?php echo e($statusClass); ?>"><?php echo e($statusLabel); ?></span>
                             </td>
 
-                            {{-- Actions --}}
+                            
                             <td class="cell-actions">
                                 <div class="action-row">
-                                    {{-- View Applicants --}}
-                                    <a href="{{ route('employer.applicants.index') }}"
+                                    
+                                    <a href="<?php echo e(route('employer.applicants.index')); ?>"
                                        class="icon-btn view"
                                        title="View Applicants"
                                        aria-label="View Applicants">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
 
-                                    {{-- Edit --}}
-                                    <a href="{{ route('employer.jobs.edit', $job) }}"
+                                    
+                                    <a href="<?php echo e(route('employer.jobs.edit', $job)); ?>"
                                        class="icon-btn view"
                                        title="Edit Job"
                                        aria-label="Edit Job">
@@ -906,10 +913,10 @@
 
 
 
-                                    {{-- Mark as Filled --}}
-                                    @if(($job->status ?? null) !== 'closed')
-                                        <form action="{{ route('employer.jobs.filled', $job) }}" method="POST" class="d-inline" style="display:contents">
-                                            @csrf @method('PATCH')
+                                    
+                                    <?php if(($job->status ?? null) !== 'closed'): ?>
+                                        <form action="<?php echo e(route('employer.jobs.filled', $job)); ?>" method="POST" class="d-inline" style="display:contents">
+                                            <?php echo csrf_field(); ?> <?php echo method_field('PATCH'); ?>
                                             <button type="submit"
                                                     class="icon-btn filled-btn"
                                                     title="Mark as Filled"
@@ -917,12 +924,12 @@
                                                 <i class="bi bi-check-circle-fill"></i>
                                             </button>
                                         </form>
-                                    @endif
+                                    <?php endif; ?>
 
-                                    {{-- Archive --}}
-                                    @if(($job->status ?? null) !== 'closed')
-                                        <form action="{{ route('employer.jobs.archive', $job) }}" method="POST" class="d-inline" style="display:contents">
-                                            @csrf @method('PATCH')
+                                    
+                                    <?php if(($job->status ?? null) !== 'closed'): ?>
+                                        <form action="<?php echo e(route('employer.jobs.archive', $job)); ?>" method="POST" class="d-inline" style="display:contents">
+                                            <?php echo csrf_field(); ?> <?php echo method_field('PATCH'); ?>
                                             <button type="submit"
                                                     class="icon-btn archive"
                                                     title="Archive Job"
@@ -930,11 +937,11 @@
                                                 <i class="bi bi-archive-fill"></i>
                                             </button>
                                         </form>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="empty-jobs-row">
                             <td colspan="11">
                                 <div class="empty-state-inner">
@@ -943,7 +950,7 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -965,4 +972,6 @@
         });
     })();
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('dashboard.employer.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views\dashboard\employer\manage-jobs.blade.php ENDPATH**/ ?>

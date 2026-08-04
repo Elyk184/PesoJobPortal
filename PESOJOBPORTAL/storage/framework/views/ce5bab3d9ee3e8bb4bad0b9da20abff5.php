@@ -185,15 +185,18 @@
         display: flex;
         gap: .3rem;
         flex-wrap: wrap;
+        width: 100%;
         border: 1px solid var(--mj-line);
         border-radius: 12px;
         background: #f7f9fe;
         padding: .45rem;
         margin-bottom: 1.25rem;
+        align-items: stretch;
     }
 
     .jobs-tab {
-        display: inline-flex;
+        display: flex;
+        flex: 1 1 0;
         align-items: center;
         gap: .38rem;
         border-radius: 8px;
@@ -205,6 +208,8 @@
         transition: background .13s, color .13s, border-color .13s;
         white-space: nowrap;
         border: 1px solid transparent;
+        justify-content: center;
+        min-width: 0;
     }
 
     .jobs-tab:hover { background: #eef3fb; color: #1f3c70; }
@@ -616,6 +621,8 @@
         .stats-row         { grid-template-columns: repeat(2, 1fr); }
         .jobs-search-wrap  { width: 100%; }
         .jobs-search-wrap input { width: 100%; }
+        .jobs-tabbar       { gap: .28rem; }
+        .jobs-tab          { flex: 1 1 calc(50% - .14rem); }
     }
 </style>
 
