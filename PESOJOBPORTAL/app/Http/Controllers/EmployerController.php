@@ -158,11 +158,17 @@ class EmployerController extends Controller
             default => $allJobs,
         };
 
+        $totalApplicants = JobApplication::query()
+            ->whereHas('job', fn ($query) => $query->where('employer_id', $employer->id))
+            ->distinct()
+            ->count('user_id');
+
         return view('dashboard.employer.manage-jobs', [
             'jobs' => $jobs,
             'selectedTab' => $selectedTab,
             'tabCounts' => $tabCounts,
             'isVerifiedEmployer' => $isVerifiedEmployer,
+            'totalApplicants' => $totalApplicants,
         ]);
     }
 

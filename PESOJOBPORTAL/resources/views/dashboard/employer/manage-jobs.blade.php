@@ -646,7 +646,6 @@
         {{-- Stats Row --}}
         @php
             $totalApps = $jobs->sum(fn($j) => $j->applications_count ?? 0);
-            $totalViews = $jobs->sum(fn($j) => $j->views ?? $j->view_count ?? 0);
             $expiringSoon = $jobs->filter(fn($j) =>
                 $j->application_end_date &&
                 \Carbon\Carbon::parse($j->application_end_date)->between(now(), now()->addDays(7))
@@ -664,9 +663,9 @@
                 <div class="stat-sub">Across all active listings</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label"><i class="bi bi-eye-fill"></i> Total Views</div>
-                <div class="stat-val">{{ $totalViews ?: '—' }}</div>
-                <div class="stat-sub">{{ $totalViews ? 'Combined impressions' : 'Tracking pending' }}</div>
+                <div class="stat-label"><i class="bi bi-people-fill"></i> Total Applicants</div>
+                <div class="stat-val">{{ $totalApplicants ?? 0 }}</div>
+                <div class="stat-sub">Unique applicants across all job posts</div>
             </div>
             <div class="stat-card accent-teal">
                 <div class="stat-label"><i class="bi bi-check2-circle"></i> Positions Filled</div>

@@ -56,20 +56,10 @@ class JobsController extends Controller
             ->activeApproved()
             ->count();
 
+        $totalApplicants = JobApplication::query()->distinct()->count('user_id');
         $totalApplications = JobApplication::count();
 
-        // Total views: try common column names, fall back to 0 if columns don't exist
-        $totalViews = 0;
-        try {
-            $totalViews = (int) DB::table('peso_jobs')->sum('views');
-            if ($totalViews === 0) {
-                $totalViews = (int) DB::table('peso_jobs')->sum('view_count');
-            }
-        } catch (\Exception $e) {
-            $totalViews = 0;
-        }
-
-        return view('jobs', compact('jobs', 'activeJobsCount', 'totalApplications', 'totalViews', 'employmentTypes', 'employmentType', 'keyword', 'location'));
+        return view('jobs', compact('jobs', 'activeJobsCount', 'totalApplicants', 'totalApplications', 'employmentTypes', 'employmentType', 'keyword', 'location'));
     }
 }
 ?>

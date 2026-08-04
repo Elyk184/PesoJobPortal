@@ -415,9 +415,10 @@ body{
         </div>
         <div class="col-lg-3 col-md-6">
             <div class="stat-card stat-green">
-                <div class="icon"><i class="bi bi-eye"></i></div>
-                <div class="value"><?php echo e($totalViews ?? 0); ?></div>
-                <div class="label">Total Views</div>
+                <div class="icon"><i class="bi bi-people"></i></div>
+                <div class="value"><?php echo e($totalApplicants ?? 0); ?></div>
+                <div class="label">Total Applicants</div>
+                <div class="sub">Unique applicants across all job posts</div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
