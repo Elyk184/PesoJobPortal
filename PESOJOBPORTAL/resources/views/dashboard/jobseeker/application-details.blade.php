@@ -585,6 +585,70 @@
                 align-items: flex-start;
             }
         }
+
+        /* UI alignment enhancements */
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            align-items: flex-start;
+        }
+
+        .card-header {
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .posting-info {
+            text-align: right;
+            min-width: 160px;
+        }
+
+        .info-grid .info-card,
+        .summary-strip .summary-item,
+        .application-meta-item {
+            min-height: 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .summary-strip {
+            align-items: stretch;
+        }
+
+        .summary-item .summary-value {
+            text-align: center;
+        }
+
+        .application-meta-item .info-value {
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-link {
+            vertical-align: middle;
+        }
+
+        .detail-text {
+            word-break: break-word;
+        }
+
+        @media (max-width: 991.98px) {
+            .posting-info {
+                text-align: left;
+            }
+
+            .card-header {
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .posting-info {
+                text-align: left;
+            }
+        }
     </style>
 
     <a href="{{ route('jobseeker.applications') }}" class="back-link">

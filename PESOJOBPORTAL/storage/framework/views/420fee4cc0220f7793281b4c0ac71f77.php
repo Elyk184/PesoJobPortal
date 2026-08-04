@@ -249,6 +249,61 @@
             justify-content: flex-start;
         }
     }
+
+    /* Additional alignment and spacing improvements */
+    .profile-top-row {
+        align-items: center;
+    }
+
+    .profile-main h3 {
+        margin-bottom: 0.25rem;
+        line-height: 1.05;
+    }
+
+    .profile-main p {
+        margin-bottom: 0;
+        color: rgba(255,255,255,0.95);
+    }
+
+    .info-card {
+        padding: 1.5rem;
+    }
+
+    .info-card .section-title {
+        margin-bottom: 1rem;
+    }
+
+    .right-sticky {
+        align-items: stretch;
+    }
+
+    .right-sticky .info-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .btn-primary.w-100 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.9rem;
+        min-width: 110px;
+        text-align: center;
+    }
+
+    @media (max-width: 991.98px) {
+        .profile-top-row { align-items: flex-start; }
+        .status-chip { min-width: auto; }
+        .profile-main { min-width: 0; }
+    }
 </style>
 <?php $__env->stopPush(); ?>
 
@@ -561,45 +616,60 @@
 
         if (statusForm && feedbackForm) {
             statusForm.addEventListener('submit', async function (e) {
-                const status = document.getElementById('statusSelect')?.value;
-                const interviewDate = document.getElementById('interviewScheduledAt')?.value;
+                e.preventDefault();
 
-                // Validate interview date is required when status is interviewed
+                const status = String(document.getElementById('statusSelect')?.value || '').trim();
+                const interviewDate = String(document.getElementById('interviewScheduledAt')?.value || '').trim();
+                const updateBtn = statusForm.querySelector('button[type="submit"]');
+
+                // Prevent double submit
+                if (updateBtn && updateBtn.dataset.submitting === '1') return;
+
+                // If status is 'interviewed', require interview date
                 if (status === 'interviewed' && !interviewDate) {
-                    e.preventDefault();
                     alert('Please select an interview date and time before updating the status to Interview.');
                     showInterviewModal();
                     document.getElementById('interviewScheduledAt')?.focus();
                     return;
                 }
 
+                // Prepare to disable button
+                if (updateBtn) {
+                    updateBtn.dataset.submitting = '1';
+                    updateBtn.disabled = true;
+                    updateBtn.classList.add('disabled');
+                    // preserve current text
+                    updateBtn.dataset.origHtml = updateBtn.innerHTML;
+                    updateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating...';
+                }
+
+                // If feedback present, submit it first via AJAX so it is saved before status update
                 const feedbackText = (feedbackForm.querySelector('textarea[name="feedback"]') || {}).value || '';
                 const feedbackType = (feedbackForm.querySelector('select[name="feedback_type"]') || {}).value || '';
                 const rating = (feedbackForm.querySelector('input[name="rating"]') || {}).value || '';
 
-                if (feedbackText.trim().length > 0 || rating || feedbackType) {
-                    e.preventDefault();
-
-                    // Validate interview date before submitting feedback
-                    if (status === 'interviewed' && !interviewDate) {
-                        alert('Please select an interview date and time before updating the status to Interview.');
-                        showInterviewModal();
-                        document.getElementById('interviewScheduledAt')?.focus();
-                        return;
-                    }
-
-                    const data = new FormData(feedbackForm);
-                    try {
+                try {
+                    if (feedbackText.trim().length > 0 || rating || feedbackType) {
+                        const data = new FormData(feedbackForm);
+                        // include CSRF token if available (already in form)
                         await fetch(feedbackForm.action, {
                             method: 'POST',
                             body: data,
                             credentials: 'same-origin',
                             headers: { 'X-Requested-With': 'XMLHttpRequest' }
                         });
-                    } catch (err) {
-                        console.error('Failed to save feedback before status update', err);
                     }
+
+                    // Finally submit the status form (regular form submit to follow normal PATCH route)
                     statusForm.submit();
+                } catch (err) {
+                    console.error('Failed to update status', err);
+                    alert('An error occurred while updating the status. Please try again.');
+                    if (updateBtn) {
+                        updateBtn.disabled = false;
+                        updateBtn.dataset.submitting = '0';
+                        updateBtn.innerHTML = updateBtn.dataset.origHtml || 'Update Status';
+                    }
                 }
             });
         }
