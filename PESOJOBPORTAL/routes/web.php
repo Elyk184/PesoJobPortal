@@ -184,6 +184,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::model('application', \App\Models\JobApplication::class);
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/notifications/{userNotification}/read', [AdminController::class, 'markNotificationAsRead'])->name('notifications.read');
 
     // Jobseeker Management
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {

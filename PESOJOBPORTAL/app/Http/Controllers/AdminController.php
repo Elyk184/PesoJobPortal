@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -435,6 +436,27 @@ class AdminController extends Controller
             'trendData',
             'jobseekerStats'
         ));
+    }
+
+    public function markNotificationAsRead(Request $request, UserNotification $userNotification): JsonResponse
+    {
+        if ((int) $userNotification->user_id !== (int) $request->user()->id) {
+            abort(403);
+        }
+
+        if ($userNotification->read_at === null) {
+            $userNotification->forceFill(['read_at' => now()])->save();
+        }
+
+        $unreadCount = UserNotification::query()
+            ->where('user_id', (int) $request->user()->id)
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'ok' => true,
+            'unread_count' => (int) $unreadCount,
+        ]);
     }
 
     public function viewJob(PesoJob $job): View

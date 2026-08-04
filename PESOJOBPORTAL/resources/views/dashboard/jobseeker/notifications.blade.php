@@ -555,6 +555,36 @@
 		}
 
 		bindReadButtons(list);
+
+		// Auto-mark notification as read when user clicks the row (views it)
+		list.querySelectorAll('.gmail-row').forEach(row => {
+			row.addEventListener('click', function (e) {
+				const tag = (e.target.tagName || '').toLowerCase();
+				if (tag === 'button' || tag === 'a' || e.target.closest('[data-mark-read]')) return;
+				const id = row.dataset.notificationId;
+				if (id) {
+					markRead(id, null);
+				}
+			});
+		});
+
+		// If a row contains a link (e.g., "View Job"), ensure it's marked read when the link is clicked.
+		list.querySelectorAll('.gmail-row a').forEach(a => {
+			a.addEventListener('click', function () {
+				const row = this.closest('.gmail-row');
+				const id = row?.dataset.notificationId;
+				if (id) {
+					fetch(`{{ url('/jobseeker/notifications') }}/${id}/read`, {
+						method: 'POST',
+						headers: {
+							'X-CSRF-TOKEN': csrfToken,
+							'X-Requested-With': 'XMLHttpRequest',
+							'Accept': 'application/json',
+						},
+					}).catch(() => {});
+				}
+			});
+		});
 		setInterval(pollNotifications, 5000);
 	})();
 </script>
