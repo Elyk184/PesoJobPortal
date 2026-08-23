@@ -7,6 +7,7 @@
         body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #111; }
         h1, h2, h3, p { margin: 0 0 8px; }
         .header { text-align: center; margin-bottom: 12px; }
+        .header-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: 6px; }
         .section { border: 1px solid #111; padding: 10px; margin-bottom: 10px; }
         .label { font-weight: bold; }
         .row { margin-bottom: 6px; }
@@ -16,6 +17,7 @@
 </head>
 <body>
     <div class="header">
+        <img src="{{ public_path('images/owwa.png') }}" alt="OWWA" class="header-logo">
         <h2>OVERSEAS WORKERS WELFARE ADMINISTRATION</h2>
         <h3>REQUEST FOR ASSISTANCE FORM</h3>
         <p class="small">Generated {{ $generated_at->format('Y-m-d H:i') }}</p>

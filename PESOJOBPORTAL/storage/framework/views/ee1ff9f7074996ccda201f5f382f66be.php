@@ -1,19 +1,19 @@
-@extends('layouts.dashboard')
 
-@section('title', 'Request for Assistance Form')
 
-@section('dashboard-mobile-brand')
+<?php $__env->startSection('title', 'Request for Assistance Form'); ?>
+
+<?php $__env->startSection('dashboard-mobile-brand'); ?>
     <div class="dashboard-mobile-brand">
-        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+        <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PESO Logo">
         <span>OFW Portal</span>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('dashboard-sidebar')
-    @include('dashboard.partials.ofw-nav')
-@endsection
+<?php $__env->startSection('dashboard-sidebar'); ?>
+    <?php echo $__env->make('dashboard.partials.ofw-nav', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -186,24 +186,25 @@
         .rfa-header { flex-direction: column; text-align: center; }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="rfa-body">
 <div class="rfa-wrapper">
 
-    <form class="rfa-sheet" method="POST" action="{{ route('ofw.rfa.download') }}" enctype="multipart/form-data" id="rfaForm">
-        @csrf
+    <form class="rfa-sheet" method="POST" action="<?php echo e(route('ofw.rfa.download')); ?>" enctype="multipart/form-data" id="rfaForm">
+        <?php echo csrf_field(); ?>
 
-        @if ($errors->any())
+        <?php if($errors->any()): ?>
             <div class="rfa-alert-danger">
-                {{ $errors->first() }}
+                <?php echo e($errors->first()); ?>
+
             </div>
-        @endif
+        <?php endif; ?>
 
         <div class="rfa-header">
             <div class="rfa-logo">
-                <img src="{{ asset('images/owwa.png') }}" alt="OWWA">
+                <img src="<?php echo e(asset('images/owwa.png')); ?>" alt="OWWA">
             </div>
 
             <div class="rfa-header-center">
@@ -220,29 +221,30 @@
         <div class="rfa-g2">
             <div class="rfa-field">
                 <label for="e_cares_ticket_number">E-Cares Ticket Number:</label>
-                <input type="text" id="e_cares_ticket_number" name="e_cares_ticket_number" value="{{ old('e_cares_ticket_number') }}">
+                <input type="text" id="e_cares_ticket_number" name="e_cares_ticket_number" value="<?php echo e(old('e_cares_ticket_number')); ?>">
             </div>
             <div class="rfa-field">
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date" value="{{ old('date', date('Y-m-d')) }}">
+                <input type="date" id="date" name="date" value="<?php echo e(old('date', date('Y-m-d'))); ?>">
             </div>
         </div>
 
         <div class="rfa-section-bar">Nature of Case / Request</div>
 
         <div class="rfa-cb-grid">
-            @foreach ($caseOptions as $key => $label)
+            <?php $__currentLoopData = $caseOptions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <label>
-                    <input type="checkbox" name="nature_of_case[]" value="{{ $key }}" {{ in_array($key, old('nature_of_case', []), true) ? 'checked' : '' }}>
-                    {{ $label }}
+                    <input type="checkbox" name="nature_of_case[]" value="<?php echo e($key); ?>" <?php echo e(in_array($key, old('nature_of_case', []), true) ? 'checked' : ''); ?>>
+                    <?php echo e($label); ?>
+
                 </label>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
         <div class="rfa-others-row">
-            <input type="checkbox" name="nature_of_case[]" value="others" id="others_check" {{ in_array('others', old('nature_of_case', []), true) ? 'checked' : '' }}>
+            <input type="checkbox" name="nature_of_case[]" value="others" id="others_check" <?php echo e(in_array('others', old('nature_of_case', []), true) ? 'checked' : ''); ?>>
             <label for="others_check">Others:</label>
-            <input type="text" name="nature_of_case_other" placeholder="Please specify..." value="{{ old('nature_of_case_other') }}">
+            <input type="text" name="nature_of_case_other" placeholder="Please specify..." value="<?php echo e(old('nature_of_case_other')); ?>">
         </div>
 
         <div class="rfa-section-bar">OFW's Background and Employment Record</div>
@@ -250,75 +252,75 @@
         <div class="rfa-g4">
             <div class="rfa-field">
                 <label>Name of OFW: [ First ]</label>
-                <input type="text" name="ofw_first" value="{{ old('ofw_first') }}">
+                <input type="text" name="ofw_first" value="<?php echo e(old('ofw_first')); ?>">
             </div>
             <div class="rfa-field">
                 <label>[ Middle ]</label>
-                <input type="text" name="ofw_middle" value="{{ old('ofw_middle') }}">
+                <input type="text" name="ofw_middle" value="<?php echo e(old('ofw_middle')); ?>">
             </div>
             <div class="rfa-field">
                 <label>[ Last ]</label>
-                <input type="text" name="ofw_last" value="{{ old('ofw_last') }}">
+                <input type="text" name="ofw_last" value="<?php echo e(old('ofw_last')); ?>">
             </div>
             <div class="rfa-field">
                 <label>Contact No.</label>
-                <input type="text" name="contact_no" value="{{ old('contact_no') }}">
+                <input type="text" name="contact_no" value="<?php echo e(old('contact_no')); ?>">
             </div>
         </div>
 
         <div class="rfa-g5 mt8">
-            <div class="rfa-field"><label>Position:</label><input type="text" name="position" value="{{ old('position') }}"></div>
-            <div class="rfa-field"><label>Sex:</label><input type="text" name="sex" value="{{ old('sex') }}"></div>
-            <div class="rfa-field"><label>Birthdate:</label><input type="text" name="birthdate" placeholder="MM/DD/YYYY" value="{{ old('birthdate') }}"></div>
-            <div class="rfa-field"><label>Age:</label><input type="text" name="age" value="{{ old('age') }}"></div>
-            <div class="rfa-field"><label>Civil Status:</label><input type="text" name="civil_status" value="{{ old('civil_status') }}"></div>
+            <div class="rfa-field"><label>Position:</label><input type="text" name="position" value="<?php echo e(old('position')); ?>"></div>
+            <div class="rfa-field"><label>Sex:</label><input type="text" name="sex" value="<?php echo e(old('sex')); ?>"></div>
+            <div class="rfa-field"><label>Birthdate:</label><input type="text" name="birthdate" placeholder="MM/DD/YYYY" value="<?php echo e(old('birthdate')); ?>"></div>
+            <div class="rfa-field"><label>Age:</label><input type="text" name="age" value="<?php echo e(old('age')); ?>"></div>
+            <div class="rfa-field"><label>Civil Status:</label><input type="text" name="civil_status" value="<?php echo e(old('civil_status')); ?>"></div>
         </div>
 
         <div class="rfa-g3 mt8">
-            <div class="rfa-field"><label>Facebook Name:</label><input type="text" name="facebook_name" value="{{ old('facebook_name') }}"></div>
-            <div class="rfa-field"><label>Highest Educational Attainment:</label><input type="text" name="highest_education" value="{{ old('highest_education') }}"></div>
-            <div class="rfa-field"><label>Religion:</label><input type="text" name="religion" value="{{ old('religion') }}"></div>
+            <div class="rfa-field"><label>Facebook Name:</label><input type="text" name="facebook_name" value="<?php echo e(old('facebook_name')); ?>"></div>
+            <div class="rfa-field"><label>Highest Educational Attainment:</label><input type="text" name="highest_education" value="<?php echo e(old('highest_education')); ?>"></div>
+            <div class="rfa-field"><label>Religion:</label><input type="text" name="religion" value="<?php echo e(old('religion')); ?>"></div>
         </div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>No. of Children:</label><input type="text" name="children_count" value="{{ old('children_count') }}"></div>
-            <div class="rfa-field"><label>Name of Employer:</label><input type="text" name="employer_name" value="{{ old('employer_name') }}"></div>
+            <div class="rfa-field"><label>No. of Children:</label><input type="text" name="children_count" value="<?php echo e(old('children_count')); ?>"></div>
+            <div class="rfa-field"><label>Name of Employer:</label><input type="text" name="employer_name" value="<?php echo e(old('employer_name')); ?>"></div>
         </div>
 
         <div class="mt8 rfa-field">
             <label>Jobsite:</label>
-            <input type="text" name="jobsite" value="{{ old('jobsite') }}">
+            <input type="text" name="jobsite" value="<?php echo e(old('jobsite')); ?>">
         </div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>Tel. No. / Fax No.:</label><input type="text" name="tel_fax" value="{{ old('tel_fax') }}"></div>
-            <div class="rfa-field"><label>Monthly Salary:</label><input type="text" name="monthly_salary" value="{{ old('monthly_salary') }}"></div>
+            <div class="rfa-field"><label>Tel. No. / Fax No.:</label><input type="text" name="tel_fax" value="<?php echo e(old('tel_fax')); ?>"></div>
+            <div class="rfa-field"><label>Monthly Salary:</label><input type="text" name="monthly_salary" value="<?php echo e(old('monthly_salary')); ?>"></div>
         </div>
 
         <div class="mt8 rfa-field">
             <label>Name of Foreign Recruitment Agency:</label>
-            <input type="text" name="foreign_recruitment_agency" value="{{ old('foreign_recruitment_agency') }}">
+            <input type="text" name="foreign_recruitment_agency" value="<?php echo e(old('foreign_recruitment_agency')); ?>">
         </div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>Address and Tel. No.:</label><input type="text" name="agency_address_tel" value="{{ old('agency_address_tel') }}"></div>
-            <div class="rfa-field"><label>Name of Local Agency:</label><input type="text" name="local_agency" value="{{ old('local_agency') }}"></div>
+            <div class="rfa-field"><label>Address and Tel. No.:</label><input type="text" name="agency_address_tel" value="<?php echo e(old('agency_address_tel')); ?>"></div>
+            <div class="rfa-field"><label>Name of Local Agency:</label><input type="text" name="local_agency" value="<?php echo e(old('local_agency')); ?>"></div>
         </div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>Date of Latest Departure From the Philippines:</label><input type="text" name="latest_departure" placeholder="MM/DD/YYYY" value="{{ old('latest_departure') }}"></div>
-            <div class="rfa-field"><label>OFW's Previous Employment (Please Specify Country):</label><input type="text" name="previous_employment_country" value="{{ old('previous_employment_country') }}"></div>
+            <div class="rfa-field"><label>Date of Latest Departure From the Philippines:</label><input type="text" name="latest_departure" placeholder="MM/DD/YYYY" value="<?php echo e(old('latest_departure')); ?>"></div>
+            <div class="rfa-field"><label>OFW's Previous Employment (Please Specify Country):</label><input type="text" name="previous_employment_country" value="<?php echo e(old('previous_employment_country')); ?>"></div>
         </div>
 
         <div class="rfa-g3 mt8">
-            <div class="rfa-field"><label>For Death Case: Date of Death:</label><input type="text" name="death_date" placeholder="MM/DD/YYYY" value="{{ old('death_date') }}"></div>
-            <div class="rfa-field"><label>Cause of Death:</label><input type="text" name="death_cause" value="{{ old('death_cause') }}"></div>
-            <div class="rfa-field"><label>Place of Death:</label><input type="text" name="death_place" value="{{ old('death_place') }}"></div>
+            <div class="rfa-field"><label>For Death Case: Date of Death:</label><input type="text" name="death_date" placeholder="MM/DD/YYYY" value="<?php echo e(old('death_date')); ?>"></div>
+            <div class="rfa-field"><label>Cause of Death:</label><input type="text" name="death_cause" value="<?php echo e(old('death_cause')); ?>"></div>
+            <div class="rfa-field"><label>Place of Death:</label><input type="text" name="death_place" value="<?php echo e(old('death_place')); ?>"></div>
         </div>
 
         <div class="mt10 rfa-field">
             <label>Facts of the Case [Isalaysay ang Inyong Request]: (Use back space if necessary)</label>
-            <textarea name="facts_of_case" rows="7">{{ old('facts_of_case') }}</textarea>
+            <textarea name="facts_of_case" rows="7"><?php echo e(old('facts_of_case')); ?></textarea>
         </div>
 
         <div class="rfa-notice">
@@ -329,13 +331,13 @@
         <div class="rfa-section-bar">Requesting Party</div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>Name & Signature of Requesting Party:</label><input type="text" name="requesting_party" value="{{ old('requesting_party') }}"></div>
-            <div class="rfa-field"><label>Relationship to OFW:</label><input type="text" name="relationship_to_ofw" value="{{ old('relationship_to_ofw') }}"></div>
+            <div class="rfa-field"><label>Name & Signature of Requesting Party:</label><input type="text" name="requesting_party" value="<?php echo e(old('requesting_party')); ?>"></div>
+            <div class="rfa-field"><label>Relationship to OFW:</label><input type="text" name="relationship_to_ofw" value="<?php echo e(old('relationship_to_ofw')); ?>"></div>
         </div>
 
         <div class="rfa-g2 mt8">
-            <div class="rfa-field"><label>Complete Address:</label><input type="text" name="complete_address" value="{{ old('complete_address') }}"></div>
-            <div class="rfa-field"><label>Phone No. / Email Address:</label><input type="text" name="phone_email" value="{{ old('phone_email') }}"></div>
+            <div class="rfa-field"><label>Complete Address:</label><input type="text" name="complete_address" value="<?php echo e(old('complete_address')); ?>"></div>
+            <div class="rfa-field"><label>Phone No. / Email Address:</label><input type="text" name="phone_email" value="<?php echo e(old('phone_email')); ?>"></div>
         </div>
 
         <div class="rfa-section-bar">Attachments</div>
@@ -358,4 +360,5 @@
 
 </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/ofw/rfa-form.blade.php ENDPATH**/ ?>
