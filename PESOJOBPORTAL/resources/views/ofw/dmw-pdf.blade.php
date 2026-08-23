@@ -9,6 +9,7 @@
 body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
 .page { width: 184mm; min-height: 273mm; height: auto; margin: 0 auto; padding: 10mm 13mm 14mm; page-break-after: always; page-break-inside: avoid; position: relative; background: #fbfdfe; }
 .page:last-child { page-break-after: auto; }
+.dmw-content-page { display: none; }
 .header { display: table; width: 100%; height: 66px; table-layout: fixed; margin-bottom: 4px; }
 .header > div { display: table-cell; vertical-align: middle; text-align: center; }
 .header .logo { width: 66px; text-align: left; }
@@ -56,7 +57,7 @@ table { width: 100%; border-collapse: collapse; }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="page dmw-content-page">
   <div class="header">
     <div class="logo">@if($owwa_logo)<img src="{{ $owwa_logo }}" alt="OWWA">@endif</div>
     <div class="header-center"><div class="rep">Republic of the Philippines</div><div class="dept">Department of Migrant Workers</div><div class="addr">Blas F. Ople Building, Ortigas Avenue cor. EDSA, Mandaluyong City 1550</div><div class="cont">Website: www.dmw.gov.ph | Email: feedback@dmw.gov.ph | Hotlines: (632) 952-8072 / 955-9007 / (02) 8722-3606</div></div>
@@ -101,7 +102,7 @@ table { width: 100%; border-collapse: collapse; }
   <div class="signatures"><div><div class="sign-line"></div><div class="sign-label">Signature over Printed Name</div></div><div><div class="sign-line"></div><div class="sign-label">Date Signed</div></div></div>
   <div class="page-number">16</div>
 </div>
-<div class="page"><div class="attachment"><div class="attachment-title">Page 3 - Employment Contract</div><div class="attachment-subtitle">Uploaded image attachment</div><div class="uploaded">@if($contract_image)<img src="{{ $contract_image }}" alt="Employment Contract">@endif</div></div><div class="page-number">17</div></div>
-<div class="page"><div class="attachment"><div class="attachment-title">Page 4 - Passport / Travel Document</div><div class="attachment-subtitle">Uploaded image attachment</div><div class="uploaded">@if($passport_image)<img src="{{ $passport_image }}" alt="Passport">@endif</div></div><div class="page-number">18</div></div>
+<div class="page"><div class="attachment"><div class="attachment-title">Page 2 - Employment Contract</div><div class="attachment-subtitle">Uploaded image attachment</div><div class="uploaded">@if($contract_image)<img src="{{ $contract_image }}" alt="Employment Contract">@endif</div></div><div class="page-number">2</div></div>
+<div class="page"><div class="attachment"><div class="attachment-title">Page 3 - Passport / Travel Document</div><div class="attachment-subtitle">Uploaded image attachment</div><div class="uploaded">@if($passport_image)<img src="{{ $passport_image }}" alt="Passport">@endif</div></div><div class="page-number">3</div></div>
 </body>
 </html>

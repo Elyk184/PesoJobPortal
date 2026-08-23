@@ -124,8 +124,12 @@ class OfwController extends Controller
 
         $data = array_merge($validated, [
             'nature_of_case' => $request->input('nature_of_case', []),
+            'case_options' => self::RFA_CASE_OPTIONS,
             'contract_name' => $request->file('contract')?->getClientOriginalName(),
             'passport_name' => $request->file('passport')?->getClientOriginalName(),
+            'owwa_logo' => $this->publicImageDataUri('images/owwa.png'),
+            'contract_image' => $this->imageDataUri($request->file('contract')),
+            'passport_image' => $this->imageDataUri($request->file('passport')),
             'generated_at' => now('Asia/Manila'),
             'case_labels' => collect($request->input('nature_of_case', []))
                 ->map(fn ($case) => self::RFA_CASE_OPTIONS[$case] ?? ucfirst(str_replace('_', ' ', $case)))
@@ -133,7 +137,8 @@ class OfwController extends Controller
                 ->all(),
         ]);
 
-        $pdf = Pdf::loadView('ofw.rfa-form-pdf', $data)->setPaper('a4');
+        $pdf = Pdf::loadView('ofw.rfa-form-pdf', $data)
+            ->setPaper([0, 0, 595.28, 1000], 'portrait');
 
         return $pdf->download('owwa-rfa-form.pdf');
     }

@@ -36,6 +36,8 @@
         box-shadow: 0 2px 16px rgba(0,0,0,.22);
         position: relative;
     }
+
+    .dmw-content-page { display: none; }
  
     /* ── Download bar ── */
     .dmw-dl-bar {
@@ -578,7 +580,7 @@
 {{-- ════════════════════════════════════
      PAGE 2
 ════════════════════════════════════ --}}
-<div class="dmw-page">
+<div class="dmw-page dmw-content-page">
  
     {{-- ── SECTION C ── --}}
     <div class="dmw-sec">C. &nbsp; URI NG TULONG NA HINIHINGI (Please check):</div>
@@ -666,12 +668,12 @@
  
  
 {{-- ════════════════════════════════════
-     PAGE 3 — CONTRACT (Required)
+    PAGE 2 — CONTRACT (Required)
 ════════════════════════════════════ --}}
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
-            <div class="pg-label">Page 3 — Employment Contract <span class="req-badge">REQUIRED</span></div>
+            <div class="pg-label">Page 2 — Employment Contract <span class="req-badge">REQUIRED</span></div>
             <div class="pg-sublabel">Attach a clear photo or scanned copy of your Employment Contract</div>
         </div>
  
@@ -691,18 +693,18 @@
         </button>
         <div class="attach-note">* This attachment is required to submit the form</div>
     </div>
-    <div class="pg-num">17</div>
+    <div class="pg-num">16</div>
 </div>
 {{-- END PAGE 3 --}}
  
  
 {{-- ════════════════════════════════════
-     PAGE 4 — PASSPORT (Required)
+    PAGE 3 — PASSPORT (Required)
 ════════════════════════════════════ --}}
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
-            <div class="pg-label">Page 4 — Passport / Travel Document <span class="req-badge">REQUIRED</span></div>
+            <div class="pg-label">Page 3 — Passport / Travel Document <span class="req-badge">REQUIRED</span></div>
             <div class="pg-sublabel">Attach a clear photo or scanned copy of the data page of your Passport</div>
         </div>
  
@@ -722,7 +724,7 @@
         </button>
         <div class="attach-note">* This attachment is required to submit the form</div>
     </div>
-    <div class="pg-num">18</div>
+    <div class="pg-num">17</div>
 </div>
 {{-- END PAGE 4 --}}
  
