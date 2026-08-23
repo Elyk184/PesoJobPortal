@@ -79,6 +79,8 @@ Route::middleware(['auth', 'role:ofw'])->prefix('ofw')->name('ofw.')->group(func
     Route::post('/rfa-download', [OfwController::class, 'downloadRfa'])->name('rfa.download');
     Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
     Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
+    Route::get('/dmw-rfa', [OfwController::class, 'dmwBuilder'])->name('dmw-rfa.show');
+    Route::post('/dmw-rfa/download', [OfwController::class, 'downloadDmw'])->name('dmw-rfa.download');
     Route::get('/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('dmw-builder');
     Route::post('/dmw-download', [OfwController::class, 'downloadDmw'])->name('dmw-download');
 });

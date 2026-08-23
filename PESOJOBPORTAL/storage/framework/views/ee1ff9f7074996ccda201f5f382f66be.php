@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Request for Assistance Form'); ?>
 
 <?php $__env->startSection('dashboard-mobile-brand'); ?>

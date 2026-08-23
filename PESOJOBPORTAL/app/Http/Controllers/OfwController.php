@@ -70,7 +70,7 @@ class OfwController extends Controller
 
     public function dmwBuilder(): View
     {
-        return view('ofw.dmw-simple');
+        return view('ofw.dmwbuilder');
     }
 
     public function rfaForm(): View
@@ -140,6 +140,80 @@ class OfwController extends Controller
 
     public function downloadDmw(Request $request)
     {
-        return back()->with('error', 'OFW DMW download is not configured yet.');
+        $validated = $request->validate([
+            'mode' => ['nullable', 'array'],
+            'mode.*' => ['string', 'in:online,walkin,referral'],
+            'referral_by' => ['nullable', 'string', 'max:255'],
+            'ofw_lastname' => ['nullable', 'string', 'max:255'],
+            'ofw_firstname' => ['nullable', 'string', 'max:255'],
+            'ofw_middlename' => ['nullable', 'string', 'max:255'],
+            'ofw_birthdate' => ['nullable', 'date'],
+            'ofw_sex' => ['nullable', 'string', 'in:male,female'],
+            'civil_status' => ['nullable', 'array'],
+            'civil_status.*' => ['string', 'in:single,married,widow,separated,soloparent'],
+            'ofw_passport' => ['nullable', 'string', 'max:255'],
+            'ofw_address_abroad' => ['nullable', 'string', 'max:1000'],
+            'ofw_address_ph' => ['nullable', 'string', 'max:1000'],
+            'ofw_contact' => ['nullable', 'string', 'max:255'],
+            'ofw_email' => ['nullable', 'string', 'max:255'],
+            'fam_lastname' => ['nullable', 'string', 'max:255'],
+            'fam_firstname' => ['nullable', 'string', 'max:255'],
+            'fam_middlename' => ['nullable', 'string', 'max:255'],
+            'fam_birthdate' => ['nullable', 'date'],
+            'relationship' => ['nullable', 'array'],
+            'relationship.*' => ['string', 'in:spouse,child,sibling,others'],
+            'relationship_others' => ['nullable', 'string', 'max:255'],
+            'fam_id' => ['nullable', 'string', 'max:255'],
+            'fam_address' => ['nullable', 'string', 'max:1000'],
+            'fam_contact' => ['nullable', 'string', 'max:255'],
+            'fam_email' => ['nullable', 'string', 'max:255'],
+            'assistance' => ['nullable', 'array'],
+            'assistance.*' => ['string', 'in:legal,medical,repatriation,rescue,welfare,compassionate,shipment,food,transportation,shelter,others'],
+            'assistance_others' => ['nullable', 'string', 'max:255'],
+            'narrative' => ['nullable', 'string', 'max:10000'],
+            'has_bank' => ['nullable', 'boolean'],
+            'bank_account_no' => ['nullable', 'string', 'max:255'],
+            'bank_name' => ['nullable', 'string', 'max:255'],
+            'bank_branch' => ['nullable', 'string', 'max:255'],
+            'bank_account_name' => ['nullable', 'string', 'max:255'],
+            'contract' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            'passport' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+        ]);
+
+        $validated['mode'] = $request->input('mode', []);
+        $validated['civil_status'] = $request->input('civil_status', []);
+        $validated['relationship'] = $request->input('relationship', []);
+        $validated['assistance'] = $request->input('assistance', []);
+        $validated['contract_image'] = $this->imageDataUri($request->file('contract'));
+        $validated['passport_image'] = $this->imageDataUri($request->file('passport'));
+        $validated['owwa_logo'] = $this->publicImageDataUri('images/owwa.png');
+        $validated['bagong_logo'] = $this->publicImageDataUri('images/Logo-Bagong-Pilipinas.png');
+        $validated['generated_at'] = now('Asia/Manila');
+
+        return Pdf::loadView('ofw.dmw-pdf', $validated)
+            ->setPaper('a4', 'portrait')
+            ->download('dmw-request-for-assistance.pdf');
+    }
+
+    private function imageDataUri(?\Illuminate\Http\UploadedFile $file): ?string
+    {
+        if (!$file) {
+            return null;
+        }
+
+        return 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->getContent());
+    }
+
+    private function publicImageDataUri(string $relativePath): ?string
+    {
+        $path = public_path($relativePath);
+
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $mime = mime_content_type($path) ?: 'image/png';
+
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
     }
 }

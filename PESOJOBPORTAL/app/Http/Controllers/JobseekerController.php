@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\CompanyProfile;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
+use App\Models\RecommendedApplicant;
 use App\Models\JobseekerAddress;
 use App\Models\JobseekerDisability;
 use App\Models\JobseekerEducation;
@@ -18,7 +19,6 @@ use App\Models\JobseekerPersonalInformation;
 use App\Models\JobseekerSkill;
 use App\Models\JobseekerSkillsMeta;
 use App\Models\JobseekerTraining;
-use App\Models\RecommendedApplicant;
 use App\Models\SavedJob;
 use App\Models\PesoClearance;
 use App\Models\PortalNotification;
@@ -30,6 +30,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -406,33 +407,51 @@ class JobseekerController extends Controller
         $user = $request->user();
         $profile = $user?->profile;
         $recommendations = $this->buildProfileBasedRecommendations($profile);
-        $userId = (int) $user->id;
-        $adminRecommendations = \App\Models\RecommendedApplicant::query()
-            ->where('jobseeker_id', $userId)
-            ->where('recommendation_type', 'admin_to_jobseeker')
-            ->with('job')
-            ->latest('id')
-            ->get()
-            ->map(function (\App\Models\RecommendedApplicant $rec) use ($userId) {
-                $job = $rec->job;
-                $alreadyApplied = $job
-                    ? JobApplication::query()
-                        ->where('user_id', $userId)
-                        ->where('peso_job_id', $job->id)
-                        ->exists()
-                    : false;
 
-                return [
-                    'title'          => $job ? "Job Recommendation: {$job->title}" : 'Job Recommendation',
-                    'job_title'      => $job?->title ?? '',
-                    'message'        => $rec->recommendation_reason ?? '',
-                    'created_at'     => $rec->created_at,
-                    'job'            => $job,
-                    'already_applied'=> $alreadyApplied,
-                    'status'         => $rec->status,
-                ];
-            })
-            ->values();
+        $adminRecommendations = collect();
+
+        if ($user) {
+            try {
+                $recs = RecommendedApplicant::query()
+                    ->where('jobseeker_id', $user->id)
+                    ->where('recommendation_type', 'admin_to_jobseeker')
+                    ->with('job')
+                    ->latest('id')
+                    ->get();
+
+                Log::info('JobseekerController: found recommended_applicants', [
+                    'user_id' => $user->id,
+                    'count' => $recs->count(),
+                    'sample' => $recs->take(3)->map(fn($r) => ['id' => $r->id, 'peso_job_id' => $r->peso_job_id])->values(),
+                ]);
+
+                $adminRecommendations = $recs->map(function (RecommendedApplicant $rec) use ($user) {
+                    $job = $rec->job ?? null;
+                    $alreadyApplied = $job ? JobApplication::query()
+                        ->where('user_id', $user->id)
+                        ->where('peso_job_id', $job->id)
+                        ->exists() : false;
+
+                    return [
+                        'job' => $job,
+                        'job_title' => $job?->title ?? $rec->recommendation_reason ?? 'Recommended Job',
+                        'title' => 'Job Recommendation: ' . ($job?->title ?? ''),
+                        'message' => $rec->recommendation_reason ?? '',
+                        'created_at' => $rec->created_at,
+                        'already_applied' => $alreadyApplied,
+                    ];
+                })->values();
+            } catch (\Throwable $e) {
+                Log::error('JobseekerController: failed to build adminRecommendations', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'user_id' => $user->id,
+                ]);
+
+                // Fallback to empty collection so the view still renders
+                $adminRecommendations = collect();
+            }
+        }
         $profileHasSkills = $this->hasSkillsDetails($profile);
         $activeJobsCount = PesoJob::query()
             ->where('status', 'active')
