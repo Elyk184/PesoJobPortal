@@ -88,7 +88,7 @@
 
             <div class="dashboard-nav-section">
                 <div class="dashboard-nav-label">Assistance</div>
-                <a href="{{ route('ofw.owwa-request') }}" class="dashboard-nav-link {{ request()->routeIs('ofw.owwa-request') || request()->routeIs('ofw.rfa.form') ? 'is-active' : '' }}">
+                <a href="{{ route('ofw.rfa.form') }}" class="dashboard-nav-link {{ request()->routeIs('ofw.owwa-request') || request()->routeIs('ofw.rfa.form') ? 'is-active' : '' }}">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>OWWA RFA</span>
                 </a>

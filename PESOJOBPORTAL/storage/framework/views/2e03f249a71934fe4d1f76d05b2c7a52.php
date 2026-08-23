@@ -89,7 +89,7 @@
 
             <div class="dashboard-nav-section">
                 <div class="dashboard-nav-label">Assistance</div>
-                <a href="<?php echo e(route('ofw.owwa-request')); ?>" class="dashboard-nav-link <?php echo e(request()->routeIs('ofw.owwa-request') || request()->routeIs('ofw.rfa.form') ? 'is-active' : ''); ?>">
+                <a href="<?php echo e(route('ofw.rfa.form')); ?>" class="dashboard-nav-link <?php echo e(request()->routeIs('ofw.owwa-request') || request()->routeIs('ofw.rfa.form') ? 'is-active' : ''); ?>">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>OWWA RFA</span>
                 </a>

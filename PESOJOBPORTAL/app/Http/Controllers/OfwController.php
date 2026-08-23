@@ -45,9 +45,9 @@ class OfwController extends Controller
         return view('ofw.dashboard', compact('ofwUser', 'profileSummary', 'requestStats', 'submittedRequests'));
     }
 
-    public function owwaRequest(): View
+    public function owwaRequest()
     {
-        return view('ofw.owwa-request');
+        return redirect()->route('ofw.rfa.form');
     }
 
     public function acceptedRequests(): View

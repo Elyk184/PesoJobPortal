@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger px-3 shadow-sm">
+                    <a href="{{ route('ofw.rfa.form') }}" class="btn btn-danger px-3 shadow-sm">
                         <i class="bi bi-file-earmark-plus me-2"></i>Start OWWA RFA
                     </a>
                     @if(optional(auth()->user())->role === 'ofw')
@@ -118,7 +118,7 @@
                     <p class="text-muted mb-3">
                         Start a new OWWA assistance request using the official RFA form.
                     </p>
-                    <a href="{{ route('ofw.owwa-request') }}" class="btn btn-danger w-100">
+                    <a href="{{ route('ofw.rfa.form') }}" class="btn btn-danger w-100">
                         <i class="bi bi-arrow-right me-2"></i>Open Page
                     </a>
                 </div>
