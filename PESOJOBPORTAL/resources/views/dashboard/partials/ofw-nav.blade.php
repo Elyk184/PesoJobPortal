@@ -5,6 +5,18 @@
     </a>
     <a href="{{ route('ofw.dmw-builder') }}"
        class="btn btn-sm {{ request()->routeIs('ofw.dmw-builder') ? 'btn-danger' : 'btn-outline-danger' }}">
-        <i class="bi bi-file-earmark-text me-1"></i>DMW Builder
+        <i class="bi bi-journal-text me-1"></i>DMW RFA
+    </a>
+    <a href="{{ route('ofw.rfa.form') }}"
+       class="btn btn-sm {{ request()->routeIs('ofw.rfa.form') || request()->routeIs('ofw.owwa-request') ? 'btn-danger' : 'btn-outline-danger' }}">
+        <i class="bi bi-file-earmark-text me-1"></i>OWWA RFA
+    </a>
+    <a href="{{ route('ofw.accepted-requests') }}"
+       class="btn btn-sm {{ request()->routeIs('ofw.accepted-requests') ? 'btn-danger' : 'btn-outline-danger' }}">
+        <i class="bi bi-check2-circle me-1"></i>Accepted Requests
+    </a>
+    <a href="{{ route('ofw.submitted-requests') }}"
+       class="btn btn-sm {{ request()->routeIs('ofw.submitted-requests') ? 'btn-danger' : 'btn-outline-danger' }}">
+        <i class="bi bi-list-check me-1"></i>Submitted Requests
     </a>
 </div>

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
 use App\Models\IssuedClearance;
+use App\Models\OfwFormSubmission;
 use App\Models\PesoClearance;
 use App\Models\JobseekerAddress;
 use App\Models\JobseekerPersonalInformation;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -1049,6 +1051,57 @@ class AdminController extends Controller
             ]);
 
         return back()->with('success', 'Document has been rejected.');
+    }
+
+    public function ofwSubmissions(Request $request): View
+    {
+        $filter = $request->query('filter', 'all');
+
+        $submissions = OfwFormSubmission::query()
+            ->with('user')
+            ->when(in_array($filter, ['rfa', 'dmw'], true), fn ($query) => $query->where('form_type', $filter))
+            ->when(in_array($filter, ['submitted', 'accepted'], true), fn ($query) => $query->where('status', $filter))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        $ofwStats = [
+            'all' => OfwFormSubmission::count(),
+            'rfa' => OfwFormSubmission::where('form_type', 'rfa')->count(),
+            'dmw' => OfwFormSubmission::where('form_type', 'dmw')->count(),
+            'submitted' => OfwFormSubmission::where('status', 'submitted')->count(),
+            'accepted' => OfwFormSubmission::where('status', 'accepted')->count(),
+        ];
+
+        return view('admin.ofw-submissions', compact('submissions', 'filter', 'ofwStats'));
+    }
+
+    public function downloadOfwSubmission(OfwFormSubmission $submission): StreamedResponse
+    {
+        abort_unless(Storage::exists($submission->pdf_path), 404);
+
+        return Storage::download($submission->pdf_path, $submission->pdf_filename);
+    }
+
+    public function acceptOfwSubmission(OfwFormSubmission $submission): RedirectResponse
+    {
+        $submission->update([
+            'status' => 'accepted',
+            'accepted_at' => now(),
+        ]);
+
+        return back()->with('success', 'OFW request has been accepted.');
+    }
+
+    public function deleteOfwSubmission(OfwFormSubmission $submission): RedirectResponse
+    {
+        if (Storage::exists($submission->pdf_path)) {
+            Storage::delete($submission->pdf_path);
+        }
+
+        $submission->delete();
+
+        return back()->with('success', 'OFW submission has been deleted.');
     }
 
     // Admin Profile

@@ -94,7 +94,7 @@
                 </a>
                 <a href="{{ route('ofw.dmw-builder') }}" class="dashboard-nav-link {{ request()->routeIs('ofw.dmw-builder') ? 'is-active' : '' }}">
                     <i class="bi bi-journal-text"></i>
-                    <span>DMW Form</span>
+                    <span>DMW RFA</span>
                 </a>
                 <a href="{{ route('ofw.accepted-requests') }}" class="dashboard-nav-link {{ request()->routeIs('ofw.accepted-requests') ? 'is-active' : '' }}">
                     <i class="bi bi-info-circle"></i>

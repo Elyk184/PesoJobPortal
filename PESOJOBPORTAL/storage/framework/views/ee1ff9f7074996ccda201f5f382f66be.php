@@ -352,11 +352,12 @@
         </div>
 
         <div class="rfa-actions">
-            <button type="submit" class="rfa-btn-submit">Download PDF</button>
+            <button type="submit" class="rfa-btn-submit">Submit to Admin</button>
         </div>
     </form>
 
 </div>
 </div>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/ofw/rfa-form.blade.php ENDPATH**/ ?>

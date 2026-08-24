@@ -51,6 +51,15 @@
                 <span>LRA/SRA Approvals</span>
             </a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="{{ route('admin.ofw-submissions') }}" class="sidebar-menu-link {{ request()->routeIs('admin.ofw-submissions*') ? 'active' : '' }}">
+                <i class="bi bi-file-earmark-pdf"></i>
+                <span>OFW Requests</span>
+                @if(($adminSidebarCounts['submittedOfwRequests'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#10b981;">{{ $adminSidebarCounts['submittedOfwRequests'] }}</span>
+                @endif
+            </a>
+        </li>
    
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>

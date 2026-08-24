@@ -1,19 +1,18 @@
-@extends('layouts.dashboard')
  
-@section('title', 'Request for Assistance (RFA) Form - DMW')
+<?php $__env->startSection('title', 'Request for Assistance (RFA) Form - DMW'); ?>
  
-@section('dashboard-mobile-brand')
+<?php $__env->startSection('dashboard-mobile-brand'); ?>
     <div class="dashboard-mobile-brand">
-        <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+        <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PESO Logo">
         <span>OFW Portal</span>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
  
-@section('dashboard-sidebar')
-    @include('dashboard.partials.ofw-nav')
-@endsection
+<?php $__env->startSection('dashboard-sidebar'); ?>
+    <?php echo $__env->make('dashboard.partials.ofw-nav', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopSection(); ?>
  
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
  
@@ -393,56 +392,55 @@
         .dmw-dl-bar { display: none !important; }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
  
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="dmw-shell">
  
-{{-- ═══════════ FORM wraps all pages so one POST submits everything ═══════════ --}}
+
 <form method="POST"
-      action="{{ route('ofw.dmw-rfa.download') }}"
+      action="<?php echo e(route('ofw.dmw-rfa.download')); ?>"
       enctype="multipart/form-data"
       id="dmwForm">
-@csrf
+<?php echo csrf_field(); ?>
  
-@if ($errors->any())
+<?php if($errors->any()): ?>
 <div style="width:100%;max-width:780px;margin:0 auto 10px;background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;padding:10px 14px;font-size:11px;border-radius:4px;">
-    {{ $errors->first() }}
+    <?php echo e($errors->first()); ?>
+
 </div>
-@endif
+<?php endif; ?>
  
-{{-- ════════════════════════════════════
-     PAGE 1
-════════════════════════════════════ --}}
+
 <div class="dmw-page">
  
-    {{-- HEADER --}}
+    
     <div class="dmw-header">
-        <img src="{{ asset('images/owwa.png') }}" class="dmw-header-logo" alt="OWWA">
+        <img src="<?php echo e(asset('images/owwa.png')); ?>" class="dmw-header-logo" alt="OWWA">
         <div class="dmw-header-center">
             <div class="rep">Republic of the Philippines</div>
             <div class="dept">Department of Migrant Workers</div>
             <div class="addr">Blas F. Ople Building, Ortigas Avenue cor. EDSA, Mandaluyong City 1550</div>
             <div class="cont">Website: www.dmw.gov.ph &nbsp;|&nbsp; Email: feedback@dmw.gov.ph &nbsp;|&nbsp; Hotlines: (632) 952-8072 / 955-9007 / (02) 8722-3606</div>
         </div>
-        <img src="{{ asset('images/Logo-Bagong-Pilipinas.png') }}" class="dmw-header-bagong" alt="Bagong Pilipinas">
+        <img src="<?php echo e(asset('images/Logo-Bagong-Pilipinas.png')); ?>" class="dmw-header-bagong" alt="Bagong Pilipinas">
     </div>
  
     <hr class="dmw-divider">
  
     <div class="dmw-form-title">REQUEST FOR ASSISTANCE (RFA) FORM</div>
  
-    {{-- Mode --}}
+    
     <div class="dmw-mode-row">
         <label><input type="checkbox" name="mode[]" value="online"> Online</label>
         <label><input type="checkbox" name="mode[]" value="walkin"> Walk-in</label>
         <label>
             <input type="checkbox" name="mode[]" value="referral"> Referral by:
-            <input type="text" name="referral_by" value="{{ old('referral_by') }}">
+            <input type="text" name="referral_by" value="<?php echo e(old('referral_by')); ?>">
         </label>
     </div>
  
-    {{-- ── SECTION A ── --}}
+    
     <div class="dmw-sec">A. &nbsp; IMPORMASYON NG OFW:</div>
  
     <table class="ft">
@@ -451,15 +449,15 @@
             <td>
                 <div class="name-row">
                     <div class="name-col">
-                        <input type="text" name="ofw_lastname" value="{{ old('ofw_lastname') }}">
+                        <input type="text" name="ofw_lastname" value="<?php echo e(old('ofw_lastname')); ?>">
                         <div class="name-col-lbl">Last name</div>
                     </div>
                     <div class="name-col">
-                        <input type="text" name="ofw_firstname" value="{{ old('ofw_firstname') }}">
+                        <input type="text" name="ofw_firstname" value="<?php echo e(old('ofw_firstname')); ?>">
                         <div class="name-col-lbl">First Name</div>
                     </div>
                     <div class="name-col">
-                        <input type="text" name="ofw_middlename" value="{{ old('ofw_middlename') }}">
+                        <input type="text" name="ofw_middlename" value="<?php echo e(old('ofw_middlename')); ?>">
                         <div class="name-col-lbl">Middle Name</div>
                     </div>
                 </div>
@@ -467,14 +465,14 @@
         </tr>
         <tr>
             <td class="lbl">Birthdate:</td>
-            <td><input type="date" name="ofw_birthdate" value="{{ old('ofw_birthdate') }}"></td>
+            <td><input type="date" name="ofw_birthdate" value="<?php echo e(old('ofw_birthdate')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Sex (Kasarian):</td>
             <td>
                 <div class="sex-row">
-                    <label><input type="radio" name="ofw_sex" value="male" {{ old('ofw_sex')==='male'?'checked':'' }}> &nbsp;Male/Lalaki</label>
-                    <label><input type="radio" name="ofw_sex" value="female" {{ old('ofw_sex')==='female'?'checked':'' }}> &nbsp;Female/Babae</label>
+                    <label><input type="radio" name="ofw_sex" value="male" <?php echo e(old('ofw_sex')==='male'?'checked':''); ?>> &nbsp;Male/Lalaki</label>
+                    <label><input type="radio" name="ofw_sex" value="female" <?php echo e(old('ofw_sex')==='female'?'checked':''); ?>> &nbsp;Female/Babae</label>
                 </div>
             </td>
         </tr>
@@ -482,37 +480,37 @@
             <td class="lbl">Civil Status:</td>
             <td style="padding:5px 7px;">
                 <div class="cb-wrap">
-                    <label><input type="checkbox" name="civil_status[]" value="single" class="cscb" {{ in_array('single', old('civil_status',[]))? 'checked':'' }}> Single / Walang Asawa</label>
-                    <label><input type="checkbox" name="civil_status[]" value="married" class="cscb" {{ in_array('married', old('civil_status',[]))? 'checked':'' }}> Married / May Asawa</label>
-                    <label><input type="checkbox" name="civil_status[]" value="widow" class="cscb" {{ in_array('widow', old('civil_status',[]))? 'checked':'' }}> Widow/Widower (Balo)</label>
-                    <label><input type="checkbox" name="civil_status[]" value="separated" class="cscb" {{ in_array('separated', old('civil_status',[]))? 'checked':'' }}> Separated / Hiwalay</label>
-                    <label><input type="checkbox" name="civil_status[]" value="soloparent" class="cscb" {{ in_array('soloparent', old('civil_status',[]))? 'checked':'' }}> Solo Parent</label>
+                    <label><input type="checkbox" name="civil_status[]" value="single" class="cscb" <?php echo e(in_array('single', old('civil_status',[]))? 'checked':''); ?>> Single / Walang Asawa</label>
+                    <label><input type="checkbox" name="civil_status[]" value="married" class="cscb" <?php echo e(in_array('married', old('civil_status',[]))? 'checked':''); ?>> Married / May Asawa</label>
+                    <label><input type="checkbox" name="civil_status[]" value="widow" class="cscb" <?php echo e(in_array('widow', old('civil_status',[]))? 'checked':''); ?>> Widow/Widower (Balo)</label>
+                    <label><input type="checkbox" name="civil_status[]" value="separated" class="cscb" <?php echo e(in_array('separated', old('civil_status',[]))? 'checked':''); ?>> Separated / Hiwalay</label>
+                    <label><input type="checkbox" name="civil_status[]" value="soloparent" class="cscb" <?php echo e(in_array('soloparent', old('civil_status',[]))? 'checked':''); ?>> Solo Parent</label>
                 </div>
             </td>
         </tr>
         <tr>
             <td class="lbl">Passport / Travel Document No:</td>
-            <td><input type="text" name="ofw_passport" value="{{ old('ofw_passport') }}"></td>
+            <td><input type="text" name="ofw_passport" value="<?php echo e(old('ofw_passport')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Address sa abroad:</td>
-            <td><input type="text" name="ofw_address_abroad" value="{{ old('ofw_address_abroad') }}"></td>
+            <td><input type="text" name="ofw_address_abroad" value="<?php echo e(old('ofw_address_abroad')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Address sa Pilipinas</td>
-            <td><input type="text" name="ofw_address_ph" value="{{ old('ofw_address_ph') }}"></td>
+            <td><input type="text" name="ofw_address_ph" value="<?php echo e(old('ofw_address_ph')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Contact No/s. Mobile/Phone No.:</td>
-            <td><input type="text" name="ofw_contact" value="{{ old('ofw_contact') }}"></td>
+            <td><input type="text" name="ofw_contact" value="<?php echo e(old('ofw_contact')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Email / Facebook Account:</td>
-            <td><input type="text" name="ofw_email" value="{{ old('ofw_email') }}"></td>
+            <td><input type="text" name="ofw_email" value="<?php echo e(old('ofw_email')); ?>"></td>
         </tr>
     </table>
  
-    {{-- ── SECTION B ── --}}
+    
     <div class="dmw-sec" style="margin-top:12px;">B. &nbsp; IMPORMASYON NG KAMAG-ANAK NG OFW NA HUMIHINGI NG TULONG:</div>
  
     <table class="ft">
@@ -521,15 +519,15 @@
             <td>
                 <div class="name-row">
                     <div class="name-col">
-                        <input type="text" name="fam_lastname" value="{{ old('fam_lastname') }}">
+                        <input type="text" name="fam_lastname" value="<?php echo e(old('fam_lastname')); ?>">
                         <div class="name-col-lbl">Last name</div>
                     </div>
                     <div class="name-col">
-                        <input type="text" name="fam_firstname" value="{{ old('fam_firstname') }}">
+                        <input type="text" name="fam_firstname" value="<?php echo e(old('fam_firstname')); ?>">
                         <div class="name-col-lbl">First Name</div>
                     </div>
                     <div class="name-col">
-                        <input type="text" name="fam_middlename" value="{{ old('fam_middlename') }}">
+                        <input type="text" name="fam_middlename" value="<?php echo e(old('fam_middlename')); ?>">
                         <div class="name-col-lbl">Middle Name</div>
                     </div>
                 </div>
@@ -537,18 +535,18 @@
         </tr>
         <tr>
             <td class="lbl">Birthdate:</td>
-            <td><input type="date" name="fam_birthdate" value="{{ old('fam_birthdate') }}"></td>
+            <td><input type="date" name="fam_birthdate" value="<?php echo e(old('fam_birthdate')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Relationship to OFW:</td>
             <td style="padding:5px 7px;">
                 <div class="cb-wrap">
-                    <label><input type="checkbox" name="relationship[]" value="spouse" {{ in_array('spouse', old('relationship',[]))? 'checked':'' }}> Spouse / Asawa</label>
-                    <label><input type="checkbox" name="relationship[]" value="child" {{ in_array('child', old('relationship',[]))? 'checked':'' }}> Child / Anak</label>
-                    <label><input type="checkbox" name="relationship[]" value="sibling" {{ in_array('sibling', old('relationship',[]))? 'checked':'' }}> Sibling / Kapatid</label>
+                    <label><input type="checkbox" name="relationship[]" value="spouse" <?php echo e(in_array('spouse', old('relationship',[]))? 'checked':''); ?>> Spouse / Asawa</label>
+                    <label><input type="checkbox" name="relationship[]" value="child" <?php echo e(in_array('child', old('relationship',[]))? 'checked':''); ?>> Child / Anak</label>
+                    <label><input type="checkbox" name="relationship[]" value="sibling" <?php echo e(in_array('sibling', old('relationship',[]))? 'checked':''); ?>> Sibling / Kapatid</label>
                     <label>
-                        <input type="checkbox" name="relationship[]" value="others" {{ in_array('others', old('relationship',[]))? 'checked':'' }}>
-                        Others <input type="text" name="relationship_others" value="{{ old('relationship_others') }}"
+                        <input type="checkbox" name="relationship[]" value="others" <?php echo e(in_array('others', old('relationship',[]))? 'checked':''); ?>>
+                        Others <input type="text" name="relationship_others" value="<?php echo e(old('relationship_others')); ?>"
                                style="border:none;border-bottom:1px solid #000;width:100px;outline:none;font-size:9pt;background:transparent;font-family:Arial,sans-serif;">
                     </label>
                 </div>
@@ -556,63 +554,61 @@
         </tr>
         <tr>
             <td class="lbl">ID No:</td>
-            <td><input type="text" name="fam_id" value="{{ old('fam_id') }}"></td>
+            <td><input type="text" name="fam_id" value="<?php echo e(old('fam_id')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Address sa Pilipinas</td>
-            <td><input type="text" name="fam_address" value="{{ old('fam_address') }}"></td>
+            <td><input type="text" name="fam_address" value="<?php echo e(old('fam_address')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Mobile/Phone No.:</td>
-            <td><input type="text" name="fam_contact" value="{{ old('fam_contact') }}"></td>
+            <td><input type="text" name="fam_contact" value="<?php echo e(old('fam_contact')); ?>"></td>
         </tr>
         <tr>
             <td class="lbl">Email / Facebook Account:</td>
-            <td><input type="text" name="fam_email" value="{{ old('fam_email') }}"></td>
+            <td><input type="text" name="fam_email" value="<?php echo e(old('fam_email')); ?>"></td>
         </tr>
     </table>
  
     <div class="pg-num">1</div>
 </div>
-{{-- END PAGE 1 --}}
+
  
  
-{{-- ════════════════════════════════════
-     PAGE 2
-════════════════════════════════════ --}}
+
 <div class="dmw-page">
  
-    {{-- ── SECTION C ── --}}
+    
     <div class="dmw-sec">C. &nbsp; URI NG TULONG NA HINIHINGI (Please check):</div>
  
     <div class="asst-outer">
         <div class="asst-grid">
-            <label><input type="checkbox" name="assistance[]" value="legal" {{ in_array('legal', old('assistance',[]))? 'checked':'' }}> LEGAL ASSISTANCE</label>
-            <label><input type="checkbox" name="assistance[]" value="medical" {{ in_array('medical', old('assistance',[]))? 'checked':'' }}> MEDICAL ASSISTANCE</label>
-            <label><input type="checkbox" name="assistance[]" value="repatriation" {{ in_array('repatriation', old('assistance',[]))? 'checked':'' }}> REPATRIATION</label>
-            <label><input type="checkbox" name="assistance[]" value="rescue" {{ in_array('rescue', old('assistance',[]))? 'checked':'' }}> RESCUE / EVACUATION</label>
-            <label style="grid-column:span 2;"><input type="checkbox" name="assistance[]" value="welfare" {{ in_array('welfare', old('assistance',[]))? 'checked':'' }}> WELFARE ASSISTANCE FOR SENIOR OFW RETURNEES</label>
-            <label><input type="checkbox" name="assistance[]" value="compassionate" {{ in_array('compassionate', old('assistance',[]))? 'checked':'' }}> COMPASSIONATE VISIT</label>
-            <label style="grid-column:span 2;"><input type="checkbox" name="assistance[]" value="shipment" {{ in_array('shipment', old('assistance',[]))? 'checked':'' }}> SHIPMENT OF HUMAN REMAINS / CREMAINS</label>
-            <label><input type="checkbox" name="assistance[]" value="food" {{ in_array('food', old('assistance',[]))? 'checked':'' }}> FOOD ASSISTANCE</label>
-            <label><input type="checkbox" name="assistance[]" value="transportation" {{ in_array('transportation', old('assistance',[]))? 'checked':'' }}> TRANSPORTATION ASSISTANCE</label>
-            <label><input type="checkbox" name="assistance[]" value="shelter" {{ in_array('shelter', old('assistance',[]))? 'checked':'' }}> TEMPORARY SHELTER</label>
+            <label><input type="checkbox" name="assistance[]" value="legal" <?php echo e(in_array('legal', old('assistance',[]))? 'checked':''); ?>> LEGAL ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="medical" <?php echo e(in_array('medical', old('assistance',[]))? 'checked':''); ?>> MEDICAL ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="repatriation" <?php echo e(in_array('repatriation', old('assistance',[]))? 'checked':''); ?>> REPATRIATION</label>
+            <label><input type="checkbox" name="assistance[]" value="rescue" <?php echo e(in_array('rescue', old('assistance',[]))? 'checked':''); ?>> RESCUE / EVACUATION</label>
+            <label style="grid-column:span 2;"><input type="checkbox" name="assistance[]" value="welfare" <?php echo e(in_array('welfare', old('assistance',[]))? 'checked':''); ?>> WELFARE ASSISTANCE FOR SENIOR OFW RETURNEES</label>
+            <label><input type="checkbox" name="assistance[]" value="compassionate" <?php echo e(in_array('compassionate', old('assistance',[]))? 'checked':''); ?>> COMPASSIONATE VISIT</label>
+            <label style="grid-column:span 2;"><input type="checkbox" name="assistance[]" value="shipment" <?php echo e(in_array('shipment', old('assistance',[]))? 'checked':''); ?>> SHIPMENT OF HUMAN REMAINS / CREMAINS</label>
+            <label><input type="checkbox" name="assistance[]" value="food" <?php echo e(in_array('food', old('assistance',[]))? 'checked':''); ?>> FOOD ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="transportation" <?php echo e(in_array('transportation', old('assistance',[]))? 'checked':''); ?>> TRANSPORTATION ASSISTANCE</label>
+            <label><input type="checkbox" name="assistance[]" value="shelter" <?php echo e(in_array('shelter', old('assistance',[]))? 'checked':''); ?>> TEMPORARY SHELTER</label>
         </div>
         <div class="asst-others">
-            <input type="checkbox" name="assistance[]" value="others" id="aoth" {{ in_array('others', old('assistance',[]))? 'checked':'' }}>
+            <input type="checkbox" name="assistance[]" value="others" id="aoth" <?php echo e(in_array('others', old('assistance',[]))? 'checked':''); ?>>
             <label for="aoth">OTHERS</label>
-            <input type="text" name="assistance_others" value="{{ old('assistance_others') }}">
+            <input type="text" name="assistance_others" value="<?php echo e(old('assistance_others')); ?>">
         </div>
     </div>
  
-    {{-- ── SECTION D ── --}}
+    
     <div class="dmw-sec" style="margin-top:8px;">D. &nbsp; MAIKLING SALAYSAY TUNGKOL SA HINIHINGING TULONG:</div>
  
     <div class="narrative-wrap">
-        <textarea name="narrative" placeholder="Isulat ang maikling salaysay…">{{ old('narrative') }}</textarea>
+        <textarea name="narrative" placeholder="Isulat ang maikling salaysay…"><?php echo e(old('narrative')); ?></textarea>
     </div>
  
-    {{-- ── SECTION E ── --}}
+    
     <div class="dmw-sec" style="margin-top:8px;">E. &nbsp; ACCOUNT KUNG SAAN IDEDEPOSITO ANG PINANSYAL NA TULONG:</div>
  
     <table class="acct-table">
@@ -626,25 +622,25 @@
             </td>
             <td class="acct-bank">
                 <div class="bfield">
-                    <input type="checkbox" name="has_bank" value="1" {{ old('has_bank')? 'checked':'' }}>
+                    <input type="checkbox" name="has_bank" value="1" <?php echo e(old('has_bank')? 'checked':''); ?>>
                     <span style="white-space:nowrap;">Bank Account No:</span>
-                    <input type="text" name="bank_account_no" value="{{ old('bank_account_no') }}">
+                    <input type="text" name="bank_account_no" value="<?php echo e(old('bank_account_no')); ?>">
                 </div>
                 <div class="bfield">
                     <span>Bank:</span>
-                    <input type="text" name="bank_name" value="{{ old('bank_name') }}" style="max-width:80px;">
+                    <input type="text" name="bank_name" value="<?php echo e(old('bank_name')); ?>" style="max-width:80px;">
                     <span>Branch:</span>
-                    <input type="text" name="bank_branch" value="{{ old('bank_branch') }}" style="max-width:72px;">
+                    <input type="text" name="bank_branch" value="<?php echo e(old('bank_branch')); ?>" style="max-width:72px;">
                 </div>
                 <div class="bfield">
                     <span style="white-space:nowrap;">Account Name:</span>
-                    <input type="text" name="bank_account_name" value="{{ old('bank_account_name') }}">
+                    <input type="text" name="bank_account_name" value="<?php echo e(old('bank_account_name')); ?>">
                 </div>
             </td>
         </tr>
     </table>
  
-    {{-- CERTIFICATION --}}
+    
     <div class="cert-title">CERTIFICATION</div>
  
     <div class="cert-box">
@@ -664,12 +660,10 @@
  
     <div class="pg-num">2</div>
 </div>
-{{-- END PAGE 2 --}}
+
  
  
-{{-- ════════════════════════════════════
-    PAGE 2 — CONTRACT (Required)
-════════════════════════════════════ --}}
+
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
@@ -695,12 +689,10 @@
     </div>
     <div class="pg-num">2</div>
 </div>
-{{-- END PAGE 3 --}}
+
  
  
-{{-- ════════════════════════════════════
-    PAGE 3 — PASSPORT (Required)
-════════════════════════════════════ --}}
+
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
@@ -726,9 +718,9 @@
     </div>
     <div class="pg-num">3</div>
 </div>
-{{-- END PAGE 4 --}}
+
  
-{{-- Submit bar --}}
+
 <div class="dmw-dl-bar">
     <button type="submit" class="btn-dl" id="dlBtn">Submit to Admin</button>
     <span id="dlProgress">Submitting PDF, please wait...</span>
@@ -736,10 +728,10 @@
 </div>
  
 </form>
-</div>{{-- end dmw-shell --}}
-@endsection
+</div>
+<?php $__env->stopSection(); ?>
  
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 /* ── Image upload preview ── */
 function previewFile(input, previewId, zoneId, removeBtnId, holderId) {
@@ -795,9 +787,11 @@ document.getElementById('dmwForm').addEventListener('submit', function () {
     prog.style.display = 'inline';
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
  
 
 
 
 
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/ofw/dmwbuilder.blade.php ENDPATH**/ ?>

@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         }
         View::composer([
             'components.admin-wrapper',
+            'components.admin.sidebar',
             'admin.layouts.sidebar',
             'dashboard.admin',
         ], function ($view) {
@@ -82,6 +83,9 @@ class AppServiceProvider extends ServiceProvider
                 ->count(),
             'pendingPesoClearances' => PesoClearance::query()
                 ->where('status', 'pending')
+                ->count(),
+            'submittedOfwRequests' => DB::table('ofw_form_submissions')
+                ->where('status', 'submitted')
                 ->count(),
             'adminUnreadNotifications' => $adminUnreadNotifications,
         ];

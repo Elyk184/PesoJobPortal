@@ -84,26 +84,27 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
 </head>
 <body>
 
-{{-- PAGE 1 --}}
+
 <div class="page">
     <div class="header">
-        <div class="logo-cell">@if(!empty($owwa_logo))<img src="{{ $owwa_logo }}" alt="DMW">@endif</div>
+        <div class="logo-cell"><?php if(!empty($owwa_logo)): ?><img src="<?php echo e($owwa_logo); ?>" alt="DMW"><?php endif; ?></div>
         <div class="header-center">
             <div class="rep">Republic of the Philippines</div>
             <div class="dept">Department of Migrant Workers</div>
             <div class="addr">Blas F. Ople Building, Ortigas Avenue cor. EDSA, Mandaluyong City 1550</div>
             <div class="cont">Website: www.dmw.gov.ph &nbsp;|&nbsp; Email: feedback@dmw.gov.ph &nbsp;|&nbsp; Hotlines: (632) 952-8072 / 955-9007 / (02) 8722-3606</div>
         </div>
-        <div class="logo-cell">@if(!empty($bagong_logo))<img src="{{ $bagong_logo }}" alt="Bagong Pilipinas">@endif</div>
+        <div class="logo-cell"><?php if(!empty($bagong_logo)): ?><img src="<?php echo e($bagong_logo); ?>" alt="Bagong Pilipinas"><?php endif; ?></div>
     </div>
 
     <hr class="divider">
     <div class="form-title">REQUEST FOR ASSISTANCE (RFA) FORM</div>
 
     <div class="mode">
-        [{{ in_array('online',   $mode ?? []) ? '&#10003;' : ' ' }}] Online &nbsp;&nbsp;&nbsp;
-        [{{ in_array('walkin',   $mode ?? []) ? '&#10003;' : ' ' }}] Walk-in &nbsp;&nbsp;&nbsp;
-        [{{ in_array('referral', $mode ?? []) ? '&#10003;' : ' ' }}] Referral by: {{ $referral_by ?? '' }}
+        [<?php echo e(in_array('online',   $mode ?? []) ? '&#10003;' : ' '); ?>] Online &nbsp;&nbsp;&nbsp;
+        [<?php echo e(in_array('walkin',   $mode ?? []) ? '&#10003;' : ' '); ?>] Walk-in &nbsp;&nbsp;&nbsp;
+        [<?php echo e(in_array('referral', $mode ?? []) ? '&#10003;' : ' '); ?>] Referral by: <?php echo e($referral_by ?? ''); ?>
+
     </div>
 
     <div class="sec">A. &nbsp; IMPORMASYON NG OFW:</div>
@@ -112,32 +113,32 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
             <td class="lbl">Pangalan ng OFW :</td>
             <td>
                 <div class="name-row">
-                    <div class="name-col"><div class="name-val">{{ $ofw_lastname ?? '' }}</div><div class="name-lbl">Last name</div></div>
-                    <div class="name-col"><div class="name-val">{{ $ofw_firstname ?? '' }}</div><div class="name-lbl">First Name</div></div>
-                    <div class="name-col"><div class="name-val">{{ $ofw_middlename ?? '' }}</div><div class="name-lbl">Middle Name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($ofw_lastname ?? ''); ?></div><div class="name-lbl">Last name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($ofw_firstname ?? ''); ?></div><div class="name-lbl">First Name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($ofw_middlename ?? ''); ?></div><div class="name-lbl">Middle Name</div></div>
                 </div>
             </td>
         </tr>
-        <tr><td class="lbl">Birthdate:</td><td>{{ $ofw_birthdate ?? '' }}</td></tr>
+        <tr><td class="lbl">Birthdate:</td><td><?php echo e($ofw_birthdate ?? ''); ?></td></tr>
         <tr>
             <td class="lbl">Sex (Kasarian):</td>
-            <td>[{{ ($ofw_sex ?? '') === 'male' ? '&#10003;' : ' ' }}] Male/Lalaki &nbsp;&nbsp;&nbsp; [{{ ($ofw_sex ?? '') === 'female' ? '&#10003;' : ' ' }}] Female/Babae</td>
+            <td>[<?php echo e(($ofw_sex ?? '') === 'male' ? '&#10003;' : ' '); ?>] Male/Lalaki &nbsp;&nbsp;&nbsp; [<?php echo e(($ofw_sex ?? '') === 'female' ? '&#10003;' : ' '); ?>] Female/Babae</td>
         </tr>
         <tr>
             <td class="lbl">Civil Status:</td>
             <td>
-                [{{ in_array('single',     $civil_status ?? []) ? '&#10003;' : ' ' }}] Single / Walang Asawa &nbsp;
-                [{{ in_array('married',    $civil_status ?? []) ? '&#10003;' : ' ' }}] Married / May Asawa &nbsp;
-                [{{ in_array('widow',      $civil_status ?? []) ? '&#10003;' : ' ' }}] Widow/Widower (Balo)<br>
-                [{{ in_array('separated',  $civil_status ?? []) ? '&#10003;' : ' ' }}] Separated / Hiwalay &nbsp;
-                [{{ in_array('soloparent', $civil_status ?? []) ? '&#10003;' : ' ' }}] Solo Parent
+                [<?php echo e(in_array('single',     $civil_status ?? []) ? '&#10003;' : ' '); ?>] Single / Walang Asawa &nbsp;
+                [<?php echo e(in_array('married',    $civil_status ?? []) ? '&#10003;' : ' '); ?>] Married / May Asawa &nbsp;
+                [<?php echo e(in_array('widow',      $civil_status ?? []) ? '&#10003;' : ' '); ?>] Widow/Widower (Balo)<br>
+                [<?php echo e(in_array('separated',  $civil_status ?? []) ? '&#10003;' : ' '); ?>] Separated / Hiwalay &nbsp;
+                [<?php echo e(in_array('soloparent', $civil_status ?? []) ? '&#10003;' : ' '); ?>] Solo Parent
             </td>
         </tr>
-        <tr><td class="lbl">Passport / Travel Document No:</td><td>{{ $ofw_passport ?? '' }}</td></tr>
-        <tr><td class="lbl">Address sa abroad:</td><td>{{ $ofw_address_abroad ?? '' }}</td></tr>
-        <tr><td class="lbl">Address sa Pilipinas</td><td>{{ $ofw_address_ph ?? '' }}</td></tr>
-        <tr><td class="lbl">Contact No/s. Mobile/Phone No.:</td><td>{{ $ofw_contact ?? '' }}</td></tr>
-        <tr><td class="lbl">Email / Facebook Account:</td><td>{{ $ofw_email ?? '' }}</td></tr>
+        <tr><td class="lbl">Passport / Travel Document No:</td><td><?php echo e($ofw_passport ?? ''); ?></td></tr>
+        <tr><td class="lbl">Address sa abroad:</td><td><?php echo e($ofw_address_abroad ?? ''); ?></td></tr>
+        <tr><td class="lbl">Address sa Pilipinas</td><td><?php echo e($ofw_address_ph ?? ''); ?></td></tr>
+        <tr><td class="lbl">Contact No/s. Mobile/Phone No.:</td><td><?php echo e($ofw_contact ?? ''); ?></td></tr>
+        <tr><td class="lbl">Email / Facebook Account:</td><td><?php echo e($ofw_email ?? ''); ?></td></tr>
     </table>
 
     <div class="sec" style="margin-top:10px;">B. &nbsp; IMPORMASYON NG KAMAG-ANAK NG OFW NA HUMIHINGI NG TULONG:</div>
@@ -146,52 +147,54 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
             <td class="lbl">Pangalan :</td>
             <td>
                 <div class="name-row">
-                    <div class="name-col"><div class="name-val">{{ $fam_lastname ?? '' }}</div><div class="name-lbl">Last name</div></div>
-                    <div class="name-col"><div class="name-val">{{ $fam_firstname ?? '' }}</div><div class="name-lbl">First Name</div></div>
-                    <div class="name-col"><div class="name-val">{{ $fam_middlename ?? '' }}</div><div class="name-lbl">Middle Name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($fam_lastname ?? ''); ?></div><div class="name-lbl">Last name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($fam_firstname ?? ''); ?></div><div class="name-lbl">First Name</div></div>
+                    <div class="name-col"><div class="name-val"><?php echo e($fam_middlename ?? ''); ?></div><div class="name-lbl">Middle Name</div></div>
                 </div>
             </td>
         </tr>
-        <tr><td class="lbl">Birthdate:</td><td>{{ $fam_birthdate ?? '' }}</td></tr>
+        <tr><td class="lbl">Birthdate:</td><td><?php echo e($fam_birthdate ?? ''); ?></td></tr>
         <tr>
             <td class="lbl">Relationship to OFW:</td>
             <td>
-                [{{ in_array('spouse',  $relationship ?? []) ? '&#10003;' : ' ' }}] Spouse / Asawa &nbsp;
-                [{{ in_array('child',   $relationship ?? []) ? '&#10003;' : ' ' }}] Child / Anak &nbsp;
-                [{{ in_array('sibling', $relationship ?? []) ? '&#10003;' : ' ' }}] Sibling / Kapatid &nbsp;
-                [{{ in_array('others',  $relationship ?? []) ? '&#10003;' : ' ' }}] Others {{ $relationship_others ?? '' }}
+                [<?php echo e(in_array('spouse',  $relationship ?? []) ? '&#10003;' : ' '); ?>] Spouse / Asawa &nbsp;
+                [<?php echo e(in_array('child',   $relationship ?? []) ? '&#10003;' : ' '); ?>] Child / Anak &nbsp;
+                [<?php echo e(in_array('sibling', $relationship ?? []) ? '&#10003;' : ' '); ?>] Sibling / Kapatid &nbsp;
+                [<?php echo e(in_array('others',  $relationship ?? []) ? '&#10003;' : ' '); ?>] Others <?php echo e($relationship_others ?? ''); ?>
+
             </td>
         </tr>
-        <tr><td class="lbl">ID No:</td><td>{{ $fam_id ?? '' }}</td></tr>
-        <tr><td class="lbl">Address sa Pilipinas</td><td>{{ $fam_address ?? '' }}</td></tr>
-        <tr><td class="lbl">Mobile/Phone No.:</td><td>{{ $fam_contact ?? '' }}</td></tr>
-        <tr><td class="lbl">Email / Facebook Account:</td><td>{{ $fam_email ?? '' }}</td></tr>
+        <tr><td class="lbl">ID No:</td><td><?php echo e($fam_id ?? ''); ?></td></tr>
+        <tr><td class="lbl">Address sa Pilipinas</td><td><?php echo e($fam_address ?? ''); ?></td></tr>
+        <tr><td class="lbl">Mobile/Phone No.:</td><td><?php echo e($fam_contact ?? ''); ?></td></tr>
+        <tr><td class="lbl">Email / Facebook Account:</td><td><?php echo e($fam_email ?? ''); ?></td></tr>
     </table>
 
     <div class="pg-num">1</div>
 </div>
 
-{{-- PAGE 2 --}}
+
 <div class="page">
 
     <div class="sec">C. &nbsp; URI NG TULONG NA HINIHINGI (Please check):</div>
     <div class="asst-outer">
-        [{{ in_array('legal',          $assistance ?? []) ? '&#10003;' : ' ' }}] LEGAL ASSISTANCE &nbsp;&nbsp;
-        [{{ in_array('medical',        $assistance ?? []) ? '&#10003;' : ' ' }}] MEDICAL ASSISTANCE &nbsp;&nbsp;
-        [{{ in_array('repatriation',   $assistance ?? []) ? '&#10003;' : ' ' }}] REPATRIATION<br>
-        [{{ in_array('rescue',         $assistance ?? []) ? '&#10003;' : ' ' }}] RESCUE / EVACUATION &nbsp;&nbsp;
-        [{{ in_array('welfare',        $assistance ?? []) ? '&#10003;' : ' ' }}] WELFARE ASSISTANCE FOR SENIOR OFW RETURNEES<br>
-        [{{ in_array('compassionate',  $assistance ?? []) ? '&#10003;' : ' ' }}] COMPASSIONATE VISIT &nbsp;&nbsp;
-        [{{ in_array('shipment',       $assistance ?? []) ? '&#10003;' : ' ' }}] SHIPMENT OF HUMAN REMAINS / CREMAINS<br>
-        [{{ in_array('food',           $assistance ?? []) ? '&#10003;' : ' ' }}] FOOD ASSISTANCE &nbsp;&nbsp;
-        [{{ in_array('transportation', $assistance ?? []) ? '&#10003;' : ' ' }}] TRANSPORTATION ASSISTANCE &nbsp;&nbsp;
-        [{{ in_array('shelter',        $assistance ?? []) ? '&#10003;' : ' ' }}] TEMPORARY SHELTER<br>
-        [{{ in_array('others',         $assistance ?? []) ? '&#10003;' : ' ' }}] OTHERS: {{ $assistance_others ?? '' }}
+        [<?php echo e(in_array('legal',          $assistance ?? []) ? '&#10003;' : ' '); ?>] LEGAL ASSISTANCE &nbsp;&nbsp;
+        [<?php echo e(in_array('medical',        $assistance ?? []) ? '&#10003;' : ' '); ?>] MEDICAL ASSISTANCE &nbsp;&nbsp;
+        [<?php echo e(in_array('repatriation',   $assistance ?? []) ? '&#10003;' : ' '); ?>] REPATRIATION<br>
+        [<?php echo e(in_array('rescue',         $assistance ?? []) ? '&#10003;' : ' '); ?>] RESCUE / EVACUATION &nbsp;&nbsp;
+        [<?php echo e(in_array('welfare',        $assistance ?? []) ? '&#10003;' : ' '); ?>] WELFARE ASSISTANCE FOR SENIOR OFW RETURNEES<br>
+        [<?php echo e(in_array('compassionate',  $assistance ?? []) ? '&#10003;' : ' '); ?>] COMPASSIONATE VISIT &nbsp;&nbsp;
+        [<?php echo e(in_array('shipment',       $assistance ?? []) ? '&#10003;' : ' '); ?>] SHIPMENT OF HUMAN REMAINS / CREMAINS<br>
+        [<?php echo e(in_array('food',           $assistance ?? []) ? '&#10003;' : ' '); ?>] FOOD ASSISTANCE &nbsp;&nbsp;
+        [<?php echo e(in_array('transportation', $assistance ?? []) ? '&#10003;' : ' '); ?>] TRANSPORTATION ASSISTANCE &nbsp;&nbsp;
+        [<?php echo e(in_array('shelter',        $assistance ?? []) ? '&#10003;' : ' '); ?>] TEMPORARY SHELTER<br>
+        [<?php echo e(in_array('others',         $assistance ?? []) ? '&#10003;' : ' '); ?>] OTHERS: <?php echo e($assistance_others ?? ''); ?>
+
     </div>
 
     <div class="sec" style="margin-top:7px;">D. &nbsp; MAIKLING SALAYSAY TUNGKOL SA HINIHINGING TULONG:</div>
     <div class="narrative-wrap">
-        <div class="narrative-box">{{ $narrative ?? '' }}</div>
+        <div class="narrative-box"><?php echo e($narrative ?? ''); ?></div>
     </div>
 
     <div class="sec" style="margin-top:7px;">E. &nbsp; ACCOUNT KUNG SAAN IDEDEPOSITO ANG PINANSYAL NA TULONG:</div>
@@ -200,9 +203,10 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
             <td class="acct-auth">In the event of the approval of my application for financial assistance, I hereby authorize the Department of Migrant Workers to credit the assistance through the account/s I have indicated on the right portion:</td>
             <td class="acct-sig">SIGNATURE OF<br>APPLICANT:<div class="sig-space"></div></td>
             <td class="acct-bank">
-                [{{ !empty($has_bank) ? '&#10003;' : ' ' }}] Bank Account No: {{ $bank_account_no ?? '' }}<br>
-                Bank: {{ $bank_name ?? '' }} &nbsp; Branch: {{ $bank_branch ?? '' }}<br>
-                Account Name: {{ $bank_account_name ?? '' }}
+                [<?php echo e(!empty($has_bank) ? '&#10003;' : ' '); ?>] Bank Account No: <?php echo e($bank_account_no ?? ''); ?><br>
+                Bank: <?php echo e($bank_name ?? ''); ?> &nbsp; Branch: <?php echo e($bank_branch ?? ''); ?><br>
+                Account Name: <?php echo e($bank_account_name ?? ''); ?>
+
             </td>
         </tr>
     </table>
@@ -218,41 +222,42 @@ body { font-family: Arial, Helvetica, sans-serif; color: #000; font-size: 9pt; }
     <div class="pg-num">2</div>
 </div>
 
-{{-- PAGE 3 — Employment Contract --}}
-@if(!empty($contract_image))
+
+<?php if(!empty($contract_image)): ?>
 <div class="page">
     <div class="attach-page">
         <div class="attach-title">Page 3 — Employment Contract <span style="background:#b91c1c;color:#fff;font-size:7pt;font-weight:bold;padding:2px 6px;margin-left:6px;">REQUIRED</span></div>
         <div class="attach-subtitle">Attached photo or scanned copy of Employment Contract</div>
         <div class="attach-img-wrap">
-            @if(!empty($contract_image))
-                <img src="{{ $contract_image }}" alt="Employment Contract">
-            @else
+            <?php if(!empty($contract_image)): ?>
+                <img src="<?php echo e($contract_image); ?>" alt="Employment Contract">
+            <?php else: ?>
                 <div class="attach-missing">No contract image attached.</div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
     <div class="pg-num">3</div>
 </div>
-@endif
+<?php endif; ?>
 
-{{-- PAGE 4 — Passport --}}
-@if(!empty($passport_image))
+
+<?php if(!empty($passport_image)): ?>
 <div class="page">
     <div class="attach-page">
         <div class="attach-title">Page 4 — Passport / Travel Document <span style="background:#b91c1c;color:#fff;font-size:7pt;font-weight:bold;padding:2px 6px;margin-left:6px;">REQUIRED</span></div>
         <div class="attach-subtitle">Attached photo or scanned copy of Passport data page</div>
         <div class="attach-img-wrap">
-            @if(!empty($passport_image))
-                <img src="{{ $passport_image }}" alt="Passport">
-            @else
+            <?php if(!empty($passport_image)): ?>
+                <img src="<?php echo e($passport_image); ?>" alt="Passport">
+            <?php else: ?>
                 <div class="attach-missing">No passport image attached.</div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
     <div class="pg-num">4</div>
 </div>
-@endif
+<?php endif; ?>
 
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/ofw/dmw-pdf.blade.php ENDPATH**/ ?>

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OfwFormSubmission;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class OfwController extends Controller
 {
@@ -26,6 +30,9 @@ class OfwController extends Controller
     {
         $ofwUser = $request->user()->loadMissing('profile');
         $profile = $ofwUser->profile;
+        $totalSubmitted = OfwFormSubmission::query()
+            ->where('user_id', $ofwUser->id)
+            ->count();
 
         $profileSummary = [
             'name' => $profile?->resume_name ?: $ofwUser->name,
@@ -35,12 +42,16 @@ class OfwController extends Controller
         ];
 
         $requestStats = [
-            'open' => 0,
-            'under_review' => 0,
+            'open' => $totalSubmitted,
+            'under_review' => $totalSubmitted,
             'resolved' => 0,
         ];
 
-        $submittedRequests = collect();
+        $submittedRequests = OfwFormSubmission::query()
+            ->where('user_id', $ofwUser->id)
+            ->latest()
+            ->limit(5)
+            ->get();
 
         return view('ofw.dashboard', compact('ofwUser', 'profileSummary', 'requestStats', 'submittedRequests'));
     }
@@ -52,20 +63,23 @@ class OfwController extends Controller
 
     public function acceptedRequests(): View
     {
-        return view('ofw.placeholder', [
-            'pageTitle' => 'Accepted Requests',
-            'heading' => 'Accepted Requests',
-            'message' => 'This section will show OFW requests that have been accepted for processing.',
-        ]);
+        $acceptedRequests = OfwFormSubmission::query()
+            ->where('user_id', auth()->id())
+            ->where('status', 'accepted')
+            ->latest('accepted_at')
+            ->paginate(10);
+
+        return view('ofw.accepted-requests', compact('acceptedRequests'));
     }
 
     public function submittedRequests(): View
     {
-        return view('ofw.placeholder', [
-            'pageTitle' => 'Submitted Requests',
-            'heading' => 'Submitted Requests',
-            'message' => 'This section will list the requests you have submitted.',
-        ]);
+        $submittedRequests = OfwFormSubmission::query()
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
+        return view('ofw.submitted-requests', compact('submittedRequests'));
     }
 
     public function dmwBuilder(): View
@@ -80,7 +94,7 @@ class OfwController extends Controller
         ]);
     }
 
-    public function downloadRfa(Request $request)
+    public function downloadRfa(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'e_cares_ticket_number' => ['nullable', 'string', 'max:100'],
@@ -140,10 +154,24 @@ class OfwController extends Controller
         $pdf = Pdf::loadView('ofw.rfa-form-pdf', $data)
             ->setPaper([0, 0, 595.28, 1000], 'portrait');
 
-        return $pdf->download('owwa-rfa-form.pdf');
+        $filename = 'owwa-rfa-form-' . $request->user()->id . '-' . now()->format('YmdHis') . '.pdf';
+        $pdfPath = 'ofw-submissions/' . $request->user()->id . '/' . $filename;
+
+        Storage::put($pdfPath, $pdf->output());
+
+        OfwFormSubmission::create([
+            'user_id' => $request->user()->id,
+            'form_type' => 'rfa',
+            'status' => 'submitted',
+            'pdf_path' => $pdfPath,
+            'pdf_filename' => $filename,
+        ]);
+
+        return redirect()->route('ofw.submitted-requests')
+            ->with('success', 'OWWA RFA form submitted successfully. Admin can now review your PDF.');
     }
 
-    public function downloadDmw(Request $request)
+    public function downloadDmw(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'mode' => ['nullable', 'array'],
@@ -195,9 +223,32 @@ class OfwController extends Controller
         $validated['bagong_logo'] = $this->publicImageDataUri('images/Logo-Bagong-Pilipinas.png');
         $validated['generated_at'] = now('Asia/Manila');
 
-        return Pdf::loadView('ofw.dmw-pdf', $validated)
-            ->setPaper('a4', 'portrait')
-            ->download('dmw-request-for-assistance.pdf');
+        $pdf = Pdf::loadView('ofw.dmw-pdf', $validated)
+            ->setPaper([0, 0, 595.28, 1000], 'portrait');
+
+        $filename = 'dmw-rfa-form-' . $request->user()->id . '-' . now()->format('YmdHis') . '.pdf';
+        $pdfPath = 'ofw-submissions/' . $request->user()->id . '/' . $filename;
+
+        Storage::put($pdfPath, $pdf->output());
+
+        OfwFormSubmission::create([
+            'user_id' => $request->user()->id,
+            'form_type' => 'dmw',
+            'status' => 'submitted',
+            'pdf_path' => $pdfPath,
+            'pdf_filename' => $filename,
+        ]);
+
+        return redirect()->route('ofw.submitted-requests')
+            ->with('success', 'DMW form submitted successfully. Admin can now review your PDF.');
+    }
+
+    public function downloadSubmittedRequest(OfwFormSubmission $submission, Request $request): BinaryFileResponse
+    {
+        abort_unless((int) $submission->user_id === (int) $request->user()->id, 403);
+        abort_unless(Storage::exists($submission->pdf_path), 404);
+
+        return Storage::download($submission->pdf_path, $submission->pdf_filename);
     }
 
     private function imageDataUri(?\Illuminate\Http\UploadedFile $file): ?string

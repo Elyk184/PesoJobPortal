@@ -352,7 +352,7 @@
         </div>
 
         <div class="rfa-actions">
-            <button type="submit" class="rfa-btn-submit">Download PDF</button>
+            <button type="submit" class="rfa-btn-submit">Submit to Admin</button>
         </div>
     </form>
 
