@@ -50,9 +50,24 @@
                             <td>{{ $submission->pdf_filename }}</td>
                             <td>{{ optional($submission->created_at)->format('M d, Y h:i A') }}</td>
                             <td class="text-end">
-                                <a href="{{ route('ofw.submitted-requests.download', $submission) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-download me-1"></i>Download PDF
-                                </a>
+                                <div class="d-inline-flex gap-2">
+                                    <a href="{{ route('ofw.submitted-requests.download', $submission) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download me-1"></i>Download PDF
+                                    </a>
+
+                                    @if($submission->status !== 'accepted')
+                                        <form method="POST"
+                                              action="{{ route('ofw.submitted-requests.delete', $submission) }}"
+                                              onsubmit="return confirm('Delete this submission? This cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach

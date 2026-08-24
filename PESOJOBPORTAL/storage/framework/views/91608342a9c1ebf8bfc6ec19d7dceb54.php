@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Submitted Requests'); ?>
 
 <?php $__env->startSection('dashboard-mobile-brand'); ?>
@@ -52,9 +50,24 @@
                             <td><?php echo e($submission->pdf_filename); ?></td>
                             <td><?php echo e(optional($submission->created_at)->format('M d, Y h:i A')); ?></td>
                             <td class="text-end">
-                                <a href="<?php echo e(route('ofw.submitted-requests.download', $submission)); ?>" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-download me-1"></i>Download PDF
-                                </a>
+                                <div class="d-inline-flex gap-2">
+                                    <a href="<?php echo e(route('ofw.submitted-requests.download', $submission)); ?>"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-download me-1"></i>Download PDF
+                                    </a>
+
+                                    <?php if($submission->status !== 'accepted'): ?>
+                                        <form method="POST"
+                                              action="<?php echo e(route('ofw.submitted-requests.delete', $submission)); ?>"
+                                              onsubmit="return confirm('Delete this submission? This cannot be undone.');">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

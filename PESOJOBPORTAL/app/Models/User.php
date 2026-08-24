@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\JobApplication;
 use App\Models\EmployerNotification;
+use App\Models\OfwProfile;
 use App\Models\PesoJob;
 use App\Models\PesoClearance;
 use App\Models\RecruitmentActivityRequest;
@@ -114,6 +115,11 @@ class User extends Authenticatable
     public function userNotifications(): HasMany
     {
         return $this->hasMany(UserNotification::class);
+    }
+
+    public function ofwProfile()
+    {
+        return $this->hasOne(OfwProfile::class);
     }
 
     public function pesoClearances(): HasMany

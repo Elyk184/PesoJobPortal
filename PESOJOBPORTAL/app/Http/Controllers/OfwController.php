@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OfwFormSubmission;
+use App\Models\OfwProfile;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -249,6 +250,60 @@ class OfwController extends Controller
         abort_unless(Storage::exists($submission->pdf_path), 404);
 
         return Storage::download($submission->pdf_path, $submission->pdf_filename);
+    }
+
+    public function profile(Request $request): View
+    {
+        $ofwProfile = OfwProfile::firstOrNew(['user_id' => $request->user()->id]);
+
+        return view('ofw.profile', compact('ofwProfile'));
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'first_name'          => ['nullable', 'string', 'max:100'],
+            'middle_name'         => ['nullable', 'string', 'max:100'],
+            'last_name'           => ['nullable', 'string', 'max:100'],
+            'suffix'              => ['nullable', 'string', 'max:20'],
+            'birthdate'           => ['nullable', 'date'],
+            'sex'                 => ['nullable', 'in:male,female'],
+            'civil_status'        => ['nullable', 'in:single,married,widow,separated,soloparent'],
+            'religion'            => ['nullable', 'string', 'max:100'],
+            'contact_number'      => ['nullable', 'string', 'max:50'],
+            'email'               => ['nullable', 'email', 'max:255'],
+            'passport_number'     => ['nullable', 'string', 'max:100'],
+            'facebook_name'       => ['nullable', 'string', 'max:255'],
+            'address_philippines' => ['nullable', 'string', 'max:500'],
+            'address_abroad'      => ['nullable', 'string', 'max:500'],
+            'employer_name'       => ['nullable', 'string', 'max:255'],
+            'jobsite_country'     => ['nullable', 'string', 'max:100'],
+            'monthly_salary'      => ['nullable', 'string', 'max:50'],
+            'local_agency'        => ['nullable', 'string', 'max:255'],
+            'foreign_agency'      => ['nullable', 'string', 'max:255'],
+        ]);
+
+        OfwProfile::updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $validated
+        );
+
+        return redirect()->route('ofw.profile')
+            ->with('success', 'Profile updated successfully.');
+    }
+
+    public function deleteSubmittedRequest(OfwFormSubmission $submission, Request $request): RedirectResponse
+    {
+        abort_unless((int) $submission->user_id === (int) $request->user()->id, 403);
+
+        if (Storage::exists($submission->pdf_path)) {
+            Storage::delete($submission->pdf_path);
+        }
+
+        $submission->delete();
+
+        return redirect()->route('ofw.submitted-requests')
+            ->with('success', 'Request has been deleted successfully.');
     }
 
     private function imageDataUri(?\Illuminate\Http\UploadedFile $file): ?string

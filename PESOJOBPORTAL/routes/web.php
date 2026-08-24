@@ -80,10 +80,13 @@ Route::middleware(['auth', 'role:ofw'])->prefix('ofw')->name('ofw.')->group(func
     Route::get('/accepted-requests', [OfwController::class, 'acceptedRequests'])->name('accepted-requests');
     Route::get('/submitted-requests', [OfwController::class, 'submittedRequests'])->name('submitted-requests');
     Route::get('/submitted-requests/{submission}/download', [OfwController::class, 'downloadSubmittedRequest'])->name('submitted-requests.download');
+    Route::delete('/submitted-requests/{submission}', [OfwController::class, 'deleteSubmittedRequest'])->name('submitted-requests.delete');
     Route::get('/dmw-rfa', [OfwController::class, 'dmwBuilder'])->name('dmw-rfa.show');
     Route::post('/dmw-rfa/download', [OfwController::class, 'downloadDmw'])->name('dmw-rfa.download');
     Route::get('/dmw-builder', [OfwController::class, 'dmwBuilder'])->name('dmw-builder');
     Route::post('/dmw-download', [OfwController::class, 'downloadDmw'])->name('dmw-download');
+    Route::get('/profile', [OfwController::class, 'profile'])->name('profile');
+    Route::post('/profile', [OfwController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Employer routes (protected)

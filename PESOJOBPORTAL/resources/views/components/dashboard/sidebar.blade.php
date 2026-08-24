@@ -105,6 +105,14 @@
                     <span>Submitted Requests</span>
                 </a>
             </div>
+
+            <div class="dashboard-nav-section">
+                <div class="dashboard-nav-label">Account</div>
+                <a href="{{ route('ofw.profile') }}" class="dashboard-nav-link {{ request()->routeIs('ofw.profile') ? 'is-active' : '' }}">
+                    <i class="bi bi-person-circle"></i>
+                    <span>My Profile</span>
+                </a>
+            </div>
         @elseif ($role === 'employer')
             <div class="dashboard-nav-section">
                 <div class="dashboard-nav-label">Overview</div>

@@ -19,4 +19,8 @@
        class="btn btn-sm {{ request()->routeIs('ofw.submitted-requests') ? 'btn-danger' : 'btn-outline-danger' }}">
         <i class="bi bi-list-check me-1"></i>Submitted Requests
     </a>
+    <a href="{{ route('ofw.profile') }}"
+       class="btn btn-sm {{ request()->routeIs('ofw.profile') ? 'btn-danger' : 'btn-outline-danger' }}">
+        <i class="bi bi-person-circle me-1"></i>My Profile
+    </a>
 </div>
