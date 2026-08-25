@@ -154,6 +154,20 @@
                     </a>
                 </div>
             </div>
+            <div class="col-12 col-lg-4">
+                <div class="dashboard-section-card h-100 p-3 p-lg-4">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-person-circle me-2"></i>My Profile</h3>
+                        <span class="badge rounded-pill text-bg-secondary">Account</span>
+                    </div>
+                    <p class="text-muted mb-3">
+                        Update your personal information, contact details, and employment info.
+                    </p>
+                    <a href="<?php echo e(route('ofw.profile')); ?>" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right me-2"></i>Open Profile
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 <?php $__env->stopSection(); ?>
