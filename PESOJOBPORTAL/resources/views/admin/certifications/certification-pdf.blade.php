@@ -40,8 +40,8 @@
         /* ── TAGLINE ── */
         .qr-image {
             display: block;
-            width: 90%;
-            height: 90px;
+            width: 100%;
+            height: 100px;
             margin: 0 auto 8px auto;
             object-fit: contain;
         }
