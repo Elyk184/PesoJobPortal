@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ strtoupper($activity_request->activity_type) }} Certification</title>
+    <title><?php echo e(strtoupper($activity_request->activity_type)); ?> Certification</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -40,8 +40,8 @@
         /* ── TAGLINE ── */
         .qr-image {
             display: block;
-            width: 90%;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             margin: 0 auto 8px auto;
             object-fit: contain;
         }
@@ -269,7 +269,7 @@
 
     <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->
     <div class="page-footer">
-        <img src="{{ public_path('images/TestQR.png') }}" alt="QR Code" class="qr-image">
+        <img src="<?php echo e(public_path('images/TestQR.png')); ?>" alt="QR Code" class="qr-image">
         <div class="tagline">"Lupad Manolo Fortich"</div>
         <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
         <div class="footer">
@@ -279,7 +279,7 @@
                         <table class="contact-item-table">
                             <tr>
                                 <td class="icon-cell">
-                                    <img src="{{ public_path('images/email.png') }}" alt="Email">
+                                    <img src="<?php echo e(public_path('images/email.png')); ?>" alt="Email">
                                 </td>
                                 <td class="contact-item-text">peso@manolofortich.gov.ph</td>
                             </tr>
@@ -292,7 +292,7 @@
                         <table class="contact-item-table">
                             <tr>
                                 <td class="icon-cell">
-                                    <img src="{{ public_path('images/phone.png') }}" alt="Phone">
+                                    <img src="<?php echo e(public_path('images/phone.png')); ?>" alt="Phone">
                                 </td>
                                 <td class="contact-item-text">0955-9546-049</td>
                             </tr>
@@ -305,7 +305,7 @@
                         <table class="contact-item-table">
                             <tr>
                                 <td class="icon-cell">
-                                    <img src="{{ public_path('images/facebook.png') }}" alt="Facebook">
+                                    <img src="<?php echo e(public_path('images/facebook.png')); ?>" alt="Facebook">
                                 </td>
                                 <td class="contact-item-text">www.facebook.com/LGU Manolo Fortich</td>
                             </tr>
@@ -315,7 +315,7 @@
             </table>
         </div>
         <div class="decor-bottom-wrapper">
-            <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-bottom">
+            <img src="<?php echo e(public_path('images/decor.png')); ?>" alt="" class="decor-bottom">
         </div>
     </div>
 
@@ -325,7 +325,7 @@
         <!-- HEADER -->
         <div class="header-top">
             <div class="header-logo-cell">
-                <img src="{{ public_path('images/manolo fortich seal.png') }}"
+                <img src="<?php echo e(public_path('images/manolo fortich seal.png')); ?>"
                      alt="Manolo Fortich Seal" class="header-logo-left">
             </div>
             <div class="header-center-cell">
@@ -335,14 +335,14 @@
                 <div class="gov-peso">PUBLIC EMPLOYMENT SERVICE OFFICE</div>
             </div>
             <div class="header-logo-cell">
-                <img src="{{ public_path('images/BAGONG-PILIPINAS-LOGO.png') }}"
+                <img src="<?php echo e(public_path('images/BAGONG-PILIPINAS-LOGO.png')); ?>"
                      alt="Bagong Pilipinas" class="header-logo">
             </div>
         </div>
 
         <!-- DECORATIVE TOP -->
         <div class="decor-wrapper">
-            <img src="{{ public_path('images/decor.png') }}" alt="" class="decor-top">
+            <img src="<?php echo e(public_path('images/decor.png')); ?>" alt="" class="decor-top">
         </div>
 
         <!-- TITLE -->
@@ -353,7 +353,7 @@
 
             <div class="salutation">TO WHOM IT MAY CONCERN:</div>
 
-            @php
+            <?php
                 $startDate  = $activity_request->recruitment_start_date
                                 ? \Carbon\Carbon::parse($activity_request->recruitment_start_date)
                                 : null;
@@ -382,18 +382,18 @@
                 } else {
                     $dateDisplay = 'TBD';
                 }
-            @endphp
+            ?>
 
             <div class="cert-paragraph">
-                <strong>THIS IS TO CERTIFY THAT</strong> <strong>{{ $company_profile?->company_name ?? $employer_name }}</strong>,
-                a registered {{ $company_profile?->line_of_business ?? 'business' }} company in the Philippines
-                @if(!empty($company_profile?->established_year))
-                    established in {{ $company_profile->established_year }},
-                @endif
+                <strong>THIS IS TO CERTIFY THAT</strong> <strong><?php echo e($company_profile?->company_name ?? $employer_name); ?></strong>,
+                a registered <?php echo e($company_profile?->line_of_business ?? 'business'); ?> company in the Philippines
+                <?php if(!empty($company_profile?->established_year)): ?>
+                    established in <?php echo e($company_profile->established_year); ?>,
+                <?php endif; ?>
                 has been granted
                 the permit and authority to conduct recruitment of applicants for local employment for
-                <strong>{{ $numDaysWord }} ({{ $numDays }}) day(s)</strong> valid on
-                <strong>{{ $dateDisplay }}</strong>
+                <strong><?php echo e($numDaysWord); ?> (<?php echo e($numDays); ?>) day(s)</strong> valid on
+                <strong><?php echo e($dateDisplay); ?></strong>
                 at Lobby area in Ground floor of Manolo Fortich PESO office, Located in,
                 Gen. Andres Bonifacio St. Cor. Albarece St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
                 8703. (in front of Tankulan Flea Market - Taboan).
@@ -410,8 +410,8 @@
             </div>
 
             <div class="location-block">
-                Given this <strong>{{ $activity_request->created_at?->format('jS') ?? now()->format('jS') }}</strong>
-                day of <strong>{{ $activity_request->created_at?->format('F Y') ?? now()->format('F Y') }}</strong>
+                Given this <strong><?php echo e($activity_request->created_at?->format('jS') ?? now()->format('jS')); ?></strong>
+                day of <strong><?php echo e($activity_request->created_at?->format('F Y') ?? now()->format('F Y')); ?></strong>
                 at Lobby area in Ground floor of Manolo Fortich PESO Office,
                 Located in, Gen. Andres Bonifacio St. Cor. Albarece St. Brgy. Tankulan, Manolo Fortich, Bukidnon.
             </div>
@@ -436,3 +436,4 @@
 
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/certifications/certification-pdf.blade.php ENDPATH**/ ?>
