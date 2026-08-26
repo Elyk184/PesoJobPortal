@@ -246,12 +246,18 @@
         gap: .75rem;
         margin-bottom: .85rem;
         flex-wrap: wrap;
+        padding: .9rem 1rem;
+        background: linear-gradient(180deg, rgba(245,249,255,0.9), rgba(255,255,255,1));
+        border: 1px solid var(--mj-line);
+        border-radius: 12px;
+        box-shadow: 0 8px 22px rgba(15,23,42,.04);
     }
 
     .toolbar-left {
         display: flex;
         align-items: center;
         gap: .55rem;
+        flex-wrap: wrap;
     }
 
     .jobs-table-title {
@@ -262,6 +268,7 @@
         display: inline-flex;
         align-items: center;
         gap: .42rem;
+        letter-spacing: -.01em;
     }
 
     .jobs-table-meta {
@@ -270,11 +277,12 @@
         gap: .35rem;
         border-radius: 999px;
         border: 1px solid #ccdcf5;
-        background: #eef4ff;
+        background: linear-gradient(180deg, #eef4ff 0%, #e7f0ff 100%);
         color: #1e4a93;
         font-size: .76rem;
         font-weight: 700;
         padding: .26rem .62rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
     }
 
     .jobs-search-wrap {
@@ -284,13 +292,15 @@
         background: #fff;
         border: 1px solid var(--mj-line);
         border-radius: 9px;
-        padding: .36rem .65rem;
-        transition: border-color .15s, box-shadow .15s;
+        padding: .42rem .7rem;
+        transition: border-color .15s, box-shadow .15s, transform .12s ease;
+        box-shadow: 0 2px 6px rgba(15,23,42,.02);
     }
 
     .jobs-search-wrap:focus-within {
         border-color: #93b4f5;
         box-shadow: 0 0 0 3px rgba(33,90,232,.08);
+        transform: translateY(-1px);
     }
 
     .jobs-search-wrap i {
@@ -330,7 +340,7 @@
     }
 
     .jobs-grid thead tr {
-        background: linear-gradient(180deg, #f8fbff 0%, #f2f6fc 100%);
+        background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
     }
 
     .jobs-grid th {
@@ -340,7 +350,7 @@
         letter-spacing: .045em;
         color: #4c5e7a;
         border-bottom: 1px solid #dce6f4;
-        padding: .7rem .55rem;
+        padding: .78rem .55rem;
         white-space: nowrap;
         vertical-align: middle;
         overflow: hidden;
@@ -361,18 +371,27 @@
     .jobs-grid td {
         border-bottom: 1px solid #edf2fb;
         vertical-align: middle;
-        padding: .78rem .55rem;
+        padding: .8rem .55rem;
         font-size: .82rem;
         color: #1e2d42;
         overflow: hidden;
         text-overflow: ellipsis;
+        background: rgba(255,255,255,0.35);
     }
 
     .jobs-grid td:first-child { padding-left: .85rem; }
     .jobs-grid td:last-child  { padding-right: .75rem; }
 
-    .jobs-grid tbody tr { transition: background .1s; }
-    .jobs-grid tbody tr:hover { background: #f5f9ff; }
+    .jobs-grid tbody tr {
+        transition: background .14s ease, transform .14s ease, box-shadow .14s ease;
+        position: relative;
+    }
+
+    .jobs-grid tbody tr:hover {
+        background: linear-gradient(90deg, rgba(238,244,255,.8), rgba(249,251,255,1), rgba(238,244,255,.8));
+        box-shadow: inset 0 0 0 1px rgba(147,180,245,.15);
+    }
+
     .jobs-grid tbody tr:last-child td { border-bottom: none; }
 
     /* ── Cell: Job Title ── */
@@ -468,20 +487,19 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 26px;
-        height: 22px;
-        background: #2360f1;
+        min-width: 28px;
+        height: 24px;
+        background: linear-gradient(180deg, #2a68f0 0%, #1f56d8 100%);
         color: #fff;
-        border-radius: 6px;
+        border-radius: 7px;
         font-size: .72rem;
         font-weight: 800;
-        padding: 0 .4rem;
+        padding: 0 .46rem;
+        box-shadow: 0 4px 10px rgba(37,99,235,.18);
+        letter-spacing: .02em;
     }
 
-    .apps-pill.zero { background: #e4e9f2; color: #7a8ea8; }
-
-    /* ── Views ── */
-    .views-num { color: #556880; font-weight: 600; font-size: .82rem; }
+    .apps-pill.zero { background: linear-gradient(180deg, #edf2f7 0%, #e3eaf5 100%); color: #7a8ea8; box-shadow: none; }
 
     /* ── Status chip ── */
     .status-chip {
@@ -489,11 +507,12 @@
         align-items: center;
         gap: .28rem;
         border-radius: 999px;
-        padding: .22rem .6rem;
+        padding: .25rem .68rem;
         font-size: .73rem;
         font-weight: 700;
         letter-spacing: .01em;
         white-space: nowrap;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
     }
 
     .status-chip::before {
@@ -784,7 +803,6 @@
                     <col style="width:11%">  {{-- Salary --}}
                     <col style="width:5%">   {{-- Vacancies --}}
                     <col style="width:7%">   {{-- Applications --}}
-                    <col style="width:5%">   {{-- Views --}}
                     <col style="width:9%">   {{-- Deadline --}}
                     <col style="width:7%">   {{-- Status --}}
                     <col style="width:15%">  {{-- Actions --}}
@@ -798,7 +816,6 @@
                         <th><span class="th-with-icon"><i class="bi bi-cash-stack"></i>Salary</span></th>
                         <th class="text-center"><span class="th-with-icon"><i class="bi bi-people"></i>Vacancies</span></th>
                         <th class="text-center"><span class="th-with-icon"><i class="bi bi-person-lines-fill"></i>Applications</span></th>
-                        <th class="text-center"><span class="th-with-icon"><i class="bi bi-eye"></i>Views</span></th>
                         <th><span class="th-with-icon"><i class="bi bi-calendar-event"></i>Deadline</span></th>
                         <th class="text-center"><span class="th-with-icon"><i class="bi bi-activity"></i>Status</span></th>
                         <th class="text-center"><span class="th-with-icon"><i class="bi bi-lightning-charge"></i>Actions</span></th>
@@ -810,7 +827,6 @@
                             [$statusClass, $statusLabel] = $resolveStatus($job);
                             $salary = $formatSalary($job);
                             $appsCount = $job->applications_count ?? 0;
-                            $viewCount = $job->views ?? $job->view_count ?? 0;
                             $deadline  = $job->application_end_date;
                             $isPast    = $isDeadlinePast($deadline);
                         @endphp
@@ -859,11 +875,6 @@
                             {{-- Applications --}}
                             <td class="cell-num">
                                 <span class="apps-pill {{ $appsCount === 0 ? 'zero' : '' }}">{{ $appsCount }}</span>
-                            </td>
-
-                            {{-- Views --}}
-                            <td class="cell-num">
-                                <span class="views-num">{{ $viewCount ?: '—' }}</span>
                             </td>
 
                             {{-- Deadline --}}
@@ -935,7 +946,7 @@
                         </tr>
                     @empty
                         <tr class="empty-jobs-row">
-                            <td colspan="11">
+                            <td colspan="10">
                                 <div class="empty-state-inner">
                                     <i class="bi bi-inbox"></i>
                                     <p>No jobs found in this tab yet.</p>
