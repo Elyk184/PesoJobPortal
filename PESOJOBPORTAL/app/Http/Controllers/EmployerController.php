@@ -537,87 +537,7 @@ class EmployerController extends Controller
 
     public function downloadResume(Request $request, JobApplication $application)
     {
-        $employerId = $request->user()->id;
-
-        if (! $application->job || $application->job->employer_id !== $employerId) {
-            abort(403, 'You are not authorized to download this resume.');
-        }
-
-        if (! $application->resume_path) {
-            abort(404, 'Resume not found.');
-        }
-
-        // Handle resume builder generated resumes (stored as 'builder:profile_id')
-        if (str_starts_with($application->resume_path, 'builder:')) {
-            // For builder resumes, generate PDF on the fly
-            $user = $application->user;
-            $userProfile = $user->profile ?? $user->userProfile;
-            if (! $userProfile) {
-                abort(404, 'Resume builder data not found.');
-            }
-
-            // Prepare data for PDF template
-            $profilePersonal = $userProfile->personal_information ?? [];
-            $profilePresentAddress = $userProfile->present_address ?? [];
-            $profilePermanentAddress = $userProfile->permanent_address ?? [];
-            $profileSkills = $userProfile->skills ?? [];
-            $profileEducationRows = $userProfile->education ?? [];
-            $profileTrainingRows = $userProfile->training ?? [];
-            $profileExperienceRows = $userProfile->experience ?? [];
-            $profileEligibilityRows = $userProfile->eligibility ?? [];
-
-            $resumeName = $userProfile->resume_name ?? $user->name;
-            $resumeEmail = $userProfile->resume_email ?? data_get($profilePersonal, 'email_address', $user->email ?? '');
-            $resumePhone = $userProfile->phone ?? data_get($profilePersonal, 'contact_number', '');
-            $resumeAddress = $userProfile->address ?? '';
-            $resumeObjective = $userProfile->objective ?? '';
-            $resumeSkills = implode(', ', $profileSkills ?: []);
-
-            $pdfData = [
-                'user' => $user,
-                'profile' => $userProfile,
-                'resumeName' => $resumeName,
-                'resumeEmail' => $resumeEmail,
-                'resumePhone' => $resumePhone,
-                'resumeAddress' => $resumeAddress,
-                'resumeObjective' => $resumeObjective,
-                'resumeSkills' => $resumeSkills,
-                'educationRows' => $profileEducationRows,
-                'trainingRows' => $profileTrainingRows,
-                'experienceRows' => $profileExperienceRows,
-                'eligibilityRows' => $profileEligibilityRows,
-                'skillsPreview' => collect(explode(',', $resumeSkills))->map(fn ($item) => trim($item))->filter()->values(),
-            ];
-
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.jobseeker.resume-builder-pdf', $pdfData)
-                ->setPaper('a4', 'portrait');
-
-            $downloadFilename = trim(($resumeName ?: 'resume') . '-harvard-style.pdf');
-
-            return $pdf->download($downloadFilename);
-        }
-
-        // Handle uploaded resumes
-        if (! Storage::disk('public')->exists($application->resume_path)) {
-            abort(404, 'Resume file not found.');
-        }
-
-        // Determine the download filename
-        if ($application->resume_original_filename) {
-            // For new uploads with original filename stored
-            $downloadFilename = $application->resume_original_filename;
-        } elseif ($application->resume_file_extension) {
-            // For uploads with just the extension stored
-            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.' . $application->resume_file_extension;
-        } else {
-            // Fallback for old records
-            $downloadFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
-        }
-
-        return response()->download(
-            Storage::disk('public')->path($application->resume_path),
-            $downloadFilename
-        );
+        return $this->viewResume($request, $application);
     }
 
     public function viewResume(Request $request, JobApplication $application)
@@ -677,7 +597,8 @@ class EmployerController extends Controller
 
             return response($pdf->output(), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+                ->header('Content-Disposition', 'inline; filename="' . $filename . '"')
+                ->header('X-Content-Type-Options', 'nosniff');
         }
 
         if (! Storage::disk('public')->exists($application->resume_path)) {
@@ -692,12 +613,18 @@ class EmployerController extends Controller
             $viewFilename = $application->user->name . '-resume-' . $application->created_at->format('Ymd') . '.pdf';
         }
 
-        return response()->file(
-            Storage::disk('public')->path($application->resume_path),
-            [
-                'Content-Disposition' => 'inline; filename="' . $viewFilename . '"',
-            ]
-        );
+        $filePath = Storage::disk('public')->path($application->resume_path);
+        $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+        $resumeUrl = asset('storage/' . $application->resume_path);
+        $useGoogleViewer = ! str_starts_with($mimeType, 'application/pdf')
+            && ! str_starts_with($mimeType, 'image/');
+
+        return response()->view('dashboard.employer.resume-viewer', [
+            'resumeUrl' => $resumeUrl,
+            'useGoogleViewer' => $useGoogleViewer,
+            'fileName' => $viewFilename,
+            'fileType' => $mimeType,
+        ])->header('X-Content-Type-Options', 'nosniff');
     }
 
     public function storeFeedback(Request $request, JobApplication $application): RedirectResponse

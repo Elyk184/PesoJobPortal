@@ -454,7 +454,7 @@
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--as-border);">
                 <div class="d-flex flex-wrap gap-2">
                     <a href="<?php echo e(route('employer.applications.resume.view', $application->id)); ?>" class="btn btn-outline-primary" target="_blank" rel="noopener">
-                        <i class="bi bi-eye"></i> View Uploaded Resume
+                        <i class="bi bi-eye"></i> View Resume
                     </a>
                 </div>
             </div>
@@ -516,7 +516,7 @@
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Submit Feedback</button>
                     <?php if($application->resume_path): ?>
-                        <a href="<?php echo e(route('employer.applications.resume.view', $application->id)); ?>" class="btn btn-outline-primary" target="_blank" rel="noopener">View Uploaded Resume</a>
+                        <a href="<?php echo e(route('employer.applications.resume.view', $application->id)); ?>" class="btn btn-outline-primary" target="_blank" rel="noopener">View Resume</a>
                     <?php endif; ?>
                 </div>
             </form>

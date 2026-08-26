@@ -8,6 +8,7 @@ use App\Models\PesoJob;
 use App\Models\RecommendedApplicant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ApplicantRecommendationTest extends TestCase
@@ -220,5 +221,28 @@ class ApplicantRecommendationTest extends TestCase
         $this->actingAs($employer3);
         $response = $this->post(route('employer.recommendations.accept', $recommendation));
         $response->assertForbidden();
+    }
+
+    public function test_resume_preview_opens_in_browser_viewer_instead_of_downloading(): void
+    {
+        Storage::fake('public');
+
+        $resumePath = 'resumes/test-resume.pdf';
+        Storage::disk('public')->put($resumePath, '%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF');
+
+        $this->application->update([
+            'resume_path' => $resumePath,
+            'resume_original_filename' => 'test-resume.pdf',
+            'resume_file_extension' => 'pdf',
+        ]);
+
+        $this->actingAs($this->employer1);
+
+        $response = $this->get(route('employer.applications.resume.view', $this->application));
+
+        $response->assertOk();
+        $response->assertSee('iframe');
+        $response->assertSee('resume-viewer');
+        $response->assertSee('viewer?embedded=true');
     }
 }
