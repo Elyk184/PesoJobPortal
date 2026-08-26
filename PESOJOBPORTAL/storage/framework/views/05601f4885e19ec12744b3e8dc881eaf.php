@@ -34,63 +34,6 @@
         gap: 16px;
     }
 
-    .profile-hero {
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 22px 24px;
-        background: #ffffff;
-        border: 1px solid #d8e5f1;
-        border-left: 6px solid #0f766e;
-        border-radius: 14px;
-        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
-    }
-
-    .profile-hero-title {
-        margin: 0;
-        color: #10243f;
-        font-size: 1.55rem;
-        font-weight: 800;
-        line-height: 1.2;
-    }
-
-    .profile-hero-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .profile-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 10px;
-        border-radius: 999px;
-        background: #eef7f6;
-        color: #0f5f58;
-        border: 1px solid #cce7e3;
-        font-size: 0.82rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .profile-chip.is-muted {
-        background: #f4f7fb;
-        color: #475569;
-        border-color: #d8e1ea;
-    }
-
-    .profile-hero-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
     .profile-nav {
         position: sticky;
         top: 24px;
@@ -522,32 +465,6 @@ textarea.form-control-custom {
             <?php echo csrf_field(); ?>
             <?php echo method_field('PUT'); ?>
             <input type="hidden" id="logo_only" name="logo_only" value="0">
-
-            <div class="profile-hero">
-                <div>
-                    <h1 class="profile-hero-title"><?php echo e($companyProfile?->company_name ?? $companyProfile?->business_name ?? $user->name ?? 'Company Profile'); ?></h1>
-                    <div class="profile-hero-meta">
-                        <span class="profile-chip">
-                            <i class="bi bi-building-check"></i>
-                            <?php echo e($companyProfile?->verification_status ? ucwords(str_replace('_', ' ', $companyProfile->verification_status)) : 'Pending'); ?>
-
-                        </span>
-                        <span class="profile-chip is-muted">
-                            <i class="bi bi-envelope"></i>
-                            <?php echo e($companyProfile?->establishment_email ?? $user->email ?? 'No email yet'); ?>
-
-                        </span>
-                    </div>
-                </div>
-                <div class="profile-hero-actions">
-                    <a href="<?php echo e(route('employer.company-profile.download')); ?>" class="btn btn-outline-primary">
-                        <i class="bi bi-download me-2"></i>Download PDF
-                    </a>
-                    <button type="submit" class="btn btn-primary-solid">
-                        <i class="bi bi-check-circle me-2"></i>Save Changes
-                    </button>
-                </div>
-            </div>
 
             <?php if(session('success')): ?>
             <div class="alert alert-success m-3 mb-0 alert-dismissible fade show" role="alert">
