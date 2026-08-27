@@ -418,7 +418,7 @@
  
     {{-- HEADER --}}
     <div class="dmw-header">
-        <img src="{{ asset('images/owwa.png') }}" class="dmw-header-logo" alt="OWWA">
+        <img src="{{ asset('images/dmw.png') }}" class="dmw-header-logo" alt="DMW">
         <div class="dmw-header-center">
             <div class="rep">Republic of the Philippines</div>
             <div class="dept">Department of Migrant Workers</div>
