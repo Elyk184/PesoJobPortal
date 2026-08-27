@@ -44,10 +44,11 @@ class User extends Authenticatable
     public function redirectToDashboard(): string
     {
         return match($this->role) {
-            'admin'    => route('admin.dashboard'),
-            'employer' => route('employer.dashboard'),
-            'ofw'      => route('ofw.dashboard'),
-            default    => route('jobseeker.dashboard'),
+            'admin'       => route('admin.dashboard'),
+            'employer'    => route('employer.dashboard'),
+            'ofw'         => route('ofw.dashboard'),
+            'association' => route('association.dashboard'),
+            default       => route('jobseeker.dashboard'),
         };
     }
 
@@ -120,6 +121,11 @@ class User extends Authenticatable
     public function ofwProfile()
     {
         return $this->hasOne(OfwProfile::class);
+    }
+
+    public function associationProfile()
+    {
+        return $this->hasOne(AssociationProfile::class);
     }
 
     public function pesoClearances(): HasMany

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AssociationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatbotController;
@@ -286,6 +287,16 @@ Route::middleware('auth')->group(function () {
             'message' => 'Job archived successfully'
         ]);
     });
+});
+
+// Association routes (protected)
+Route::middleware(['auth', 'role:association'])->prefix('association')->name('association.')->group(function () {
+    Route::get('/dashboard', [AssociationController::class, 'dashboard'])->name('dashboard');
+    Route::get('/submitted-requests', [AssociationController::class, 'submittedRequests'])->name('submitted-requests');
+    Route::get('/registration-form', [AssociationController::class, 'registrationForm'])->name('registration-form');
+    Route::post('/registration-form', [AssociationController::class, 'submitRegistration'])->name('registration.submit');
+    Route::get('/profile', [AssociationController::class, 'profile'])->name('profile');
+    Route::post('/profile', [AssociationController::class, 'updateProfile'])->name('profile.update');
 });
 
 Route::post('/chatbot', [App\Http\Controllers\ChatbotController::class, 'chat'])->name('chatbot.chat');
