@@ -144,7 +144,7 @@ class AssociationController extends Controller
             'contact_number' => $validated['contact_no'],
             'email' => $validated['email'],
             'address' => $validated['address'],
-            'request_type' => 'WA Registration',
+            'request_type' => 'Association Registration',
             'document_path' => $documents['constitution'] ?? null,
             'status' => 'open',
             'notes' => ['registration_data' => $validated, 'documents' => $documents],
@@ -152,7 +152,7 @@ class AssociationController extends Controller
 
         try {
             $portal = PortalNotification::create([
-                'title' => 'New WA Registration Application from ' . $validated['association_name'],
+                'title' => 'New Association Registration Application from ' . $validated['association_name'],
                 'message' => "Worker's Association registration submitted for review.",
                 'created_by' => $user->id,
             ]);
@@ -161,7 +161,7 @@ class AssociationController extends Controller
                 UserNotification::create(['user_id' => $admin->id, 'portal_notification_id' => $portal->id]);
             });
         } catch (\Throwable $e) {
-            Log::error('Failed to notify admins for WA Registration: ' . $e->getMessage());
+            Log::error('Failed to notify admins for Association Registration: ' . $e->getMessage());
         }
 
         return redirect()->route('association.dashboard')

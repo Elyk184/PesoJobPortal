@@ -57,7 +57,7 @@
 
                 <div class="d-flex flex-wrap gap-2">
                     <a href="{{ route('association.registration-form') }}" class="btn btn-danger px-3 shadow-sm">
-                        <i class="bi bi-file-earmark-plus me-2"></i>WA Registration
+                        <i class="bi bi-file-earmark-plus me-2"></i>Association Registration
                     </a>
                 </div>
             </div>
@@ -99,7 +99,7 @@
             <div class="col-12 col-lg-4">
                 <div class="dashboard-section-card h-100 p-3 p-lg-4">
                     <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
-                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>WA Registration</h3>
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>Association Registration</h3>
                         <span class="badge rounded-pill text-bg-danger">Form</span>
                     </div>
                     <p class="text-muted mb-3">

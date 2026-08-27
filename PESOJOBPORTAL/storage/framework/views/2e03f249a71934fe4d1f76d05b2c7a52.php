@@ -147,7 +147,7 @@
                 <div class="dashboard-nav-label">Requests</div>
                 <a href="<?php echo e(route('association.registration-form')); ?>" class="dashboard-nav-link <?php echo e(request()->routeIs('association.registration-form') ? 'is-active' : ''); ?>">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>WA Registration</span>
+                    <span>Association Registration</span>
                 </a>
                 <a href="<?php echo e(route('association.submitted-requests')); ?>" class="dashboard-nav-link <?php echo e(request()->routeIs('association.submitted-requests') ? 'is-active' : ''); ?>">
                     <i class="bi bi-list-check"></i>

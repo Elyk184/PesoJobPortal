@@ -5,7 +5,7 @@
     </a>
     <a href="<?php echo e(route('association.registration-form')); ?>"
        class="btn btn-sm <?php echo e(request()->routeIs('association.registration-form') ? 'btn-danger' : 'btn-outline-danger'); ?>">
-        <i class="bi bi-file-earmark-text me-1"></i>WA Registration
+        <i class="bi bi-file-earmark-text me-1"></i>Association Registration
     </a>
     <a href="<?php echo e(route('association.submitted-requests')); ?>"
        class="btn btn-sm <?php echo e(request()->routeIs('association.submitted-requests') ? 'btn-danger' : 'btn-outline-danger'); ?>">
