@@ -50,7 +50,7 @@
                     {{-- HEADER --}}
                     <div class="form-header">
                         <div class="header-logo">
-                            <img src="{{ asset('images/dole.png') }}" alt="DOLE Logo" class="logo-img">
+                             <img src="{{ asset('images/dolee.png') }}" alt="DOLE Logo" class="logo-img">
                             <div class="blr-form-no">
                                 <span>BLR Form No. 4, Series 2016</span>
                             </div>

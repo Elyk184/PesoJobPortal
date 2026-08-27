@@ -8,13 +8,13 @@
 /* ============================================================
    RESET & BASE
    ============================================================ */
-*, *::before, *::after {
+.page-wrapper *, .page-wrapper *::before, .page-wrapper *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
+.page-wrapper {
     background-color: #e8e8e8;
     font-family: 'Times New Roman', Times, serif;
     font-size: 9pt;
@@ -25,7 +25,7 @@ body {
 /* ============================================================
    PAGE WRAPPER — C4 Envelope size
    ============================================================ */
-.page-wrapper {
+.page-wrapper .page-wrapper {
     width: 9.02in;
     min-height: 12.76in;
     margin: 0 auto;
@@ -33,7 +33,7 @@ body {
     box-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 
-.form-page {
+.page-wrapper .form-page {
     width: 100%;
     padding: 0.35in 0.4in 0.35in 0.4in;
 }
@@ -41,7 +41,7 @@ body {
 /* ============================================================
    FORM HEADER
    ============================================================ */
-.form-header {
+.page-wrapper .form-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -51,7 +51,7 @@ body {
     gap: 10px;
 }
 
-.header-logo {
+.page-wrapper .header-logo {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -59,38 +59,38 @@ body {
     min-width: 80px;
 }
 
-.logo-img {
+.page-wrapper .logo-img {
     width: 60px;
     height: auto;
     margin-bottom: 4px;
 }
 
-.header-text {
+.page-wrapper .header-text {
     text-align: center;
     flex: 1;
 }
 
-.republic-text {
+.page-wrapper .republic-text {
     font-size: 8.5pt;
     margin-bottom: 1px;
 }
 
-.dept-text {
+.page-wrapper .dept-text {
     font-size: 11pt;
     font-weight: bold;
     margin-bottom: 1px;
 }
 
-.regional-text {
+.page-wrapper .regional-text {
     font-size: 9pt;
 }
 
-.underline-val {
+.page-wrapper .underline-val {
     text-decoration: underline;
     font-weight: bold;
 }
 
-.form-code {
+.page-wrapper .form-code {
     position: absolute;
     top: 0;
     right: 0;
@@ -98,7 +98,7 @@ body {
     color: #c00;
 }
 
-.blr-form-no {
+.page-wrapper .blr-form-no {
     font-size: 7pt;
     text-align: center;
     margin-top: 2px;
@@ -107,7 +107,7 @@ body {
 /* ============================================================
    FORM TITLE
    ============================================================ */
-.form-title {
+.page-wrapper .form-title {
     background-color: #f0f0f0;
     border: 1.5px solid #000;
     text-align: center;
@@ -115,21 +115,21 @@ body {
     margin-bottom: 0;
 }
 
-.form-title h1 {
+.page-wrapper .form-title h1 {
     font-size: 11pt;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
-.title-abbr {
+.page-wrapper .title-abbr {
     font-style: italic;
 }
 
 /* ============================================================
    PART LABELS & NOTES
    ============================================================ */
-.part-label {
+.page-wrapper .part-label {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -140,19 +140,19 @@ body {
     font-size: 7.5pt;
 }
 
-.part-heading {
+.page-wrapper .part-heading {
     font-weight: bold;
     font-size: 8pt;
 }
 
-.date-accomplished-box {
+.page-wrapper .date-accomplished-box {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 7.5pt;
 }
 
-.date-accomplished-box input {
+.page-wrapper .date-accomplished-box input {
     border: none;
     border-bottom: 1px solid #000;
     width: 90px;
@@ -162,14 +162,14 @@ body {
     outline: none;
 }
 
-.date-received-box {
+.page-wrapper .date-received-box {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 7.5pt;
 }
 
-.date-received-box input {
+.page-wrapper .date-received-box input {
     border: none;
     border-bottom: 1px solid #000;
     width: 100px;
@@ -179,7 +179,7 @@ body {
     outline: none;
 }
 
-.part-note {
+.page-wrapper .part-note {
     border: 1px solid #000;
     border-top: none;
     padding: 3px 6px;
@@ -191,41 +191,41 @@ body {
 /* ============================================================
    ROW GROUPS & FIELDS
    ============================================================ */
-.row-group {
+.page-wrapper .row-group {
     display: flex;
     border: 1px solid #000;
     border-top: none;
 }
 
-.row-group.two-col {
+.page-wrapper .row-group.two-col {
     gap: 0;
 }
 
-.row-group.two-col-equal {
+.page-wrapper .row-group.two-col-equal {
     gap: 0;
 }
 
-.field-group {
+.page-wrapper .field-group {
     display: flex;
     flex-direction: column;
     padding: 4px 6px;
     flex: 1;
 }
 
-.field-group.full-width {
+.page-wrapper .field-group.full-width {
     flex: 1;
 }
 
-.field-group label {
+.page-wrapper .field-group label {
     font-size: 7.5pt;
     font-weight: bold;
     margin-bottom: 2px;
     color: #111;
 }
 
-.field-group input[type="text"],
-.field-group input[type="email"],
-.field-group input[type="number"] {
+.page-wrapper .field-group input[type="text"],
+.page-wrapper .field-group input[type="email"],
+.page-wrapper .field-group input[type="number"] {
     border: none;
     border-bottom: 1px solid #555;
     width: 100%;
@@ -239,32 +239,32 @@ body {
 /* ============================================================
    CONTACT GROUP
    ============================================================ */
-.contact-group {
+.page-wrapper .contact-group {
     border-left: 1px solid #000;
     min-width: 230px;
     max-width: 230px;
 }
 
-.contact-fields {
+.page-wrapper .contact-fields {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.contact-row {
+.page-wrapper .contact-row {
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 7.5pt;
 }
 
-.contact-row span {
+.page-wrapper .contact-row span {
     white-space: nowrap;
     min-width: 70px;
     font-size: 7.5pt;
 }
 
-.contact-row input {
+.page-wrapper .contact-row input {
     border: none;
     border-bottom: 1px solid #555;
     flex: 1;
@@ -278,24 +278,24 @@ body {
 /* ============================================================
    NAME SUBFIELDS (First / MI / Last)
    ============================================================ */
-.name-subfields {
+.page-wrapper .name-subfields {
     display: flex;
     gap: 6px;
     align-items: flex-end;
 }
 
-.name-col {
+.page-wrapper .name-col {
     display: flex;
     flex-direction: column;
     flex: 1;
 }
 
-.name-col-mi {
+.page-wrapper .name-col-mi {
     max-width: 50px;
     flex: 0 0 50px;
 }
 
-.name-col input {
+.page-wrapper .name-col input {
     border: none;
     border-bottom: 1px solid #555;
     font-size: 9pt;
@@ -306,7 +306,7 @@ body {
     width: 100%;
 }
 
-.sub-label {
+.page-wrapper .sub-label {
     font-size: 6.5pt;
     color: #444;
     text-align: center;
@@ -316,22 +316,22 @@ body {
 /* ============================================================
    GENDER FIELD
    ============================================================ */
-.gender-field {
+.page-wrapper .gender-field {
     max-width: 180px;
 }
 
 /* ============================================================
    PLACES OF OPERATION + MEMBERS
    ============================================================ */
-.places-members {
+.page-wrapper .places-members {
     align-items: stretch;
 }
 
-.place-field {
+.page-wrapper .place-field {
     flex: 1;
 }
 
-.place-field textarea {
+.page-wrapper .place-field textarea {
     border: none;
     border-bottom: 1px solid #555;
     width: 100%;
@@ -343,32 +343,32 @@ body {
     padding: 2px 0;
 }
 
-.members-field {
+.page-wrapper .members-field {
     border-left: 1px solid #000;
     min-width: 160px;
     max-width: 160px;
 }
 
-.members-table {
+.page-wrapper .members-table {
     display: flex;
     flex-direction: column;
     gap: 4px;
     margin-top: 4px;
 }
 
-.members-row {
+.page-wrapper .members-row {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 8.5pt;
 }
 
-.members-row span {
+.page-wrapper .members-row span {
     min-width: 55px;
     font-weight: normal;
 }
 
-.members-row input {
+.page-wrapper .members-row input {
     border: 1px solid #888;
     width: 60px;
     font-size: 9pt;
@@ -378,7 +378,7 @@ body {
     text-align: right;
 }
 
-.members-total {
+.page-wrapper .members-total {
     border-top: 1px solid #000;
     padding-top: 4px;
     font-weight: bold;
@@ -387,27 +387,27 @@ body {
 /* ============================================================
    OCCUPATION SECTION
    ============================================================ */
-.occupation-section {
+.page-wrapper .occupation-section {
     border: 1px solid #000;
     border-top: none;
     padding: 5px 8px;
 }
 
-.occupation-label {
+.page-wrapper .occupation-label {
     font-size: 7.5pt;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.occupation-label em {
+.page-wrapper .occupation-label em {
     font-weight: normal;
 }
 
-.occupation-group {
+.page-wrapper .occupation-group {
     margin-bottom: 3px;
 }
 
-.checkbox-label {
+.page-wrapper .checkbox-label {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -416,14 +416,14 @@ body {
     cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
+.page-wrapper .checkbox-label input[type="checkbox"] {
     width: 10px;
     height: 10px;
     cursor: pointer;
     margin: 0;
 }
 
-.inline-text {
+.page-wrapper .inline-text {
     border: none;
     border-bottom: 1px solid #555;
     width: 80px;
@@ -434,7 +434,7 @@ body {
     background: transparent;
 }
 
-.inline-text-long {
+.page-wrapper .inline-text-long {
     border: none;
     border-bottom: 1px solid #555;
     width: 200px;
@@ -448,41 +448,41 @@ body {
 /* ============================================================
    ATTESTATION SECTION
    ============================================================ */
-.attestation-section {
+.page-wrapper .attestation-section {
     border: 1px solid #000;
     border-top: none;
     padding: 10px 14px;
 }
 
-.attest-text {
+.page-wrapper .attest-text {
     font-size: 9pt;
     margin-bottom: 20px;
 }
 
-.signature-block {
+.page-wrapper .signature-block {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
 }
 
-.signature-line-group {
+.page-wrapper .signature-line-group {
     text-align: center;
     min-width: 220px;
 }
 
-.sig-line {
+.page-wrapper .sig-line {
     border-bottom: 1px solid #000;
     width: 100%;
     height: 28px;
     margin-bottom: 2px;
 }
 
-.sig-label {
+.page-wrapper .sig-label {
     font-size: 8.5pt;
     font-weight: bold;
 }
 
-.sig-sublabel {
+.page-wrapper .sig-sublabel {
     font-size: 7.5pt;
     font-style: italic;
 }
@@ -490,7 +490,7 @@ body {
 /* ============================================================
    NOTARY BLOCK
    ============================================================ */
-.notary-block {
+.page-wrapper .notary-block {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -498,14 +498,14 @@ body {
     margin-bottom: 10px;
 }
 
-.notary-row {
+.page-wrapper .notary-row {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 3px;
 }
 
-.notary-input-long {
+.page-wrapper .notary-input-long {
     border: none;
     border-bottom: 1px solid #555;
     width: 160px;
@@ -516,7 +516,7 @@ body {
     padding: 1px 0;
 }
 
-.notary-input-medium {
+.page-wrapper .notary-input-medium {
     border: none;
     border-bottom: 1px solid #555;
     width: 100px;
@@ -527,7 +527,7 @@ body {
     padding: 1px 0;
 }
 
-.notary-input-short {
+.page-wrapper .notary-input-short {
     border: none;
     border-bottom: 1px solid #555;
     width: 45px;
@@ -538,7 +538,7 @@ body {
     padding: 1px 0;
 }
 
-.notary-input-tiny {
+.page-wrapper .notary-input-tiny {
     border: none;
     border-bottom: 1px solid #555;
     width: 25px;
@@ -549,7 +549,7 @@ body {
     padding: 1px 0;
 }
 
-.notary-public-label {
+.page-wrapper .notary-public-label {
     text-align: center;
     font-size: 9pt;
     font-weight: bold;
@@ -560,20 +560,20 @@ body {
 /* ============================================================
    DOC FIELDS
    ============================================================ */
-.doc-fields {
+.page-wrapper .doc-fields {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.doc-row {
+.page-wrapper .doc-row {
     display: flex;
     align-items: center;
     gap: 4px;
     font-size: 8.5pt;
 }
 
-.doc-input {
+.page-wrapper .doc-input {
     border: none;
     border-bottom: 1px solid #555;
     width: 90px;
@@ -587,7 +587,7 @@ body {
 /* ============================================================
    PAGE BREAK
    ============================================================ */
-.page-break {
+.page-wrapper .page-break {
     page-break-after: always;
     border-top: 2px dashed #aaa;
     margin: 18px 0;
@@ -596,27 +596,27 @@ body {
 /* ============================================================
    PART II - PROCESSING REQUIREMENTS
    ============================================================ */
-.part-label-ii {
+.page-wrapper .part-label-ii {
     border-top: 1px solid #000;
 }
 
-.requirements-section {
+.page-wrapper .requirements-section {
     border: 1px solid #000;
     border-top: none;
     padding: 7px 10px;
 }
 
-.req-intro {
+.page-wrapper .req-intro {
     font-size: 8pt;
     margin-bottom: 8px;
     line-height: 1.4;
 }
 
-.checklist {
+.page-wrapper .checklist {
     margin-bottom: 8px;
 }
 
-.checklist-item {
+.page-wrapper .checklist-item {
     font-size: 8pt;
     margin-bottom: 4px;
     line-height: 1.4;
@@ -626,14 +626,14 @@ body {
     gap: 3px;
 }
 
-.checkbox-bracket {
+.page-wrapper .checkbox-bracket {
     font-family: monospace;
     font-size: 8.5pt;
     margin-right: 2px;
     flex-shrink: 0;
 }
 
-.req-note {
+.page-wrapper .req-note {
     font-size: 7.5pt;
     font-style: italic;
     margin-bottom: 10px;
@@ -644,28 +644,28 @@ body {
 /* ============================================================
    PAYMENT & RECOMMENDATION
    ============================================================ */
-.payment-section {
+.page-wrapper .payment-section {
     margin-bottom: 10px;
 }
 
-.payment-section p,
-.recommendation-section p {
+.page-wrapper .payment-section p,
+.page-wrapper .recommendation-section p {
     font-size: 8.5pt;
     margin-bottom: 4px;
     font-weight: bold;
 }
 
-.recommendation-section {
+.page-wrapper .recommendation-section {
     margin-bottom: 10px;
 }
 
-.req-indent {
+.page-wrapper .req-indent {
     margin-left: 18px;
     font-size: 7.5pt;
     font-style: italic;
 }
 
-.inline-input-short {
+.page-wrapper .inline-input-short {
     border: none;
     border-bottom: 1px solid #555;
     width: 80px;
@@ -673,10 +673,9 @@ body {
     font-family: inherit;
     outline: none;
     background: transparent;
-    padding: 1px 0;
 }
 
-.inline-input-medium {
+.page-wrapper .inline-input-medium {
     border: none;
     border-bottom: 1px solid #555;
     width: 120px;
@@ -684,15 +683,14 @@ body {
     font-family: inherit;
     outline: none;
     background: transparent;
-    padding: 1px 0;
 }
 
-.denial-reasons {
+.page-wrapper .denial-reasons {
     margin-top: 5px;
     margin-left: 18px;
 }
 
-.denial-row {
+.page-wrapper .denial-row {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -700,7 +698,7 @@ body {
     font-size: 8pt;
 }
 
-.denial-input {
+.page-wrapper .denial-input {
     border: none;
     border-bottom: 1px solid #555;
     flex: 1;
@@ -709,13 +707,12 @@ body {
     font-family: inherit;
     outline: none;
     background: transparent;
-    padding: 1px 0;
 }
 
 /* ============================================================
    PROCESSOR SIGNATURE
    ============================================================ */
-.processor-signature {
+.page-wrapper .processor-signature {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -723,19 +720,19 @@ body {
     gap: 5px;
 }
 
-.processor-sig-block {
+.page-wrapper .processor-sig-block {
     text-align: center;
     min-width: 220px;
 }
 
-.proc-sig-line {
+.page-wrapper .proc-sig-line {
     border-bottom: 1px solid #000;
     width: 100%;
     height: 25px;
     margin-bottom: 2px;
 }
 
-.proc-date-row {
+.page-wrapper .proc-date-row {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -745,51 +742,51 @@ body {
 /* ============================================================
    PART III - ACTION
    ============================================================ */
-.part-label-iii {
+.page-wrapper .part-label-iii {
     border-top: 1px solid #000;
 }
 
-.action-section {
+.page-wrapper .action-section {
     border: 1px solid #000;
     border-top: none;
     padding: 7px 10px;
 }
 
-.action-section > p {
+.page-wrapper .action-section > p {
     font-size: 8.5pt;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.endorsement-block {
+.page-wrapper .endorsement-block {
     margin-top: 10px;
 }
 
-.endorsement-block p {
+.page-wrapper .endorsement-block p {
     font-size: 8.5pt;
     margin-bottom: 4px;
 }
 
-.provincial-head-block {
+.page-wrapper .provincial-head-block {
     margin-top: 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.ph-name {
+.page-wrapper .ph-name {
     font-weight: bold;
     font-size: 9.5pt;
     text-decoration: underline;
     margin-bottom: 2px;
 }
 
-.ph-title {
+.page-wrapper .ph-title {
     font-size: 8.5pt;
     margin-bottom: 8px;
 }
 
-.approved-row {
+.page-wrapper .approved-row {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -798,7 +795,7 @@ body {
     font-size: 8.5pt;
 }
 
-.approved-line {
+.page-wrapper .approved-line {
     border-bottom: 1px solid #000;
     flex: 1;
     max-width: 160px;
@@ -808,30 +805,30 @@ body {
 /* ============================================================
    CERTIFICATION TABLE
    ============================================================ */
-.cert-table {
+.page-wrapper .cert-table {
     display: flex;
     border: 1px solid #000;
     border-top: none;
 }
 
-.cert-cell {
+.page-wrapper .cert-cell {
     flex: 1;
     padding: 4px 6px;
     border-right: 1px solid #000;
 }
 
-.cert-cell:last-child {
+.page-wrapper .cert-cell:last-child {
     border-right: none;
 }
 
-.cert-cell label {
+.page-wrapper .cert-cell label {
     display: block;
     font-size: 7.5pt;
     font-weight: bold;
     margin-bottom: 2px;
 }
 
-.cert-cell input {
+.page-wrapper .cert-cell input {
     border: none;
     border-bottom: 1px solid #555;
     width: 100%;
@@ -839,20 +836,19 @@ body {
     font-family: inherit;
     padding: 2px 0;
     outline: none;
-    background: transparent;
 }
 
 /* ============================================================
    SUBMIT BUTTON
    ============================================================ */
-.submit-wrapper {
+.page-wrapper .submit-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 10px;
 }
 
-.submit-btn {
+.page-wrapper .submit-btn {
     background-color: #003082;
     color: #fff;
     border: none;
@@ -867,11 +863,11 @@ body {
     text-transform: uppercase;
 }
 
-.submit-btn:hover {
+.page-wrapper .submit-btn:hover {
     background-color: #004abf;
 }
 
-.submit-btn:active {
+.page-wrapper .submit-btn:active {
     background-color: #001a4d;
 }
 
@@ -884,18 +880,18 @@ body {
         padding: 0;
     }
 
-    .page-wrapper {
+    .page-wrapper .page-wrapper {
         box-shadow: none;
         width: 9.02in;
         min-height: 12.76in;
     }
 
-    .page-break {
+    .page-wrapper .page-break {
         page-break-after: always;
         border: none;
     }
 
-    .submit-wrapper {
+    .page-wrapper .submit-wrapper {
         display: none;
     }
 

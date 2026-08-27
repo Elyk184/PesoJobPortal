@@ -127,6 +127,21 @@
                     </a>
                 </div>
             </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="dashboard-section-card h-100 p-3 p-lg-4">
+                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3 border-bottom pb-3">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-check2-circle me-2"></i>Accepted Requests</h3>
+                        <span class="badge rounded-pill text-bg-success">Resolved</span>
+                    </div>
+                    <p class="text-muted mb-3">
+                        View your WA registration requests that have been accepted or resolved.
+                    </p>
+                    <a href="<?php echo e(route('association.accepted-requests')); ?>" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right me-2"></i>Open Page
+                    </a>
+                </div>
+            </div>
         </div>
 
         <?php if($submittedRequests->isNotEmpty()): ?>

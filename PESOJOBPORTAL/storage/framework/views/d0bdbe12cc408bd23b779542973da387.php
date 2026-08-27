@@ -49,7 +49,7 @@
                     
                     <div class="form-header">
                         <div class="header-logo">
-                            <img src="<?php echo e(asset('images/dole.png')); ?>" alt="DOLE Logo" class="logo-img">
+                             <img src="<?php echo e(asset('images/dolee.png')); ?>" alt="DOLE Logo" class="logo-img">
                             <div class="blr-form-no">
                                 <span>BLR Form No. 4, Series 2016</span>
                             </div>
