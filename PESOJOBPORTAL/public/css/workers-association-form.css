@@ -1,0 +1,906 @@
+/* ============================================================
+   DOLE Worker's Association Registration Form
+   Envelope C4 size: 9.02in x 12.76in
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #e8e8e8;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 9pt;
+    color: #000;
+    padding: 20px;
+}
+
+/* ============================================================
+   PAGE WRAPPER — C4 Envelope size
+   ============================================================ */
+.page-wrapper {
+    width: 9.02in;
+    min-height: 12.76in;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.form-page {
+    width: 100%;
+    padding: 0.35in 0.4in 0.35in 0.4in;
+}
+
+/* ============================================================
+   FORM HEADER
+   ============================================================ */
+.form-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    gap: 10px;
+}
+
+.header-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 80px;
+}
+
+.logo-img {
+    width: 60px;
+    height: auto;
+    margin-bottom: 4px;
+}
+
+.header-text {
+    text-align: center;
+    flex: 1;
+}
+
+.republic-text {
+    font-size: 8.5pt;
+    margin-bottom: 1px;
+}
+
+.dept-text {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 1px;
+}
+
+.regional-text {
+    font-size: 9pt;
+}
+
+.underline-val {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.form-code {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 7pt;
+    color: #c00;
+}
+
+.blr-form-no {
+    font-size: 7pt;
+    text-align: center;
+    margin-top: 2px;
+}
+
+/* ============================================================
+   FORM TITLE
+   ============================================================ */
+.form-title {
+    background-color: #f0f0f0;
+    border: 1.5px solid #000;
+    text-align: center;
+    padding: 5px 8px;
+    margin-bottom: 0;
+}
+
+.form-title h1 {
+    font-size: 11pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.title-abbr {
+    font-style: italic;
+}
+
+/* ============================================================
+   PART LABELS & NOTES
+   ============================================================ */
+.part-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #c8c8c8;
+    border: 1px solid #000;
+    border-top: none;
+    padding: 3px 6px;
+    font-size: 7.5pt;
+}
+
+.part-heading {
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+.date-accomplished-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 7.5pt;
+}
+
+.date-accomplished-box input {
+    border: none;
+    border-bottom: 1px solid #000;
+    width: 90px;
+    font-size: 7.5pt;
+    background: transparent;
+    font-family: inherit;
+    outline: none;
+}
+
+.date-received-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 7.5pt;
+}
+
+.date-received-box input {
+    border: none;
+    border-bottom: 1px solid #000;
+    width: 100px;
+    font-size: 7.5pt;
+    background: transparent;
+    font-family: inherit;
+    outline: none;
+}
+
+.part-note {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 3px 6px;
+    font-size: 7pt;
+    font-style: italic;
+    background: #fff;
+}
+
+/* ============================================================
+   ROW GROUPS & FIELDS
+   ============================================================ */
+.row-group {
+    display: flex;
+    border: 1px solid #000;
+    border-top: none;
+}
+
+.row-group.two-col {
+    gap: 0;
+}
+
+.row-group.two-col-equal {
+    gap: 0;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 6px;
+    flex: 1;
+}
+
+.field-group.full-width {
+    flex: 1;
+}
+
+.field-group label {
+    font-size: 7.5pt;
+    font-weight: bold;
+    margin-bottom: 2px;
+    color: #111;
+}
+
+.field-group input[type="text"],
+.field-group input[type="email"],
+.field-group input[type="number"] {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 100%;
+    font-size: 9pt;
+    font-family: inherit;
+    padding: 2px 0;
+    outline: none;
+    background: transparent;
+}
+
+/* ============================================================
+   CONTACT GROUP
+   ============================================================ */
+.contact-group {
+    border-left: 1px solid #000;
+    min-width: 230px;
+    max-width: 230px;
+}
+
+.contact-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 7.5pt;
+}
+
+.contact-row span {
+    white-space: nowrap;
+    min-width: 70px;
+    font-size: 7.5pt;
+}
+
+.contact-row input {
+    border: none;
+    border-bottom: 1px solid #555;
+    flex: 1;
+    font-size: 8pt;
+    font-family: inherit;
+    padding: 1px 0;
+    outline: none;
+    background: transparent;
+}
+
+/* ============================================================
+   NAME SUBFIELDS (First / MI / Last)
+   ============================================================ */
+.name-subfields {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.name-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.name-col-mi {
+    max-width: 50px;
+    flex: 0 0 50px;
+}
+
+.name-col input {
+    border: none;
+    border-bottom: 1px solid #555;
+    font-size: 9pt;
+    font-family: inherit;
+    padding: 2px 0;
+    outline: none;
+    background: transparent;
+    width: 100%;
+}
+
+.sub-label {
+    font-size: 6.5pt;
+    color: #444;
+    text-align: center;
+    margin-top: 1px;
+}
+
+/* ============================================================
+   GENDER FIELD
+   ============================================================ */
+.gender-field {
+    max-width: 180px;
+}
+
+/* ============================================================
+   PLACES OF OPERATION + MEMBERS
+   ============================================================ */
+.places-members {
+    align-items: stretch;
+}
+
+.place-field {
+    flex: 1;
+}
+
+.place-field textarea {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 100%;
+    font-size: 9pt;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    background: transparent;
+    padding: 2px 0;
+}
+
+.members-field {
+    border-left: 1px solid #000;
+    min-width: 160px;
+    max-width: 160px;
+}
+
+.members-table {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.members-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 8.5pt;
+}
+
+.members-row span {
+    min-width: 55px;
+    font-weight: normal;
+}
+
+.members-row input {
+    border: 1px solid #888;
+    width: 60px;
+    font-size: 9pt;
+    font-family: inherit;
+    padding: 1px 3px;
+    outline: none;
+    text-align: right;
+}
+
+.members-total {
+    border-top: 1px solid #000;
+    padding-top: 4px;
+    font-weight: bold;
+}
+
+/* ============================================================
+   OCCUPATION SECTION
+   ============================================================ */
+.occupation-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 5px 8px;
+}
+
+.occupation-label {
+    font-size: 7.5pt;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.occupation-label em {
+    font-weight: normal;
+}
+
+.occupation-group {
+    margin-bottom: 3px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 8pt;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.inline-text {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 80px;
+    font-size: 8pt;
+    font-family: inherit;
+    padding: 0;
+    outline: none;
+    background: transparent;
+}
+
+.inline-text-long {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 200px;
+    font-size: 8pt;
+    font-family: inherit;
+    padding: 0;
+    outline: none;
+    background: transparent;
+}
+
+/* ============================================================
+   ATTESTATION SECTION
+   ============================================================ */
+.attestation-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 10px 14px;
+}
+
+.attest-text {
+    font-size: 9pt;
+    margin-bottom: 20px;
+}
+
+.signature-block {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.signature-line-group {
+    text-align: center;
+    min-width: 220px;
+}
+
+.sig-line {
+    border-bottom: 1px solid #000;
+    width: 100%;
+    height: 28px;
+    margin-bottom: 2px;
+}
+
+.sig-label {
+    font-size: 8.5pt;
+    font-weight: bold;
+}
+
+.sig-sublabel {
+    font-size: 7.5pt;
+    font-style: italic;
+}
+
+/* ============================================================
+   NOTARY BLOCK
+   ============================================================ */
+.notary-block {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 8.5pt;
+    margin-bottom: 10px;
+}
+
+.notary-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.notary-input-long {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 160px;
+    font-size: 8.5pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.notary-input-medium {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 100px;
+    font-size: 8.5pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.notary-input-short {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 45px;
+    font-size: 8.5pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.notary-input-tiny {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 25px;
+    font-size: 8.5pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.notary-public-label {
+    text-align: center;
+    font-size: 9pt;
+    font-weight: bold;
+    margin: 8px 0;
+    text-decoration: underline;
+}
+
+/* ============================================================
+   DOC FIELDS
+   ============================================================ */
+.doc-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.doc-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8.5pt;
+}
+
+.doc-input {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 90px;
+    font-size: 8.5pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+/* ============================================================
+   PAGE BREAK
+   ============================================================ */
+.page-break {
+    page-break-after: always;
+    border-top: 2px dashed #aaa;
+    margin: 18px 0;
+}
+
+/* ============================================================
+   PART II - PROCESSING REQUIREMENTS
+   ============================================================ */
+.part-label-ii {
+    border-top: 1px solid #000;
+}
+
+.requirements-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 7px 10px;
+}
+
+.req-intro {
+    font-size: 8pt;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.checklist {
+    margin-bottom: 8px;
+}
+
+.checklist-item {
+    font-size: 8pt;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.checkbox-bracket {
+    font-family: monospace;
+    font-size: 8.5pt;
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+
+.req-note {
+    font-size: 7.5pt;
+    font-style: italic;
+    margin-bottom: 10px;
+    border-top: 1px solid #ccc;
+    padding-top: 5px;
+}
+
+/* ============================================================
+   PAYMENT & RECOMMENDATION
+   ============================================================ */
+.payment-section {
+    margin-bottom: 10px;
+}
+
+.payment-section p,
+.recommendation-section p {
+    font-size: 8.5pt;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.recommendation-section {
+    margin-bottom: 10px;
+}
+
+.req-indent {
+    margin-left: 18px;
+    font-size: 7.5pt;
+    font-style: italic;
+}
+
+.inline-input-short {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 80px;
+    font-size: 8pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.inline-input-medium {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 120px;
+    font-size: 8pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+.denial-reasons {
+    margin-top: 5px;
+    margin-left: 18px;
+}
+
+.denial-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    font-size: 8pt;
+}
+
+.denial-input {
+    border: none;
+    border-bottom: 1px solid #555;
+    flex: 1;
+    max-width: 380px;
+    font-size: 8pt;
+    font-family: inherit;
+    outline: none;
+    background: transparent;
+    padding: 1px 0;
+}
+
+/* ============================================================
+   PROCESSOR SIGNATURE
+   ============================================================ */
+.processor-signature {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 12px;
+    gap: 5px;
+}
+
+.processor-sig-block {
+    text-align: center;
+    min-width: 220px;
+}
+
+.proc-sig-line {
+    border-bottom: 1px solid #000;
+    width: 100%;
+    height: 25px;
+    margin-bottom: 2px;
+}
+
+.proc-date-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 8.5pt;
+}
+
+/* ============================================================
+   PART III - ACTION
+   ============================================================ */
+.part-label-iii {
+    border-top: 1px solid #000;
+}
+
+.action-section {
+    border: 1px solid #000;
+    border-top: none;
+    padding: 7px 10px;
+}
+
+.action-section > p {
+    font-size: 8.5pt;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.endorsement-block {
+    margin-top: 10px;
+}
+
+.endorsement-block p {
+    font-size: 8.5pt;
+    margin-bottom: 4px;
+}
+
+.provincial-head-block {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ph-name {
+    font-weight: bold;
+    font-size: 9.5pt;
+    text-decoration: underline;
+    margin-bottom: 2px;
+}
+
+.ph-title {
+    font-size: 8.5pt;
+    margin-bottom: 8px;
+}
+
+.approved-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    justify-content: flex-start;
+    font-size: 8.5pt;
+}
+
+.approved-line {
+    border-bottom: 1px solid #000;
+    flex: 1;
+    max-width: 160px;
+    height: 12px;
+}
+
+/* ============================================================
+   CERTIFICATION TABLE
+   ============================================================ */
+.cert-table {
+    display: flex;
+    border: 1px solid #000;
+    border-top: none;
+}
+
+.cert-cell {
+    flex: 1;
+    padding: 4px 6px;
+    border-right: 1px solid #000;
+}
+
+.cert-cell:last-child {
+    border-right: none;
+}
+
+.cert-cell label {
+    display: block;
+    font-size: 7.5pt;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.cert-cell input {
+    border: none;
+    border-bottom: 1px solid #555;
+    width: 100%;
+    font-size: 9pt;
+    font-family: inherit;
+    padding: 2px 0;
+    outline: none;
+    background: transparent;
+}
+
+/* ============================================================
+   SUBMIT BUTTON
+   ============================================================ */
+.submit-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.submit-btn {
+    background-color: #003082;
+    color: #fff;
+    border: none;
+    padding: 10px 40px;
+    font-size: 10.5pt;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+}
+
+.submit-btn:hover {
+    background-color: #004abf;
+}
+
+.submit-btn:active {
+    background-color: #001a4d;
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+    body {
+        background: #fff;
+        padding: 0;
+    }
+
+    .page-wrapper {
+        box-shadow: none;
+        width: 9.02in;
+        min-height: 12.76in;
+    }
+
+    .page-break {
+        page-break-after: always;
+        border: none;
+    }
+
+    .submit-wrapper {
+        display: none;
+    }
+
+    @page {
+        size: 9.02in 12.76in;
+        margin: 0;
+    }
+}

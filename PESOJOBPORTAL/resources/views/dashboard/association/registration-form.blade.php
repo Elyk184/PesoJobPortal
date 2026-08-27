@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Association | WA Registration')
+@section('title', 'Association | Registration Form')
 
 @section('dashboard-mobile-brand')
     <div class="dashboard-mobile-brand">
@@ -14,214 +14,411 @@
 @endsection
 
 @section('content')
-    <section aria-label="WA Registration Form">
+    <section aria-label="Worker's Association Registration Form">
         <div class="dashboard-topbar">
             <div>
-                <div class="dashboard-topbar-title">Worker's Association Registration</div>
-                <div class="dashboard-topbar-subtitle">Application for Registration of Worker's Association</div>
+                <div class="dashboard-topbar-title">Application for Registration</div>
+                <div class="dashboard-topbar-subtitle">Worker's Association (WA) Registration Form</div>
             </div>
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger mb-4">
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                 <ul class="mb-0">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        <div class="dashboard-section-card p-3 p-lg-4">
-            <form method="POST" action="{{ route('association.registration.submit') }}" enctype="multipart/form-data">
-                @csrf
+        @if(session('status'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('status') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-                <h5 class="fw-bold mb-3">Association Information</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-6">
-                        <label class="form-label">Association Name <span class="text-danger">*</span></label>
-                        <input type="text" name="association_name" class="form-control @error('association_name') is-invalid @enderror"
-                               value="{{ old('association_name') }}" required>
-                        @error('association_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label class="form-label">Address <span class="text-danger">*</span></label>
-                        <input type="text" name="address" class="form-control @error('address') is-invalid @enderror"
-                               value="{{ old('address') }}" required>
-                        @error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label class="form-label">Place of Operation <span class="text-danger">*</span></label>
-                        <input type="text" name="place_of_operation" class="form-control @error('place_of_operation') is-invalid @enderror"
-                               value="{{ old('place_of_operation') }}" required>
-                        @error('place_of_operation')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <label class="form-label">Date Organized <span class="text-danger">*</span></label>
-                        <input type="date" name="date_organized" class="form-control @error('date_organized') is-invalid @enderror"
-                               value="{{ old('date_organized') }}" required>
-                        @error('date_organized')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <label class="form-label">Date CBL Ratification</label>
-                        <input type="date" name="date_cbl_ratification" class="form-control @error('date_cbl_ratification') is-invalid @enderror"
-                               value="{{ old('date_cbl_ratification') }}">
-                        @error('date_cbl_ratification')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
+        <link rel="stylesheet" href="{{ asset('css/workers-association-form.css') }}">
 
-                <h5 class="fw-bold mb-3">President Information</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                        <input type="text" name="president_last_name" class="form-control @error('president_last_name') is-invalid @enderror"
-                               value="{{ old('president_last_name') }}" required>
-                        @error('president_last_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">First Name <span class="text-danger">*</span></label>
-                        <input type="text" name="president_first_name" class="form-control @error('president_first_name') is-invalid @enderror"
-                               value="{{ old('president_first_name') }}" required>
-                        @error('president_first_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Middle Name</label>
-                        <input type="text" name="president_middle_name" class="form-control @error('president_middle_name') is-invalid @enderror"
-                               value="{{ old('president_middle_name') }}">
-                        @error('president_middle_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label class="form-label">President Address <span class="text-danger">*</span></label>
-                        <input type="text" name="president_address" class="form-control @error('president_address') is-invalid @enderror"
-                               value="{{ old('president_address') }}" required>
-                        @error('president_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <label class="form-label">Contact No. <span class="text-danger">*</span></label>
-                        <input type="text" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror"
-                               value="{{ old('contact_no') }}" required>
-                        @error('contact_no')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                               value="{{ old('email') }}">
-                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <label class="form-label">ID No.</label>
-                        <input type="text" name="id_no" class="form-control @error('id_no') is-invalid @enderror"
-                               value="{{ old('id_no') }}">
-                        @error('id_no')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
+        <div class="dashboard-section-card p-4 mb-4">
+            <div class="page-wrapper">
+                <form method="POST" action="{{ route('association.registration.submit') }}" enctype="multipart/form-data" class="form-page">
+                    @csrf
 
-                <h5 class="fw-bold mb-3">Membership</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Male Members <span class="text-danger">*</span></label>
-                        <input type="number" name="male_members" class="form-control @error('male_members') is-invalid @enderror"
-                               value="{{ old('male_members', 0) }}" min="0" required>
-                        @error('male_members')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Female Members <span class="text-danger">*</span></label>
-                        <input type="number" name="female_members" class="form-control @error('female_members') is-invalid @enderror"
-                               value="{{ old('female_members', 0) }}" min="0" required>
-                        @error('female_members')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Total Members <span class="text-danger">*</span></label>
-                        <input type="number" name="total_members" class="form-control @error('total_members') is-invalid @enderror"
-                               value="{{ old('total_members', 0) }}" min="0" required>
-                        @error('total_members')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <h5 class="fw-bold mb-3">Occupation</h5>
-                <div class="mb-4">
-                    @php
-                        $occupations = ['Agriculture','Fishing','Construction','Manufacturing','Trade','Transport','Services','Others'];
-                    @endphp
-                    <div class="row g-2">
-                        @foreach($occupations as $occ)
-                            <div class="col-6 col-md-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="occupation[]"
-                                           value="{{ $occ }}" id="occ_{{ $loop->index }}"
-                                           {{ in_array($occ, old('occupation', [])) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="occ_{{ $loop->index }}">{{ $occ }}</label>
-                                </div>
+                    {{-- HEADER --}}
+                    <div class="form-header">
+                        <div class="header-logo">
+                            <img src="{{ asset('images/dole.png') }}" alt="DOLE Logo" class="logo-img">
+                            <div class="blr-form-no">
+                                <span>BLR Form No. 4, Series 2016</span>
                             </div>
-                        @endforeach
-                    </div>
-                    @error('occupation')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                    <div class="mt-2">
-                        <input type="text" name="occupation_other_text" class="form-control"
-                               placeholder="If Others, please specify" value="{{ old('occupation_other_text') }}">
-                    </div>
-                </div>
-
-                <h5 class="fw-bold mb-3">Documents</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Constitution / By-Laws</label>
-                        <input type="file" name="constitution_document" class="form-control @error('constitution_document') is-invalid @enderror"
-                               accept=".pdf,.jpg,.jpeg,.png">
-                        @error('constitution_document')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Financial Report</label>
-                        <input type="file" name="financial_report" class="form-control @error('financial_report') is-invalid @enderror"
-                               accept=".pdf,.jpg,.jpeg,.png">
-                        @error('financial_report')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Additional Documents</label>
-                        <input type="file" name="additional_documents[]" class="form-control" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                    </div>
-                </div>
-
-                <h5 class="fw-bold mb-3">Declaration & Signature</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">President Signature (Full Name) <span class="text-danger">*</span></label>
-                        <input type="text" name="president_signature" class="form-control @error('president_signature') is-invalid @enderror"
-                               value="{{ old('president_signature') }}" required>
-                        @error('president_signature')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Signature Location</label>
-                        <input type="text" name="signature_location" class="form-control @error('signature_location') is-invalid @enderror"
-                               value="{{ old('signature_location') }}">
-                        @error('signature_location')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label class="form-label">Signature Date</label>
-                        <input type="date" name="signature_date" class="form-control @error('signature_date') is-invalid @enderror"
-                               value="{{ old('signature_date') }}">
-                        @error('signature_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-12">
-                        <div class="form-check">
-                            <input class="form-check-input @error('declaration') is-invalid @enderror"
-                                   type="checkbox" name="declaration" id="declaration" value="1"
-                                   {{ old('declaration') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="declaration">
-                                I declare that all information provided is true and correct. <span class="text-danger">*</span>
-                            </label>
-                            @error('declaration')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="header-text">
+                            <p class="republic-text">Republic of the Philippines</p>
+                            <p class="dept-text">DEPARTMENT OF LABOR AND EMPLOYMENT</p>
+                            <p class="regional-text">Regional Office No. <span class="underline-val">__</span></p>
+                        </div>
+                        <div class="form-code">
+                            <span>PM-__-___.11-F-01, R.01</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-danger px-4">
-                        <i class="bi bi-send me-2"></i>Submit Registration
-                    </button>
-                    <a href="{{ route('association.dashboard') }}" class="btn btn-outline-secondary px-4">Cancel</a>
-                </div>
-            </form>
+                    {{-- FORM TITLE --}}
+                    <div class="form-title">
+                        <h1>APPLICATION FOR REGISTRATION OF WORKER'S ASSOCIATION <span class="title-abbr">(WAs)</span></h1>
+                    </div>
+
+                    {{-- PART I --}}
+                    <div class="part-label">
+                        <span class="part-heading">PART I. INFORMATION ABOUT THE REPORTING ORGANIZATION</span>
+                        <div class="date-accomplished-box">
+                            <label>Date Accomplished <em>(mm/dd/yyyy)</em></label>
+                            <input type="text" name="date_accomplished" placeholder="mm/dd/yyyy" value="{{ old('date_accomplished') }}">
+                        </div>
+                    </div>
+
+                    <div class="part-note">
+                        To be accomplished by the applicant. Supply all required information. Misrepresentation, false information filed in this
+                        application or any supporting document is a ground for denial or cancellation of registration.
+                    </div>
+
+                    {{-- NAME OF APPLICANT ASSOCIATION + CONTACT --}}
+                    <div class="row-group two-col">
+                        <div class="field-group">
+                            <label>Name of Applicant Association</label>
+                            <input type="text" name="association_name" value="{{ old('association_name') }}" required>
+                        </div>
+                        <div class="field-group contact-group">
+                            <label>Contact Nos.</label>
+                            <div class="contact-fields">
+                                <div class="contact-row">
+                                    <span>E-mail:</span>
+                                    <input type="email" name="email" value="{{ old('email') }}">
+                                </div>
+                                <div class="contact-row">
+                                    <span>Landline No:</span>
+                                    <input type="text" name="contact_no" value="{{ old('contact_no') }}">
+                                </div>
+                                <div class="contact-row">
+                                    <span>Mobile No:</span>
+                                    <input type="text" name="contact_mobile" value="{{ old('contact_mobile') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ADDRESS --}}
+                    <div class="row-group">
+                        <div class="field-group full-width">
+                            <label>Address</label>
+                            <input type="text" name="address" value="{{ old('address') }}" required>
+                        </div>
+                    </div>
+
+                    {{-- NAME OF PRESIDENT + CONTACT --}}
+                    <div class="row-group two-col">
+                        <div class="field-group">
+                            <label>Name of President</label>
+                            <div class="name-subfields">
+                                <div class="name-col">
+                                    <input type="text" name="president_first_name" value="{{ old('president_first_name') }}" required>
+                                    <span class="sub-label">(First Name)</span>
+                                </div>
+                                <div class="name-col name-col-mi">
+                                    <input type="text" name="president_middle_name" value="{{ old('president_middle_name') }}">
+                                    <span class="sub-label">(M.I.)</span>
+                                </div>
+                                <div class="name-col">
+                                    <input type="text" name="president_last_name" value="{{ old('president_last_name') }}" required>
+                                    <span class="sub-label">(Last Name)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field-group contact-group">
+                            <label>Contact Nos.</label>
+                            <div class="contact-fields">
+                                <div class="contact-row">
+                                    <span>E-mail:</span>
+                                    <input type="email" name="president_email" value="{{ old('president_email') }}">
+                                </div>
+                                <div class="contact-row">
+                                    <span>Landline No:</span>
+                                    <input type="text" name="president_landline" value="{{ old('president_landline') }}">
+                                </div>
+                                <div class="contact-row">
+                                    <span>Mobile No:</span>
+                                    <input type="text" name="president_mobile" value="{{ old('president_mobile') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ADDRESS OF PRESIDENT --}}
+                    <div class="row-group">
+                        <div class="field-group full-width">
+                            <label>Address</label>
+                            <input type="text" name="president_address" value="{{ old('president_address') }}" required>
+                        </div>
+                    </div>
+
+                    {{-- GENDER --}}
+                    <div class="row-group">
+                        <div class="field-group gender-field">
+                            <label>Gender</label>
+                            <input type="text" name="gender" value="{{ old('gender') }}">
+                        </div>
+                    </div>
+
+                    {{-- DATES --}}
+                    <div class="row-group two-col-equal">
+                        <div class="field-group">
+                            <label>Date Organized <em>(mm/dd/yyyy)</em></label>
+                            <input type="text" name="date_organized" placeholder="mm/dd/yyyy" value="{{ old('date_organized') }}" required>
+                        </div>
+                        <div class="field-group">
+                            <label>Date of CBL Ratification <em>(mm/dd/yyyy)</em></label>
+                            <input type="text" name="date_cbl_ratification" placeholder="mm/dd/yyyy" value="{{ old('date_cbl_ratification') }}">
+                        </div>
+                    </div>
+
+                    {{-- PLACE OF OPERATION + MEMBERS --}}
+                    <div class="row-group places-members">
+                        <div class="field-group place-field">
+                            <label>Place/s of Operation</label>
+                            <textarea name="place_of_operation" rows="3" required>{{ old('place_of_operation') }}</textarea>
+                        </div>
+                        <div class="field-group members-field">
+                            <label>No. of Association Members</label>
+                            <div class="members-table">
+                                <div class="members-row">
+                                    <span>Male</span>
+                                    <input type="number" name="male_members" min="0" value="{{ old('male_members') }}" required>
+                                </div>
+                                <div class="members-row">
+                                    <span>Female</span>
+                                    <input type="number" name="female_members" min="0" value="{{ old('female_members') }}" required>
+                                </div>
+                                <div class="members-row members-total">
+                                    <span>TOTAL</span>
+                                    <input type="number" name="total_members" min="0" readonly value="{{ old('total_members', old('male_members', 0)+old('female_members', 0)) }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- OCCUPATION OF MEMBERS --}}
+                    <div class="occupation-section">
+                        <p class="occupation-label">Occupation of Members: <em>Please check appropriate category</em></p>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Agricultural Workers" {{ in_array('Agricultural Workers', old('occupation', [])) ? 'checked' : '' }}> Agricultural Workers (
+                                <input type="checkbox" name="occupation[]" value="Farmers" {{ in_array('Farmers', old('occupation', [])) ? 'checked' : '' }}> Farmers
+                                <input type="checkbox" name="occupation[]" value="Fisherfolk" {{ in_array('Fisherfolk', old('occupation', [])) ? 'checked' : '' }}> Fisherfolk
+                                <input type="checkbox" name="occupation[]" value="Artisans" {{ in_array('Artisans', old('occupation', [])) ? 'checked' : '' }}> Artisans
+                                <input type="checkbox" name="occupation[]" value="Cottage" {{ in_array('Cottage', old('occupation', [])) ? 'checked' : '' }}> Cottage
+                                <input type="checkbox" name="occupation[]" value="Others" {{ in_array('Others', old('occupation', [])) ? 'checked' : '' }}> Others
+                                <input type="text" name="occupation_ag_others_specify" class="inline-text" value="{{ old('occupation_ag_others_specify') }}"> )
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Small Transport Workers" {{ in_array('Small Transport Workers', old('occupation', [])) ? 'checked' : '' }}> Small Transport Workers (Drivers:
+                                <input type="checkbox" name="occupation[]" value="Jeepney" {{ in_array('Jeepney', old('occupation', [])) ? 'checked' : '' }}> Jeepney
+                                <input type="checkbox" name="occupation[]" value="FX" {{ in_array('FX', old('occupation', [])) ? 'checked' : '' }}> FX
+                                <input type="checkbox" name="occupation[]" value="Tricycle" {{ in_array('Tricycle', old('occupation', [])) ? 'checked' : '' }}> Tricycle
+                                <input type="checkbox" name="occupation[]" value="Pedicab" {{ in_array('Pedicab', old('occupation', [])) ? 'checked' : '' }}> Pedicab )
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Home-based / Homeworkers" {{ in_array('Home-based / Homeworkers', old('occupation', [])) ? 'checked' : '' }}> Home-based / Homeworkers
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Small Construction Workers" {{ in_array('Small Construction Workers', old('occupation', [])) ? 'checked' : '' }}> Small Construction Workers
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Vendors" {{ in_array('Vendors', old('occupation', [])) ? 'checked' : '' }}> Vendors (
+                                <input type="checkbox" name="occupation[]" value="Market" {{ in_array('Market', old('occupation', [])) ? 'checked' : '' }}> Market
+                                <input type="checkbox" name="occupation[]" value="Sidewalk" {{ in_array('Sidewalk', old('occupation', [])) ? 'checked' : '' }}> Sidewalk
+                                <input type="checkbox" name="occupation[]" value="Ambulant" {{ in_array('Ambulant', old('occupation', [])) ? 'checked' : '' }}> Ambulant )
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Small-scale Miners" {{ in_array('Small-scale Miners', old('occupation', [])) ? 'checked' : '' }}> Small-scale Miners
+                            </label>
+                        </div>
+
+                        <div class="occupation-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="occupation[]" value="Other" id="occ_other" onchange="toggleOtherOccupation()" {{ in_array('Other', old('occupation', [])) ? 'checked' : '' }}> Others / Own-Account, Please specify
+                                <input type="text" name="occupation_other_text" id="occupation_other_text" class="inline-text-long" value="{{ old('occupation_other_text') }}" {{ in_array('Other', old('occupation', [])) ? '' : 'style="display:none;"' }}>
+                            </label>
+                        </div>
+
+                        {{-- hidden required marker for controller validation (occupation array required) --}}
+                        <input type="hidden" name="occupation_required" value="1">
+                    </div>
+
+                    {{-- ATTESTATION --}}
+                    <div class="attestation-section">
+                        <p class="attest-text">I attest to the truth of the foregoing.</p>
+
+                        <div class="signature-block">
+                            <div class="signature-line-group">
+                                <div class="sig-line"></div>
+                                <p class="sig-label"><strong>President</strong></p>
+                                <p class="sig-sublabel">(Signature over printed name)</p>
+                            </div>
+                        </div>
+
+                        <input type="checkbox" name="declaration" id="declaration" value="1" {{ old('declaration') ? 'checked' : '' }} style="display:none;" required>
+
+                        <div class="notary-block">
+                            <div class="notary-row">
+                                <span>Subscribed and sworn to before me at</span>
+                                <input type="text" name="signature_location" class="notary-input-long" value="{{ old('signature_location') }}">
+                                <span>, Philippines,</span>
+                            </div>
+                            <div class="notary-row">
+                                <span>this</span>
+                                <input type="text" name="sworn_day" class="notary-input-short" value="{{ old('sworn_day') }}">
+                                <span>day of</span>
+                                <input type="text" name="sworn_month" class="notary-input-medium" value="{{ old('sworn_month') }}">
+                                <span>20</span>
+                                <input type="text" name="sworn_year" class="notary-input-tiny" value="{{ old('sworn_year') }}">
+                                <span>with I.D. No.</span>
+                                <input type="text" name="id_no" class="notary-input-medium" value="{{ old('id_no') }}">
+                            </div>
+                            <div class="notary-row">
+                                <span>issued by</span>
+                                <input type="text" name="id_issued_by" class="notary-input-long" value="{{ old('id_issued_by') }}">
+                                <span>on</span>
+                                <input type="text" name="id_issued_on" class="notary-input-medium" value="{{ old('id_issued_on') }}">
+                            </div>
+                        </div>
+
+                        <div class="notary-public-label">NOTARY PUBLIC</div>
+
+                        <div class="doc-fields">
+                            <div class="doc-row">
+                                <span>Doc No.</span>
+                                <input type="text" name="doc_no" class="doc-input" value="{{ old('doc_no') }}">
+                            </div>
+                            <div class="doc-row">
+                                <span>Page No.</span>
+                                <input type="text" name="page_no" class="doc-input" value="{{ old('page_no') }}">
+                            </div>
+                            <div class="doc-row">
+                                <span>Book No.</span>
+                                <input type="text" name="book_no" class="doc-input" value="{{ old('book_no') }}">
+                            </div>
+                            <div class="doc-row">
+                                <span>Series of</span>
+                                <input type="text" name="series_of" class="doc-input" value="{{ old('series_of') }}">
+                            </div>
+                        </div>
+
+                        {{-- map president signature into controller expected field --}}
+                        <input type="text" name="president_signature" value="{{ old('president_signature') }}" class="notary-input-long" placeholder="President signature over printed name" style="margin-top:10px;">
+                        <input type="date" name="signature_date" value="{{ old('signature_date', date('Y-m-d')) }}" style="display:none;">
+                    </div>
+
+                    {{-- PAGE BREAK --}}
+                    <div class="page-break"></div>
+
+                    {{-- PART II (minimal required for this app) --}}
+                    <div class="part-label part-label-ii">
+                        <span class="part-heading">PART II. PROCESSING OF REQUIREMENTS</span>
+                        <div class="date-received-box">
+                            <label>Date Received:</label>
+                            <input type="text" name="date_received" placeholder="mm/dd/yyyy" value="{{ old('date_received') }}">
+                        </div>
+                    </div>
+                    <div class="part-note">(To be accomplished by the processor in the FO)</div>
+
+                    {{-- PART III (minimal required for this app) --}}
+                    <div class="part-label part-label-iii">
+                        <span class="part-heading">PART III. ACTION ON THE APPLICATION</span>
+                    </div>
+                    <div class="action-section">
+                        <p><strong>A. Approval/Denial</strong></p>
+                        <p style="font-size:7.5pt;font-style:italic;font-weight:normal;">(Processor fields omitted in this electronic submission view.)</p>
+
+                        <div class="submit-wrapper">
+                            <button type="submit" class="submit-btn">Submit Application</button>
+                        </div>
+
+                        <div style="display:flex;justify-content:center;gap:12px;margin-top:10px;">
+                            <a href="{{ route('association.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </div>
+
+                    {{-- supporting documents --}}
+                    <div class="requirements-section" style="margin-top:0;">
+                        <p style="font-size:8.5pt;font-weight:bold;margin-bottom:8px;">Supporting Documents</p>
+                        <div class="checklist-item">
+                            <span class="checkbox-bracket">[ ]</span>
+                            <span>Constitution and By-laws</span>
+                            <input type="file" name="constitution_document" accept=".pdf,.jpg,.jpeg,.png" style="margin-left:10px;">
+                        </div>
+                        <div class="checklist-item">
+                            <span class="checkbox-bracket">[ ]</span>
+                            <span>Annual Financial Report</span>
+                            <input type="file" name="financial_report" accept=".pdf,.jpg,.jpeg,.png" style="margin-left:10px;">
+                        </div>
+                        <div class="checklist-item">
+                            <span class="checkbox-bracket">[ ]</span>
+                            <span>Additional supporting documents (optional)</span>
+                            <input type="file" name="additional_documents[]" accept=".pdf,.jpg,.jpeg,.png" multiple style="margin-left:10px;">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
         </div>
+
+        <script>
+            const maleInput = document.querySelector('input[name="male_members"]');
+            const femaleInput = document.querySelector('input[name="female_members"]');
+            const totalInput = document.querySelector('input[name="total_members"]');
+
+            function updateTotal() {
+                const male = parseInt(maleInput.value) || 0;
+                const female = parseInt(femaleInput.value) || 0;
+                totalInput.value = male + female;
+            }
+
+            if (maleInput && femaleInput && totalInput) {
+                maleInput.addEventListener('input', updateTotal);
+                femaleInput.addEventListener('input', updateTotal);
+                updateTotal();
+            }
+
+            function toggleOtherOccupation() {
+                const checkbox = document.getElementById('occ_other');
+                const textInput = document.getElementById('occupation_other_text');
+                if (!checkbox || !textInput) return;
+                textInput.style.display = checkbox.checked ? 'block' : 'none';
+                if (!checkbox.checked) textInput.value = '';
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                toggleOtherOccupation();
+            });
+        </script>
+
     </section>
 @endsection

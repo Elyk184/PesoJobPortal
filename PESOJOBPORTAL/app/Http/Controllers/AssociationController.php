@@ -22,6 +22,17 @@ class AssociationController extends Controller
         return view('dashboard.association.submitted-requests', $this->dashboardData($request));
     }
 
+    public function acceptedRequests(Request $request): View
+    {
+        $data = $this->dashboardData($request);
+        $data['acceptedRequests'] = AssociationRequest::query()
+            ->where('user_id', $request->user()->id)
+            ->where('status', 'resolved')
+            ->latest()
+            ->get();
+        return view('dashboard.association.accepted-requests', $data);
+    }
+
     public function registrationForm(Request $request): View
     {
         return view('dashboard.association.registration-form', $this->dashboardData($request));

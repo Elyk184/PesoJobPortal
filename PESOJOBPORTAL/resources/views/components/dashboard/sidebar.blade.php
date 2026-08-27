@@ -2,10 +2,11 @@
     $user = auth()->user();
     $role = $user?->role ?? 'jobseeker';
     $brandTitle = match ($role) {
-        'ofw' => 'OFW Portal',
-        'employer' => 'Employer Portal',
-        'admin' => 'Admin Portal',
-        default => 'Jobseeker Portal',
+        'ofw'         => 'OFW Portal',
+        'employer'    => 'Employer Portal',
+        'admin'       => 'Admin Portal',
+        'association' => 'Association Portal',
+        default       => 'Jobseeker Portal',
     };
 @endphp
 
@@ -130,6 +131,38 @@
                 <a href="{{ route('employer.jobs.manage') }}" class="dashboard-nav-link {{ request()->routeIs('employer.jobs.manage') ? 'is-active' : '' }}">
                     <i class="bi bi-briefcase"></i>
                     <span>Manage Jobs</span>
+                </a>
+            </div>
+        @elseif ($role === 'association')
+            <div class="dashboard-nav-section">
+                <div class="dashboard-nav-label">Overview</div>
+                <a href="{{ route('association.dashboard') }}" class="dashboard-nav-link {{ request()->routeIs('association.dashboard') ? 'is-active' : '' }}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <div class="dashboard-nav-section">
+                <div class="dashboard-nav-label">Requests</div>
+                <a href="{{ route('association.registration-form') }}" class="dashboard-nav-link {{ request()->routeIs('association.registration-form') ? 'is-active' : '' }}">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>WA Registration</span>
+                </a>
+                <a href="{{ route('association.submitted-requests') }}" class="dashboard-nav-link {{ request()->routeIs('association.submitted-requests') ? 'is-active' : '' }}">
+                    <i class="bi bi-list-check"></i>
+                    <span>Submitted Requests</span>
+                </a>
+                <a href="{{ route('association.accepted-requests') }}" class="dashboard-nav-link {{ request()->routeIs('association.accepted-requests') ? 'is-active' : '' }}">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Accepted Requests</span>
+                </a>
+            </div>
+
+            <div class="dashboard-nav-section">
+                <div class="dashboard-nav-label">Account</div>
+                <a href="{{ route('association.profile') }}" class="dashboard-nav-link {{ request()->routeIs('association.profile') ? 'is-active' : '' }}">
+                    <i class="bi bi-person-circle"></i>
+                    <span>My Profile</span>
                 </a>
             </div>
         @elseif ($role === 'admin')

@@ -293,6 +293,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:association'])->prefix('association')->name('association.')->group(function () {
     Route::get('/dashboard', [AssociationController::class, 'dashboard'])->name('dashboard');
     Route::get('/submitted-requests', [AssociationController::class, 'submittedRequests'])->name('submitted-requests');
+    Route::get('/accepted-requests', [AssociationController::class, 'acceptedRequests'])->name('accepted-requests');
     Route::get('/registration-form', [AssociationController::class, 'registrationForm'])->name('registration-form');
     Route::post('/registration-form', [AssociationController::class, 'submitRegistration'])->name('registration.submit');
     Route::get('/profile', [AssociationController::class, 'profile'])->name('profile');

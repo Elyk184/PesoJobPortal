@@ -11,6 +11,10 @@
        class="btn btn-sm {{ request()->routeIs('association.submitted-requests') ? 'btn-danger' : 'btn-outline-danger' }}">
         <i class="bi bi-list-check me-1"></i>Submitted Requests
     </a>
+    <a href="{{ route('association.accepted-requests') }}"
+       class="btn btn-sm {{ request()->routeIs('association.accepted-requests') ? 'btn-danger' : 'btn-outline-danger' }}">
+        <i class="bi bi-check2-circle me-1"></i>Accepted Requests
+    </a>
     <a href="{{ route('association.profile') }}"
        class="btn btn-sm {{ request()->routeIs('association.profile') ? 'btn-danger' : 'btn-outline-danger' }}">
         <i class="bi bi-person-circle me-1"></i>My Profile
