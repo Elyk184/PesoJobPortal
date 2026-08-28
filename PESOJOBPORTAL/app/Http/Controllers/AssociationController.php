@@ -27,7 +27,7 @@ class AssociationController extends Controller
         $data = $this->dashboardData($request);
         $data['acceptedRequests'] = AssociationRequest::query()
             ->where('user_id', $request->user()->id)
-            ->where('status', 'resolved')
+            ->where('status', 'accepted')
             ->latest()
             ->get();
         return view('dashboard.association.accepted-requests', $data);

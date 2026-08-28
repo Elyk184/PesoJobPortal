@@ -46,7 +46,7 @@
                                     <td>{{ $req->request_type }}</td>
                                     <td>{{ $req->contact_person }}</td>
                                     <td>
-                                        <span class="badge text-bg-{{ match($req->status) { 'open' => 'primary', 'under_review' => 'warning', 'resolved' => 'success', default => 'secondary' } }}">
+                                        <span class="badge text-bg-{{ match($req->status) { 'submitted' => 'warning', 'accepted' => 'success', 'rejected' => 'danger', 'open' => 'primary', 'under_review' => 'warning', 'resolved' => 'success', default => 'secondary' } }}">
                                             {{ ucfirst(str_replace('_', ' ', $req->status)) }}
                                         </span>
                                     </td>

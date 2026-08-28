@@ -165,6 +165,12 @@
                                             <span class="badge bg-primary">Open</span>
                                         @elseif($request->status === 'under_review')
                                             <span class="badge bg-warning">Under Review</span>
+                                        @elseif($request->status === 'submitted')
+                                            <span class="badge bg-warning">Submitted</span>
+                                        @elseif($request->status === 'accepted')
+                                            <span class="badge bg-success">Accepted</span>
+                                        @elseif($request->status === 'rejected')
+                                            <span class="badge bg-danger">Rejected</span>
                                         @else
                                             <span class="badge bg-success">Resolved</span>
                                         @endif
