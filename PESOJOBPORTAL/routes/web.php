@@ -228,12 +228,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/ofw-submissions', [AdminController::class, 'ofwSubmissions'])->name('ofw-submissions');
     Route::get('/ofw-submissions/{submission}/download', [AdminController::class, 'downloadOfwSubmission'])->name('ofw-submissions.download');
     Route::post('/ofw-submissions/{submission}/accept', [AdminController::class, 'acceptOfwSubmission'])->name('ofw-submissions.accept');
+    Route::post('/ofw-submissions/{submission}/reject', [AdminController::class, 'rejectOfwSubmission'])->name('ofw-submissions.reject');
+    Route::post('/ofw-submissions/{submission}/undo', [AdminController::class, 'undoOfwSubmission'])->name('ofw-submissions.undo');
     Route::delete('/ofw-submissions/{submission}', [AdminController::class, 'deleteOfwSubmission'])->name('ofw-submissions.delete');
 
     // Associations
     Route::get('/associations', [AdminController::class, 'associations'])->name('associations');
     Route::post('/associations/{associationRequest}/accept', [AdminController::class, 'acceptAssociationRequest'])->name('associations.accept');
     Route::post('/associations/{associationRequest}/reject', [AdminController::class, 'rejectAssociationRequest'])->name('associations.reject');
+    Route::post('/associations/{associationRequest}/undo', [AdminController::class, 'undoAssociationRequest'])->name('associations.undo');
+    Route::delete('/associations/{associationRequest}', [AdminController::class, 'deleteAssociationRequest'])->name('associations.delete');
 
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');

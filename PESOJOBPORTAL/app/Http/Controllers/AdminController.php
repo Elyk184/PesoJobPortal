@@ -1061,7 +1061,7 @@ class AdminController extends Controller
         $submissions = OfwFormSubmission::query()
             ->with('user')
             ->when(in_array($filter, ['rfa', 'dmw'], true), fn ($query) => $query->where('form_type', $filter))
-            ->when(in_array($filter, ['submitted', 'accepted'], true), fn ($query) => $query->where('status', $filter))
+            ->when(in_array($filter, ['submitted', 'accepted', 'rejected'], true), fn ($query) => $query->where('status', $filter))
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -1072,6 +1072,7 @@ class AdminController extends Controller
             'dmw' => OfwFormSubmission::where('form_type', 'dmw')->count(),
             'submitted' => OfwFormSubmission::where('status', 'submitted')->count(),
             'accepted' => OfwFormSubmission::where('status', 'accepted')->count(),
+            'rejected' => OfwFormSubmission::where('status', 'rejected')->count(),
         ];
 
         return view('admin.ofw-submissions', compact('submissions', 'filter', 'ofwStats'));
@@ -1092,6 +1093,23 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'OFW request has been accepted.');
+    }
+
+    public function rejectOfwSubmission(OfwFormSubmission $submission): RedirectResponse
+    {
+        $submission->update(['status' => 'rejected']);
+
+        return back()->with('success', 'OFW request has been rejected.');
+    }
+
+    public function undoOfwSubmission(OfwFormSubmission $submission): RedirectResponse
+    {
+        $submission->update([
+            'status' => 'submitted',
+            'accepted_at' => null,
+        ]);
+
+        return back()->with('success', 'OFW request has been reverted to submitted.');
     }
 
     public function deleteOfwSubmission(OfwFormSubmission $submission): RedirectResponse
@@ -1146,6 +1164,24 @@ class AdminController extends Controller
         $associationRequest->update(['status' => 'rejected']);
 
         return back()->with('success', 'Association request has been rejected.');
+    }
+
+    public function undoAssociationRequest(Request $request, AssociationRequest $associationRequest): RedirectResponse
+    {
+        $associationRequest->update(['status' => 'submitted']);
+
+        return back()->with('success', 'Association request has been reverted to submitted.');
+    }
+
+    public function deleteAssociationRequest(Request $request, AssociationRequest $associationRequest): RedirectResponse
+    {
+        if ($associationRequest->document_path && Storage::exists($associationRequest->document_path)) {
+            Storage::delete($associationRequest->document_path);
+        }
+
+        $associationRequest->delete();
+
+        return redirect()->route('admin.associations')->with('success', 'Association request has been deleted.');
     }
 
     // Admin Profile

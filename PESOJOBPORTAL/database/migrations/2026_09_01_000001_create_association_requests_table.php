@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('address', 500)->nullable();
             $table->string('request_type', 100);
             $table->string('document_path')->nullable();
-            $table->string('status', 50)->default('open');
+            $table->string('status', 50)->default('submitted');
             $table->json('notes')->nullable();
             $table->timestamps();
         });

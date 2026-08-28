@@ -13,10 +13,18 @@
         'dmw'       => 'DMW RFA',
         'submitted' => 'Submitted Requests',
         'accepted'  => 'Accepted Requests',
+        'rejected'  => 'Rejected Requests',
     ];
 ?>
 
 @section('content')
+<style>
+    .ofw-action-btn {
+        padding: 0.15rem 0.45rem;
+        font-size: 0.72rem;
+    }
+    .ofw-action-btn i { font-size: 0.78rem; }
+</style>
 <div class="admin-dashboard">
     <div class="dashboard-card">
         @if(session('success'))
@@ -58,7 +66,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $submission->status === 'accepted' ? 'text-bg-success' : 'text-bg-warning text-dark' }}">
+                                    <span class="badge {{ $submission->status === 'accepted' ? 'text-bg-success' : ($submission->status === 'rejected' ? 'text-bg-danger' : 'text-bg-warning text-dark') }}">
                                         {{ ucfirst($submission->status ?? 'submitted') }}
                                     </span>
                                 </td>
@@ -67,15 +75,35 @@
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-2">
                                         <a href="{{ route('admin.ofw-submissions.download', $submission) }}"
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-download me-1"></i>Download PDF
+                                           class="btn btn-sm btn-outline-primary ofw-action-btn">
+                                            <i class="bi bi-download me-1"></i>Download
                                         </a>
 
-                                        @if($submission->status !== 'accepted')
+                                        @if($submission->status !== 'accepted' && $submission->status !== 'rejected')
                                             <form method="POST" action="{{ route('admin.ofw-submissions.accept', $submission) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">
+                                                <button type="submit" class="btn btn-sm btn-success ofw-action-btn">
                                                     <i class="bi bi-check2-circle me-1"></i>Accept
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if($submission->status !== 'rejected' && $submission->status !== 'accepted')
+                                            <form method="POST" action="{{ route('admin.ofw-submissions.reject', $submission) }}"
+                                                  onsubmit="return confirm('Reject this OFW request?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-danger ofw-action-btn">
+                                                    <i class="bi bi-x-circle me-1"></i>Reject
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if($submission->status === 'accepted' || $submission->status === 'rejected')
+                                            <form method="POST" action="{{ route('admin.ofw-submissions.undo', $submission) }}"
+                                                  onsubmit="return confirm('Undo this action and revert to submitted?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary ofw-action-btn">
+                                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Undo
                                                 </button>
                                             </form>
                                         @endif

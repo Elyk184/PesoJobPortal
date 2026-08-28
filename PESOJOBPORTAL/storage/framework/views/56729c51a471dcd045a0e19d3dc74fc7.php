@@ -14,6 +14,13 @@
 ?>
 
 <?php $__env->startSection('content'); ?>
+<style>
+    .assoc-action-btn {
+        padding: 0.15rem 0.45rem;
+        font-size: 0.72rem;
+    }
+    .assoc-action-btn i { font-size: 0.78rem; }
+</style>
 <div class="admin-dashboard">
     <div class="dashboard-card">
         <?php if(session('success')): ?>
@@ -64,29 +71,48 @@
                                     <div class="d-inline-flex gap-2">
                                         <?php if($req->document_path): ?>
                                             <a href="<?php echo e(asset('storage/' . $req->document_path)); ?>" target="_blank"
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="btn btn-sm btn-outline-primary assoc-action-btn">
                                                 <i class="bi bi-file-earmark-text me-1"></i>View Doc
                                             </a>
                                         <?php endif; ?>
 
-                                        <?php if($req->status !== 'accepted'): ?>
+                                        <?php if($req->status !== 'accepted' && $req->status !== 'rejected'): ?>
                                             <form method="POST" action="<?php echo e(route('admin.associations.accept', $req)); ?>">
                                                 <?php echo csrf_field(); ?>
-                                                <button type="submit" class="btn btn-sm btn-success">
+                                                <button type="submit" class="btn btn-sm btn-success assoc-action-btn">
                                                     <i class="bi bi-check2-circle me-1"></i>Accept
                                                 </button>
                                             </form>
                                         <?php endif; ?>
 
-                                        <?php if($req->status !== 'rejected'): ?>
+                                        <?php if($req->status !== 'rejected' && $req->status !== 'accepted'): ?>
                                             <form method="POST" action="<?php echo e(route('admin.associations.reject', $req)); ?>"
                                                   onsubmit="return confirm('Reject this association request?');">
                                                 <?php echo csrf_field(); ?>
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger assoc-action-btn">
                                                     <i class="bi bi-x-circle me-1"></i>Reject
                                                 </button>
                                             </form>
                                         <?php endif; ?>
+
+                                        <?php if($req->status === 'accepted' || $req->status === 'rejected'): ?>
+                                            <form method="POST" action="<?php echo e(route('admin.associations.undo', $req)); ?>"
+                                                  onsubmit="return confirm('Undo this action and revert to submitted?');">
+                                                <?php echo csrf_field(); ?>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary assoc-action-btn">
+                                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Undo
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+
+                                        <form method="POST" action="<?php echo e(route('admin.associations.delete', $req)); ?>"
+                                              onsubmit="return confirm('Delete this association request? This cannot be undone.');">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger assoc-action-btn">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

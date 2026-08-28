@@ -16,6 +16,13 @@
 ?>
 
 @section('content')
+<style>
+    .assoc-action-btn {
+        padding: 0.15rem 0.45rem;
+        font-size: 0.72rem;
+    }
+    .assoc-action-btn i { font-size: 0.78rem; }
+</style>
 <div class="admin-dashboard">
     <div class="dashboard-card">
         @if(session('success'))
@@ -63,29 +70,48 @@
                                     <div class="d-inline-flex gap-2">
                                         @if($req->document_path)
                                             <a href="{{ asset('storage/' . $req->document_path) }}" target="_blank"
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="btn btn-sm btn-outline-primary assoc-action-btn">
                                                 <i class="bi bi-file-earmark-text me-1"></i>View Doc
                                             </a>
                                         @endif
 
-                                        @if($req->status !== 'accepted')
+                                        @if($req->status !== 'accepted' && $req->status !== 'rejected')
                                             <form method="POST" action="{{ route('admin.associations.accept', $req) }}">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">
+                                                <button type="submit" class="btn btn-sm btn-success assoc-action-btn">
                                                     <i class="bi bi-check2-circle me-1"></i>Accept
                                                 </button>
                                             </form>
                                         @endif
 
-                                        @if($req->status !== 'rejected')
+                                        @if($req->status !== 'rejected' && $req->status !== 'accepted')
                                             <form method="POST" action="{{ route('admin.associations.reject', $req) }}"
                                                   onsubmit="return confirm('Reject this association request?');">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger assoc-action-btn">
                                                     <i class="bi bi-x-circle me-1"></i>Reject
                                                 </button>
                                             </form>
                                         @endif
+
+                                        @if($req->status === 'accepted' || $req->status === 'rejected')
+                                            <form method="POST" action="{{ route('admin.associations.undo', $req) }}"
+                                                  onsubmit="return confirm('Undo this action and revert to submitted?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary assoc-action-btn">
+                                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Undo
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <form method="POST" action="{{ route('admin.associations.delete', $req) }}"
+                                              onsubmit="return confirm('Delete this association request? This cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger assoc-action-btn">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
