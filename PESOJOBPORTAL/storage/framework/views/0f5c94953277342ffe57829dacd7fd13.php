@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Admin Dashboard | Link Job Resource Portal'); ?>
 
-@section('title', 'Admin Dashboard | Link Job Resource Portal')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     /* Hide navbar on admin dashboard */
     .peso-header {
@@ -870,11 +868,11 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-            <a href="{{ route('admin.profile') }}" style="text-decoration: none; color: inherit; display: block; transition: all 0.3s ease; border-radius: 8px; padding: 0.5rem; margin: -0.5rem;">
+            <a href="<?php echo e(route('admin.profile')); ?>" style="text-decoration: none; color: inherit; display: block; transition: all 0.3s ease; border-radius: 8px; padding: 0.5rem; margin: -0.5rem;">
                 <div class="sidebar-user" style="cursor: pointer;">
-                    <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                    <div class="sidebar-user-avatar"><?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?></div>
                     <div class="sidebar-user-name">
-                        <h6>{{ Str::limit(auth()->user()->name, 15) }}</h6>
+                        <h6><?php echo e(Str::limit(auth()->user()->name, 15)); ?></h6>
                         <p>Administrator</p>
                     </div>
                 </div>
@@ -884,7 +882,7 @@
         <ul class="sidebar-menu">
             <!-- Dashboard -->
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-menu-link active">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-menu-link active">
                     <i class="bi bi-speedometer2"></i>
                     <span>Dashboard</span>
                 </a>
@@ -897,60 +895,60 @@
                 <small style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-size: 10px;">Approvals & Verification</small>
             </li>
 
-            @if(!request()->routeIs('admin.jobseekers.index'))
+            <?php if(!request()->routeIs('admin.jobseekers.index')): ?>
             <li class="sidebar-menu-item">
 
             </li>
-            @endif
+            <?php endif; ?>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.employer-verification') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.employer-verification')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-building"></i>
                     <span>Employers</span>
-                    @if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0)
-                        <span class="badge badge-pending">{{ $adminSidebarCounts['pendingEmployerVerification'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['pendingEmployerVerification'] ?? 0) > 0): ?>
+                        <span class="badge badge-pending"><?php echo e($adminSidebarCounts['pendingEmployerVerification']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.jobseekers.index') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.jobseekers.index')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-people"></i>
                     <span>Jobseekers</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.job-approvals') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.job-approvals')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-file-check"></i>
                     <span>Job Approvals</span>
-                    @if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0)
-                        <span class="badge badge-pending" style="background:#0ea5e9;">{{ $adminSidebarCounts['pendingJobApprovals'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['pendingJobApprovals'] ?? 0) > 0): ?>
+                        <span class="badge badge-pending" style="background:#0ea5e9;"><?php echo e($adminSidebarCounts['pendingJobApprovals']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.lra-sra-approvals') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.lra-sra-approvals')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-clipboard-check"></i>
                     <span>LRA/SRA Approvals</span>
-                    @if(($adminSidebarCounts['pendingLraSraApprovals'] ?? 0) > 0)
-                        <span class="badge badge-pending" style="background:#ec4899;">{{ $adminSidebarCounts['pendingLraSraApprovals'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['pendingLraSraApprovals'] ?? 0) > 0): ?>
+                        <span class="badge badge-pending" style="background:#ec4899;"><?php echo e($adminSidebarCounts['pendingLraSraApprovals']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.ofw-submissions') }}" class="sidebar-menu-link {{ request()->routeIs('admin.ofw-submissions*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.ofw-submissions')); ?>" class="sidebar-menu-link <?php echo e(request()->routeIs('admin.ofw-submissions*') ? 'active' : ''); ?>">
                     <i class="bi bi-file-earmark-pdf"></i>
                     <span>OFW Requests</span>
-                    @if(($adminSidebarCounts['submittedOfwRequests'] ?? 0) > 0)
-                        <span class="badge badge-pending" style="background:#10b981;">{{ $adminSidebarCounts['submittedOfwRequests'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['submittedOfwRequests'] ?? 0) > 0): ?>
+                        <span class="badge badge-pending" style="background:#10b981;"><?php echo e($adminSidebarCounts['submittedOfwRequests']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.associations') }}" class="sidebar-menu-link {{ request()->routeIs('admin.associations*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.associations')); ?>" class="sidebar-menu-link <?php echo e(request()->routeIs('admin.associations*') ? 'active' : ''); ?>">
                     <i class="bi bi-people-fill"></i>
                     <span>Associations</span>
-                    @if(($adminSidebarCounts['pendingAssociationRequests'] ?? 0) > 0)
-                        <span class="badge badge-pending" style="background:#8b5cf6;">{{ $adminSidebarCounts['pendingAssociationRequests'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['pendingAssociationRequests'] ?? 0) > 0): ?>
+                        <span class="badge badge-pending" style="background:#8b5cf6;"><?php echo e($adminSidebarCounts['pendingAssociationRequests']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
 
@@ -963,19 +961,19 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.employment-stats') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.employment-stats')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-bar-chart-line"></i>
                     <span>Employment Stats</span>
                 </a>
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.peso-clearances') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.peso-clearances')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-file-pdf"></i>
                     <span>PESO Clearances</span>
-                    @if(($adminSidebarCounts['pendingPesoClearances'] ?? 0) > 0)
-                        <span class="sidebar-badge" style="background:#f59e0b;">{{ $adminSidebarCounts['pendingPesoClearances'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['pendingPesoClearances'] ?? 0) > 0): ?>
+                        <span class="sidebar-badge" style="background:#f59e0b;"><?php echo e($adminSidebarCounts['pendingPesoClearances']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
 
@@ -989,18 +987,18 @@
             </li>
 
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.settings') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.settings')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-gear"></i>
                     <span>Settings</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="{{ route('admin.alerts-notifications') }}" class="sidebar-menu-link">
+                <a href="<?php echo e(route('admin.alerts-notifications')); ?>" class="sidebar-menu-link">
                     <i class="bi bi-bell"></i>
                     <span>Alerts & Notifications</span>
-                    @if(($adminSidebarCounts['adminUnreadNotifications'] ?? 0) > 0)
-                        <span class="sidebar-badge">{{ $adminSidebarCounts['adminUnreadNotifications'] }}</span>
-                    @endif
+                    <?php if(($adminSidebarCounts['adminUnreadNotifications'] ?? 0) > 0): ?>
+                        <span class="sidebar-badge"><?php echo e($adminSidebarCounts['adminUnreadNotifications']); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
 
@@ -1008,13 +1006,13 @@
             <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
             <li class="sidebar-menu-item">
-                <a href="{{ route('logout') }}" class="sidebar-menu-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <a href="<?php echo e(route('logout')); ?>" class="sidebar-menu-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Logout</span>
                 </a>
             </li>
         </ul>
-        <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">@csrf</form>
+        <form id="logout-form" method="POST" action="<?php echo e(route('logout')); ?>" style="display: none;"><?php echo csrf_field(); ?></form>
     </aside>
 
     <!-- Main Content -->
@@ -1023,7 +1021,7 @@
         <div class="admin-topbar">
             <div class="admin-topbar-left">
                 <div class="topbar-logo">
-                    <img src="{{ asset('images/logo.png') }}" alt="PESO Logo">
+                    <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PESO Logo">
                 </div>
                 <div class="topbar-title">
                     <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
@@ -1070,8 +1068,8 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Job Postings</div>
-                            <div class="stat-value">{{ $stats['total_jobs'] }}</div>
-                            <div class="stat-card-subtitle">✓ {{ $stats['active_jobs'] }} active</div>
+                            <div class="stat-value"><?php echo e($stats['total_jobs']); ?></div>
+                            <div class="stat-card-subtitle">✓ <?php echo e($stats['active_jobs']); ?> active</div>
                         </div>
                         <div class="stat-card-icon-box">
                             <i class="bi bi-briefcase-fill"></i>
@@ -1090,8 +1088,8 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Applications</div>
-                            <div class="stat-value">{{ $stats['total_applications'] }}</div>
-                            <div class="stat-card-subtitle">⚠ {{ $stats['pending_applications'] }} pending</div>
+                            <div class="stat-value"><?php echo e($stats['total_applications']); ?></div>
+                            <div class="stat-card-subtitle">⚠ <?php echo e($stats['pending_applications']); ?> pending</div>
                         </div>
                         <div class="stat-card-icon-box">
                             <i class="bi bi-file-earmark-text-fill"></i>
@@ -1110,8 +1108,8 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Pending Job Approvals</div>
-                            <div class="stat-value">{{ $stats['pending_job_approvals'] }}</div>
-                            <a href="{{ route('admin.job-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                            <div class="stat-value"><?php echo e($stats['pending_job_approvals']); ?></div>
+                            <a href="<?php echo e(route('admin.job-approvals')); ?>" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
                         </div>
                         <div class="stat-card-icon-box">
                             <i class="bi bi-hourglass-split"></i>
@@ -1130,8 +1128,8 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Pending LRA/SRA Requests</div>
-                            <div class="stat-value">{{ $stats['pending_lra_sra'] }}</div>
-                            <a href="{{ route('admin.lra-sra-approvals') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                            <div class="stat-value"><?php echo e($stats['pending_lra_sra']); ?></div>
+                            <a href="<?php echo e(route('admin.lra-sra-approvals')); ?>" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
                         </div>
                         <div class="stat-card-icon-box">
                             <i class="bi bi-file-earmark-check"></i>
@@ -1150,8 +1148,8 @@
                     <div class="stat-card-header">
                         <div>
                             <div class="stat-label">Pending Document Approvals</div>
-                            <div class="stat-value">{{ $stats['pending_documents'] }}</div>
-                            <a href="{{ route('admin.document-verification') }}" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
+                            <div class="stat-value"><?php echo e($stats['pending_documents']); ?></div>
+                            <a href="<?php echo e(route('admin.document-verification')); ?>" style="color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 700; font-size: 12px; display: inline-block; margin-top: 0.5rem;">Review →</a>
                         </div>
                         <div class="stat-card-icon-box">
                             <i class="bi bi-shield-check"></i>
@@ -1191,19 +1189,19 @@
                         </div>
                         <div class="chart-stats" style="grid-template-columns: repeat(4, 1fr);">
                             <div class="stat-box info">
-                                <div class="stat-number">{{ $stats['total_applications'] }}</div>
+                                <div class="stat-number"><?php echo e($stats['total_applications']); ?></div>
                                 <div class="stat-text">Total Applications</div>
                             </div>
                             <div class="stat-box danger">
-                                <div class="stat-number">{{ $stats['pending_job_approvals'] }}</div>
+                                <div class="stat-number"><?php echo e($stats['pending_job_approvals']); ?></div>
                                 <div class="stat-text">Pending Jobs</div>
                             </div>
                             <div class="stat-box warning">
-                                <div class="stat-number">{{ $stats['pending_lra_sra'] }}</div>
+                                <div class="stat-number"><?php echo e($stats['pending_lra_sra']); ?></div>
                                 <div class="stat-text">LRA/SRA Requests</div>
                             </div>
                             <div class="stat-box success">
-                                <div class="stat-number">{{ $stats['pending_documents'] }}</div>
+                                <div class="stat-number"><?php echo e($stats['pending_documents']); ?></div>
                                 <div class="stat-text">Pending Documents</div>
                             </div>
                         </div>
@@ -1345,7 +1343,7 @@
                 <div class="col-lg-6 mb-4">
                     <div class="dashboard-card">
                         <h5><i class="bi bi-people me-2"></i>Recent Users</h5>
-                        @if($recentUsers->count() > 0)
+                        <?php if($recentUsers->count() > 0): ?>
                             <table class="data-table w-100">
                                 <thead>
                                     <tr>
@@ -1356,33 +1354,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($recentUsers as $user)
+                                    <?php $__currentLoopData = $recentUsers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
                                             <td>
-                                                <strong>{{ Str::limit($user->name, 15) }}</strong>
+                                                <strong><?php echo e(Str::limit($user->name, 15)); ?></strong>
                                             </td>
-                                            <td>{{ Str::limit($user->email, 20) }}</td>
+                                            <td><?php echo e(Str::limit($user->email, 20)); ?></td>
                                             <td>
-                                                @if($user->role === 'admin')
+                                                <?php if($user->role === 'admin'): ?>
                                                     <span class="badge badge-role badge-admin">Admin</span>
-                                                @elseif($user->role === 'employer')
+                                                <?php elseif($user->role === 'employer'): ?>
                                                     <span class="badge badge-role badge-employer">Employer</span>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="badge badge-role badge-jobseeker">Jobseeker</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
-                                            <td><small>{{ $user->created_at->format('d M') }}</small></td>
+                                            <td><small><?php echo e($user->created_at->format('d M')); ?></small></td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
-                        @else
+                        <?php else: ?>
                             <div class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <p>No Recent Users</p>
                                 <small>Users will appear here as they register</small>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -1390,7 +1388,7 @@
                 <div class="col-lg-6 mb-4">
                     <div class="dashboard-card">
                         <h5><i class="bi bi-briefcase me-2"></i>Recent Job Postings</h5>
-                        @if($recentJobs->count() > 0)
+                        <?php if($recentJobs->count() > 0): ?>
                             <table class="data-table w-100">
                                 <thead>
                                     <tr>
@@ -1401,31 +1399,31 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($recentJobs as $job)
-                                        <tr style="cursor: pointer;" onclick="window.location.href='{{ route('admin.jobs.review', $job) }}';" title="Click to review">
-                                            <td><strong>{{ Str::limit($job->title, 15) }}</strong></td>
-                                            <td>{{ Str::limit($job->employer_name, 12) }}</td>
+                                    <?php $__currentLoopData = $recentJobs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $job): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr style="cursor: pointer;" onclick="window.location.href='<?php echo e(route('admin.jobs.review', $job)); ?>';" title="Click to review">
+                                            <td><strong><?php echo e(Str::limit($job->title, 15)); ?></strong></td>
+                                            <td><?php echo e(Str::limit($job->employer_name, 12)); ?></td>
                                             <td>
-                                                @if($job->status === 'active')
+                                                <?php if($job->status === 'active'): ?>
                                                     <span class="badge badge-role badge-active">Active</span>
-                                                @elseif($job->status === 'closed')
+                                                <?php elseif($job->status === 'closed'): ?>
                                                     <span class="badge badge-role badge-closed">Closed</span>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="badge badge-role badge-pending">Pending</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
-                                            <td><small>{{ $job->created_at->format('d M') }}</small></td>
+                                            <td><small><?php echo e($job->created_at->format('d M')); ?></small></td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
-                        @else
+                        <?php else: ?>
                             <div class="empty-state">
                                 <i class="bi bi-briefcase"></i>
                                 <p>No Recent Job Postings</p>
                                 <small>New job listings will appear here</small>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -1435,9 +1433,9 @@
                 <div class="col-12 mb-4">
                     <div class="dashboard-card">
                         <h5><i class="bi bi-briefcase me-2"></i>All Posted Jobs</h5>
-                        @if($recentJobs->count() > 0)
+                        <?php if($recentJobs->count() > 0): ?>
                             <div class="job-feed">
-                                @foreach($recentJobs as $job)
+                                <?php $__currentLoopData = $recentJobs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $job): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="job-post">
                                         <div class="job-post-header">
                                             <div class="job-post-company">
@@ -1445,49 +1443,52 @@
                                                     <i class="bi bi-building"></i>
                                                 </div>
                                                 <div class="job-company-info">
-                                                    <div class="job-company-name">{{ Str::limit($job->employer_name, 25) }}</div>
-                                                    <div class="job-post-date">Posted {{ $job->created_at->diffForHumans() }}</div>
+                                                    <div class="job-company-name"><?php echo e(Str::limit($job->employer_name, 25)); ?></div>
+                                                    <div class="job-post-date">Posted <?php echo e($job->created_at->diffForHumans()); ?></div>
                                                 </div>
                                             </div>
                                             <div class="job-post-status">
-                                                @if($job->status === 'active')
+                                                <?php if($job->status === 'active'): ?>
                                                     <span class="badge badge-role badge-active">Active</span>
-                                                @elseif($job->status === 'closed')
+                                                <?php elseif($job->status === 'closed'): ?>
                                                     <span class="badge badge-role badge-closed">Closed</span>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="badge badge-role badge-pending">Pending</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="job-post-content">
-                                            <h6 class="job-title">{{ Str::limit($job->title, 50) }}</h6>
-                                            <p class="job-description">{{ Str::limit($job->description, 120) }}</p>
+                                            <h6 class="job-title"><?php echo e(Str::limit($job->title, 50)); ?></h6>
+                                            <p class="job-description"><?php echo e(Str::limit($job->description, 120)); ?></p>
                                             <div class="job-meta">
                                                 <span class="job-meta-item">
-                                                    <i class="bi bi-geo-alt"></i> {{ Str::limit($job->location ?? 'Remote', 20) }}
+                                                    <i class="bi bi-geo-alt"></i> <?php echo e(Str::limit($job->location ?? 'Remote', 20)); ?>
+
                                                 </span>
                                                 <span class="job-meta-item">
-                                                    <i class="bi bi-cash-coin"></i> {{ $job->salary_range ?? 'Competitive' }}
+                                                    <i class="bi bi-cash-coin"></i> <?php echo e($job->salary_range ?? 'Competitive'); ?>
+
                                                 </span>
                                                 <span class="job-meta-item">
-                                                    <i class="bi bi-file-text"></i> {{ $job->employment_type ?? 'Full-time' }}
+                                                    <i class="bi bi-file-text"></i> <?php echo e($job->employment_type ?? 'Full-time'); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="job-post-footer">
-                                            <button type="button" class="job-view-btn" onclick="openJobDetailModal({{ $job->id }})" data-job-id="{{ $job->id }}">View Details</button>
-                                            <button type="button" class="job-trash-btn" onclick="openJobDeleteModal({{ $job->id }})" title="Delete this job"><i class="bi bi-trash3"></i></button>
+                                            <button type="button" class="job-view-btn" onclick="openJobDetailModal(<?php echo e($job->id); ?>)" data-job-id="<?php echo e($job->id); ?>">View Details</button>
+                                            <button type="button" class="job-trash-btn" onclick="openJobDeleteModal(<?php echo e($job->id); ?>)" title="Delete this job"><i class="bi bi-trash3"></i></button>
                                         </div>
                                     </div>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="empty-state">
                                 <i class="bi bi-briefcase"></i>
                                 <p>No Jobs Posted Yet</p>
                                 <small>All job postings will be displayed here</small>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -2382,7 +2383,7 @@
                 const datasets = [
                     {
                         label: 'Applications',
-                        data: generateData({{ $stats['pending_applications'] }}, period),
+                        data: generateData(<?php echo e($stats['pending_applications']); ?>, period),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
@@ -2396,7 +2397,7 @@
                     },
                     {
                         label: 'Job Approvals',
-                        data: generateData({{ $stats['pending_job_approvals'] }}, period),
+                        data: generateData(<?php echo e($stats['pending_job_approvals']); ?>, period),
                         borderColor: '#ef4444',
                         backgroundColor: 'rgba(239, 68, 68, 0.1)',
                         borderWidth: 3,
@@ -2410,7 +2411,7 @@
                     },
                     {
                         label: 'LRA/SRA Requests',
-                        data: generateData({{ $stats['pending_lra_sra'] }}, period),
+                        data: generateData(<?php echo e($stats['pending_lra_sra']); ?>, period),
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
                         borderWidth: 3,
@@ -2424,7 +2425,7 @@
                     },
                     {
                         label: 'Documents',
-                        data: generateData({{ $stats['pending_documents'] }}, period),
+                        data: generateData(<?php echo e($stats['pending_documents']); ?>, period),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         borderWidth: 3,
@@ -2524,4 +2525,6 @@
     }
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/dashboard/admin.blade.php ENDPATH**/ ?>
