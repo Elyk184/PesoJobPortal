@@ -230,6 +230,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/ofw-submissions/{submission}/accept', [AdminController::class, 'acceptOfwSubmission'])->name('ofw-submissions.accept');
     Route::delete('/ofw-submissions/{submission}', [AdminController::class, 'deleteOfwSubmission'])->name('ofw-submissions.delete');
 
+    // Associations
+    Route::get('/associations', [AdminController::class, 'associations'])->name('associations');
+    Route::post('/associations/{associationRequest}/accept', [AdminController::class, 'acceptAssociationRequest'])->name('associations.accept');
+    Route::post('/associations/{associationRequest}/reject', [AdminController::class, 'rejectAssociationRequest'])->name('associations.reject');
+
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');
     Route::get('/employers-management', [AdminController::class, 'employersManagement'])->name('employers-management');

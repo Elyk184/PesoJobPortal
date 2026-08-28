@@ -87,6 +87,9 @@ class AppServiceProvider extends ServiceProvider
             'submittedOfwRequests' => DB::table('ofw_form_submissions')
                 ->where('status', 'submitted')
                 ->count(),
+            'pendingAssociationRequests' => DB::table('association_requests')
+                ->where('status', 'submitted')
+                ->count(),
             'adminUnreadNotifications' => $adminUnreadNotifications,
         ];
     }

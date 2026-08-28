@@ -69,6 +69,15 @@
                 @endif
             </a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="{{ route('admin.associations') }}" class="sidebar-menu-link {{ request()->routeIs('admin.associations*') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i>
+                <span>Associations</span>
+                @if(($adminSidebarCounts['pendingAssociationRequests'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#8b5cf6;">{{ $adminSidebarCounts['pendingAssociationRequests'] }}</span>
+                @endif
+            </a>
+        </li>
         {{--  <li class="sidebar-menu-item">
             <a href="{{ route('admin.document-verification') }}" class="sidebar-menu-link {{ request()->routeIs('admin.document-verification') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark"></i>
@@ -124,7 +133,7 @@
                 @endif
             </a>
         </li>
-       
+
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 

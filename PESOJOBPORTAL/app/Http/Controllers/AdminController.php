@@ -11,6 +11,7 @@ use App\Models\PesoClearance;
 use App\Models\JobseekerAddress;
 use App\Models\JobseekerPersonalInformation;
 use App\Models\RecruitmentActivityRequest;
+use App\Models\AssociationRequest;
 use App\Models\CompanyProfile;
 use App\Models\EmployerNotification;
 use App\Models\PortalNotification;
@@ -1102,6 +1103,49 @@ class AdminController extends Controller
         $submission->delete();
 
         return back()->with('success', 'OFW submission has been deleted.');
+    }
+
+    // Associations
+    public function associations(Request $request): View
+    {
+        $filter = $request->query('filter', 'all');
+
+        $query = AssociationRequest::with('user')->latest();
+
+        if ($filter === 'submitted') {
+            $query->where('status', 'submitted');
+        } elseif ($filter === 'accepted') {
+            $query->where('status', 'accepted');
+        } elseif ($filter === 'rejected') {
+            $query->where('status', 'rejected');
+        }
+
+        $stats = [
+            'all'       => AssociationRequest::count(),
+            'submitted' => AssociationRequest::where('status', 'submitted')->count(),
+            'accepted'  => AssociationRequest::where('status', 'accepted')->count(),
+            'rejected'  => AssociationRequest::where('status', 'rejected')->count(),
+        ];
+
+        return view('admin.associations', [
+            'requests' => $query->paginate(15)->withQueryString(),
+            'stats'    => $stats,
+            'filter'   => $filter,
+        ]);
+    }
+
+    public function acceptAssociationRequest(Request $request, AssociationRequest $associationRequest): RedirectResponse
+    {
+        $associationRequest->update(['status' => 'accepted']);
+
+        return back()->with('success', 'Association request has been accepted.');
+    }
+
+    public function rejectAssociationRequest(Request $request, AssociationRequest $associationRequest): RedirectResponse
+    {
+        $associationRequest->update(['status' => 'rejected']);
+
+        return back()->with('success', 'Association request has been rejected.');
     }
 
     // Admin Profile

@@ -69,6 +69,15 @@
                 <?php endif; ?>
             </a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="<?php echo e(route('admin.associations')); ?>" class="sidebar-menu-link <?php echo e(request()->routeIs('admin.associations*') ? 'active' : ''); ?>">
+                <i class="bi bi-people-fill"></i>
+                <span>Associations</span>
+                <?php if(($adminSidebarCounts['pendingAssociationRequests'] ?? 0) > 0): ?>
+                    <span class="sidebar-badge" style="background:#8b5cf6;"><?php echo e($adminSidebarCounts['pendingAssociationRequests']); ?></span>
+                <?php endif; ?>
+            </a>
+        </li>
         
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
@@ -119,7 +128,7 @@
                 <?php endif; ?>
             </a>
         </li>
-       
+
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>
 
