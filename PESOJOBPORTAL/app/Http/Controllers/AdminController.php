@@ -24,11 +24,11 @@ use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
@@ -1186,7 +1186,7 @@ class AdminController extends Controller
         return redirect()->route('admin.associations')->with('success', 'Association request has been deleted.');
     }
 
-    public function downloadAssociationPdf(AssociationRequest $associationRequest): BinaryFileResponse|StreamedResponse
+    public function downloadAssociationPdf(AssociationRequest $associationRequest): Response
     {
         $notes = $associationRequest->notes ?? [];
         $registrationData = $notes['registration_data'] ?? [];
@@ -1213,7 +1213,7 @@ class AdminController extends Controller
             'female_members' => $registrationData['female_members'] ?? '',
             'total_members' => $registrationData['total_members'] ?? '',
             'occupation' => $registrationData['occupation'] ?? [],
-            'occupation_ag_others_specify' => '',
+            'occupation_ag_others_specify' => $registrationData['occupation_ag_others_specify'] ?? '',
             'occupation_other_text' => $registrationData['occupation_other_text'] ?? '',
             'president_signature' => $registrationData['president_signature'] ?? '',
             'signature_date' => $registrationData['signature_date'] ?? '',
@@ -1229,7 +1229,7 @@ class AdminController extends Controller
             'book_no' => $registrationData['book_no'] ?? '',
             'series_of' => $registrationData['series_of'] ?? '',
             'date_received' => '',
-            'date_accomplished' => $registrationData['date_organized'] ?? '',
+            'date_accomplished' => $registrationData['date_accomplished'] ?? '',
             'constitution_document' => $this->storageImageDataUri($documents['constitution'] ?? null),
             'financial_report' => $this->storageImageDataUri($documents['financial_report'] ?? null),
             'additional_documents' => [],
@@ -1240,12 +1240,21 @@ class AdminController extends Controller
             $submission['additional_documents'][] = $this->storageImageDataUri($docPath);
         }
 
+        // Keep checklist checkboxes ticked even if image conversion returned null
+        if (!empty($documents['constitution']) && empty($submission['constitution_document'])) {
+            $submission['constitution_document'] = '__pdf__';
+        }
+        if (!empty($documents['financial_report']) && empty($submission['financial_report'])) {
+            $submission['financial_report'] = '__pdf__';
+        }
+
         $doleLogo = $this->publicImageDataUri('images/dolee.png');
 
         $pdf = Pdf::loadView('admin.associations-pdf', [
             'submission' => $submission,
             'dole_logo' => $doleLogo,
-        ])->setPaper([0, 0, 595.28, 841.89], 'portrait');
+        ])->setPaper([0, 0, 595.28, 2400], 'portrait');
+        $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
 
         $filename = 'association-registration-' . $associationRequest->id . '-' . now()->format('YmdHis') . '.pdf';
 
@@ -1274,8 +1283,34 @@ class AdminController extends Controller
         $fullPath = Storage::disk('public')->path($path);
         $mime = mime_content_type($fullPath) ?: 'application/octet-stream';
 
+        if ($mime === 'image/webp' && function_exists('imagecreatefromwebp')) {
+            $image = imagecreatefromwebp($fullPath);
+            if ($image !== false) {
+                ob_start();
+                imagepng($image);
+                $contents = ob_get_clean();
+                imagedestroy($image);
+                return $contents === false ? null : 'data:image/png;base64,' . base64_encode($contents);
+            }
+        }
+
         if (str_starts_with($mime, 'image/')) {
             return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
+        }
+
+        // For PDFs, attempt to render first page as image via Imagick
+        if ($mime === 'application/pdf' && extension_loaded('imagick')) {
+            try {
+                $im = new \Imagick();
+                $im->setResolution(150, 150);
+                $im->readImage($fullPath . '[0]');
+                $im->setImageFormat('png');
+                $contents = $im->getImageBlob();
+                $im->clear();
+                return 'data:image/png;base64,' . base64_encode($contents);
+            } catch (\Throwable) {
+                // Imagick not available or failed — fall through
+            }
         }
 
         return null;

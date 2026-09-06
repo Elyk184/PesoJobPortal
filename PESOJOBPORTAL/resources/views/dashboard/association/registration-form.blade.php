@@ -284,7 +284,7 @@
                             </div>
                         </div>
 
-                        <input type="checkbox" name="declaration" id="declaration" value="1" {{ old('declaration') ? 'checked' : '' }} style="display:none;" required>
+                        <input type="hidden" name="declaration" value="1">
 
                         <div class="notary-block">
                             <div class="notary-row">
@@ -332,7 +332,7 @@
                         </div>
 
                         {{-- map president signature into controller expected field --}}
-                        <input type="text" name="president_signature" value="{{ old('president_signature') }}" class="notary-input-long" placeholder="President signature over printed name" style="margin-top:10px;">
+                        <input type="text" name="president_signature" value="{{ old('president_signature') }}" class="notary-input-long" placeholder="President signature over printed name" style="margin-top:10px;" required>
                         <input type="date" name="signature_date" value="{{ old('signature_date', date('Y-m-d')) }}" style="display:none;">
                     </div>
 

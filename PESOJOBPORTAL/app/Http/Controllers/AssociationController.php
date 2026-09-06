@@ -109,9 +109,9 @@ class AssociationController extends Controller
             'signature_location' => ['nullable', 'string', 'max:255'],
             'signature_date' => ['nullable', 'date'],
             'id_no' => ['nullable', 'string', 'max:100'],
-            'constitution_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
-            'financial_report' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
-            'additional_documents.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'constitution_document' => ['nullable', 'file', 'max:10240'],
+            'financial_report' => ['nullable', 'file', 'max:10240'],
+            'additional_documents.*' => ['nullable', 'file', 'max:10240'],
         ]);
 
         $user = $request->user();
