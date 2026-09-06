@@ -68,12 +68,10 @@
                                 <td>{{ optional($req->created_at)->format('M d, Y h:i A') }}</td>
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-2">
-                                        @if($req->document_path)
-                                            <a href="{{ asset('storage/' . $req->document_path) }}" target="_blank"
-                                               class="btn btn-sm btn-outline-primary assoc-action-btn">
-                                                <i class="bi bi-file-earmark-text me-1"></i>View Doc
-                                            </a>
-                                        @endif
+                                        <a href="{{ route('admin.associations.download', $req) }}" target="_blank"
+                                           class="btn btn-sm btn-outline-primary assoc-action-btn">
+                                            <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+                                        </a>
 
                                         @if($req->status !== 'accepted' && $req->status !== 'rejected')
                                             <form method="POST" action="{{ route('admin.associations.accept', $req) }}">

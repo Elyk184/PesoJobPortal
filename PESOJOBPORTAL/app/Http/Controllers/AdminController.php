@@ -19,6 +19,7 @@ use App\Models\UserNotification;
 use App\Services\CertificationService;
 use App\Services\PesoClearanceService;
 use App\Services\PesoClearanceDocumentService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
@@ -1182,6 +1184,101 @@ class AdminController extends Controller
         $associationRequest->delete();
 
         return redirect()->route('admin.associations')->with('success', 'Association request has been deleted.');
+    }
+
+    public function downloadAssociationPdf(AssociationRequest $associationRequest): BinaryFileResponse|StreamedResponse
+    {
+        $notes = $associationRequest->notes ?? [];
+        $registrationData = $notes['registration_data'] ?? [];
+        $documents = $notes['documents'] ?? [];
+
+        $submission = [
+            'association_name' => $associationRequest->association_name,
+            'address' => $associationRequest->address,
+            'email' => $associationRequest->email ?? ($registrationData['email'] ?? ''),
+            'contact_no' => $associationRequest->contact_number ?? ($registrationData['contact_no'] ?? ''),
+            'contact_mobile' => $registrationData['president_mobile'] ?? '',
+            'president_first_name' => $registrationData['president_first_name'] ?? '',
+            'president_middle_name' => $registrationData['president_middle_name'] ?? '',
+            'president_last_name' => $registrationData['president_last_name'] ?? '',
+            'president_email' => $registrationData['president_email'] ?? '',
+            'president_landline' => $registrationData['president_landline'] ?? '',
+            'president_mobile' => $registrationData['president_mobile'] ?? '',
+            'president_address' => $registrationData['president_address'] ?? '',
+            'gender' => $registrationData['gender'] ?? '',
+            'date_organized' => $registrationData['date_organized'] ?? '',
+            'date_cbl_ratification' => $registrationData['date_cbl_ratification'] ?? '',
+            'place_of_operation' => $registrationData['place_of_operation'] ?? '',
+            'male_members' => $registrationData['male_members'] ?? '',
+            'female_members' => $registrationData['female_members'] ?? '',
+            'total_members' => $registrationData['total_members'] ?? '',
+            'occupation' => $registrationData['occupation'] ?? [],
+            'occupation_ag_others_specify' => '',
+            'occupation_other_text' => $registrationData['occupation_other_text'] ?? '',
+            'president_signature' => $registrationData['president_signature'] ?? '',
+            'signature_date' => $registrationData['signature_date'] ?? '',
+            'signature_location' => $registrationData['signature_location'] ?? '',
+            'sworn_day' => $registrationData['sworn_day'] ?? '',
+            'sworn_month' => $registrationData['sworn_month'] ?? '',
+            'sworn_year' => $registrationData['sworn_year'] ?? '',
+            'id_no' => $registrationData['id_no'] ?? '',
+            'id_issued_by' => $registrationData['id_issued_by'] ?? '',
+            'id_issued_on' => $registrationData['id_issued_on'] ?? '',
+            'doc_no' => $registrationData['doc_no'] ?? '',
+            'page_no' => $registrationData['page_no'] ?? '',
+            'book_no' => $registrationData['book_no'] ?? '',
+            'series_of' => $registrationData['series_of'] ?? '',
+            'date_received' => '',
+            'date_accomplished' => $registrationData['date_organized'] ?? '',
+            'constitution_document' => $this->storageImageDataUri($documents['constitution'] ?? null),
+            'financial_report' => $this->storageImageDataUri($documents['financial_report'] ?? null),
+            'additional_documents' => [],
+            'regional_office' => '',
+        ];
+
+        foreach (($documents['additional'] ?? []) as $docPath) {
+            $submission['additional_documents'][] = $this->storageImageDataUri($docPath);
+        }
+
+        $doleLogo = $this->publicImageDataUri('images/dolee.png');
+
+        $pdf = Pdf::loadView('admin.associations-pdf', [
+            'submission' => $submission,
+            'dole_logo' => $doleLogo,
+        ])->setPaper([0, 0, 595.28, 841.89], 'portrait');
+
+        $filename = 'association-registration-' . $associationRequest->id . '-' . now()->format('YmdHis') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    private function publicImageDataUri(string $relativePath): ?string
+    {
+        $path = public_path($relativePath);
+
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $mime = mime_content_type($path) ?: 'image/png';
+
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+    }
+
+    private function storageImageDataUri(?string $path): ?string
+    {
+        if (!$path || !Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        $fullPath = Storage::disk('public')->path($path);
+        $mime = mime_content_type($fullPath) ?: 'application/octet-stream';
+
+        if (str_starts_with($mime, 'image/')) {
+            return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
+        }
+
+        return null;
     }
 
     // Admin Profile

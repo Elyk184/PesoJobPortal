@@ -238,6 +238,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/associations/{associationRequest}/reject', [AdminController::class, 'rejectAssociationRequest'])->name('associations.reject');
     Route::post('/associations/{associationRequest}/undo', [AdminController::class, 'undoAssociationRequest'])->name('associations.undo');
     Route::delete('/associations/{associationRequest}', [AdminController::class, 'deleteAssociationRequest'])->name('associations.delete');
+    Route::get('/associations/{associationRequest}/download', [AdminController::class, 'downloadAssociationPdf'])->name('associations.download');
 
     // Management Section
     Route::view('/jobseekers-management', 'admin.jobseekers-management')->name('jobseekers-management');

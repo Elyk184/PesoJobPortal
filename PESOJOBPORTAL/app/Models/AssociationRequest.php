@@ -10,6 +10,7 @@ class AssociationRequest extends Model
         'user_id', 'subject', 'details', 'association_name',
         'contact_person', 'contact_number', 'email', 'address',
         'request_type', 'document_path', 'status', 'notes',
+        'pdf_path', 'pdf_filename',
     ];
 
     protected $casts = ['notes' => 'array'];

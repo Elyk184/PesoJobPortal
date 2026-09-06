@@ -69,12 +69,10 @@
                                 <td><?php echo e(optional($req->created_at)->format('M d, Y h:i A')); ?></td>
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-2">
-                                        <?php if($req->document_path): ?>
-                                            <a href="<?php echo e(asset('storage/' . $req->document_path)); ?>" target="_blank"
-                                               class="btn btn-sm btn-outline-primary assoc-action-btn">
-                                                <i class="bi bi-file-earmark-text me-1"></i>View Doc
-                                            </a>
-                                        <?php endif; ?>
+                                        <a href="<?php echo e(route('admin.associations.download', $req)); ?>" target="_blank"
+                                           class="btn btn-sm btn-outline-primary assoc-action-btn">
+                                            <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+                                        </a>
 
                                         <?php if($req->status !== 'accepted' && $req->status !== 'rejected'): ?>
                                             <form method="POST" action="<?php echo e(route('admin.associations.accept', $req)); ?>">
