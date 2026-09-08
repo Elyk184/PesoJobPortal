@@ -568,6 +568,35 @@ class AdminController extends Controller
         }
 
         $filePath = data_get($activityRequest, $field);
+
+        if ($field === 'company_profile_path') {
+            $activityRequest->loadMissing('employer.companyProfile');
+            $employer = $activityRequest->employer;
+            $companyProfile = $employer?->companyProfile;
+
+            if ($employer) {
+                $logoPath = $companyProfile?->logo_path;
+                $logoFullPath = null;
+
+                if ($logoPath && Storage::disk('public')->exists($logoPath)) {
+                    $logoFullPath = Storage::disk('public')->path($logoPath);
+                }
+
+                $pdf = Pdf::loadView('dashboard.employer.company-profile-pdf', [
+                    'employer' => $employer,
+                    'companyProfile' => $companyProfile,
+                    'logoFullPath' => $logoFullPath,
+                    'generatedAt' => now('Asia/Manila'),
+                ])->setPaper('a4');
+
+                $companyName = $companyProfile?->company_name ?: $employer->name;
+                $downloadName = preg_replace('/[^A-Za-z0-9]+/', '-', $companyName);
+                $downloadName = trim($downloadName, '-') ?: 'company-profile';
+
+                return $pdf->download($downloadName . '-company-profile.pdf');
+            }
+        }
+
         if (! $filePath) {
             return back()->with('error', 'File not found.');
         }

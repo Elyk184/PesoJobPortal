@@ -264,4 +264,4 @@
     </script>
 </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/login.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views\login.blade.php ENDPATH**/ ?>
