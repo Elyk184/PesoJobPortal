@@ -36,10 +36,10 @@
     </style>
 
     <div class="alerts-shell">
-        <div class="alerts-summary">
+            <div class="alerts-summary">
             <div class="alerts-stat">
                 <div class="alerts-stat-label">Unread Alerts</div>
-                <div class="alerts-stat-value">{{ $adminUnreadNotificationsCount ?? 0 }}</div>
+                <div id="adminUnreadStat" class="alerts-stat-value">{{ $adminUnreadNotificationsCount ?? 0 }}</div>
                 <div class="alerts-stat-note">Pending PESO and portal notifications</div>
             </div>
             <div class="alerts-stat">
@@ -70,7 +70,7 @@
                     <h3>Recent Alerts</h3>
                     <p>Live notifications from the PESO clearance workflow and other portal updates.</p>
                 </div>
-                <span class="badge text-bg-primary rounded-pill px-3 py-2">{{ $adminUnreadNotificationsCount ?? 0 }} unread</span>
+                <span id="adminUnreadBadge" class="badge text-bg-primary rounded-pill px-3 py-2">{{ $adminUnreadNotificationsCount ?? 0 }} unread</span>
             </div>
 
             <div class="alerts-list">
@@ -85,7 +85,7 @@
                         $isLraSra = str_contains($alertText, 'lra') || str_contains($alertText, 'sra') || str_contains($alertText, 'recruitment activity');
                         $isPesoClearance = str_contains($alertText, 'peso clearance');
                     @endphp
-                    <div class="alert-item">
+                    <div class="alert-item" data-notification-id="{{ $notification->id }}">
                         <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isLraSra ? '#ec4899' : ($isEmployerVerification ? '#16a34a' : '#2563eb')) }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isLraSra ? 'rgba(236, 72, 153, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)')) }};">
                             <i class="bi bi-bell-fill"></i>
                         </div>
@@ -135,3 +135,40 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    (function(){
+        const csrf = '{{ csrf_token() }}';
+        const stat = document.getElementById('adminUnreadStat');
+        const badge = document.getElementById('adminUnreadBadge');
+
+        function updateCounts(count) {
+            if (stat) stat.textContent = String(count);
+            if (badge) badge.textContent = String(count) + ' unread';
+        }
+
+        document.addEventListener('click', function(e){
+            const item = e.target.closest('.alert-item');
+            if (!item) return;
+
+            const id = item.dataset.notificationId;
+            if (!id) return;
+
+            // If click originates from an action link, let navigation happen but still mark as read.
+            fetch(`/admin/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            }).then(r => r.json()).then(data => {
+                if (data && typeof data.unread_count !== 'undefined') {
+                    updateCounts(data.unread_count);
+                }
+            }).catch(() => {});
+        }, {capture: true});
+    })();
+</script>
+@endpush

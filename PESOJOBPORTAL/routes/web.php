@@ -131,6 +131,9 @@ Route::middleware(['auth', 'role:employer'])->prefix('employer')->name('employer
     Route::get('/applications/{application}/resume/download', [EmployerController::class, 'downloadResume'])
         ->name('applications.resume.download');
 
+    Route::get('/applications/{application}/resume/view', [EmployerController::class, 'viewResume'])
+        ->name('applications.resume.view');
+
     Route::post('/applications/{application}/feedback', [EmployerController::class, 'storeFeedback'])
         ->name('applications.feedback');
 
@@ -191,6 +194,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::model('application', \App\Models\JobApplication::class);
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/notifications/{userNotification}/read', [AdminController::class, 'markNotificationAsRead'])->name('notifications.read');
 
     // Jobseeker Management
     Route::prefix('jobseekers')->name('jobseekers.')->group(function () {

@@ -38,6 +38,14 @@
         }
 
         /* ── TAGLINE ── */
+        .qr-image {
+            display: block;
+            width: 100%;
+            height: 100px;
+            margin: 0 auto 8px auto;
+            object-fit: contain;
+        }
+
         .tagline {
             text-align: center;
             font-style: italic;
@@ -261,6 +269,7 @@
 
     <!-- ── FIXED FOOTER (always pinned to bottom of A4) ── -->
     <div class="page-footer">
+        <img src="{{ public_path('images/TestQR.png') }}" alt="QR Code" class="qr-image">
         <div class="tagline">"Lupad Manolo Fortich"</div>
         <div class="tagline-sub">SOAR HIGH MANOLO FORTICH</div>
         <div class="footer">

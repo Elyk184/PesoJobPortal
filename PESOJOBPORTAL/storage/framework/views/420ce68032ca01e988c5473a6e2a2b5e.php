@@ -1,6 +1,4 @@
-@extends('layouts.admin-dashboard')
-
-@section('title', strtoupper($activityRequest->activity_type) . ' Request - Review')
+<?php $__env->startSection('title', strtoupper($activityRequest->activity_type) . ' Request - Review'); ?>
 
 <?php
     $pageTitle = strtoupper($activityRequest->activity_type) . ' Request Review';
@@ -8,55 +6,57 @@
     $pageIcon = 'bi-clipboard-check';
 ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="admin-dashboard">
     <div class="dashboard-card">
 
-        {{-- Page Header --}}
+        
         <div class="lra-topbar">
             <div>
-                <h1 class="lra-page-title">{{ strtoupper($activityRequest->activity_type) }} Request Review</h1>
+                <h1 class="lra-page-title"><?php echo e(strtoupper($activityRequest->activity_type)); ?> Request Review</h1>
                 <p class="lra-page-sub">
-                    Review and {{ $activityRequest->status === 'pending' ? 'approve or reject' : 'view' }} the LRA/SRA request documents
+                    Review and <?php echo e($activityRequest->status === 'pending' ? 'approve or reject' : 'view'); ?> the LRA/SRA request documents
                 </p>
             </div>
-            <a href="{{ route('admin.lra-sra-approvals') }}" class="lra-back-btn">
+            <a href="<?php echo e(route('admin.lra-sra-approvals')); ?>" class="lra-back-btn">
                 <i class="bi bi-arrow-left"></i> Back to Approvals
             </a>
         </div>
 
-        {{-- Two-column layout --}}
+        
         <div class="lra-layout">
 
-            {{-- ── MAIN COLUMN ── --}}
+            
             <div class="lra-main">
 
-                {{-- Meta strip --}}
+                
                 <div class="lra-card lra-card--flush mb-card">
                     <div class="lra-meta-strip">
                         <div class="lra-meta-cell">
                             <div class="lra-meta-label"><i class="bi bi-tag me-1"></i>Activity type</div>
-                            <span class="lra-badge lra-badge--{{ $activityRequest->activity_type }}">
-                                <i class="bi bi-file-earmark me-1"></i>{{ strtoupper($activityRequest->activity_type) }}
+                            <span class="lra-badge lra-badge--<?php echo e($activityRequest->activity_type); ?>">
+                                <i class="bi bi-file-earmark me-1"></i><?php echo e(strtoupper($activityRequest->activity_type)); ?>
+
                             </span>
                         </div>
                         <div class="lra-meta-cell">
                             <div class="lra-meta-label"><i class="bi bi-building me-1"></i>Employer</div>
-                            <div class="lra-meta-val">{{ $activityRequest->employer?->name ?? 'N/A' }}</div>
+                            <div class="lra-meta-val"><?php echo e($activityRequest->employer?->name ?? 'N/A'); ?></div>
                         </div>
                         <div class="lra-meta-cell">
                             <div class="lra-meta-label"><i class="bi bi-calendar me-1"></i>Submitted</div>
-                            <div class="lra-meta-val">{{ $activityRequest->created_at->format('M d, Y') }}</div>
+                            <div class="lra-meta-val"><?php echo e($activityRequest->created_at->format('M d, Y')); ?></div>
                         </div>
                         <div class="lra-meta-cell">
                             <div class="lra-meta-label"><i class="bi bi-info-circle me-1"></i>Status</div>
-                            <span class="lra-badge lra-badge--status-{{ $activityRequest->status }}">
-                                {{ ucfirst($activityRequest->status) }}
+                            <span class="lra-badge lra-badge--status-<?php echo e($activityRequest->status); ?>">
+                                <?php echo e(ucfirst($activityRequest->status)); ?>
+
                             </span>
                         </div>
                     </div>
 
-                    {{-- Required Documents --}}
+                    
                     <div class="lra-card-body">
                         <div class="lra-section-tag lra-section-tag--red">
                             <i class="bi bi-file-earmark-pdf me-1"></i> Required documents
@@ -65,33 +65,33 @@
                             <div class="lra-doc-item">
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--red"></i>
                                 <p class="lra-doc-name">Letter of Intent</p>
-                                @if($activityRequest->letter_of_intent_path)
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'letter_of_intent_path']) }}"
+                                <?php if($activityRequest->letter_of_intent_path): ?>
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, 'letter_of_intent_path'])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
-                                @else
+                                <?php else: ?>
                                     <span class="lra-doc-missing">Not provided</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                             <div class="lra-doc-item">
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--red"></i>
                                 <p class="lra-doc-name">Company Profile</p>
-                                @if($activityRequest->company_profile_path)
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'company_profile_path']) }}"
+                                <?php if($activityRequest->company_profile_path): ?>
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, 'company_profile_path'])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
-                                @else
+                                <?php else: ?>
                                     <span class="lra-doc-missing">Not provided</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- SRA Specific Documents --}}
-                @if($activityRequest->activity_type === 'sra')
+                
+                <?php if($activityRequest->activity_type === 'sra'): ?>
                 <div class="lra-card mb-card">
                     <div class="lra-card-head">
                         <i class="bi bi-file-earmark"></i>
@@ -101,7 +101,7 @@
                         <div class="lra-section-tag lra-section-tag--purple">
                             <i class="bi bi-file-earmark me-1"></i> SRA documents
                         </div>
-                        @php
+                        <?php
                             $sraDocuments = [
                                 ['name' => 'DMW Certificate',         'field' => 'dmw_certificate_path'],
                                 ['name' => 'Recruitment Officer ID',  'field' => 'recruitment_officer_id_path'],
@@ -110,29 +110,29 @@
                                 ['name' => 'Affidavit of Undertaking','field' => 'affidavit_undertaking_path'],
                                 ['name' => 'SRA Authority',           'field' => 'sra_authority_file_path'],
                             ];
-                        @endphp
+                        ?>
                         <div class="lra-doc-grid">
-                            @foreach($sraDocuments as $doc)
+                            <?php $__currentLoopData = $sraDocuments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $doc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="lra-doc-item">
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--purple"></i>
-                                <p class="lra-doc-name">{{ $doc['name'] }}</p>
-                                @if($activityRequest->{$doc['field']})
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, $doc['field']]) }}"
+                                <p class="lra-doc-name"><?php echo e($doc['name']); ?></p>
+                                <?php if($activityRequest->{$doc['field']}): ?>
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, $doc['field']])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
-                                @else
+                                <?php else: ?>
                                     <span class="lra-doc-missing">Not provided</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- LRA Specific Documents + Job Vacancies --}}
-                @if($activityRequest->activity_type === 'lra')
+                
+                <?php if($activityRequest->activity_type === 'lra'): ?>
                 <div class="lra-card mb-card">
                     <div class="lra-card-head">
                         <i class="bi bi-file-earmark"></i>
@@ -146,79 +146,79 @@
                             <div class="lra-doc-item">
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
                                 <p class="lra-doc-name">Business Permit</p>
-                                @if($activityRequest->business_permit_path)
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'business_permit_path']) }}"
+                                <?php if($activityRequest->business_permit_path): ?>
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, 'business_permit_path'])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
-                                @else
+                                <?php else: ?>
                                     <span class="lra-doc-missing">Not provided</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                             <div class="lra-doc-item">
                                 <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--teal"></i>
                                 <p class="lra-doc-name">Recruitment Officer ID</p>
-                                @if($activityRequest->lra_recruitment_officer_id_path)
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'lra_recruitment_officer_id_path']) }}"
+                                <?php if($activityRequest->lra_recruitment_officer_id_path): ?>
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, 'lra_recruitment_officer_id_path'])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
-                                @else
+                                <?php else: ?>
                                     <span class="lra-doc-missing">Not provided</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Job Vacancies --}}
+                
                 <div id="job-vacancies" class="lra-card mb-card">
                     <div class="lra-card-head">
                         <i class="bi bi-briefcase"></i>
                         <span class="lra-card-head-label">Job vacancies</span>
                     </div>
                     <div class="lra-card-body">
-                        @if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text)
+                        <?php if($activityRequest->job_vacancies_path && $activityRequest->job_vacancies_text): ?>
                             <div class="lra-jv-split">
                                 <div class="lra-doc-item">
                                     <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--blue"></i>
                                     <p class="lra-doc-name">Job Vacancies File</p>
-                                    <a href="{{ route('admin.lra-sra.download-file', [$activityRequest, 'job_vacancies_path']) }}"
+                                    <a href="<?php echo e(route('admin.lra-sra.download-file', [$activityRequest, 'job_vacancies_path'])); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 </div>
-                                <div class="lra-vacancies-text">{{ $activityRequest->job_vacancies_text }}</div>
+                                <div class="lra-vacancies-text"><?php echo e($activityRequest->job_vacancies_text); ?></div>
                             </div>
-                        @elseif($activityRequest->job_vacancies_path)
+                        <?php elseif($activityRequest->job_vacancies_path): ?>
                             <div class="lra-doc-grid">
                                 <div class="lra-doc-item">
                                     <i class="bi bi-file-pdf lra-doc-icon lra-doc-icon--blue"></i>
                                     <p class="lra-doc-name">Job Vacancies File</p>
-                                    <a href="{{ asset('storage/' . $activityRequest->job_vacancies_path) }}"
+                                    <a href="<?php echo e(asset('storage/' . $activityRequest->job_vacancies_path)); ?>"
                                        class="lra-dl-btn" target="_blank">
                                         <i class="bi bi-download me-1"></i>Download
                                     </a>
                                 </div>
                             </div>
-                        @elseif($activityRequest->job_vacancies_text)
-                            <div class="lra-vacancies-text">{{ $activityRequest->job_vacancies_text }}</div>
-                        @else
+                        <?php elseif($activityRequest->job_vacancies_text): ?>
+                            <div class="lra-vacancies-text"><?php echo e($activityRequest->job_vacancies_text); ?></div>
+                        <?php else: ?>
                             <div class="lra-empty">
                                 <i class="bi bi-inbox"></i>
                                 <span>Not provided</span>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
 
-            </div>{{-- /main --}}
+            </div>
 
-            {{-- ── SIDEBAR ── --}}
+            
             <div class="lra-sidebar">
 
-                {{-- Company info --}}
+                
                 <div class="lra-card mb-card">
                     <div class="lra-card-head">
                         <i class="bi bi-building"></i>
@@ -227,50 +227,52 @@
                     <div class="lra-card-body lra-card-body--compact">
                         <div class="lra-info-row">
                             <span class="lra-info-key"><i class="bi bi-globe me-1"></i>Business</span>
-                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->line_of_business ?? 'N/A' }}</span>
+                            <span class="lra-info-val"><?php echo e($activityRequest->employer->profile?->line_of_business ?? 'N/A'); ?></span>
                         </div>
                         <div class="lra-info-row">
                             <span class="lra-info-key"><i class="bi bi-people me-1"></i>Workforce</span>
-                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->workforce_size ?? 'N/A' }}</span>
+                            <span class="lra-info-val"><?php echo e($activityRequest->employer->profile?->workforce_size ?? 'N/A'); ?></span>
                         </div>
                         <div class="lra-info-row lra-info-row--last">
                             <span class="lra-info-key"><i class="bi bi-telephone me-1"></i>Contact</span>
-                            <span class="lra-info-val">{{ $activityRequest->employer->profile?->establishment_phone ?? 'N/A' }}</span>
+                            <span class="lra-info-val"><?php echo e($activityRequest->employer->profile?->establishment_phone ?? 'N/A'); ?></span>
                         </div>
                     </div>
                 </div>
 
-                @if($activityRequest->status === 'pending')
+                <?php if($activityRequest->status === 'pending'): ?>
 
-                    {{-- Certification --}}
+                    
                     <div class="lra-card mb-card">
                         <div class="lra-card-head">
                             <i class="bi bi-certificate"></i>
                             <span class="lra-card-head-label">Certification</span>
                         </div>
                         <div class="lra-card-body lra-card-body--compact">
-                            @if($activityRequest->certification_path)
+                            <?php if($activityRequest->certification_path): ?>
                                 <div class="lra-cert-status lra-cert-status--ok">
                                     <div class="lra-cert-title">
                                         <i class="bi bi-check-circle-fill me-1"></i>Certification generated
                                     </div>
                                     <div class="lra-cert-sub">
-                                        {{-- ✅ FIXED: Convert UTC timestamp to Asia/Manila (UTC+8) --}}
-                                        {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
-                                        &mdash; {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
+                                        
+                                        <?php echo e(\Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i')); ?>
+
+                                        &mdash; <?php echo e($activityRequest->certificationGeneratedBy?->name ?? 'System'); ?>
+
                                     </div>
                                 </div>
-                                <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}"
+                                <a href="<?php echo e(route('admin.lra-sra.view-certification', $activityRequest)); ?>"
                                    class="lra-action-btn lra-action-btn--view" target="_blank">
                                     <i class="bi bi-eye me-1"></i>View certification
                                 </a>
-                                <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('admin.lra-sra.generate-certification', $activityRequest)); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="lra-action-btn lra-action-btn--generate w-100">
                                         <i class="bi bi-arrow-repeat me-1"></i>Regenerate
                                     </button>
                                 </form>
-                            @else
+                            <?php else: ?>
                                 <div class="lra-cert-status lra-cert-status--pending">
                                     <div class="lra-cert-title">
                                         <i class="bi bi-exclamation-circle-fill me-1"></i>Not yet generated
@@ -279,17 +281,17 @@
                                         Generate a certification document before approving this request.
                                     </div>
                                 </div>
-                                <form method="POST" action="{{ route('admin.lra-sra.generate-certification', $activityRequest) }}">
-                                    @csrf
+                                <form method="POST" action="<?php echo e(route('admin.lra-sra.generate-certification', $activityRequest)); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="lra-action-btn lra-action-btn--generate w-100">
                                         <i class="bi bi-file-earmark-plus me-1"></i>Generate certification
                                     </button>
                                 </form>
-                            @endif
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    {{-- Review actions --}}
+                    
                     <div class="lra-card lra-sidebar-sticky">
                         <div class="lra-card-head">
                             <i class="bi bi-shield-check"></i>
@@ -301,11 +303,11 @@
                                 Generate certification first, then approve.
                             </div>
                             <form method="POST" class="d-grid gap-2">
-                                @csrf
+                                <?php echo csrf_field(); ?>
                                 <button type="submit"
-                                        formaction="{{ route('admin.lra-sra.approve', $activityRequest) }}"
+                                        formaction="<?php echo e(route('admin.lra-sra.approve', $activityRequest)); ?>"
                                         class="lra-action-btn lra-action-btn--approve w-100"
-                                        {{ !$activityRequest->certification_path ? 'disabled' : '' }}>
+                                        <?php echo e(!$activityRequest->certification_path ? 'disabled' : ''); ?>>
                                     <i class="bi bi-check-circle me-1"></i>Approve
                                 </button>
                             </form>
@@ -318,41 +320,42 @@
                         </div>
                     </div>
 
-                @else
+                <?php else: ?>
 
-                    {{-- Status info (approved / rejected) --}}
+                    
                     <div class="lra-card">
                         <div class="lra-card-head">
                             <i class="bi bi-info-circle"></i>
                             <span class="lra-card-head-label">Status</span>
                         </div>
                         <div class="lra-card-body--flush">
-                            @if($activityRequest->status === 'approved')
+                            <?php if($activityRequest->status === 'approved'): ?>
                                 <div class="lra-status-block lra-status-block--approved">
                                     <i class="bi bi-check-circle-fill lra-status-icon"></i>
                                     <div>
                                         <div class="lra-status-title">Approved</div>
                                         <div class="lra-status-detail">
-                                            <span>{{ optional($activityRequest->approved_at)->format('M d, Y') }}</span>
-                                            <span>&mdash; {{ $activityRequest->approvedBy?->name ?? 'System' }}</span>
+                                            <span><?php echo e(optional($activityRequest->approved_at)->format('M d, Y')); ?></span>
+                                            <span>&mdash; <?php echo e($activityRequest->approvedBy?->name ?? 'System'); ?></span>
                                         </div>
                                     </div>
                                 </div>
-                            @elseif($activityRequest->status === 'rejected')
+                            <?php elseif($activityRequest->status === 'rejected'): ?>
                                 <div class="lra-status-block lra-status-block--rejected">
                                     <i class="bi bi-x-circle-fill lra-status-icon"></i>
                                     <div>
                                         <div class="lra-status-title">Rejected</div>
                                         <div class="lra-status-reason">
-                                            {{ $activityRequest->notes ?? 'No reason provided' }}
+                                            <?php echo e($activityRequest->notes ?? 'No reason provided'); ?>
+
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
                     </div>
 
-                    @if($activityRequest->certification_path)
+                    <?php if($activityRequest->certification_path): ?>
                         <div class="lra-card mt-3">
                             <div class="lra-card-head">
                                 <i class="bi bi-certificate"></i>
@@ -364,36 +367,38 @@
                                         <i class="bi bi-check-circle-fill me-1"></i>Certification available
                                     </div>
                                     <div class="lra-cert-sub">
-                                        @if($activityRequest->certification_generated_at)
-                                            {{ \Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i') }}
+                                        <?php if($activityRequest->certification_generated_at): ?>
+                                            <?php echo e(\Carbon\Carbon::parse($activityRequest->certification_generated_at)->timezone('Asia/Manila')->format('M d, Y H:i')); ?>
+
                                             &mdash;
-                                        @endif
-                                        {{ $activityRequest->certificationGeneratedBy?->name ?? 'System' }}
+                                        <?php endif; ?>
+                                        <?php echo e($activityRequest->certificationGeneratedBy?->name ?? 'System'); ?>
+
                                     </div>
                                 </div>
-                                <a href="{{ route('admin.lra-sra.view-certification', $activityRequest) }}"
+                                <a href="<?php echo e(route('admin.lra-sra.view-certification', $activityRequest)); ?>"
                                    class="lra-action-btn lra-action-btn--view"
                                    target="_blank">
                                     <i class="bi bi-eye me-1"></i>View certificate
                                 </a>
-                                <a href="{{ route('admin.lra-sra.download-certification', $activityRequest) }}"
+                                <a href="<?php echo e(route('admin.lra-sra.download-certification', $activityRequest)); ?>"
                                    class="lra-action-btn lra-action-btn--generate">
                                     <i class="bi bi-download me-1"></i>Download certificate
                                 </a>
                             </div>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                @endif
+                <?php endif; ?>
 
-            </div>{{-- /sidebar --}}
+            </div>
 
-        </div>{{-- /layout --}}
+        </div>
     </div>
 </div>
 
-{{-- Rejection Modal --}}
-@if($activityRequest->status === 'pending')
+
+<?php if($activityRequest->status === 'pending'): ?>
 <div class="modal fade" id="rejectModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -401,11 +406,12 @@
                 <h5 class="modal-title">Reject request</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="{{ route('admin.lra-sra.reject', $activityRequest) }}">
-                @csrf
+            <form method="POST" action="<?php echo e(route('admin.lra-sra.reject', $activityRequest)); ?>">
+                <?php echo csrf_field(); ?>
                 <div class="modal-body">
                     <small class="text-muted">
-                        {{ strtoupper($activityRequest->activity_type) }} &mdash; {{ $activityRequest->employer?->name }}
+                        <?php echo e(strtoupper($activityRequest->activity_type)); ?> &mdash; <?php echo e($activityRequest->employer?->name); ?>
+
                     </small>
                     <div class="mb-0 mt-3">
                         <label for="rejection_notes" class="form-label">
@@ -423,9 +429,9 @@
         </div>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
-{{-- ── Scoped styles ── --}}
+
 <style>
 :root {
     --bg: #ffffff;
@@ -1001,4 +1007,6 @@
     }
 }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin-dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/approvals/lra-sra-detail.blade.php ENDPATH**/ ?>

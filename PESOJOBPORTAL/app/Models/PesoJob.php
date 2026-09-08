@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\JobApplication;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class PesoJob extends Model
 {
@@ -97,7 +99,7 @@ class PesoJob extends Model
     /**
      * Scope to exclude archived jobs
      */
-    public function scopeNotArchived($query)
+    public function scopeNotArchived(Builder $query): Builder
     {
         return $query->whereNull('archived_at');
     }
@@ -105,7 +107,7 @@ class PesoJob extends Model
     /**
      * Scope to only get archived jobs
      */
-    public function scopeArchived($query)
+    public function scopeArchived(Builder $query): Builder
     {
         return $query->whereNotNull('archived_at');
     }
@@ -113,7 +115,7 @@ class PesoJob extends Model
     /**
      * Scope to only get approved jobs
      */
-    public function scopeApproved($query)
+    public function scopeApproved(Builder $query): Builder
     {
         return $query->where('status', 'active')
             ->whereNotNull('approved_at');
@@ -122,7 +124,7 @@ class PesoJob extends Model
     /**
      * Scope to get active approved jobs (not archived, not filled)
      */
-    public function scopeActiveApproved($query)
+    public function scopeActiveApproved(Builder $query): Builder
     {
         return $query->approved()
             ->notArchived()
@@ -130,6 +132,22 @@ class PesoJob extends Model
                 $q->whereNull('is_filled')
                   ->orWhere('is_filled', false);
             });
+    }
+
+    /**
+     * Move overdue active postings into the archived bucket.
+     */
+    public static function archiveExpiredPostings(): int
+    {
+        return static::query()
+            ->where('status', 'active')
+            ->whereNull('archived_at')
+            ->whereNotNull('application_end_date')
+            ->whereDate('application_end_date', '<', Carbon::today())
+            ->update([
+                'status' => 'closed',
+                'archived_at' => now(),
+            ]);
     }
 }
 ?>

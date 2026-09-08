@@ -1,6 +1,4 @@
-@extends('layouts.admin-dashboard')
-
-@section('title', 'LRA/SRA Approvals | PESO Admin')
+<?php $__env->startSection('title', 'LRA/SRA Approvals | PESO Admin'); ?>
 
 <?php
     $pageTitle = 'LRA/SRA Approvals';
@@ -8,7 +6,7 @@
     $pageIcon = 'bi-clipboard-check';
 ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="admin-dashboard">
     <style>
         .lra-approval-stack { display: grid; gap: 1.5rem; }
@@ -242,10 +240,10 @@
                 </div>
                 <span class="approval-count">
                     <i class="bi bi-hourglass-split"></i>
-                    {{ $pendingRequests->count() }} pending
+                    <?php echo e($pendingRequests->count()); ?> pending
                 </span>
             </div>
-            @if($pendingRequests->count() > 0)
+            <?php if($pendingRequests->count() > 0): ?>
                 <!-- Approvals Table -->
                 <div class="table-shell">
                 <table class="table data-table w-100">
@@ -259,14 +257,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pendingRequests as $request)
+                        <?php $__currentLoopData = $pendingRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
                                 <td>
-                                    <span class="badge badge-activity bg-info">{{ strtoupper($request->activity_type) }}</span>
+                                    <span class="badge badge-activity bg-info"><?php echo e(strtoupper($request->activity_type)); ?></span>
                                 </td>
-                                <td class="employer-cell"><strong>{{ Str::limit($request->employer?->name ?? 'N/A', 28) }}</strong></td>
+                                <td class="employer-cell"><strong><?php echo e(Str::limit($request->employer?->name ?? 'N/A', 28)); ?></strong></td>
                                 <td class="doc-col">
-                                    @php
+                                    <?php
                                         $commonDocs = [
                                             ['label' => 'LOI', 'field' => 'letter_of_intent_path'],
                                             ['label' => 'Company Profile', 'field' => 'company_profile_path'],
@@ -299,79 +297,84 @@
                                             return !empty($request->{$d['field']});
                                         });
                                         $presentCount = count($present);
-                                    @endphp
+                                    ?>
 
-                                    <span class="docs-count"><i class="bi bi-paperclip"></i><strong>{{ $presentCount }}</strong>/{{ $totalDocs }} uploaded</span>
+                                    <span class="docs-count"><i class="bi bi-paperclip"></i><strong><?php echo e($presentCount); ?></strong>/<?php echo e($totalDocs); ?> uploaded</span>
 
                                     <div class="doc-chip-group">
-                                        @foreach($docsToShow as $doc)
-                                            @if($doc['field'] === 'job_vacancies_path')
-                                                @if(!empty($request->job_vacancies_path))
+                                        <?php $__currentLoopData = $docsToShow; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $doc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php if($doc['field'] === 'job_vacancies_path'): ?>
+                                                <?php if(!empty($request->job_vacancies_path)): ?>
                                                     <button type="button"
                                                             class="doc-badge btn bg-success text-white"
                                                             data-type="file"
-                                                            data-url="{{ asset('storage/' . $request->job_vacancies_path) }}"
+                                                            data-url="<?php echo e(asset('storage/' . $request->job_vacancies_path)); ?>"
                                                             title="Preview Job Vacancies PDF">
                                                         <i class="bi bi-download"></i>
-                                                        {{ Str::limit($doc['label'], 18) }}
+                                                        <?php echo e(Str::limit($doc['label'], 18)); ?>
+
                                                     </button>
-                                                @elseif(!empty($request->job_vacancies_text))
+                                                <?php elseif(!empty($request->job_vacancies_text)): ?>
                                                     <button type="button"
                                                             class="doc-badge btn bg-primary text-white"
                                                             data-type="text"
-                                                            data-vacancy-id="{{ $request->id }}"
+                                                            data-vacancy-id="<?php echo e($request->id); ?>"
                                                             title="View Job Vacancies (text)">
                                                         <i class="bi bi-card-text"></i>
-                                                        {{ Str::limit($doc['label'], 18) }}
+                                                        <?php echo e(Str::limit($doc['label'], 18)); ?>
+
                                                     </button>
-                                                @else
-                                                    <span class="doc-missing">{{ Str::limit($doc['label'], 14) }}</span>
-                                                @endif
-                                            @else
-                                                @if(!empty($request->{$doc['field']}))
+                                                <?php else: ?>
+                                                    <span class="doc-missing"><?php echo e(Str::limit($doc['label'], 14)); ?></span>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <?php if(!empty($request->{$doc['field']})): ?>
                                                     <button type="button"
                                                             class="doc-badge btn bg-success text-white"
                                                             data-type="file"
-                                                            data-url="{{ asset('storage/' . $request->{$doc['field']}) }}"
-                                                            title="Preview {{ $doc['label'] }} PDF">
+                                                            data-url="<?php echo e(asset('storage/' . $request->{$doc['field']})); ?>"
+                                                            title="Preview <?php echo e($doc['label']); ?> PDF">
                                                         <i class="bi bi-download"></i>
-                                                        {{ Str::limit($doc['label'], 18) }}
+                                                        <?php echo e(Str::limit($doc['label'], 18)); ?>
+
                                                     </button>
-                                                @else
-                                                    <span class="doc-missing">{{ Str::limit($doc['label'], 14) }}</span>
-                                                @endif
-                                            @endif
-                                        @endforeach
+                                                <?php else: ?>
+                                                    <span class="doc-missing"><?php echo e(Str::limit($doc['label'], 14)); ?></span>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
 
-                                    {{-- Hidden vacancy text (for preview modal) --}}
-                                    @if(!empty($request->job_vacancies_text))
-                                        <div id="vacancy-text-{{ $request->id }}" class="d-none">
-                                            {!! nl2br(e($request->job_vacancies_text)) !!}
+                                    
+                                    <?php if(!empty($request->job_vacancies_text)): ?>
+                                        <div id="vacancy-text-<?php echo e($request->id); ?>" class="d-none">
+                                            <?php echo nl2br(e($request->job_vacancies_text)); ?>
+
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
-                                <td class="date-cell"><small>{{ $request->created_at->format('d M, Y') }}</small></td>
+                                <td class="date-cell"><small><?php echo e($request->created_at->format('d M, Y')); ?></small></td>
                                 <td class="text-center action-cell">
                                     <div class="action-btns">
-                                        <a href="{{ route('admin.lra-sra.review', $request) }}"
+                                        <a href="<?php echo e(route('admin.lra-sra.review', $request)); ?>"
                                            class="btn btn-sm btn-info" title="Review this request">
                                             <i class="bi bi-eye"></i> Review
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
                 </div>
 
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-4">
-                    {{ $pendingRequests->links('pagination::bootstrap-5') }}
+                    <?php echo e($pendingRequests->links('pagination::bootstrap-5')); ?>
+
                 </div>
 
-                {{-- Document preview modal --}}
+                
                 <div class="modal fade" id="docPreviewModal" tabindex="-1">
                     <div class="modal-dialog modal-xl modal-dialog-centered">
                         <div class="modal-content">
@@ -390,7 +393,7 @@
                         </div>
                     </div>
                 </div>
-            @else
+            <?php else: ?>
                 <!-- Empty State -->
                 <div class="empty-approval-state" role="alert">
                     <i class="bi bi-check-circle-fill"></i>
@@ -399,7 +402,7 @@
                         <div>No pending LRA/SRA approvals to review.</div>
                     </div>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <div class="dashboard-card history-card">
@@ -410,7 +413,7 @@
                 </div>
             </div>
 
-            @if($recentRequests->count() > 0)
+            <?php if($recentRequests->count() > 0): ?>
                 <div class="table-shell">
                 <table class="table data-table w-100">
                     <thead>
@@ -424,49 +427,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($recentRequests as $request)
+                        <?php $__currentLoopData = $recentRequests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
                                 <td>
-                                    <span class="badge badge-activity {{ $request->activity_type === 'sra' ? 'bg-primary' : 'bg-info' }}">
-                                        {{ strtoupper($request->activity_type) }}
+                                    <span class="badge badge-activity <?php echo e($request->activity_type === 'sra' ? 'bg-primary' : 'bg-info'); ?>">
+                                        <?php echo e(strtoupper($request->activity_type)); ?>
+
                                     </span>
                                 </td>
                                 <td>
-                                    <strong>{{ Str::limit($request->employer?->name ?? 'N/A', 28) }}</strong>
-                                    <div class="text-muted small">{{ $request->created_at->format('d M, Y') }}</div>
+                                    <strong><?php echo e(Str::limit($request->employer?->name ?? 'N/A', 28)); ?></strong>
+                                    <div class="text-muted small"><?php echo e($request->created_at->format('d M, Y')); ?></div>
                                 </td>
                                 <td>
-                                    <span class="status-pill status-pill--{{ $request->status }}">
-                                        <i class="bi {{ $request->status === 'approved' ? 'bi-check-circle-fill' : 'bi-x-circle-fill' }}"></i>
-                                        {{ $request->status }}
+                                    <span class="status-pill status-pill--<?php echo e($request->status); ?>">
+                                        <i class="bi <?php echo e($request->status === 'approved' ? 'bi-check-circle-fill' : 'bi-x-circle-fill'); ?>"></i>
+                                        <?php echo e($request->status); ?>
+
                                     </span>
                                 </td>
                                 <td>
-                                    @if($request->certification_path)
-                                        <a href="{{ route('admin.lra-sra.view-certification', $request) }}"
+                                    <?php if($request->certification_path): ?>
+                                        <a href="<?php echo e(route('admin.lra-sra.view-certification', $request)); ?>"
                                            class="cert-link"
                                            target="_blank">
                                             <i class="bi bi-file-earmark-pdf-fill"></i>
                                             View certificate
                                         </a>
-                                        @if($request->certification_generated_at)
+                                        <?php if($request->certification_generated_at): ?>
                                             <div class="text-muted small">
-                                                {{ \Carbon\Carbon::parse($request->certification_generated_at)->timezone('Asia/Manila')->format('d M, Y') }}
+                                                <?php echo e(\Carbon\Carbon::parse($request->certification_generated_at)->timezone('Asia/Manila')->format('d M, Y')); ?>
+
                                             </div>
-                                        @endif
-                                    @else
+                                        <?php endif; ?>
+                                    <?php else: ?>
                                         <span class="cert-missing">No certificate</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                                 <td>
-                                    <small>{{ $request->updated_at->format('d M, Y') }}</small>
-                                    @if($request->approvedBy)
-                                        <div class="text-muted small">by {{ Str::limit($request->approvedBy->name, 22) }}</div>
-                                    @endif
+                                    <small><?php echo e($request->updated_at->format('d M, Y')); ?></small>
+                                    <?php if($request->approvedBy): ?>
+                                        <div class="text-muted small">by <?php echo e(Str::limit($request->approvedBy->name, 22)); ?></div>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-center">
                                     <div class="action-btns">
-                                    <a href="{{ route('admin.lra-sra.review', $request) }}"
+                                    <a href="<?php echo e(route('admin.lra-sra.review', $request)); ?>"
                                        class="btn btn-sm btn-outline-primary"
                                        title="View request details">
                                         <i class="bi bi-eye"></i> Details
@@ -474,23 +480,23 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="alert alert-light border mb-0" role="alert">
                     <i class="bi bi-clock-history me-2"></i>
                     No approved or rejected LRA/SRA requests yet.
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
     <script>
     document.addEventListener('DOMContentLoaded', function(){
         const modalEl = document.getElementById('docPreviewModal');
@@ -524,4 +530,6 @@
         });
     });
     </script>
-    @endpush
+    <?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin-dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\PesoJobPortal\PESOJOBPORTAL\resources\views/admin/approvals/lra-sra.blade.php ENDPATH**/ ?>
