@@ -114,7 +114,11 @@ class CertificationService
             $activityRequest->id
         );
 
-        return Storage::disk('public')->download($path, $filename);
+        return response()->download(
+            Storage::disk('public')->path($path),
+            $filename,
+            ['Content-Type' => 'application/pdf']
+        );
     }
 
     /**
