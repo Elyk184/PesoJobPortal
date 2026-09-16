@@ -318,7 +318,7 @@
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[first_name]"
-                            value="<?php echo e(old('personal_information.first_name', $personalInformation['first_name'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.first_name', $personalInformation['first_name'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Middle Initial</label>
@@ -328,7 +328,7 @@
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[surname]"
-                            value="<?php echo e(old('personal_information.surname', $personalInformation['surname'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.surname', $personalInformation['surname'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Suffix</label>
@@ -339,14 +339,14 @@
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">Date of Birth <span class="text-danger">*</span></label>
                         <input type="date" class="form-control profile-input" name="personal_information[date_of_birth]"
-                            value="<?php echo e(old('personal_information.date_of_birth', $personalInformation['date_of_birth'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.date_of_birth', $personalInformation['date_of_birth'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold d-block">Sex</label>
+                        <label class="form-label fw-semibold d-block">Sex <span class="text-danger">*</span></label>
                         <div class="profile-radio-stack">
                             <label class="profile-radio-item">
                                 <input type="radio" name="personal_information[sex]" value="Male"
-                                    <?php if(old('personal_information.sex', $personalInformation['sex'] ?? '') === 'Male'): echo 'checked'; endif; ?>> Male
+                                    <?php if(old('personal_information.sex', $personalInformation['sex'] ?? '') === 'Male'): echo 'checked'; endif; ?> required> Male
                             </label>
                             <label class="profile-radio-item">
                                 <input type="radio" name="personal_information[sex]" value="Female"
@@ -355,20 +355,20 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Religion</label>
+                        <label class="form-label fw-semibold">Religion <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[religion]"
-                            value="<?php echo e(old('personal_information.religion', $personalInformation['religion'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.religion', $personalInformation['religion'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Civil Status</label>
+                        <label class="form-label fw-semibold">Civil Status <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[civil_status]"
-                            value="<?php echo e(old('personal_information.civil_status', $personalInformation['civil_status'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.civil_status', $personalInformation['civil_status'] ?? '')); ?>" required>
                     </div>
 
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Height <span class="text-muted">(cm)</span></label>
+                        <label class="form-label fw-semibold">Height <span class="text-muted">(cm)</span> <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[height]"
-                            value="<?php echo e(old('personal_information.height', $personalInformation['height'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.height', $personalInformation['height'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
                         <label class="form-label fw-semibold">TIN</label>
@@ -376,14 +376,14 @@
                             value="<?php echo e(old('personal_information.tin', $personalInformation['tin'] ?? '')); ?>">
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Contact Number/s</label>
+                        <label class="form-label fw-semibold">Contact Number/s <span class="text-danger">*</span></label>
                         <input class="form-control profile-input" name="personal_information[contact_number]"
-                            value="<?php echo e(old('personal_information.contact_number', $personalInformation['contact_number'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.contact_number', $personalInformation['contact_number'] ?? '')); ?>" required>
                     </div>
                     <div class="col-12 col-md-6 col-xl-3">
-                        <label class="form-label fw-semibold">Email Address</label>
+                        <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
                         <input type="email" class="form-control profile-input" name="personal_information[email_address]"
-                            value="<?php echo e(old('personal_information.email_address', $personalInformation['email_address'] ?? '')); ?>">
+                            value="<?php echo e(old('personal_information.email_address', $personalInformation['email_address'] ?? '')); ?>" required>
                     </div>
                 </div>
             </div>
@@ -408,25 +408,25 @@
                                     <label class="form-label fw-semibold">House No./Street/Village</label>
                                     <input class="form-control profile-input" name="present_address[house_no]"
                                         data-address-source="present" data-address-field="house_no"
-                                        value="<?php echo e(old('present_address.house_no', $presentAddress['house_no'] ?? '')); ?>">
+                                        value="<?php echo e(old('present_address.house_no', $presentAddress['house_no'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Barangay</label>
                                     <input class="form-control profile-input" name="present_address[barangay]"
                                         data-address-source="present" data-address-field="barangay"
-                                        value="<?php echo e(old('present_address.barangay', $presentAddress['barangay'] ?? '')); ?>">
+                                        value="<?php echo e(old('present_address.barangay', $presentAddress['barangay'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Municipality/City</label>
                                     <input class="form-control profile-input" name="present_address[municipality]"
                                         data-address-source="present" data-address-field="municipality"
-                                        value="<?php echo e(old('present_address.municipality', $presentAddress['municipality'] ?? '')); ?>">
+                                        value="<?php echo e(old('present_address.municipality', $presentAddress['municipality'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Province</label>
                                     <input class="form-control profile-input" name="present_address[province]"
                                         data-address-source="present" data-address-field="province"
-                                        value="<?php echo e(old('present_address.province', $presentAddress['province'] ?? '')); ?>">
+                                        value="<?php echo e(old('present_address.province', $presentAddress['province'] ?? '')); ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -444,25 +444,25 @@
                                     <label class="form-label fw-semibold">House No./Street/Village</label>
                                     <input class="form-control profile-input" name="permanent_address[house_no]"
                                         data-address-target="house_no"
-                                        value="<?php echo e(old('permanent_address.house_no', $permanentAddress['house_no'] ?? '')); ?>">
+                                        value="<?php echo e(old('permanent_address.house_no', $permanentAddress['house_no'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Barangay</label>
                                     <input class="form-control profile-input" name="permanent_address[barangay]"
                                         data-address-target="barangay"
-                                        value="<?php echo e(old('permanent_address.barangay', $permanentAddress['barangay'] ?? '')); ?>">
+                                        value="<?php echo e(old('permanent_address.barangay', $permanentAddress['barangay'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Municipality/City</label>
                                     <input class="form-control profile-input" name="permanent_address[municipality]"
                                         data-address-target="municipality"
-                                        value="<?php echo e(old('permanent_address.municipality', $permanentAddress['municipality'] ?? '')); ?>">
+                                        value="<?php echo e(old('permanent_address.municipality', $permanentAddress['municipality'] ?? '')); ?>" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Province</label>
                                     <input class="form-control profile-input" name="permanent_address[province]"
                                         data-address-target="province"
-                                        value="<?php echo e(old('permanent_address.province', $permanentAddress['province'] ?? '')); ?>">
+                                        value="<?php echo e(old('permanent_address.province', $permanentAddress['province'] ?? '')); ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -505,7 +505,7 @@
                                 <div class="col-12 col-lg-6">
                                     <input class="form-control profile-input" data-field="school"
                                         name="education[<?php echo e($index); ?>][school]" placeholder="School / University"
-                                        value="<?php echo e($row['school'] ?? ''); ?>">
+                                        value="<?php echo e($row['school'] ?? ''); ?>" required>
                                 </div>
                                 <div class="col-12 col-lg-4">
                                     <input class="form-control profile-input" data-field="course"
@@ -820,7 +820,7 @@
                     <div class="profile-section-icon"><i class="bi bi-briefcase-fill"></i></div>
                     <div>
                         <div class="profile-section-kicker">VIII.</div>
-                        <h2 class="profile-section-title">Employment Status / Type</h2>
+                        <h2 class="profile-section-title">Employment Status / Type <span class="text-danger">*</span></h2>
                     </div>
                 </div>
                 <div class="profile-section-rule"></div>
@@ -1019,7 +1019,7 @@
             </button>
         </div>
         <div class="row g-2">
-            <div class="col-12 col-lg-6"><input class="form-control profile-input" data-field="school" name="education[__INDEX__][school]" placeholder="School / University"></div>
+            <div class="col-12 col-lg-6"><input class="form-control profile-input" data-field="school" name="education[__INDEX__][school]" placeholder="School / University" required></div>
             <div class="col-12 col-lg-4"><input class="form-control profile-input" data-field="course" name="education[__INDEX__][course]" placeholder="Course / Strand"></div>
             <div class="col-12 col-lg-2"><input class="form-control profile-input" data-field="year"   name="education[__INDEX__][year]"   placeholder="Year"></div>
         </div>
