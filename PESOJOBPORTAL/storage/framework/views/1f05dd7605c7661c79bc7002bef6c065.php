@@ -227,19 +227,10 @@
         }
 
         .profile-save-wrap {
-            position: sticky;
-            bottom: 20px;
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            padding: 16px 20px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 100%);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(224, 231, 241, 0.5);
-            z-index: 50;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
+            padding: 16px 0 0;
         }
 
         .profile-save-btn {
@@ -268,13 +259,8 @@
 
         @media (max-width: 767px) {
             .profile-save-wrap {
-                position: static;
                 justify-content: stretch;
-                padding: 12px 0;
-                background: none;
-                border: none;
-                box-shadow: none;
-                margin-top: 16px;
+                padding: 12px 0 0;
             }
 
             .profile-save-btn {
@@ -999,7 +985,7 @@
                 </div>
             </div>
 
-            <div class="profile-save-wrap pb-1">
+            <div class="profile-save-wrap">
                 <button type="submit" class="btn profile-save-btn">
                     <i class="bi bi-cloud-arrow-up me-2"></i>Save Profile
                 </button>
