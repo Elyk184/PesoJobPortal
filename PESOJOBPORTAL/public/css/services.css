@@ -91,8 +91,7 @@
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    justify-content: center;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.35rem;
     max-width: 1050px;
     margin: 0 auto;
@@ -103,12 +102,6 @@
     .services-grid {
         grid-template-columns: 1fr;
         max-width: 640px;
-    }
-}
-
-@media (max-width: 580px) {
-    .services-grid {
-        grid-template-columns: 1fr;
     }
 }
 
@@ -346,6 +339,34 @@
     box-shadow: 0 10px 20px rgba(215, 38, 56, 0.3);
     transform: translateY(-1px);
 }
+
+/* OFW */
+.service-icon-wrap.service-ofw {
+    background: linear-gradient(180deg, #e0f2e9, #c8ecd8);
+}
+.service-icon-wrap.service-ofw svg { stroke: #1a7a4a; }
+.service-badge-ofw { color: #1a7a4a; border-color: rgba(26,122,74,0.2); background: rgba(26,122,74,0.09); }
+.service-dot.service-ofw { background: #d0f0e0; }
+.service-dot.service-ofw svg { stroke: #1a7a4a; }
+.service-card.service-ofw:hover { border-color: rgba(26,122,74,0.28); }
+.service-card.service-ofw:hover .service-card-title { color: #1a7a4a; }
+.service-divider-ofw { background: linear-gradient(90deg, #1a7a4a, #2ecc71); }
+.service-btn.service-ofw { background: linear-gradient(90deg, #1a7a4a, #27ae60); color: #fff; }
+.service-btn.service-ofw:hover { box-shadow: 0 10px 20px rgba(26,122,74,0.3); transform: translateY(-1px); }
+
+/* Association */
+.service-icon-wrap.service-assoc {
+    background: linear-gradient(180deg, #f3e8ff, #e9d5ff);
+}
+.service-icon-wrap.service-assoc svg { stroke: #7c3aed; }
+.service-badge-assoc { color: #7c3aed; border-color: rgba(124,58,237,0.2); background: rgba(124,58,237,0.09); }
+.service-dot.service-assoc { background: #ede9fe; }
+.service-dot.service-assoc svg { stroke: #7c3aed; }
+.service-card.service-assoc:hover { border-color: rgba(124,58,237,0.28); }
+.service-card.service-assoc:hover .service-card-title { color: #7c3aed; }
+.service-divider-assoc { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.service-btn.service-assoc { background: linear-gradient(90deg, #7c3aed, #8b5cf6); color: #fff; }
+.service-btn.service-assoc:hover { box-shadow: 0 10px 20px rgba(124,58,237,0.3); transform: translateY(-1px); }
 
 @media (max-width: 768px) {
     .peso-services-section {
