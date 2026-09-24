@@ -23,12 +23,21 @@
     letter-spacing: 0.2px;
   }
 
+  .navbar-brand {
+    gap: 0.5rem;
+  }
+
   .navbar-brand-text {
-    font-size: 1rem;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
   }
 
   .navbar-brand-text-sm {
-    font-size: 0.95rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   .navbar-nav-custom {
@@ -122,8 +131,8 @@
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
       <img src="{{ asset('images/logo.png') }}" alt="PESO Logo" title="PESO Logo" class="logo-img me-2">
-      <span class="d-none d-sm-inline navbar-brand-text">PUBLIC EMPLOYMENT SERVICES OFFICE</span>
-      <span class="d-sm-none navbar-brand-text-sm">Manolo Fortich</span>
+      <span class="d-none d-sm-inline navbar-brand-text">LINK JOB RESOURCE PORTAL</span>
+      <span class="d-sm-none navbar-brand-text-sm">LINK JOB</span>
     </a>
 
     <button class="navbar-toggler navbar-toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
