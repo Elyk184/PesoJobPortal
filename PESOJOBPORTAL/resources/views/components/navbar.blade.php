@@ -28,14 +28,17 @@
   }
 
   .navbar-brand-text {
-    font-size: 0.82rem;
+    font-size: 0.95rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     white-space: nowrap;
+    line-height: 1.2;
   }
 
   .navbar-brand-text-sm {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -105,7 +108,7 @@
 
   @media (max-width: 991.98px) {
     .navbar-brand-text {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
     }
 
     .logo-img {
