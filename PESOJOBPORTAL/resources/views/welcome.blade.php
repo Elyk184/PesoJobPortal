@@ -173,7 +173,7 @@
             .hero-description-text {
                 font-size: 18px;
                 color: #333;
-                margin-bottom: 30px;
+                margin-bottom: 16px;
                 line-height: 1.6;
             }
 
@@ -182,19 +182,19 @@
                 font-size: 15px;
                 font-weight: 600;
                 border-radius: 30px;
-                border: 2px solid #3498db;
+                border: 2px solid #1f4b8f;
                 color: white;
-                background: #3498db;
+                background: #1f4b8f;
                 text-decoration: none;
                 display: inline-block;
                 transition: all 0.3s ease;
             }
 
             .hero-btn-getstarted:hover {
-                background: #2980b9;
-                border-color: #2980b9;
+                background: #0f2d52;
+                border-color: #0f2d52;
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+                box-shadow: 0 5px 15px rgba(15, 45, 82, 0.3);
             }
 
             /* Stats Card */
