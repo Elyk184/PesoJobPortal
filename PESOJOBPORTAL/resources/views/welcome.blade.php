@@ -89,58 +89,38 @@
                 transform: translateY(-1px);
             }
 
-            /* FIXED HERO SECTION - Full Screen Background */
+            /* HERO SECTION */
             .peso-hero {
-                position: relative;
-                min-height: 100vh;
                 width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                isolation: isolate;
+                background: #fff;
+                position: relative;
+            }
+
+            .hero-bg-top {
+                width: 100%;
                 overflow: hidden;
+                height: clamp(160px, 22vw, 300px);
+                line-height: 0;
             }
 
-            /* Background image with proper cover sizing - NO OVERLAY */
-            .peso-hero::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-image: url('/images/background-desktop.png'), url('/images/background.png');
-                background-size: cover;
-                background-position: center center;
-                background-repeat: no-repeat;
-                z-index: -1;
+            .hero-bg-top img {
+                width: 100%;
+                display: block;
+                height: auto;
             }
 
-            /* PESO Logo Watermark Background (removed) */
-            .peso-hero::after {
-                content: none;
+            .hero-bg-bottom {
+                width: 100%;
+                overflow: hidden;
+                height: clamp(160px, 22vw, 300px);
+                line-height: 0;
             }
 
-            /* Tablet background */
-            @media (max-width: 1024px) and (min-width: 801px) {
-                .peso-hero::before {
-                    background-image: url('/images/background-tablet.png'), url('/images/background.png');
-                    background-size: cover;
-                    background-position: center center;
-                }
-
-                .peso-hero::after { content: none; }
-            }
-
-            /* Mobile background */
-            @media (max-width: 800px) {
-                .peso-hero::before {
-                    background-image: url('/images/background-mobile.png'), url('/images/background.png');
-                    background-size: cover;
-                    background-position: center center;
-                }
-
-                .peso-hero::after { content: none; }
+            .hero-bg-bottom img {
+                width: 100%;
+                display: block;
+                height: auto;
+                margin-top: -37vw;
             }
 
             .hero-static {
@@ -150,8 +130,8 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
+                padding: 30px 40px 30px;
                 position: relative;
-                padding: 80px 24px;
                 z-index: 1;
             }
 
@@ -179,11 +159,11 @@
             }
 
             .hero-title-connecting {
-                font-size: 34px;
-                font-weight: 700;
+                font-size: clamp(28px, 3.5vw, 46px);
+                font-weight: 800;
                 line-height: 1.2;
                 margin-bottom: 18px;
-                color: #075cb2e6;
+                color: #1e3a8a;
             }
 
             .hero-title-connecting span {
@@ -490,11 +470,10 @@
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
 
-            /* Responsive Design */
             @media (max-width: 1024px) {
                 .hero-static {
                     flex-direction: column;
-                    padding: 60px 24px;
+                    padding: 20px 24px 50px;
                 }
 
                 .hero-content-left {
@@ -577,22 +556,19 @@
 
         <main class="peso-main">
             <section class="peso-hero" aria-label="Welcome section">
+                <div class="hero-bg-top">
+                    <img src="{{ asset('images/background.png') }}" alt="" aria-hidden="true">
+                </div>
                 <div class="hero-static">
                     <div class="hero-content-left">
-                        <h1 class="hero-title-welcome">
-                            Welcome to <span style="color: #e74c3c;">PESO</span>
-                        </h1>
-
-                        <h2 class="hero-title-peso">
-                            Manolo Fortich
-                        </h2>
+                        <div class="peso-chip" style="border:1.5px solid #1e3a8a; border-radius:30px; padding:6px 18px; font-size:0.78rem; font-weight:700; color:#1e3a8a; background:#fff; display:inline-block; margin-bottom:14px; letter-spacing:0.5px;">PESO MANOLO FORTICH</div>
 
                         <h1 class="hero-title-connecting">
                             Connecting People <span>with Opportunities</span>
                         </h1>
 
                         <p class="hero-description-text">
-                            Connecting Filipino jobseekers with verified employers. Access thousands of local and overseas job opportunities through PESO.
+                            Bridging job seekers and employers in the municipality of Manolo Fortich through efficient, accessible and free employment services.
                         </p>
 
                         <div>
@@ -622,6 +598,9 @@
                             </div>
                         </div>
                     </aside>
+                </div>
+                <div class="hero-bg-bottom">
+                    <img src="{{ asset('images/background.png') }}" alt="" aria-hidden="true">
                 </div>
             </section>
 
