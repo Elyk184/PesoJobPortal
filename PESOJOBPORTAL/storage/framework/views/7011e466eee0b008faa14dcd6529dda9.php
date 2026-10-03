@@ -32,7 +32,6 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    white-space: nowrap;
     line-height: 1.2;
   }
 
@@ -128,14 +127,24 @@
       padding: 0.55rem 0.8rem !important;
     }
   }
+
+  @media (max-width: 480px) {
+    .navbar-brand-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.03em;
+    }
+
+    .logo-img {
+      width: 52px;
+    }
+  }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="<?php echo e(url('/')); ?>">
       <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PESO Logo" title="PESO Logo" class="logo-img me-2">
-      <span class="d-none d-sm-inline navbar-brand-text">LINK JOB RESOURCE PORTAL</span>
-      <span class="d-sm-none navbar-brand-text-sm">LINK JOB</span>
+      <span class="navbar-brand-text">LINK JOB RESOURCE PORTAL</span>
     </a>
 
     <button class="navbar-toggler navbar-toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
