@@ -667,7 +667,7 @@
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
-            <div class="pg-label">Page 2 — Employment Contract <span class="req-badge">REQUIRED</span></div>
+            <div class="pg-label">Page 3 — Employment Contract <span class="req-badge">REQUIRED</span></div>
             <div class="pg-sublabel">Attach a clear photo or scanned copy of your Employment Contract</div>
         </div>
  
@@ -687,7 +687,7 @@
         </button>
         <div class="attach-note">* This attachment is required to submit the form</div>
     </div>
-    <div class="pg-num">2</div>
+    <div class="pg-num">3</div>
 </div>
 
  
@@ -696,7 +696,7 @@
 <div class="dmw-page">
     <div class="attach-page">
         <div class="attach-hdr">
-            <div class="pg-label">Page 3 — Passport / Travel Document <span class="req-badge">REQUIRED</span></div>
+            <div class="pg-label">Page 4 — Passport / Travel Document <span class="req-badge">REQUIRED</span></div>
             <div class="pg-sublabel">Attach a clear photo or scanned copy of the data page of your Passport</div>
         </div>
  
@@ -716,7 +716,7 @@
         </button>
         <div class="attach-note">* This attachment is required to submit the form</div>
     </div>
-    <div class="pg-num">3</div>
+    <div class="pg-num">4</div>
 </div>
 
  
@@ -789,7 +789,6 @@ document.getElementById('dmwForm').addEventListener('submit', function () {
 </script>
 <?php $__env->stopPush(); ?>
  
-
 
 
 
