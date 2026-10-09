@@ -67,20 +67,6 @@
             'label'   => 'Trade & Manual Skills',
             'options' => ['Auto Mechanic','Beautician','Carpentry Work','Plumbing','Housekeeping','Electrician','Embroidery','Tailoring','Masonry','Painting Jobs','Gardening/Farming','Driver'],
         ],
-        'it_technical' => [
-            'label'   => 'IT & Technical Skills',
-            'options' => [
-                'Computer Literate', 'Microsoft Office', 'Web Development', 'System Developer', 'Programming', 'Database', 'JavaScript', 'HTML/CSS', 'Git',
-                'Database Management', 'Frontend Development (Web UI)', 'API Integration & Development', 'Software Development & Debugging',
-                'Network Configuration & Troubleshooting', 'Hardware Installation & Repair', 'Graphic Design', 'React.js', 'Node.js', 'REST API',
-                'Backend Development (Server-side)', 'Virtual Assistance', 'Data Entry and Record Keeping', 'Filing and Documentation',
-                'Scheduling and Calendar Management', 'MySQL (Database)', 'Flutter', 'Docker', 'Laravel (Backend)'
-            ],
-        ],
-        'soft_skills' => [
-            'label'   => 'Soft Skills',
-            'options' => ['Critical Thinking', 'Problem-Solving', 'Adaptability', 'Time Management', 'Team Collaboration'],
-        ],
     ];
 
     $otherSkillText  = data_get($otherSkills, 'other_text',       '');
@@ -767,35 +753,29 @@
                             <?php if((bool) data_get($otherSkills, 'other_enabled', false)): echo 'checked'; endif; ?>>
                         <span><strong>Others (please specify):</strong></span>
                     </label>
-                    <input class="form-control profile-input" name="other_skills[other_text]"
-                        value="<?php echo e($otherSkillText); ?>" placeholder="Specify">
-                    <div class="row g-3 mt-1">
-                        <div class="col-12 col-md-6">
-                            <div class="profile-inline-choice">
-                                <span class="fw-semibold">With Certificate</span>
-                                <label class="profile-radio-inline">
-                                    <input type="radio" name="other_skills[with_certificate]" value="1"
-                                        <?php if((string) $withCertificate === '1'): echo 'checked'; endif; ?>> Yes
-                                </label>
-                                <label class="profile-radio-inline">
-                                    <input type="radio" name="other_skills[with_certificate]" value="0"
-                                        <?php if((string) $withCertificate === '0'): echo 'checked'; endif; ?>> No
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="profile-inline-choice">
-                                <span class="fw-semibold">By Experience</span>
-                                <label class="profile-radio-inline">
-                                    <input type="radio" name="other_skills[by_experience]" value="1"
-                                        <?php if((string) $byExperience === '1'): echo 'checked'; endif; ?>> Yes
-                                </label>
-                                <label class="profile-radio-inline">
-                                    <input type="radio" name="other_skills[by_experience]" value="0"
-                                        <?php if((string) $byExperience === '0'): echo 'checked'; endif; ?>> No
-                                </label>
-                            </div>
-                        </div>
+
+                    <?php
+                        $otherSkillTags = array_filter(array_map('trim', is_array($otherSkillText) ? $otherSkillText : explode(',', $otherSkillText ?? '')));
+                    ?>
+
+                    <div class="d-flex gap-2 mb-2">
+                        <input type="text" id="other-skill-input" class="form-control profile-input" placeholder="Type a skill and click Add">
+                        <button type="button" class="btn btn-primary px-3" id="other-skill-add-btn">Add</button>
+                    </div>
+
+                    <div id="other-skill-tags" class="d-flex flex-wrap gap-2 mb-2">
+                        <?php $__currentLoopData = $otherSkillTags; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php if($tag): ?>
+                                <span class="badge d-inline-flex align-items-center gap-1 px-3 py-2"
+                                    style="background:#1f4b8f; font-size:0.85rem; border-radius:20px; cursor:default;">
+                                    <?php echo e($tag); ?>
+
+                                    <input type="hidden" name="other_skills[other_tags][]" value="<?php echo e($tag); ?>">
+                                    <button type="button" class="btn-close btn-close-white ms-1" style="font-size:0.6rem;"
+                                        onclick="this.closest('span').remove()"></button>
+                                </span>
+                            <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -1149,6 +1129,32 @@
     });
 
     initSkillGroupCollapsibles();
+
+    // Other skills tag input
+    const otherInput  = document.getElementById('other-skill-input');
+    const otherAddBtn = document.getElementById('other-skill-add-btn');
+    const otherTags   = document.getElementById('other-skill-tags');
+
+    function addOtherSkillTag(value) {
+        value = value.trim();
+        if (!value) return;
+        const span = document.createElement('span');
+        span.className = 'badge d-inline-flex align-items-center gap-1 px-3 py-2';
+        span.style.cssText = 'background:#1f4b8f;font-size:0.85rem;border-radius:20px;cursor:default;';
+        span.innerHTML = value +
+            '<input type="hidden" name="other_skills[other_tags][]" value="' + value.replace(/"/g, '&quot;') + '">' +
+            '<button type="button" class="btn-close btn-close-white ms-1" style="font-size:0.6rem;"></button>';
+        span.querySelector('.btn-close').addEventListener('click', function () { span.remove(); });
+        otherTags.appendChild(span);
+        otherInput.value = '';
+    }
+
+    if (otherAddBtn) {
+        otherAddBtn.addEventListener('click', function () { addOtherSkillTag(otherInput.value); });
+        otherInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); addOtherSkillTag(otherInput.value); }
+        });
+    }
 })();
 </script>
 <?php $__env->stopPush(); ?>

@@ -930,8 +930,6 @@ class JobseekerController extends Controller
             'eligibility.*.valid_until' => ['nullable', 'string', 'max:50'],
 
             'other_skills.trade_manual' => ['nullable', 'array'],
-            'other_skills.it_technical' => ['nullable', 'array'],
-            'other_skills.soft_skills' => ['nullable', 'array'],
             'other_skills.other_enabled' => ['nullable', 'boolean'],
             'other_skills.other_text' => ['nullable', 'string', 'max:255'],
             'other_skills.with_certificate' => ['nullable', 'boolean'],
@@ -1214,8 +1212,6 @@ class JobseekerController extends Controller
     {
         $skills = array_merge(
             $otherSkills['trade_manual'] ?? [],
-            $otherSkills['it_technical'] ?? [],
-            $otherSkills['soft_skills'] ?? [],
             array_filter([(string) ($otherSkills['other_text'] ?? '')])
         );
 
@@ -1499,8 +1495,6 @@ class JobseekerController extends Controller
 
         $categoryMap = [
             'trade_manual' => 'trade_manual',
-            'it_technical' => 'it_technical',
-            'soft_skills' => 'soft_skills',
         ];
 
         $inserts = [];
@@ -1753,8 +1747,6 @@ class JobseekerController extends Controller
 
         $otherSkills = [
             'trade_manual' => $skillRows->where('category', 'trade_manual')->pluck('skill')->all(),
-            'it_technical' => $skillRows->where('category', 'it_technical')->pluck('skill')->all(),
-            'soft_skills' => $skillRows->where('category', 'soft_skills')->pluck('skill')->all(),
             'other_enabled' => (bool) ($meta?->other_enabled ?? false),
             'other_text' => $skillRows->where('category', 'other')->pluck('skill')->first() ?? ($meta?->other_text ?? ''),
             'with_certificate' => $meta?->with_certificate,
@@ -1930,8 +1922,6 @@ class JobseekerController extends Controller
     {
         return [
             'trade_manual' => [],
-            'it_technical' => [],
-            'soft_skills' => [],
             'other_text' => '',
             'with_certificate' => false,
             'by_experience' => false,
@@ -2149,8 +2139,6 @@ class JobseekerController extends Controller
 
         $skills = collect($profile->skills ?? [])
             ->merge($otherSkills['trade_manual'] ?? [])
-            ->merge($otherSkills['it_technical'] ?? [])
-            ->merge($otherSkills['soft_skills'] ?? [])
             ->push((string) ($otherSkills['other_text'] ?? ''))
             ->all();
 
@@ -2303,8 +2291,6 @@ class JobseekerController extends Controller
         $otherSkills = $profile->other_skills ?? [];
         $userSkills = $userSkills
             ->merge($otherSkills['trade_manual'] ?? [])
-            ->merge($otherSkills['it_technical'] ?? [])
-            ->merge($otherSkills['soft_skills'] ?? [])
             ->push((string) ($otherSkills['other_text'] ?? ''));
 
         $trainingSkills = collect($profile->training ?? [])
@@ -2416,8 +2402,6 @@ class JobseekerController extends Controller
         $otherSkills = $profile->other_skills ?? [];
         $userSkills = $userSkills
             ->merge($otherSkills['trade_manual'] ?? [])
-            ->merge($otherSkills['it_technical'] ?? [])
-            ->merge($otherSkills['soft_skills'] ?? [])
             ->push((string) ($otherSkills['other_text'] ?? ''));
 
         // Training skills
@@ -2714,8 +2698,6 @@ class JobseekerController extends Controller
         }
 
         return ! empty($otherSkills['trade_manual'])
-            || ! empty($otherSkills['it_technical'])
-            || ! empty($otherSkills['soft_skills'])
             || trim((string) ($otherSkills['other_text'] ?? '')) !== '';
     }
 
