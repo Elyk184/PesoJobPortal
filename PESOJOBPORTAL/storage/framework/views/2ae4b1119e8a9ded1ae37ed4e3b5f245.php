@@ -128,6 +128,15 @@
                 <?php endif; ?>
             </a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="<?php echo e(route('admin.contact-messages')); ?>" class="sidebar-menu-link <?php echo e(request()->routeIs('admin.contact-messages*') ? 'active' : ''); ?>">
+                <i class="bi bi-envelope"></i>
+                <span>Contact Messages</span>
+                <?php if(($adminSidebarCounts['unreadContactMessages'] ?? 0) > 0): ?>
+                    <span class="sidebar-badge" style="background:#f59e0b;"><?php echo e($adminSidebarCounts['unreadContactMessages']); ?></span>
+                <?php endif; ?>
+            </a>
+        </li>
 
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>

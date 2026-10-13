@@ -267,6 +267,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/peso-clearances/{clearance}/document', [AdminController::class, 'viewClearanceDocument'])->name('peso-clearances.view-document');
     Route::get('/peso-clearances/{clearance}/download', [AdminController::class, 'downloadClearanceDocument'])->name('peso-clearances.download-document');
 
+    // Contact Messages
+    Route::get('/contact-messages', [AdminController::class, 'contactMessages'])->name('contact-messages');
+    Route::post('/contact-messages/{contactMessage}/reply', [AdminController::class, 'replyContactMessage'])->name('contact-messages.reply');
+    Route::post('/contact-messages/{contactMessage}/read', [AdminController::class, 'markContactMessageRead'])->name('contact-messages.read');
+
     // Admin Profile
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');

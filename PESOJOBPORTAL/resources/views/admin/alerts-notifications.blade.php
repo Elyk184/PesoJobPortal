@@ -84,6 +84,7 @@
                         $isEmployerVerification = str_contains($alertText, 'employer verification') || str_contains($alertText, 'company verification') || str_contains($alertText, 'business permit');
                         $isLraSra = str_contains($alertText, 'lra') || str_contains($alertText, 'sra') || str_contains($alertText, 'recruitment activity');
                         $isPesoClearance = str_contains($alertText, 'peso clearance');
+                        $isContactMessage = str_contains($alertText, 'contact message') || str_contains($alertText, 'new contact');
                     @endphp
                     <div class="alert-item" data-notification-id="{{ $notification->id }}">
                         <div class="alert-icon" style="color: {{ $isPesoClearance ? '#f59e0b' : ($isLraSra ? '#ec4899' : ($isEmployerVerification ? '#16a34a' : '#2563eb')) }}; background: {{ $isPesoClearance ? 'rgba(245, 158, 11, 0.12)' : ($isLraSra ? 'rgba(236, 72, 153, 0.12)' : ($isEmployerVerification ? 'rgba(22, 163, 74, 0.12)' : 'rgba(37, 99, 235, 0.12)')) }};">
@@ -106,6 +107,9 @@
                                 @if($isPesoClearance)
                                     <span class="badge text-bg-warning text-dark rounded-pill">PESO Clearance</span>
                                 @endif
+                                @if($isContactMessage)
+                                    <span class="badge rounded-pill" style="background:#0891b2; color:white;">Contact Message</span>
+                                @endif
                             </div>
                         </div>
                         <div class="alert-actions">
@@ -120,6 +124,9 @@
                             @endif
                             @if($isPesoClearance)
                                 <a href="{{ route('admin.peso-clearances') }}" class="btn-small btn-dismiss" style="background:#f59e0b; color:#fff; text-decoration:none;">Open Queue</a>
+                            @endif
+                            @if($isContactMessage)
+                                <a href="{{ route('admin.contact-messages') }}" class="btn-small btn-dismiss" style="background:#0891b2; color:#fff; text-decoration:none;"><i class="bi bi-reply me-1"></i>Reply</a>
                             @endif
                         </div>
                     </div>

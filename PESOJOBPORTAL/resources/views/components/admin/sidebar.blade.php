@@ -133,6 +133,15 @@
                 @endif
             </a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="{{ route('admin.contact-messages') }}" class="sidebar-menu-link {{ request()->routeIs('admin.contact-messages*') ? 'active' : '' }}">
+                <i class="bi bi-envelope"></i>
+                <span>Contact Messages</span>
+                @if(($adminSidebarCounts['unreadContactMessages'] ?? 0) > 0)
+                    <span class="sidebar-badge" style="background:#f59e0b;">{{ $adminSidebarCounts['unreadContactMessages'] }}</span>
+                @endif
+            </a>
+        </li>
 
 
         <li style="padding: 0; margin: 1rem 0;"><div class="sidebar-menu-divider"></div></li>

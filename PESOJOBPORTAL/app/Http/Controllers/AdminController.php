@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactMessage;
 use App\Models\User;
 use App\Models\PesoJob;
 use App\Models\JobApplication;
@@ -1365,6 +1366,58 @@ class AdminController extends Controller
         }
 
         return null;
+    }
+
+    // Contact Messages
+    public function contactMessages(Request $request): View
+    {
+        $filter = $request->query('filter', 'all');
+
+        $messages = ContactMessage::query()
+            ->when($filter === 'unread', fn ($q) => $q->where('status', 'unread'))
+            ->when($filter === 'replied', fn ($q) => $q->where('status', 'replied'))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        $stats = [
+            'all'     => ContactMessage::count(),
+            'unread'  => ContactMessage::where('status', 'unread')->count(),
+            'replied' => ContactMessage::where('status', 'replied')->count(),
+        ];
+
+        return view('admin.contact-messages', compact('messages', 'stats', 'filter'));
+    }
+
+    public function replyContactMessage(Request $request, ContactMessage $contactMessage): RedirectResponse
+    {
+        $request->validate(['reply' => 'required|string|max:5000']);
+
+        try {
+            \Illuminate\Support\Facades\Mail::mailer('brevo')
+                ->to($contactMessage->email, $contactMessage->name)
+                ->send(new \App\Mail\ContactReplyMail($contactMessage, $request->reply));
+        } catch (\Throwable $e) {
+            Log::error('Failed to send reply: ' . $e->getMessage());
+            return back()->with('error', 'Failed to send reply: ' . $e->getMessage());
+        }
+
+        $contactMessage->update([
+            'admin_reply' => $request->reply,
+            'replied_at'  => now(),
+            'replied_by'  => Auth::id(),
+            'status'      => 'replied',
+        ]);
+
+        return back()->with('success', 'Reply sent successfully to ' . $contactMessage->email . '.');
+    }
+
+    public function markContactMessageRead(ContactMessage $contactMessage): RedirectResponse
+    {
+        if ($contactMessage->status === 'unread') {
+            $contactMessage->update(['status' => 'read']);
+        }
+        return back();
     }
 
     // Admin Profile

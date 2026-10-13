@@ -70,6 +70,16 @@ return [
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
         ],
 
+        'brevo' => [
+            'transport' => 'smtp',
+            'host'      => env('BREVO_SMTP_HOST', 'smtp.gmail.com'),
+            'port'      => env('BREVO_SMTP_PORT', 587),
+            'username'  => env('BREVO_SMTP_LOGIN'),
+            'password'  => env('BREVO_SMTP_KEY'),
+            'encryption'=> 'tls',
+            'timeout'   => null,
+        ],
+
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
